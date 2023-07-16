@@ -2,21 +2,20 @@ modLoader="javafml" #mandatory
 loaderVersion="[40,)" #mandatory
 license="All rights reserved"
 [[mods]] #mandatory
-modId="modid" #mandatory
+modId="ohmega" #mandatory
 version="${file.jarVersion}" #mandatory
-displayName="Template Mod" #mandatory
-logoFile="" #optional
-credits="" #optional
+displayName="Ohmega" #mandatory
+logoFile="ohmega.png" #optional
+credits="Inspiration from Curios, code used and/or modified has been credited in their respective files" #optional
 authors="Developer: Swacky_" #optional
-description='''
-'''
-[[dependencies.modid]]
+description='''A modernized and lightweight accessories mod for Minecraft'''
+[[dependencies.ohmega]]
     modId="forge"
     mandatory=true
     versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.modid]]
+[[dependencies.ohmega]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.18.2,1.19)"
