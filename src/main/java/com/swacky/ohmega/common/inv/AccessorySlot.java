@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +28,9 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        if(stack.getItem() instanceof IAccessory accessory)
-            return ((AccessoryContainer) getItemHandler()).isValid(slot, stack) && accessory.getType() == this.type;
+        if(stack.getItem() instanceof IAccessory accessory) {
+            return ((AccessoryContainer) getItemHandler()).isValid(stack) && accessory.getType() == this.type;
+        }
         return false;
     }
 
@@ -39,13 +41,18 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPickup(Player player) {
-        return !getItem().isEmpty() && getItem().getCapability(Ohmega.ACCESSORY_ITEM).orElseThrow(NullPointerException::new).canEquip(player);
+        return !getItem().isEmpty() && getItem().getCapability(Ohmega.ACCESSORY_ITEM).orElseThrow(NullPointerException::new).canUnequip(player);
     }
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
         if (!hasItem() && stack.getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
-            stack.getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent((accessory) -> accessory.onUnequip(player, stack));
+            stack.getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent(a -> {
+                getItem().getOrCreateTag().putInt("slot", -1);
+                if(player instanceof ServerPlayer svr) {
+                    a.onUnequip(svr, stack);
+                }
+            });
         }
         super.onTake(player, stack);
     }
@@ -53,14 +60,24 @@ public class AccessorySlot extends SlotItemHandler {
     @Override
     public void set(@NotNull ItemStack stack) {
         if (hasItem() && !ItemStack.isSame(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).isPresent()) {
-            getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent((accessory) -> accessory.onUnequip(player, stack));
+            getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent((accessory) -> {
+                getItem().getOrCreateTag().putInt("slot", -1);
+                if(player instanceof ServerPlayer svr) {
+                    accessory.onUnequip(svr, stack);
+                }
+            });
         }
 
         ItemStack old = getItem().copy();
         super.set(stack);
 
         if (hasItem() && !ItemStack.isSame(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).isPresent()) {
-            getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent((accessory) -> accessory.onEquip(player, stack));
+            getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent(a -> {
+                getItem().getOrCreateTag().putInt("slot", slot);
+                if(player instanceof ServerPlayer svr) {
+                    a.onEquip(svr, stack);
+                }
+            });
         }
     }
 

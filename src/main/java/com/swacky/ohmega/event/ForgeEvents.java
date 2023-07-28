@@ -19,6 +19,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,21 +33,24 @@ import java.util.Collections;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEvents {
+    // Syncs slots upon player joining
     @SubscribeEvent
-    public static void playerJoin(EntityJoinWorldEvent event) {
+    public static void onPlayerJoin(EntityJoinWorldEvent event) {
         if(event.getEntity() instanceof ServerPlayer player) {
             syncSlots(player, Collections.singletonList(player));
         }
     }
 
+    // Begins player tracking
     @SubscribeEvent
-    public static void tracking(PlayerEvent.StartTracking event) {
+    public static void onPlayerTrack(PlayerEvent.StartTracking event) {
         if (event.getTarget() instanceof ServerPlayer player) {
             syncSlots(player, Collections.singletonList(event.getPlayer()));
         }
     }
 
 
+    // Sync all slots
     private static void syncSlots(ServerPlayer player, Collection<? extends Player> receivers) {
         player.getCapability(Ohmega.ACCESSORIES).ifPresent(accessories -> {
             for (byte i = 0; i < accessories.getSlots(); i++) {
@@ -55,6 +59,7 @@ public class ForgeEvents {
         });
     }
 
+    // Sync provided slot
     public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
         SyncAccessoriesPacket packet = new SyncAccessoriesPacket(player.getId(), slot, stack);
         for (Player receiver : receivers) {
@@ -63,13 +68,12 @@ public class ForgeEvents {
         }
     }
 
-    private static final ResourceLocation cap = new ResourceLocation(Ohmega.MODID, "accessories_cap");
-
+    // Attach accessory capability to the accessory item
     @SubscribeEvent
     public static void attachCapsItem(AttachCapabilitiesEvent<ItemStack> event) {
         ItemStack stack = event.getObject();
         if (stack.getItem() instanceof IAccessory) {
-            event.addCapability(cap, new ICapabilityProvider() {
+            event.addCapability(new ResourceLocation(Ohmega.MODID, "accessories_cap"), new ICapabilityProvider() {
                 private final LazyOptional<IAccessory> opt = LazyOptional.of(() -> (IAccessory) stack.getItem());
 
                 @Nonnull
@@ -81,6 +85,7 @@ public class ForgeEvents {
         }
     }
 
+    // Attaches accessory container provider capability to the player
     @SubscribeEvent
     public static void attachCapsPlayer(AttachCapabilitiesEvent<Entity> event) {
         if(event.getObject() instanceof Player player) {
@@ -88,6 +93,7 @@ public class ForgeEvents {
         }
     }
 
+    // Provides the calling for the Accessories' ticking
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
@@ -96,6 +102,7 @@ public class ForgeEvents {
         }
     }
 
+    // Clones caps when changing dimensions
     @SubscribeEvent
     public static void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
         try {
@@ -104,23 +111,36 @@ public class ForgeEvents {
                 event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(accessoryContainer -> accessoryContainer.deserializeNBT(tag));
             });
         } catch (Exception e) {
-            System.out.println("Could not clone player [" + event.getOriginal().getName() + "]'s accessories.");
+            Ohmega.LOGGER.warn("Player [" + event.getOriginal().getName() + "]'s accessories could not be cloned.");
         }
     }
 
+    // For dropping accessories upon players' deaths.
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p) {
+            event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+                for (int i = 0; i < a.getSlots(); i++) {
+                    p.drop(a.getStackInSlot(i), false, false);
+                }
+            });
+        }
+    }
+
+    // Inner class for providing a container to a player, utility class.
     private static class AccessoryContainerProvider implements INBTSerializable<CompoundTag>, ICapabilityProvider {
         private final AccessoryContainer inner;
-        private final LazyOptional<AccessoryContainer> handlerCap;
+        private final LazyOptional<AccessoryContainer> cap;
 
         public AccessoryContainerProvider(Player player) {
             this.inner = new AccessoryContainer(player);
-            this.handlerCap = LazyOptional.of(() -> this.inner);
+            this.cap = LazyOptional.of(() -> this.inner);
         }
 
         @NotNull
         @Override
         public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @org.jetbrains.annotations.Nullable Direction side) {
-            return Ohmega.ACCESSORIES.orEmpty(cap, this.handlerCap);
+            return Ohmega.ACCESSORIES.orEmpty(cap, this.cap);
         }
 
         @Override

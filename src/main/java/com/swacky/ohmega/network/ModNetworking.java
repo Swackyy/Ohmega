@@ -1,11 +1,11 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.core.Ohmega;
-import com.swacky.ohmega.network.C2S.OpenAccessoryGuiPacket;
-import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
-import com.swacky.ohmega.network.C2S.SyncAccessoriesPacket;
+import com.swacky.ohmega.network.C2S.*;
+import com.swacky.ohmega.network.S2C.SyncActivePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -41,6 +41,16 @@ public class ModNetworking {
                 .encoder(SyncAccessoriesPacket::toBytes)
                 .consumer(SyncAccessoriesPacket::handle)
                 .add();
+        net.messageBuilder(UseAccessoryKbPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(UseAccessoryKbPacket::new)
+                .encoder(UseAccessoryKbPacket::toBytes)
+                .consumer(UseAccessoryKbPacket::handle)
+                .add();
+        net.messageBuilder(SyncActivePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncActivePacket::new)
+                .encoder(SyncActivePacket::toBytes)
+                .consumer(SyncActivePacket::handle)
+                .add();
         INSTANCE = net;
     }
 
@@ -48,7 +58,7 @@ public class ModNetworking {
         INSTANCE.sendToServer(msg);
     }
 
-    public static <T> void sendToPlayer(T msg, ServerPlayer player) {
+    public static <T> void sendTo(T msg, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), msg);
     }
 }
