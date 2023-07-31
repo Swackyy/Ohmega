@@ -1,5 +1,6 @@
 package com.swacky.ohmega.network.S2C;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,6 +39,7 @@ public class SyncActivePacket {
                     player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                         for (int i = 0; i < 3; i++) {
                             a.setActive(i + 3, active[i], true);
+                            AccessoryHelper.addActiveTag(a.getStackInSlot(i), this.active[i]);
                         }
                     });
                 }

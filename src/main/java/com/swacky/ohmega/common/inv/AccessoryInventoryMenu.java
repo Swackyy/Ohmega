@@ -1,13 +1,16 @@
 package com.swacky.ohmega.common.inv;
 
 import com.mojang.datafixers.util.Pair;
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryType;
+import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModMenus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -21,12 +24,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import static com.swacky.ohmega.api.AccessoryType.*;
 
 public class AccessoryInventoryMenu extends AbstractContainerMenu {
-    protected SimpleContainerData data;
     protected AccessoryContainer accessories;
     protected static final AccessorySlot[] SLOTS = new AccessorySlot[6];
     protected static final AccessoryType[] SLOT_TYPES = new AccessoryType[]{NORMAL, NORMAL, NORMAL, UTILITY, UTILITY, SPECIAL};
@@ -68,29 +69,13 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         this.addSlot(new OffhandSlot(inv, 40, 77, 62)); // Offhand Slot
 
         for (int index = 0; index < 6; index++) { // Accessory Slots
-            SLOTS[index] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, accessories, 40 + index, 183, 25 + index * 18, SLOT_TYPES[index]));
+            SLOTS[index] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, accessories, index, 183, 25 + index * 18, SLOT_TYPES[index]));
         }
     }
 
     @Override
     public boolean stillValid(@NotNull Player player) {
         return true;
-    }
-
-    public @NotNull AccessorySlot getAccessorySlot(int index) {
-        return SLOTS[index];
-    }
-
-    public @NotNull AccessorySlot[] getAccessorySlot() {
-        return SLOTS;
-    }
-
-    public @NotNull ArrayList<AccessorySlot> getAccessorySlot(AccessoryType type) {
-        ArrayList<AccessorySlot> slotsOut = new ArrayList<>();
-        for(AccessorySlot slot : SLOTS) {
-            if(slot.getType() == type) slotsOut.add(slot);
-        }
-        return slotsOut;
     }
 
     @Override
@@ -118,11 +103,81 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         return slot.container != this.craftResult && super.canTakeItemForPickAll(stack, slot);
     }
 
-    // Todo
-    //@Override
-    //public @NotNull ItemStack quickMoveStack(@NotNull Player player, int pIndex) {
-        //return super.quickMoveStack(player, pIndex);
-    //}
+    @Override
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
+        ItemStack stack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+        if (slot.hasItem()) {
+            ItemStack stack0 = slot.getItem();
+            stack = stack0.copy();
+            EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(stack);
+            if (index == 0) {
+                if (!this.moveItemStackTo(stack0, 9, 45, true)) { // Crafting result out
+                    return ItemStack.EMPTY;
+                }
+                slot.onQuickCraft(stack0, stack);
+            } else if (index >= 1 && index < 5) {
+                if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Crafting out
+                    return ItemStack.EMPTY;
+                }
+            } else if (index >= 5 && index < 9) {
+                if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Armour out
+                    return ItemStack.EMPTY;
+                }
+            } else if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem()) {
+                int i = 8 - equipmentSlot.getIndex();
+                if (!this.moveItemStackTo(stack0, i, i + 1, false)) { // Armour in
+                    return ItemStack.EMPTY;
+                }
+            } else if (equipmentSlot == EquipmentSlot.OFFHAND && !this.slots.get(45).hasItem()) {
+                if (!this.moveItemStackTo(stack0, 45, 46, false)) { // Offhand in
+                    return ItemStack.EMPTY;
+                }
+            } else if(stack0.getItem() instanceof IAccessory acc && index > 8 && index < 45) { // Accessory in
+                int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
+                if(accSlot != -1) {
+                    if(getSlot(46 + accSlot).mayPlace(stack)) {
+                        stack0.shrink(1);
+                        stack.setCount(1);
+                        getSlot(46 + accSlot).set(stack);
+                    }
+                }
+            } else if (index >= 9 && index < 36) {
+                if (!this.moveItemStackTo(stack0, 36, 45, false)) { // Top part of inv in
+                    return ItemStack.EMPTY;
+                }
+            } else if (index > 35 && index < 45) {
+                if (!this.moveItemStackTo(stack0, 9, 36, false)) { // Hotbar out
+                    return ItemStack.EMPTY;
+                }
+            } else if(index > 45 && index < 52 && stack0.getItem() instanceof IAccessory) {
+                stack0.getOrCreateTag().putInt("slot", -1);
+                AccessoryHelper.addActiveTag(stack0, false);
+                if(this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into top part of inv
+                return ItemStack.EMPTY;
+            }
+
+            if (stack0.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+
+            if (stack0.getCount() == stack.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(player, stack0);
+            if (index == 0) {
+                player.drop(stack0, false);
+            }
+        }
+
+        return stack;
+    }
 
     private static class ArmorSlot extends Slot {
         private final EquipmentSlot slotType;

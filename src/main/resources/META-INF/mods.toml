@@ -6,9 +6,12 @@ modId="ohmega" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="Ohmega" #mandatory
 logoFile="ohmega.png" #optional
-credits="Inspiration from Curios, code used and/or modified has been credited in their respective files" #optional
+credits="Inspired by other accessorising mods which felt they needed something more" #optional
 authors="Developer: Swacky_" #optional
-description='''A modernized and lightweight accessories mod for Minecraft'''
+description='''
+A modernized and lightweight accessories mod for Minecraft
+For API usage and reference code info, visit github.com/
+'''
 [[dependencies.ohmega]]
     modId="forge"
     mandatory=true

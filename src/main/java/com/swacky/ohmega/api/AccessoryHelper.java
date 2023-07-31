@@ -188,7 +188,7 @@ public class AccessoryHelper {
      */
     @SuppressWarnings("unchecked")
     public static InteractionResultHolder<ItemStack> tryEquip(Player player, InteractionHand hand) {
-        InteractionResultHolder<ItemStack>[] out = new InteractionResultHolder[]{InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level.isClientSide)};
+        InteractionResultHolder<ItemStack>[] ret = new InteractionResultHolder[]{InteractionResultHolder.pass(player.getItemInHand(hand))};
         player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
             ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() instanceof IAccessory acc) {
@@ -204,11 +204,12 @@ public class AccessoryHelper {
                         if(stack0.getEquipSound() != null) {
                             player.playSound(stack0.getEquipSound(), 1.0F, 1.0F);
                         }
+                        ret[0] = InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level.isClientSide);
                     }
                 }
             }
         });
-        return out[0];
+        return ret[0];
     }
 
     /**
@@ -245,5 +246,20 @@ public class AccessoryHelper {
             }
         });
         return out[0];
+    }
+
+    public static boolean isExclusiveType(Player player, ItemStack stack) {
+        final boolean[] ret = new boolean[1];
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+            if(stack.getItem() instanceof IAccessory) {
+                for(int i = 0; i < 6; i++) {
+                    if(a.getStackInSlot(i).is(stack.getItem())) {
+                        return;
+                    }
+                }
+                ret[0] = true;
+            }
+        });
+        return ret[0];
     }
 }

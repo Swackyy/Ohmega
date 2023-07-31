@@ -124,9 +124,12 @@ public class ForgeEvents {
         if (event.getEntity() instanceof ServerPlayer svr) {
             event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                 for (int i = 0; i < a.getSlots(); i++) {
-                    a.getStackInSlot(i).getOrCreateTag().putInt("slot", -1);
-                    AccessoryHelper.addActiveTag(a.getStackInSlot(i), false);
-                    svr.drop(a.getStackInSlot(i), false, false);
+                    if(a.getStackInSlot(i).getItem() instanceof IAccessory acc) {
+                        a.getStackInSlot(i).getOrCreateTag().putInt("slot", -1);
+                        AccessoryHelper.addActiveTag(a.getStackInSlot(i), false);
+                        acc.onUnequip(svr, a.getStackInSlot(i));
+                        svr.drop(a.getStackInSlot(i), false, false);
+                    }
                 }
             });
         }

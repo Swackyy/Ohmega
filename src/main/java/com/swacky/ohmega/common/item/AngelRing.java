@@ -85,7 +85,7 @@ public class AngelRing extends Item implements IAccessory {
 
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
-        return AccessoryHelper.isTagActive(stack);
+        return AccessoryHelper.isTagActive(stack); // I don't know if its confusing if it also has glint when enchanted, so I didn't add the super
     }
 
     @Nullable

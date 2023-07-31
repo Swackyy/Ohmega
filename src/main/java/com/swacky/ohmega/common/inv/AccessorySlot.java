@@ -29,7 +29,7 @@ public class AccessorySlot extends SlotItemHandler {
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
         if(stack.getItem() instanceof IAccessory accessory) {
-            return ((AccessoryContainer) getItemHandler()).isValid(stack) && accessory.getType() == this.type;
+            return ((AccessoryContainer) getItemHandler()).isValid(stack) && accessory.getType() == this.type && AccessoryHelper.isExclusiveType(this.player, stack);
         }
         return false;
     }
@@ -46,8 +46,8 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-        if(!hasItem() && stack.getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
-            stack.getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent(acc -> {
+        if(!hasItem()) {
+            stack.getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
                 acc.onUnequip(player, stack);
                 stack.getOrCreateTag().putInt("slot", -1);
                 AccessoryHelper.addActiveTag(stack, false);
@@ -60,9 +60,10 @@ public class AccessorySlot extends SlotItemHandler {
     public void set(@NotNull ItemStack stack) {
         if (hasItem() && !ItemStack.isSame(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
             getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
-                acc.onUnequip(player, stack);
+                acc.onUnequip(this.player, stack);
                 stack.getOrCreateTag().putInt("slot", -1);
                 AccessoryHelper.addActiveTag(stack, false);
+                this.setChanged();
             });
         }
 
@@ -71,9 +72,10 @@ public class AccessorySlot extends SlotItemHandler {
 
         if (hasItem() && !ItemStack.isSame(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
             getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
-                stack.getOrCreateTag().putInt("slot", slot);
+                stack.getOrCreateTag().putInt("slot", this.slot);
                 AccessoryHelper.addActiveTag(stack, true);
-                acc.onEquip(player, stack);
+                acc.onEquip(this.player, stack);
+                this.setChanged();
             });
         }
     }
@@ -82,9 +84,5 @@ public class AccessorySlot extends SlotItemHandler {
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
         return Pair.of(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "gui/accessory_slot_" + this.type.getIdentifier()));
-    }
-
-    public AccessoryType getType() {
-        return type;
     }
 }
