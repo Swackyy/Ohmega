@@ -2,6 +2,7 @@ package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
+import com.swacky.ohmega.common.core.init.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -38,7 +39,7 @@ public class AccessoryHelper {
      * @param holder a holder class for a functional interface, allows users to run methods if the accessory is present
      * @return true if the player has the passed accessory, false otherwise
      */
-    public static <T extends Item & IAccessory> boolean runIfHasAccessory(ServerPlayer player, T accessory, Inner holder) {
+    public static <T extends Item & IAccessory> boolean runIfPresent(ServerPlayer player, T accessory, Inner holder) {
         if(hasAccessory(player, accessory)) {
             holder.apply(player);
             return true;
@@ -52,8 +53,8 @@ public class AccessoryHelper {
      * @param accessory the accessory to check if the player has it
      * @return true if the player has the passed accessory, false otherwise
      */
-    public static <T extends Item & IAccessory> boolean updateIfHasAccessory(ServerPlayer player, T accessory) {
-        return runIfHasAccessory(player, accessory, accessory::update);
+    public static <T extends Item & IAccessory> boolean updateIfPresent(ServerPlayer player, T accessory) {
+        return runIfPresent(player, accessory, accessory::update);
     }
 
     /**
@@ -248,6 +249,12 @@ public class AccessoryHelper {
         return out[0];
     }
 
+    /**
+     * Checks whether an accessory is exclusive, or in other words is the only instance of that accessory equipped
+     * @param player the player to check against
+     * @param stack the stack of the accessory item
+     * @return true if it is an exclusive type, false if not or not an IAccessory
+     */
     public static boolean isExclusiveType(Player player, ItemStack stack) {
         final boolean[] ret = new boolean[1];
         player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
