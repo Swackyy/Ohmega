@@ -6,7 +6,7 @@ modId="ohmega" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="Ohmega" #mandatory
 logoFile="ohmega.png" #optional
-credits="Inspired by other accessorising mods which felt they needed something more" #optional
+credits="" #optional
 authors="Developer: Swacky_" #optional
 description='''
 A modernized and lightweight accessories mod for Minecraft
