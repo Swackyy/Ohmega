@@ -1,9 +1,13 @@
 package com.swacky.ohmega.cap;
 
+import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.event.ForgeEvents;
 import com.swacky.ohmega.network.ModNetworking;
 import com.swacky.ohmega.network.S2C.SyncActivePacket;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -14,19 +18,18 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+// Since this is an internal class, please refrain from calling sided methods incorrectly as it may be unsafe and lead to crashes
 public class AccessoryContainer extends ItemStackHandler implements IItemHandlerModifiable {
     private static final int SLOTS = 6;
     private final boolean[] changed = new boolean[SLOTS];
-    private final ItemStack[] previous = new ItemStack[SLOTS];
+    private final NonNullList<ItemStack> previous = NonNullList.withSize(6, ItemStack.EMPTY);
     private final Player entity;
     private final boolean[] active = new boolean[3];
     public AccessoryContainer(Player entity) {
         super(SLOTS);
         this.entity = entity;
-        Arrays.fill(this.previous, ItemStack.EMPTY);
     }
 
     public boolean isValid(ItemStack stack) {
@@ -36,14 +39,27 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
         return accessory.canEquip(entity);
     }
 
+    // Why can't this return a boolean normally >:(
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if (stack.isEmpty() || this.isValid(stack)) super.setStackInSlot(slot, stack);
+        if(stack.isEmpty() || this.isValid(stack) && this.isUniqueType(stack)) {
+            super.setStackInSlot(slot, stack);
+        }
+    }
+
+    public boolean trySetStackInSlot(int slot, ItemStack stack) {
+        if((stack.isEmpty() || this.isValid(stack)) && this.isUniqueType(stack)) {
+            super.setStackInSlot(slot, stack);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (!this.isValid(stack)) return stack;
+        if(!this.isValid(stack)) {
+            return stack;
+        }
         return super.insertItem(slot, stack, simulate);
     }
 
@@ -53,7 +69,7 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     }
 
     public void tick() {
-        for (int i = 0; i < getSlots(); i++) {
+        for(int i = 0; i < getSlots(); i++) {
             var stack = getStackInSlot(i);
             stack.getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(b -> b.tick(this.entity, stack));
         }
@@ -61,24 +77,33 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     }
 
     private void sync() {
-        if (!(entity instanceof ServerPlayer)) {
-            return;
-        }
-
-        final var holder = (ServerPlayer) this.entity;
-
-        List<ServerPlayer> receivers = null;
-        for (byte i = 0; i < getSlots(); i++) {
-            final var stack = getStackInSlot(i);
-            boolean autoSync = stack.getCapability(Ohmega.ACCESSORY_ITEM).map(a -> a.autoSync(this.entity)).orElse(false);
-            if (changed[i] || autoSync && !ItemStack.isSame(stack, previous[i])) {
-                if (receivers == null) {
-                    receivers = new ArrayList<>(((ServerLevel) this.entity.level).getPlayers((serverPlayerEntity) -> true));
-                    receivers.add(holder);
+        if(this.entity instanceof final ServerPlayer svr) {
+            List<ServerPlayer> receivers = null;
+            for (byte i = 0; i < getSlots(); i++) {
+                final ItemStack stack = getStackInSlot(i);
+                boolean autoSync = stack.getCapability(Ohmega.ACCESSORY_ITEM).map(a -> a.autoSync(this.entity)).orElse(false);
+                if (this.changed[i] || autoSync && !ItemStack.isSame(stack, this.previous.get(i))) {
+                    if (receivers == null) {
+                        receivers = new ArrayList<>(((ServerLevel) this.entity.level).getPlayers((svr0) -> true));
+                        receivers.add(svr);
+                    }
+                    ForgeEvents.syncSlot(svr, i, stack, receivers);
+                    for(ServerPlayer player : receivers) {
+                        ModNetworking.sendTo(new SyncActivePacket(svr.getId(), this.active), player);
+                    }
+                    this.changed[i] = false;
+                    this.previous.set(i, stack.copy());
                 }
-                ForgeEvents.syncSlot(holder, i, stack, receivers);
-                this.changed[i] = false;
-                previous[i] = stack.copy();
+            }
+        }
+    }
+
+    public void setActive(int slot, boolean value, boolean client) {
+        if(slot > 2) {
+            this.active[slot - 3] = value;
+            AccessoryHelper.addActiveTag(getStackInSlot(slot), value);
+            if(!client) {
+                ModNetworking.sendTo(new SyncActivePacket(this.entity.getId(), this.active), (ServerPlayer) this.entity);
             }
         }
     }
@@ -86,15 +111,6 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     // Calling on client is a no no
     public void setActive(int slot, boolean value) {
         setActive(slot, value, false);
-    }
-
-    public void setActive(int slot, boolean value, boolean client) {
-        if(slot > 2) {
-            if (!client) {
-                ModNetworking.sendTo(new SyncActivePacket(this.entity.getId(), this.active), (ServerPlayer) this.entity);
-            }
-            this.active[slot - 3] = value;
-        }
     }
 
     public void setActive(int slot) {
@@ -113,5 +129,29 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
         }
 
         return this.active[slot - 3];
+    }
+
+    private boolean isUniqueType(ItemStack stack) {
+        if(stack.getItem() instanceof IAccessory) {
+            for(int i = 0; i < SLOTS; i++) {
+                if(this.getStackInSlot(i).is(stack.getItem())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag tag) {
+        super.deserializeNBT(tag);
+        this.active[0] = getStackInSlot(3).getOrCreateTag().getBoolean("active");
+        this.active[1] = getStackInSlot(4).getOrCreateTag().getBoolean("active");
+        this.active[2] = getStackInSlot(5).getOrCreateTag().getBoolean("active");
+    }
+
+    public boolean[] getActive() {
+        return this.active;
     }
 }

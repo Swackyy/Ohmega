@@ -42,10 +42,6 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         this.accessories = inv.player.getCapability(Ohmega.ACCESSORIES).orElseThrow(NullPointerException::new);
 
-        for (int index = 0; index < 6; index++) { // Accessory Slots
-            SLOTS[index] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, accessories, index, 183, 25 + index * 18, SLOT_TYPES[index]));
-        }
-
         this.addSlot(new ResultSlot(inv.player, this.craftMatrix, this.craftResult, 0, 155, 29));
 
         for (int i = 0; i < 2; ++i) { // Crafting Matrix Slots
@@ -70,6 +66,10 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         }
 
         this.addSlot(new OffhandSlot(inv, 40, 77, 62)); // Offhand Slot
+
+        for (int index = 0; index < 6; index++) { // Accessory Slots
+            SLOTS[index] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, accessories, 40 + index, 183, 25 + index * 18, SLOT_TYPES[index]));
+        }
     }
 
     @Override
@@ -117,6 +117,12 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
     public boolean canTakeItemForPickAll(@NotNull ItemStack stack, Slot slot) {
         return slot.container != this.craftResult && super.canTakeItemForPickAll(stack, slot);
     }
+
+    // Todo
+    //@Override
+    //public @NotNull ItemStack quickMoveStack(@NotNull Player player, int pIndex) {
+        //return super.quickMoveStack(player, pIndex);
+    //}
 
     private static class ArmorSlot extends Slot {
         private final EquipmentSlot slotType;

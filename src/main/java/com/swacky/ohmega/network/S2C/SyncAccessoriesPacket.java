@@ -1,4 +1,4 @@
-package com.swacky.ohmega.network.C2S;
+package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.client.Minecraft;

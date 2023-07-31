@@ -2,10 +2,10 @@ package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.network.C2S.*;
+import com.swacky.ohmega.network.S2C.SyncAccessoriesPacket;
 import com.swacky.ohmega.network.S2C.SyncActivePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;

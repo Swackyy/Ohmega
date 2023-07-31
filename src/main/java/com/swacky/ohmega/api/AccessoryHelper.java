@@ -2,6 +2,8 @@ package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -63,37 +65,63 @@ public class AccessoryHelper {
     }
 
     /**
-     * A utility method to get a description for a key bind activated accessory.
-     * @param bindDescription what will be displayed for the bind to do / activate
-     * @param inSlot the accessory slot that the item is in.
+     * A utility method to get a description for a key-bind activated accessory.
+     * @param bindDescription what will be displayed for the bind to do / activate. Use "&lt;BIND&gt;" to show the bind letter
+     * @param inSlot the accessory slot that the item is in
+     * @param other the "other" argument, for displaying when the key-bind cannot be retrieved as the accessory is not in an accessory slot
      * @return
      * If the slot is a normal category slot: An empty component
-     * Otherwise, an example: "Press B to activate invisibility" When "Press %1s to activate invisibility" is provided and a slot with keybinding of key B
+     * Otherwise, an example: "Press B to activate invisibility" When "Press %1$s to activate invisibility" is provided and a slot with key-binding of key B
      */
-    public static TextComponent getBindTooltip(String bindDescription, int inSlot) {
-        return new TextComponent(bindDescription.replace("%s", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage() : ModBinds.SPECIAL.getTranslatedKeyMessage()).getString().toUpperCase()));
+    public static TextComponent getBindTooltip(Component bindDescription, int inSlot, Component other) {
+        return inSlot == -1 ? (TextComponent) new TextComponent(other.getString()).withStyle(ChatFormatting.GRAY) : (TextComponent) new TextComponent(bindDescription.getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage() : ModBinds.SPECIAL.getTranslatedKeyMessage()).getString().toUpperCase())).withStyle(ChatFormatting.GRAY);
+    }
+
+    public static TextComponent getBindTooltip(Component bindDescription, ItemStack stack, Component other) {
+        return getBindTooltip(bindDescription, getSlot(stack), other);
     }
 
     /**
-     * Same as the method above, just gets the slot through a stack tag which is stored upon equipping/de-quipping
+     * A utility method to get the type of accessory in a component
+     * @param accessory the accessory to get the type from
+     * @return a TextComponent instance of "Accessory type: TYPE"
      */
-    public static TextComponent getBindTooltip(String bindDescription, ItemStack stack) {
-        if (stack.getTag() != null) {
-            return getBindTooltip(bindDescription, stack.getTag().getInt("slot"));
-        }
-        return new TextComponent(bindDescription.replace("%s","TAG_ERR"));
+    public static TextComponent getTypeTooltip(IAccessory accessory) {
+        return (TextComponent) new TextComponent("Accessory type: " + accessory.getType().getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     /**
      * Gets the item's slot in the player's inventory from an ItemStack's tag
      * @param stack the itemstack to test against
      * @return the slot of the item if the tag is present, -1 otherwise
+     * -1 is returned if not present because otherwise it would return 0, the first slot, which messes things up. Using -1 makes it an outlier
      */
     public static int getSlot(ItemStack stack) {
-        if(stack.getTag() != null) {
-            return stack.getTag().getInt("slot");
+        return stack.getOrCreateTag().contains("slot") ? stack.getOrCreateTag().getInt("slot") : -1;
+    }
+
+    /**
+     * Adds a tag to show the active state of an accessory item
+     * @param stack the ItemStack to add the tag to
+     * @param value the value of the active state
+     * This is handled internally but for whatever reason you want to change the value of this, you can
+     */
+    public static void addActiveTag(ItemStack stack, boolean value) {
+        if(stack.getItem() instanceof IAccessory) {
+            stack.getOrCreateTag().putBoolean("active", value);
         }
-        return -1;
+    }
+
+    /**
+     * Checks the active state of an accessory item by tag
+     * @param stack the ItemStack to check the active state of
+     * @return true if active, false if inactive or not an accessory item
+     */
+    public static boolean isTagActive(ItemStack stack) {
+        if(stack.getItem() instanceof IAccessory) {
+            return stack.getOrCreateTag().getBoolean("active");
+        }
+        return false;
     }
 
     /**
@@ -115,7 +143,7 @@ public class AccessoryHelper {
      * @param slot the slot, must range from 3-5
      */
     public static void deactivate(ServerPlayer player, int slot) {
-        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> a.setActive(slot));
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> a.setActive(slot, false));
     }
 
     public static void deactivate(ServerPlayer player, ItemStack stack) {
@@ -158,18 +186,28 @@ public class AccessoryHelper {
      * @param hand the hand to get the accessory held
      * @return an interaction result success if the item is equipped, else a pass
      */
+    @SuppressWarnings("unchecked")
     public static InteractionResultHolder<ItemStack> tryEquip(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        InteractionResultHolder<ItemStack>[] out = new InteractionResultHolder[]{InteractionResultHolder.pass(stack)};
-        if(stack.getItem() instanceof IAccessory acc) {
-            player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+        InteractionResultHolder<ItemStack>[] out = new InteractionResultHolder[]{InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level.isClientSide)};
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+            ItemStack stack = player.getItemInHand(hand);
+            if (stack.getItem() instanceof IAccessory acc) {
                 int slot = getFirstOpenSlot(player, acc.getType());
-                if(slot != -1) {
-                    a.insertItem(slot, stack, false);
-                    stack.shrink(1);
+                if (slot != -1) {
+                    ItemStack stack0 = stack.copy();
+                    stack0.setCount(1);
+
+                    if(a.trySetStackInSlot(slot, stack0)) {
+                        stack.shrink(1);
+                        stack0.getOrCreateTag().putInt("slot", slot);
+                        acc.onEquip(player, stack0);
+                        if(stack0.getEquipSound() != null) {
+                            player.playSound(stack0.getEquipSound(), 1.0F, 1.0F);
+                        }
+                    }
                 }
-            });
-        }
+            }
+        });
         return out[0];
     }
 
@@ -187,6 +225,7 @@ public class AccessoryHelper {
                     for (int i = 0; i < 3; i++) {
                         if(a.getStackInSlot(i).isEmpty()) {
                             out[0] = i;
+                            return;
                         }
                     }
                 }
@@ -194,6 +233,7 @@ public class AccessoryHelper {
                     for (int i = 3; i < 5; i++) {
                         if(a.getStackInSlot(i).isEmpty()) {
                             out[0] = i;
+                            return;
                         }
                     }
                 }

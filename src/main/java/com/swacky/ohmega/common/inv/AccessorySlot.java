@@ -1,12 +1,12 @@
 package com.swacky.ohmega.common.inv;
 
 import com.mojang.datafixers.util.Pair;
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryType;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
@@ -46,12 +46,11 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-        if (!hasItem() && stack.getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
-            stack.getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent(a -> {
-                getItem().getOrCreateTag().putInt("slot", -1);
-                if(player instanceof ServerPlayer svr) {
-                    a.onUnequip(svr, stack);
-                }
+        if(!hasItem() && stack.getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+            stack.getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent(acc -> {
+                acc.onUnequip(player, stack);
+                stack.getOrCreateTag().putInt("slot", -1);
+                AccessoryHelper.addActiveTag(stack, false);
             });
         }
         super.onTake(player, stack);
@@ -59,24 +58,22 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        if (hasItem() && !ItemStack.isSame(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).isPresent()) {
-            getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent((accessory) -> {
-                getItem().getOrCreateTag().putInt("slot", -1);
-                if(player instanceof ServerPlayer svr) {
-                    accessory.onUnequip(svr, stack);
-                }
+        if (hasItem() && !ItemStack.isSame(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+            getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
+                acc.onUnequip(player, stack);
+                stack.getOrCreateTag().putInt("slot", -1);
+                AccessoryHelper.addActiveTag(stack, false);
             });
         }
 
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if (hasItem() && !ItemStack.isSame(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).isPresent()) {
-            getItem().getCapability(Ohmega.ACCESSORY_ITEM, null).ifPresent(a -> {
-                getItem().getOrCreateTag().putInt("slot", slot);
-                if(player instanceof ServerPlayer svr) {
-                    a.onEquip(svr, stack);
-                }
+        if (hasItem() && !ItemStack.isSame(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+            getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
+                stack.getOrCreateTag().putInt("slot", slot);
+                AccessoryHelper.addActiveTag(stack, true);
+                acc.onEquip(player, stack);
             });
         }
     }

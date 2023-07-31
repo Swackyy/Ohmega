@@ -1,10 +1,12 @@
 package com.swacky.ohmega.event;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
-import com.swacky.ohmega.network.C2S.SyncAccessoriesPacket;
+import com.swacky.ohmega.network.S2C.SyncAccessoriesPacket;
 import com.swacky.ohmega.network.ModNetworking;
+import com.swacky.ohmega.network.S2C.SyncActivePacket;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +25,6 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -36,8 +37,9 @@ public class ForgeEvents {
     // Syncs slots upon player joining
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinWorldEvent event) {
-        if(event.getEntity() instanceof ServerPlayer player) {
-            syncSlots(player, Collections.singletonList(player));
+        if(event.getEntity() instanceof ServerPlayer svr) {
+            syncSlots(svr, Collections.singletonList(svr));
+            svr.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> ModNetworking.sendTo(new SyncActivePacket(svr.getId(), a.getActive()), svr));
         }
     }
 
@@ -63,8 +65,9 @@ public class ForgeEvents {
     public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
         SyncAccessoriesPacket packet = new SyncAccessoriesPacket(player.getId(), slot, stack);
         for (Player receiver : receivers) {
-            if (receiver instanceof ServerPlayer s)
-                ModNetworking.INSTANCE.send(PacketDistributor.PLAYER.with(() -> s), packet);
+            if (receiver instanceof ServerPlayer svr) {
+                ModNetworking.sendTo(packet, svr);
+            }
         }
     }
 
@@ -111,17 +114,19 @@ public class ForgeEvents {
                 event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(accessoryContainer -> accessoryContainer.deserializeNBT(tag));
             });
         } catch (Exception e) {
-            Ohmega.LOGGER.warn("Player [" + event.getOriginal().getName() + "]'s accessories could not be cloned.");
+            Ohmega.LOGGER.warn("Player [{}]'s accessories could not be cloned.", event.getOriginal().getName());
         }
     }
 
     // For dropping accessories upon players' deaths.
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer p) {
+        if (event.getEntity() instanceof ServerPlayer svr) {
             event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                 for (int i = 0; i < a.getSlots(); i++) {
-                    p.drop(a.getStackInSlot(i), false, false);
+                    a.getStackInSlot(i).getOrCreateTag().putInt("slot", -1);
+                    AccessoryHelper.addActiveTag(a.getStackInSlot(i), false);
+                    svr.drop(a.getStackInSlot(i), false, false);
                 }
             });
         }
