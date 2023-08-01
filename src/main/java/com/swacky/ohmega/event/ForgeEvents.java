@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -52,6 +53,7 @@ public class ForgeEvents {
     }
 
 
+    // These use a player collection because of what is planned for the future of the mod and API
     // Sync all slots
     private static void syncSlots(ServerPlayer player, Collection<? extends Player> receivers) {
         player.getCapability(Ohmega.ACCESSORIES).ifPresent(accessories -> {
@@ -98,7 +100,7 @@ public class ForgeEvents {
 
     // Provides the calling for the Accessories' ticking
     @SubscribeEvent
-    public static void playerTick(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             var player = event.player;
             player.getCapability(Ohmega.ACCESSORIES).ifPresent(AccessoryContainer::tick);
@@ -107,11 +109,14 @@ public class ForgeEvents {
 
     // Clones caps when changing dimensions
     @SubscribeEvent
-    public static void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
+    public static void onCloneCaps(PlayerEvent.Clone event) {
         try {
-            event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(container -> {
-                CompoundTag tag = container.serializeNBT();
-                event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(accessoryContainer -> accessoryContainer.deserializeNBT(tag));
+            event.getOriginal().reviveCaps();
+            event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(old -> {
+                if((event.isWasDeath() && event.getOriginal().getServer() != null && event.getOriginal().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) || !event.isWasDeath()) {
+                    event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(newStore -> newStore.deserializeNBT(old.serializeNBT()));
+                    event.getOriginal().invalidateCaps();
+                }
             });
         } catch (Exception e) {
             Ohmega.LOGGER.warn("Player [{}]'s accessories could not be cloned.", event.getOriginal().getName());
@@ -121,7 +126,7 @@ public class ForgeEvents {
     // For dropping accessories upon players' deaths.
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer svr) {
+        if (event.getEntity() instanceof ServerPlayer svr && !svr.server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                 for (int i = 0; i < a.getSlots(); i++) {
                     if(a.getStackInSlot(i).getItem() instanceof IAccessory acc) {

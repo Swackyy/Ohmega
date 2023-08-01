@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[40,)" #mandatory
+loaderVersion="[38,)" #mandatory
 license="All rights reserved"
 [[mods]] #mandatory
 modId="ohmega" #mandatory
@@ -15,12 +15,12 @@ For API usage and reference code info, visit https://github.com/Swackyy/ohmega a
 [[dependencies.ohmega]]
     modId="forge"
     mandatory=true
-    versionRange="[40,)"
+    versionRange="[38,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.ohmega]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18.2,1.19)"
+    versionRange="[1.18,1.19)"
     ordering="NONE"
     side="BOTH"

@@ -133,15 +133,11 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(stack0, 45, 46, false)) { // Offhand in
                     return ItemStack.EMPTY;
                 }
-            } else if(stack0.getItem() instanceof IAccessory acc && index > 8 && index < 45) { // Accessory in
+            } else if (stack0.getItem() instanceof IAccessory acc && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, acc.getType()) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, acc.getType())).mayPlace(stack)) { // Accessory in
                 int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
-                if(accSlot != -1) {
-                    if(getSlot(46 + accSlot).mayPlace(stack)) {
-                        stack0.shrink(1);
-                        stack.setCount(1);
-                        getSlot(46 + accSlot).set(stack);
-                    }
-                }
+                stack0.shrink(1);
+                stack.setCount(1);
+                getSlot(46 + accSlot).set(stack);
             } else if (index >= 9 && index < 36) {
                 if (!this.moveItemStackTo(stack0, 36, 45, false)) { // Top part of inv in
                     return ItemStack.EMPTY;
@@ -150,10 +146,10 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(stack0, 9, 36, false)) { // Hotbar out
                     return ItemStack.EMPTY;
                 }
-            } else if(index > 45 && index < 52 && stack0.getItem() instanceof IAccessory) {
+            } else if (index > 45 && index < 52 && stack0.getItem() instanceof IAccessory) {
                 stack0.getOrCreateTag().putInt("slot", -1);
                 AccessoryHelper.addActiveTag(stack0, false);
-                if(this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
+                if (this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
                     return ItemStack.EMPTY;
                 }
             } else if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into top part of inv

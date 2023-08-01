@@ -4,5 +4,9 @@
   "item.ohmega.flyring.tooltip.keybind": "Press <BIND> to fly",
   "accessory.type.normal": "Normal",
   "accessory.type.utility": "Utility",
-  "accessory.type.special": "Special"
+  "accessory.type.special": "Special",
+  "key.category.ohmega.ohmega": "Ohmega",
+  "key.ohmega.utility_0": "Utility 1",
+  "key.ohmega.utility_1": "Utility 2",
+  "key.ohmega.special": "Special"
 }

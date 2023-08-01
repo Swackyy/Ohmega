@@ -100,9 +100,10 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     public void setActive(int slot, boolean value, boolean client) {
         if(slot > 2) {
             this.active[slot - 3] = value;
+            AccessoryHelper.addActiveTag(getStackInSlot(slot), value);
             if(!client) {
                 ModNetworking.sendTo(new SyncActivePacket(this.player.getId(), this.active), (ServerPlayer) this.player);
-            } else AccessoryHelper.addActiveTag(getStackInSlot(slot), value);
+            }
         }
     }
 
