@@ -58,7 +58,7 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        if (hasItem() && !ItemStack.isSame(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
             getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
                 acc.onUnequip(this.player, stack);
                 stack.getOrCreateTag().putInt("slot", -1);
@@ -70,7 +70,7 @@ public class AccessorySlot extends SlotItemHandler {
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if (hasItem() && !ItemStack.isSame(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
             getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
                 stack.getOrCreateTag().putInt("slot", this.slot);
                 AccessoryHelper.addActiveTag(stack, true);
@@ -80,9 +80,10 @@ public class AccessorySlot extends SlotItemHandler {
         }
     }
 
+    // This took way more work than it should've to figure out
     @Nullable
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-        return Pair.of(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "gui/accessory_slot_" + this.type.getIdentifier()));
+        return Pair.of(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_" + this.type.getIdentifier()));
     }
 }

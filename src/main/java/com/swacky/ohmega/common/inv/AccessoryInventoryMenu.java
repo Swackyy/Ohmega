@@ -16,14 +16,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import static com.swacky.ohmega.api.AccessoryType.*;
 
@@ -33,7 +29,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
     protected static final AccessoryType[] SLOT_TYPES = new AccessoryType[]{NORMAL, NORMAL, NORMAL, UTILITY, UTILITY, SPECIAL};
     public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
+    private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
     private final Player player;
 
@@ -80,12 +76,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(@Nonnull Container container) {
-        try {
-            Method onCraftChange = ObfuscationReflectionHelper.findMethod(CraftingMenu.class, "m_150546_", AbstractContainerMenu.class, Level.class, Player.class, CraftingContainer.class, ResultContainer.class);
-            onCraftChange.invoke(null, this, this.player.level, this.player, this.craftMatrix, this.craftResult);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CraftingMenu.slotChangedCraftingGrid(this, this.player.level(), this.player, this.craftMatrix, this.craftResult);
     }
 
     @Override
@@ -93,7 +84,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         super.removed(player);
         this.craftResult.clearContent();
 
-        if (!player.level.isClientSide) {
+        if (!player.level().isClientSide) {
             this.clearContainer(player, this.craftMatrix);
         }
     }

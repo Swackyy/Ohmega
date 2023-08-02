@@ -29,7 +29,7 @@ public class AngelRing extends Item implements IAccessory {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip.keybind"), stack, new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip")));
+        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip.keybind", "Press <BIND> to fly", new Object[]{}), stack, new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip", "Allows the wearer to fly", new Object[]{})));
         tooltip.add(AccessoryHelper.getTypeTooltip(this));
     }
 
@@ -88,7 +88,6 @@ public class AngelRing extends Item implements IAccessory {
         return AccessoryHelper.isTagActive(stack); // I don't know if its confusing if it also has glint when enchanted, so I didn't add the super
     }
 
-    @Nullable
     @Override
     public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GOLD;

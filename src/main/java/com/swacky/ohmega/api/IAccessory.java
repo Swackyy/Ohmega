@@ -1,6 +1,8 @@
 package com.swacky.ohmega.api;
 
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,4 +46,10 @@ public interface IAccessory {
     default boolean autoSync(Player player) {
         return false;
     }
+
+    /**
+     * Gets the sound to make upon the equipping of the accessory through a right click
+     * @return the equipping sound effect
+     */
+    SoundEvent getEquipSound();
 }

@@ -13,8 +13,10 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -86,6 +88,16 @@ public class ClientEvents {
             } else if(!ModBinds.SPECIAL.isDown()) {
                 down[2] = false;
             }
+        }
+    }
+
+    @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT, bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
+    public static class Mod {
+        @SubscribeEvent
+        public static void addModels(ModelEvent.RegisterAdditional event) {
+            event.register(new ResourceLocation(Ohmega.MODID, "gui/accessory_slot_normal"));
+            event.register(new ResourceLocation(Ohmega.MODID, "gui/accessory_slot_utility"));
+            event.register(new ResourceLocation(Ohmega.MODID, "gui/accessory_slot_special"));
         }
     }
 }

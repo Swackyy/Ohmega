@@ -9,6 +9,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -32,9 +34,5 @@ public class Ohmega {
 
         ModMenus.MENUS.register(bus);
         ModItems.ITEMS.register(bus);
-
-        ModelBakery.UNREFERENCED_TEXTURES.add(new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(MODID, "gui/accessory_slot_normal")));
-        ModelBakery.UNREFERENCED_TEXTURES.add(new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(MODID, "gui/accessory_slot_utility")));
-        ModelBakery.UNREFERENCED_TEXTURES.add(new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(MODID, "gui/accessory_slot_special")));
     }
 }
