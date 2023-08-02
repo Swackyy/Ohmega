@@ -62,7 +62,7 @@ public class AccessoryHelper {
      * An inner class allowing functions to be called with a Player argument
      */
     @FunctionalInterface
-    interface Inner {
+    private interface Inner {
         void apply(ServerPlayer player);
     }
 
@@ -76,7 +76,7 @@ public class AccessoryHelper {
      * Otherwise, an example: "Press B to activate invisibility" When "Press %1$s to activate invisibility" is provided and a slot with key-binding of key B
      */
     public static MutableComponent getBindTooltip(ComponentContents bindDescription, int inSlot, ComponentContents other) {
-        return inSlot == -1 ? MutableComponent.create(new LiteralContents(other.toString())).withStyle(ChatFormatting.GRAY) : MutableComponent.create(new LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage().getString() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage().getString() : ModBinds.SPECIAL.getTranslatedKeyMessage().getString().toUpperCase())))).withStyle(ChatFormatting.GRAY);
+        return inSlot == -1 ? MutableComponent.create(new LiteralContents(other.toString())).withStyle(ChatFormatting.GRAY) : MutableComponent.create(new LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage().getString().toUpperCase() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage().getString().toUpperCase() : ModBinds.SPECIAL.getTranslatedKeyMessage().getString().toUpperCase())))).withStyle(ChatFormatting.GRAY);
     }
 
     public static MutableComponent getBindTooltip(ComponentContents bindDescription, ItemStack stack, ComponentContents other) {
@@ -89,7 +89,7 @@ public class AccessoryHelper {
      * @return a TextComponent instance of "Accessory type: TYPE"
      */
     public static MutableComponent getTypeTooltip(IAccessory accessory) {
-        return MutableComponent.create(new TranslatableContents("accessory.type", accessory.getType().getTranslation())).withStyle(ChatFormatting.DARK_GRAY);
+        return MutableComponent.create(new TranslatableContents("accessory.type", MutableComponent.create(accessory.getType().getTranslation()).getString())).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     /**
