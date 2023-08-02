@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,12 +28,11 @@ public class ClientEvents {
         event.enqueueWork(() -> {
             MenuScreens.register(ModMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<AccessoryInventoryMenu, AccessoryInventoryScreen>) AccessoryInventoryScreen::new);
             ModNetworking.register();
-            ModBinds.register();
         });
     }
 
     @SubscribeEvent
-    public static void addToScreens(ScreenEvent.InitScreenEvent.Post event) {
+    public static void addToScreens(ScreenEvent.Init.Post event) {
         if(event.getScreen() instanceof AccessoryInventoryScreen || event.getScreen() instanceof InventoryScreen) {
             final Minecraft mc = event.getScreen().getMinecraft();
             if(mc.player != null && !mc.player.isCreative()) {
@@ -42,7 +42,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void hide(ScreenEvent.DrawScreenEvent.Pre event) {
+    public static void hide(ScreenEvent.Render.Pre event) {
         if(event.getScreen() instanceof InventoryScreen scr) {
             for (GuiEventListener list : scr.children()) {
                 if (list instanceof AccessoryInventoryButton btn) {
@@ -52,11 +52,18 @@ public class ClientEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void registerKbs(RegisterKeyMappingsEvent event) {
+        event.register(ModBinds.UTILITY_0);
+        event.register(ModBinds.UTILITY_1);
+        event.register(ModBinds.SPECIAL);
+    }
+
     private static final boolean[] down = new boolean[3];
 
     // Handles the accessory use kb packets
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.KeyInputEvent event) {
+    public static void onKeyInput(InputEvent.Key event) {
         Minecraft mc = Minecraft.getInstance();
         if(mc.screen == null) {
             if(ModBinds.UTILITY_0.isDown() && !down[0]) {

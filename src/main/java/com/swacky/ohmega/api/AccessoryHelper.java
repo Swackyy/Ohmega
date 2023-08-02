@@ -2,10 +2,11 @@ package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
-import com.swacky.ohmega.common.core.init.ModItems;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -74,11 +75,11 @@ public class AccessoryHelper {
      * If the slot is a normal category slot: An empty component
      * Otherwise, an example: "Press B to activate invisibility" When "Press %1$s to activate invisibility" is provided and a slot with key-binding of key B
      */
-    public static TextComponent getBindTooltip(Component bindDescription, int inSlot, Component other) {
-        return inSlot == -1 ? (TextComponent) new TextComponent(other.getString()).withStyle(ChatFormatting.GRAY) : (TextComponent) new TextComponent(bindDescription.getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage() : ModBinds.SPECIAL.getTranslatedKeyMessage()).getString().toUpperCase())).withStyle(ChatFormatting.GRAY);
+    public static MutableComponent getBindTooltip(ComponentContents bindDescription, int inSlot, ComponentContents other) {
+        return inSlot == -1 ? MutableComponent.create(new LiteralContents(other.toString())).withStyle(ChatFormatting.GRAY) : MutableComponent.create(new LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage().getString() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage().getString() : ModBinds.SPECIAL.getTranslatedKeyMessage().getString().toUpperCase())))).withStyle(ChatFormatting.GRAY);
     }
 
-    public static TextComponent getBindTooltip(Component bindDescription, ItemStack stack, Component other) {
+    public static MutableComponent getBindTooltip(ComponentContents bindDescription, ItemStack stack, ComponentContents other) {
         return getBindTooltip(bindDescription, getSlot(stack), other);
     }
 
@@ -87,8 +88,8 @@ public class AccessoryHelper {
      * @param accessory the accessory to get the type from
      * @return a TextComponent instance of "Accessory type: TYPE"
      */
-    public static TextComponent getTypeTooltip(IAccessory accessory) {
-        return (TextComponent) new TextComponent("Accessory type: " + accessory.getType().getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
+    public static MutableComponent getTypeTooltip(IAccessory accessory) {
+        return MutableComponent.create(new TranslatableContents("accessory.type", accessory.getType().getTranslation())).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     /**

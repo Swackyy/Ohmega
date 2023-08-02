@@ -7,7 +7,8 @@ import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,7 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
     @Override
     protected void renderLabels(@NotNull PoseStack stack, int mx, int my) {
         if (this.minecraft != null) {
-            this.minecraft.font.draw(stack, new TranslatableComponent("container.crafting"), 97, 6, 4210752);
+            this.minecraft.font.draw(stack, MutableComponent.create(new TranslatableContents("container.crafting")), 97, 6, 4210752);
         }
     }
 
@@ -67,17 +68,17 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
         if(this.menu.getCarried().isEmpty() && this.hoveredSlot != null && !this.hoveredSlot.hasItem()) {
             // Normal
             for(int i = 0; i < 3; i++) {
-                ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 24 + i * 18, topPos + 41 + i * 18, mx, my, () -> this.renderTooltip(stack, AccessoryType.NORMAL.getTranslation(), mx, my));
+                ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 24 + i * 18, topPos + 41 + i * 18, mx, my, () -> this.renderTooltip(stack, MutableComponent.create(AccessoryType.NORMAL.getTranslation()), mx, my));
             }
 
 
             // Utility
             for(int i = 0; i < 2; i++) {
-                ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 78 + i * 18, topPos + 95 + i * 18, mx, my, () -> this.renderTooltip(stack, AccessoryType.UTILITY.getTranslation(), mx, my));
+                ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 78 + i * 18, topPos + 95 + i * 18, mx, my, () -> this.renderTooltip(stack, MutableComponent.create(AccessoryType.UTILITY.getTranslation()), mx, my));
             }
 
             // Special
-            ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 114, topPos + 131, mx, my, () -> this.renderTooltip(stack, AccessoryType.SPECIAL.getTranslation(), mx, my));
+            ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 114, topPos + 131, mx, my, () -> this.renderTooltip(stack, MutableComponent.create(AccessoryType.SPECIAL.getTranslation()), mx, my));
         } else super.renderTooltip(stack, mx, my);
     }
 }

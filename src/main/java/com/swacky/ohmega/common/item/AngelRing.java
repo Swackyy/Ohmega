@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.AccessoryType;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -29,7 +29,7 @@ public class AngelRing extends Item implements IAccessory {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableComponent("item." + Ohmega.MODID + ".flyring.tooltip.keybind"), stack, new TranslatableComponent("item." + Ohmega.MODID + ".flyring.tooltip")));
+        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip.keybind"), stack, new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip")));
         tooltip.add(AccessoryHelper.getTypeTooltip(this));
     }
 

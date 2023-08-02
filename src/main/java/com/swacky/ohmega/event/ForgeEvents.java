@@ -21,7 +21,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,7 +37,7 @@ import java.util.Collections;
 public class ForgeEvents {
     // Syncs slots upon player joining
     @SubscribeEvent
-    public static void onPlayerJoin(EntityJoinWorldEvent event) {
+    public static void onPlayerJoin(EntityJoinLevelEvent event) {
         if(event.getEntity() instanceof ServerPlayer svr) {
             syncSlots(svr, Collections.singletonList(svr));
             svr.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> ModNetworking.sendTo(new SyncActivePacket(svr.getId(), a.getActive()), svr));
@@ -48,7 +48,7 @@ public class ForgeEvents {
     @SubscribeEvent
     public static void onPlayerTrack(PlayerEvent.StartTracking event) {
         if (event.getTarget() instanceof ServerPlayer player) {
-            syncSlots(player, Collections.singletonList(event.getPlayer()));
+            syncSlots(player, Collections.singletonList(event.getEntity()));
         }
     }
 

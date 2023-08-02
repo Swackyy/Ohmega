@@ -29,27 +29,27 @@ public class ModNetworking {
         net.messageBuilder(OpenAccessoryGuiPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(OpenAccessoryGuiPacket::new)
                 .encoder(OpenAccessoryGuiPacket::toBytes)
-                .consumer(OpenAccessoryGuiPacket::handle)
+                .consumerMainThread(OpenAccessoryGuiPacket::handle)
                 .add();
         net.messageBuilder(OpenInventoryPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(OpenInventoryPacket::new)
                 .encoder(OpenInventoryPacket::toBytes)
-                .consumer(OpenInventoryPacket::handle)
+                .consumerMainThread(OpenInventoryPacket::handle)
                 .add();
         net.messageBuilder(SyncAccessoriesPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(SyncAccessoriesPacket::new)
                 .encoder(SyncAccessoriesPacket::toBytes)
-                .consumer(SyncAccessoriesPacket::handle)
+                .consumerMainThread(SyncAccessoriesPacket::handle)
                 .add();
         net.messageBuilder(UseAccessoryKbPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(UseAccessoryKbPacket::new)
                 .encoder(UseAccessoryKbPacket::toBytes)
-                .consumer(UseAccessoryKbPacket::handle)
+                .consumerMainThread(UseAccessoryKbPacket::handle)
                 .add();
         net.messageBuilder(SyncActivePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(SyncActivePacket::new)
                 .encoder(SyncActivePacket::toBytes)
-                .consumer(SyncActivePacket::handle)
+                .consumerMainThread(SyncActivePacket::handle)
                 .add();
         INSTANCE = net;
     }

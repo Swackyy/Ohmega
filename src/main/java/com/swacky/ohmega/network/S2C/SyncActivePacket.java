@@ -1,6 +1,5 @@
 package com.swacky.ohmega.network.S2C;
 
-import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

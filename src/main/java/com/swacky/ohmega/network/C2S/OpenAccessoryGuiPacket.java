@@ -3,7 +3,8 @@ package com.swacky.ohmega.network.C2S;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,17 +30,17 @@ public class OpenAccessoryGuiPacket {
         buf.writeInt(this.playerId);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> sup) {
+    public void handle(Supplier<NetworkEvent.Context> sup) {
         NetworkEvent.Context context = sup.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if(player != null) {
                 player.containerMenu.removed(player);
                 if(!player.isCreative())
-                    NetworkHooks.openGui(player, new MenuProvider() {
+                    NetworkHooks.openScreen(player, new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
-                            return new TextComponent("");
+                            return MutableComponent.create(new LiteralContents(""));
                         }
 
                         @Override
@@ -49,6 +50,5 @@ public class OpenAccessoryGuiPacket {
                     });
             }
         });
-        return true;
     }
 }
