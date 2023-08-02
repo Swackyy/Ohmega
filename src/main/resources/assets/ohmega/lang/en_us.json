@@ -8,5 +8,6 @@
   "key.category.ohmega.ohmega": "Ohmega",
   "key.ohmega.utility_0": "Utility 1",
   "key.ohmega.utility_1": "Utility 2",
-  "key.ohmega.special": "Special"
+  "key.ohmega.special": "Special",
+  "accessory.type": "Accessory type: %1$s"
 }

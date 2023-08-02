@@ -2,10 +2,10 @@ package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
-import com.swacky.ohmega.common.core.init.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -87,8 +87,8 @@ public class AccessoryHelper {
      * @param accessory the accessory to get the type from
      * @return a TextComponent instance of "Accessory type: TYPE"
      */
-    public static TextComponent getTypeTooltip(IAccessory accessory) {
-        return (TextComponent) new TextComponent("Accessory type: " + accessory.getType().getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
+    public static Component getTypeTooltip(IAccessory accessory) {
+        return new TranslatableComponent("accessory.type", accessory.getType().getTranslation()).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     /**
