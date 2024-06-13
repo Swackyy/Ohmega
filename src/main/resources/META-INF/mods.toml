@@ -1,17 +1,15 @@
-modLoader="javafml" #mandatory
-loaderVersion="[38,)" #mandatory
+modLoader="javafml"
+loaderVersion="[38,)"
 license="All rights reserved"
-[[mods]] #mandatory
-modId="ohmega" #mandatory
-version="${file.jarVersion}" #mandatory
-displayName="Ohmega" #mandatory
-logoFile="ohmega.png" #optional
-credits="" #optional
-authors="Developer: Swacky_" #optional
+[[mods]]
+modId="ohmega"
+version="${file.jarVersion}"
+displayName="Ohmega"
+logoFile="ohmega.png"
+#credits=""
+authors="Developer: Swacky_"
 description='''
-A modernized and lightweight accessories mod for Minecraft
-For API usage and reference code info, visit https://github.com/Swackyy/ohmega and view the readme.md file
-'''
+A modernized and lightweight accessories mod for Minecraft. For API usage and reference code info, visit https://github.com/Swackyy/ohmega and view the readme.md file'''
 [[dependencies.ohmega]]
     modId="forge"
     mandatory=true
