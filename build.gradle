@@ -21,7 +21,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-version = '1.1.0-forge-1.19-1.19.3'
+version = '1.1.0-forge-1.19-1.19.2'
 group = 'com.swacky.ohmega'
 archivesBaseName = 'ohmega'
 
@@ -99,7 +99,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.4.0'
     implementation fg.deobf("curse.maven:jei-238222:5106178")
 }
 

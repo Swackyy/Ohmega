@@ -59,9 +59,5 @@ public class AccessoryInventoryButton extends AbstractButton {
 
         RenderSystem.enableDepthTest();
         blit(stack, this.x, this.y, (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
-        if (this.isHovered) {
-            this.renderToolTip(stack, pMouseX, pMouseY);
-        }
-
     }
 }
