@@ -7,8 +7,4 @@ public enum Phase {
     public boolean pre() {
         return this == PRE;
     }
-
-    public boolean post() {
-        return this == POST;
-    }
 }
