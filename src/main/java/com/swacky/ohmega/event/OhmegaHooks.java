@@ -7,8 +7,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
-// todo: make attr mods on compound tag with an active bool portion if they are marked only active when the accessory's active tag is true
-// todo: make active only attr mods not active themselves by default, fixing the toggling issue
 public class OhmegaHooks {
     public static AccessoryTickEvent accessoryTickEventPre(Player player, ItemStack stack) {
         AccessoryTickEvent event = new AccessoryTickEvent(Phase.PRE, player, stack);
