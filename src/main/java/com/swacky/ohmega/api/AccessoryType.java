@@ -14,7 +14,7 @@ public enum AccessoryType {
     }
 
     public TranslatableContents getTranslation() {
-        return new TranslatableContents("accessory.type." + identifier);
+        return new TranslatableContents("accessory.type." + identifier, null, TranslatableContents.NO_ARGS);
     }
 
     public String getIdentifier() {

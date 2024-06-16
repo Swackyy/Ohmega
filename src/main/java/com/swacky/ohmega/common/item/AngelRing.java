@@ -35,7 +35,7 @@ public class AngelRing extends Item implements IAccessory {
     // This method uses the utility class to easily add tooltips onto the accessory
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip.keybind"), stack, new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip")));
+        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip.keybind", null, TranslatableContents.NO_ARGS), stack, new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip", null, TranslatableContents.NO_ARGS)));
         tooltip.add(AccessoryHelper.getTypeTooltip(this));
     }
 
@@ -94,7 +94,6 @@ public class AngelRing extends Item implements IAccessory {
     }
 
     // The sound to be played when equipped using a right click
-    @Nullable
     @Override
     public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GOLD;

@@ -116,7 +116,7 @@ public class AccessoryHelper {
      * @return a {@link MutableComponent} instance of "Accessory type: TYPE"
      */
     public static MutableComponent getTypeTooltip(IAccessory accessory) {
-        return MutableComponent.create(new TranslatableContents("accessory.type", MutableComponent.create(accessory.getType().getTranslation()).getString())).withStyle(ChatFormatting.DARK_GRAY);
+        return MutableComponent.create(new TranslatableContents("accessory.type", null, new Object[]{MutableComponent.create(accessory.getType().getTranslation()).getString()})).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     /**
@@ -220,8 +220,8 @@ public class AccessoryHelper {
                         if(!event.isCanceled()) {
                             acc.onEquip(player, stack0);
                         }
-                        if(stack0.getEquipSound() != null) {
-                            player.playSound(stack0.getEquipSound(), 1.0F, 1.0F);
+                        if(acc.getEquipSound() != null) {
+                            player.playSound(acc.getEquipSound(), 1.0F, 1.0F);
                         }
                         out[0] = InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level.isClientSide);
                     }

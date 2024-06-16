@@ -46,20 +46,20 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
             ScreenHelper.set(ACCESSORY_LOC);
 
             // Main inventory
-            this.blit(stack, this.leftPos, this.topPos, 0, 0, 175, 165);
+            blit(stack, this.leftPos, this.topPos, 0, 0, 175, 165);
 
             // Accessory Inventory
-            this.blit(stack, this.leftPos + 178, this.topPos + 20, 178, 37, 26, 116);
+            blit(stack, this.leftPos + 178, this.topPos + 20, 178, 37, 26, 116);
 
             // Entity rendering
-            InventoryScreen.renderEntityInInventory(this.leftPos + 51, this.topPos + 75, 30, (float) (this.leftPos + 51) - this.oldMouseX, (float) (this.topPos + 75 - 50) - this.oldMouseY, this.minecraft.player);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(stack, this.leftPos + 51, this.topPos + 75, 30, (float) (this.leftPos + 51) - this.oldMouseX, (float) (this.topPos + 75 - 50) - this.oldMouseY, this.minecraft.player);
         }
     }
 
     @Override
     protected void renderLabels(@NotNull PoseStack stack, int mx, int my) {
         if (this.minecraft != null) {
-            this.minecraft.font.draw(stack, MutableComponent.create(new TranslatableContents("container.crafting")), 97, 6, 4210752);
+            this.minecraft.font.draw(stack, MutableComponent.create(new TranslatableContents("container.crafting", null, TranslatableContents.NO_ARGS)), 97, 6, 4210752);
         }
     }
 

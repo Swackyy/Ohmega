@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[41,46)"
+loaderVersion="[45,46)"
 license="All rights reserved"
 [[mods]]
 modId="ohmega"
@@ -13,12 +13,12 @@ A modernized and lightweight accessories mod for Minecraft. For API usage and re
 [[dependencies.ohmega]]
     modId="forge"
     mandatory=true
-    versionRange="[41,46)"
+    versionRange="[45,46)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.ohmega]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,1.20)"
+    versionRange="[1.19.4,1.20)"
     ordering="NONE"
     side="BOTH"

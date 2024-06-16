@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -65,6 +67,10 @@ public interface IAccessory {
     // If true, will automatically sync with the client every tick
     default boolean autoSync(Player player) {
         return false;
+    }
+
+    default SoundEvent getEquipSound() {
+        return SoundEvents.ARMOR_EQUIP_GENERIC;
     }
 
     // Attribute modifiers to be applied when the accessory is equipped (or only when active)

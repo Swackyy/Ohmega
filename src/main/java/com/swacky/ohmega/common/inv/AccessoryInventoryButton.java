@@ -44,12 +44,12 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void updateNarration(@NotNull NarrationElementOutput output) {
+    public void updateWidgetNarration(@NotNull NarrationElementOutput output) {
         this.defaultButtonNarrationText(output);
     }
 
     @Override
-    public void renderButton(@NotNull PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(@NotNull PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, LOC);
         int offsY = this.yStart;
@@ -58,10 +58,6 @@ public class AccessoryInventoryButton extends AbstractButton {
         }
 
         RenderSystem.enableDepthTest();
-        blit(stack, this.x, this.y, (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
-        if (this.isHovered) {
-            this.renderToolTip(stack, pMouseX, pMouseY);
-        }
-
+        blit(stack, this.getX(), this.getY(), (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
     }
 }

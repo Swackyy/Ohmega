@@ -9,6 +9,7 @@ import com.swacky.ohmega.api.events.AccessoryUnequipEvent;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.event.OhmegaHooks;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -22,6 +23,12 @@ public class AccessorySlot extends SlotItemHandler {
     protected final Player player;
     protected final int slot;
     protected final AccessoryType type;
+
+    private static final Material SLOT_NORMAL = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_normal"));
+    private static final Material SLOT_UTILITY = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_utility"));
+    private static final Material SLOT_SPECIAL = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_special"));
+    public static final Material[] SLOTS = new Material[]{SLOT_NORMAL, SLOT_UTILITY, SLOT_SPECIAL};
+
     public AccessorySlot(Player player, IItemHandler handler, int index, int x, int y, AccessoryType type) {
         super(handler, index, x, y);
         this.player = player;
@@ -106,6 +113,6 @@ public class AccessorySlot extends SlotItemHandler {
     @Nullable
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-        return Pair.of(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "gui/accessory_slot_" + this.type.getIdentifier()));
+        return Pair.of(InventoryMenu.BLOCK_ATLAS, SLOTS[this.type.ordinal()].texture());
     }
 }
