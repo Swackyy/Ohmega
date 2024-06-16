@@ -3,7 +3,6 @@ package com.swacky.ohmega.network;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.network.C2S.*;
 import com.swacky.ohmega.network.S2C.SyncAccessoriesPacket;
-import com.swacky.ohmega.network.S2C.SyncActivePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -45,11 +44,6 @@ public class ModNetworking {
                 .decoder(UseAccessoryKbPacket::new)
                 .encoder(UseAccessoryKbPacket::toBytes)
                 .consumerMainThread(UseAccessoryKbPacket::handle)
-                .add();
-        net.messageBuilder(SyncActivePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(SyncActivePacket::new)
-                .encoder(SyncActivePacket::toBytes)
-                .consumerMainThread(SyncActivePacket::handle)
                 .add();
         INSTANCE = net;
     }

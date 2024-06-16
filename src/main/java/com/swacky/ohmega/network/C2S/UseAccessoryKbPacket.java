@@ -1,8 +1,12 @@
 package com.swacky.ohmega.network.C2S;
 
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.events.AccessoryUseEvent;
 import com.swacky.ohmega.common.core.Ohmega;
+import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
@@ -28,7 +32,13 @@ public class UseAccessoryKbPacket {
             if(this.slot < 6) {
                 Objects.requireNonNull(sup.get().getSender()).getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                     if(a.getStackInSlot(this.slot).getItem() instanceof IAccessory acc) {
-                        acc.onUse(sup.get().getSender(), a.getStackInSlot(slot));
+                        Player player = sup.get().getSender();
+                        ItemStack stack = a.getStackInSlot(slot);
+
+                        AccessoryUseEvent event = OhmegaHooks.accessoryUseEvent(player, stack);
+                        if(!event.isCanceled()) {
+                            acc.onUse(player, stack);
+                        }
                     }
                 });
             }

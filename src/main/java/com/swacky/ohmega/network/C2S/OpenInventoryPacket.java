@@ -10,9 +10,11 @@ public class OpenInventoryPacket {
     public OpenInventoryPacket() {
     }
 
+    @SuppressWarnings("unused")
     public OpenInventoryPacket(FriendlyByteBuf buf) {
     }
 
+    @SuppressWarnings("unused")
     public void toBytes(FriendlyByteBuf buf) {
     }
 

@@ -1,16 +1,17 @@
 package com.swacky.ohmega.cap;
 
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.events.AccessoryTickEvent;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.event.ForgeEvents;
-import com.swacky.ohmega.network.ModNetworking;
-import com.swacky.ohmega.network.S2C.SyncActivePacket;
+import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -20,27 +21,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Since this is an internal class, please refrain from calling sided methods incorrectly as it may be unsafe and lead to crashes
+// todo: Use onContentsChanged method
 public class AccessoryContainer extends ItemStackHandler implements IItemHandlerModifiable {
     private static final int SLOTS = 6;
     private final boolean[] changed = new boolean[SLOTS];
     private final NonNullList<ItemStack> previous = NonNullList.withSize(6, ItemStack.EMPTY);
     private final Player player;
-    private final boolean[] active = new boolean[3];
     public AccessoryContainer(Player player) {
         super(SLOTS);
         this.player = player;
     }
 
     public boolean isValid(ItemStack stack) {
-        var cap = stack.getCapability(Ohmega.ACCESSORY_ITEM);
-        if (stack.isEmpty() || !cap.isPresent()) return false;
-        var accessory = cap.orElseThrow(NullPointerException::new);
-        return accessory.canEquip(player);
+        LazyOptional<IAccessory> cap = stack.getCapability(Ohmega.ACCESSORY_ITEM);
+        if(stack.isEmpty() || !cap.isPresent()) {
+            return false;
+        }
+
+        IAccessory accessory = cap.orElseThrow(NullPointerException::new);
+        return OhmegaHooks.accessoryCanEquipEvent(player, stack, accessory.canEquip(player, stack)).getReturnValue();
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if(stack.isEmpty() || this.isValid(stack) && AccessoryHelper.isExclusiveType(player, stack)) {
+        if(stack.isEmpty() || this.isValid(stack) && stack.getItem() instanceof IAccessory) {
             super.setStackInSlot(slot, stack);
         }
     }
@@ -62,15 +66,16 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
         return super.insertItem(slot, stack, simulate);
     }
 
-    @Override
-    protected void onContentsChanged(int slot) {
-        this.changed[slot] = true;
-    }
-
     public void tick() {
-        for(int i = 0; i < getSlots(); i++) {
-            var stack = getStackInSlot(i);
-            stack.getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(b -> b.tick(this.player, stack));
+        for (int i = 0; i < getSlots(); i++) {
+            ItemStack stack = getStackInSlot(i);
+            stack.getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(a -> {
+                AccessoryTickEvent event = OhmegaHooks.accessoryTickEventPre(this.player, stack);
+                if (!event.isCanceled()) {
+                    a.tick(this.player, stack);
+                    OhmegaHooks.accessoryTickEventPost(this.player, stack);
+                }
+            });
         }
         this.sync();
     }
@@ -87,58 +92,10 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
                         receivers.add(svr);
                     }
                     ForgeEvents.syncSlot(svr, i, stack, receivers);
-                    for(ServerPlayer player : receivers) {
-                        ModNetworking.sendTo(new SyncActivePacket(svr.getId(), this.active), player);
-                    }
                     this.changed[i] = false;
                     this.previous.set(i, stack.copy());
                 }
             }
         }
-    }
-
-    public void setActive(int slot, boolean value, boolean client) {
-        if(slot > 2) {
-            this.active[slot - 3] = value;
-            AccessoryHelper.addActiveTag(getStackInSlot(slot), value);
-            if(!client) {
-                ModNetworking.sendTo(new SyncActivePacket(this.player.getId(), this.active), (ServerPlayer) this.player);
-            }
-        }
-    }
-
-    // Calling on client is a no no
-    public void setActive(int slot, boolean value) {
-        setActive(slot, value, false);
-    }
-
-    public void setActive(int slot) {
-        setActive(slot, true);
-    }
-
-    public void toggle(int slot) {
-        if(slot > 2 && !getStackInSlot(slot).isEmpty()) {
-            this.setActive(slot, !this.active[slot-3]);
-        }
-    }
-
-    public boolean isActive(int slot) {
-        if(slot < 3) {
-            return false;
-        }
-
-        return this.active[slot - 3];
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag tag) {
-        super.deserializeNBT(tag);
-        this.active[0] = getStackInSlot(3).getOrCreateTag().getBoolean("active");
-        this.active[1] = getStackInSlot(4).getOrCreateTag().getBoolean("active");
-        this.active[2] = getStackInSlot(5).getOrCreateTag().getBoolean("active");
-    }
-
-    public boolean[] getActive() {
-        return this.active;
     }
 }
