@@ -67,17 +67,17 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
         if(this.menu.getCarried().isEmpty() && this.hoveredSlot != null && !this.hoveredSlot.hasItem()) {
             // Normal
             for(int i = 0; i < 3; i++) {
-                ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 24 + i * 18, topPos + 41 + i * 18, mx, my, () -> this.renderTooltip(stack, AccessoryType.NORMAL.getTranslation(), mx, my));
+                ScreenHelper.runIfBetween(leftPos + 182, leftPos + 199, topPos + 24 + i * 18, topPos + 41 + i * 18, mx, my, () -> this.renderTooltip(stack, AccessoryType.NORMAL.getTranslation(), mx, my));
             }
 
 
             // Utility
             for(int i = 0; i < 2; i++) {
-                ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 78 + i * 18, topPos + 95 + i * 18, mx, my, () -> this.renderTooltip(stack, AccessoryType.UTILITY.getTranslation(), mx, my));
+                ScreenHelper.runIfBetween(leftPos + 182, leftPos + 199, topPos + 78 + i * 18, topPos + 95 + i * 18, mx, my, () -> this.renderTooltip(stack, AccessoryType.UTILITY.getTranslation(), mx, my));
             }
 
             // Special
-            ScreenHelper.displayIfBetween(leftPos + 182, leftPos + 199, topPos + 114, topPos + 131, mx, my, () -> this.renderTooltip(stack, AccessoryType.SPECIAL.getTranslation(), mx, my));
+            ScreenHelper.runIfBetween(leftPos + 182, leftPos + 199, topPos + 114, topPos + 131, mx, my, () -> this.renderTooltip(stack, AccessoryType.SPECIAL.getTranslation(), mx, my));
         } else super.renderTooltip(stack, mx, my);
     }
 }

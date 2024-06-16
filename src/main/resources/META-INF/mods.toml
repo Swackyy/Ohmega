@@ -13,7 +13,7 @@ A modernized and lightweight accessories mod for Minecraft. For API usage and re
 [[dependencies.ohmega]]
     modId="forge"
     mandatory=true
-    versionRange="[38,)"
+    versionRange="[38,41)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.ohmega]]

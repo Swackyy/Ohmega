@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api;
 
 import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.NotNull;
 
 public enum AccessoryType {
     NORMAL("normal"),
@@ -13,7 +14,7 @@ public enum AccessoryType {
         this.identifier = identifier;
     }
 
-    public TranslatableComponent getTranslation() {
+    public @NotNull TranslatableComponent getTranslation() {
         return new TranslatableComponent("accessory.type." + identifier);
     }
 
