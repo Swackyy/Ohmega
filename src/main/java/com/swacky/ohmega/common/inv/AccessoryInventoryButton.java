@@ -1,17 +1,16 @@
 package com.swacky.ohmega.common.inv;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.network.C2S.OpenAccessoryGuiPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.ModNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
@@ -49,15 +48,13 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(@NotNull PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, LOC);
+    public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         int offsY = this.yStart;
         if (this.isHoveredOrFocused()) {
             offsY += this.yOffsHovered;
         }
 
         RenderSystem.enableDepthTest();
-        blit(stack, this.getX(), this.getY(), (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
+        gui.blit(LOC, this.getX(), this.getY(), (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
     }
 }

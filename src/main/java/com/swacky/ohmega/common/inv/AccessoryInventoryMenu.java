@@ -31,7 +31,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
     protected static final AccessoryType[] SLOT_TYPES = new AccessoryType[]{NORMAL, NORMAL, NORMAL, UTILITY, UTILITY, SPECIAL};
     public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
+    private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
     private final Player player;
 
@@ -78,7 +78,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(@Nonnull Container container) {
-       CraftingMenu.slotChangedCraftingGrid(this, this.player.level, this.player, this.craftMatrix, this.craftResult);
+       CraftingMenu.slotChangedCraftingGrid(this, this.player.level(), this.player, this.craftMatrix, this.craftResult);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         super.removed(player);
         this.craftResult.clearContent();
 
-        if(!player.level.isClientSide) {
+        if(!player.level().isClientSide) {
             this.clearContainer(player, this.craftMatrix);
         }
     }

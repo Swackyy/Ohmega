@@ -86,9 +86,9 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
             for (byte i = 0; i < getSlots(); i++) {
                 final ItemStack stack = getStackInSlot(i);
                 boolean autoSync = stack.getCapability(Ohmega.ACCESSORY_ITEM).map(a -> a.autoSync(this.player)).orElse(false);
-                if (this.changed[i] || autoSync && !ItemStack.isSame(stack, this.previous.get(i))) {
+                if (this.changed[i] || autoSync && !ItemStack.isSameItem(stack, this.previous.get(i))) {
                     if (receivers == null) {
-                        receivers = new ArrayList<>(((ServerLevel) this.player.level).getPlayers((svr0) -> true));
+                        receivers = new ArrayList<>(((ServerLevel) this.player.level()).getPlayers((svr0) -> true));
                         receivers.add(svr);
                     }
                     ForgeEvents.syncSlot(svr, i, stack, receivers);

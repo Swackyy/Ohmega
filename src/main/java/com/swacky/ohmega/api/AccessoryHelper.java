@@ -223,7 +223,7 @@ public class AccessoryHelper {
                         if(acc.getEquipSound() != null) {
                             player.playSound(acc.getEquipSound(), 1.0F, 1.0F);
                         }
-                        out[0] = InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level.isClientSide);
+                        out[0] = InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level().isClientSide);
                     }
                 }
             }

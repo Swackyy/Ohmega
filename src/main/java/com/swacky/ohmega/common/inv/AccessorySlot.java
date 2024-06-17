@@ -74,7 +74,7 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        if(hasItem() && !ItemStack.isSame(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+        if(hasItem() && !ItemStack.isSameItem(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
             getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
                 IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
                 this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
@@ -93,7 +93,7 @@ public class AccessorySlot extends SlotItemHandler {
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if(hasItem() && !ItemStack.isSame(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
+        if(hasItem() && !ItemStack.isSameItem(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
             getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
                 AccessoryHelper._internalTag(stack).putInt("slot", this.slot);
                 AccessoryHelper.setActive(this.player, stack, true);
