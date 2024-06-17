@@ -6,9 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class SyncAccessoriesPacket {
     private final int playerId;
@@ -33,14 +31,14 @@ public class SyncAccessoriesPacket {
         buf.writeItem(this.accessory);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> sup) {
-        sup.get().enqueueWork(() -> {
+    public void handle(CustomPayloadEvent.Context context) {
+        context.enqueueWork(() -> {
             ClientLevel level = Minecraft.getInstance().level;
             if(level == null) return;
             if(level.getEntity(playerId) instanceof Player player) {
                 player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> a.setStackInSlot(this.slot, accessory));
             }
         });
-        sup.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }

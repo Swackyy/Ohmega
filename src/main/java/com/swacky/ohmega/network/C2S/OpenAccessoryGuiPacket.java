@@ -10,11 +10,8 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 public class OpenAccessoryGuiPacket {
     private int playerId;
@@ -30,14 +27,13 @@ public class OpenAccessoryGuiPacket {
         buf.writeInt(this.playerId);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> sup) {
-        NetworkEvent.Context context = sup.get();
+    public void handle(CustomPayloadEvent.Context context) {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if(player != null) {
                 player.containerMenu.removed(player);
-                if(!player.isCreative())
-                    NetworkHooks.openScreen(player, new MenuProvider() {
+                if(!player.isCreative()) {
+                    player.openMenu(new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
                             return MutableComponent.create(new LiteralContents(""));
@@ -48,6 +44,7 @@ public class OpenAccessoryGuiPacket {
                             return new AccessoryInventoryMenu(id, inv);
                         }
                     });
+                }
             }
         });
     }

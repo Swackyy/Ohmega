@@ -7,10 +7,9 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public class UseAccessoryKbPacket {
     private final int slot;
@@ -27,12 +26,12 @@ public class UseAccessoryKbPacket {
         buf.writeInt(this.slot);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> sup) {
-        sup.get().enqueueWork(() -> {
+    public void handle(CustomPayloadEvent.Context context) {
+        context.enqueueWork(() -> {
             if(this.slot < 6) {
-                Objects.requireNonNull(sup.get().getSender()).getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+                Objects.requireNonNull(context.getSender()).getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                     if(a.getStackInSlot(this.slot).getItem() instanceof IAccessory acc) {
-                        Player player = sup.get().getSender();
+                        Player player = context.getSender();
                         ItemStack stack = a.getStackInSlot(slot);
 
                         AccessoryUseEvent event = OhmegaHooks.accessoryUseEvent(player, stack);
@@ -43,6 +42,6 @@ public class UseAccessoryKbPacket {
                 });
             }
         });
-        sup.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }

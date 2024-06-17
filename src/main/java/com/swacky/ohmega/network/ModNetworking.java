@@ -5,10 +5,7 @@ import com.swacky.ohmega.network.C2S.*;
 import com.swacky.ohmega.network.S2C.SyncAccessoriesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.*;
 
 public class ModNetworking {
     public static SimpleChannel INSTANCE;
@@ -19,11 +16,11 @@ public class ModNetworking {
     }
 
     public static void register() {
-        SimpleChannel net = NetworkRegistry.ChannelBuilder
+        SimpleChannel net = ChannelBuilder
                 .named(new ResourceLocation(Ohmega.MODID, "network"))
-                .networkProtocolVersion(() -> "1.0")
-                .clientAcceptedVersions(s -> true)
-                .serverAcceptedVersions(s -> true)
+                .networkProtocolVersion(1)
+                .clientAcceptedVersions((status, version) -> true)
+                .serverAcceptedVersions((status, version) -> true)
                 .simpleChannel();
         net.messageBuilder(OpenAccessoryGuiPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(OpenAccessoryGuiPacket::new)
@@ -49,10 +46,10 @@ public class ModNetworking {
     }
 
     public static <T> void sendToServer(T msg) {
-        INSTANCE.sendToServer(msg);
+        INSTANCE.send(msg, PacketDistributor.SERVER.noArg());
     }
 
     public static <T> void sendTo(T msg, ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), msg);
+        INSTANCE.send(msg, PacketDistributor.PLAYER.with(player));
     }
 }

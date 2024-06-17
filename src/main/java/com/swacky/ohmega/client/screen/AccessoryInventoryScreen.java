@@ -40,8 +40,6 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
     @Override
     protected void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mx, int my) {
         if (this.minecraft != null && this.minecraft.player != null) {
-            renderBackground(gui);
-
             // Main inventory
             gui.blit(ACCESSORY_LOC, this.leftPos, this.topPos, 0, 0, 175, 165);
 
@@ -49,7 +47,7 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
             gui.blit(ACCESSORY_LOC, this.leftPos + 178, this.topPos + 20, 178, 37, 26, 116);
 
             // Entity rendering
-            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 51, this.topPos + 75, 30, (float) (this.leftPos + 51) - this.oldMouseX, (float) (this.topPos + 75 - 50) - this.oldMouseY, this.minecraft.player);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 26, this.topPos + 8, this.leftPos + 75, this.topPos + 78, 30, 0.0625F, mx, my, this.minecraft.player);
         }
     }
 

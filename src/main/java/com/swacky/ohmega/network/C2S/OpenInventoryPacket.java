@@ -2,9 +2,7 @@ package com.swacky.ohmega.network.C2S;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class OpenInventoryPacket {
     public OpenInventoryPacket() {
@@ -18,8 +16,7 @@ public class OpenInventoryPacket {
     public void toBytes(FriendlyByteBuf buf) {
     }
 
-    public void handle(Supplier<NetworkEvent.Context> sup) {
-        NetworkEvent.Context context = sup.get();
+    public void handle(CustomPayloadEvent.Context context) {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if(player != null) {
@@ -27,6 +24,6 @@ public class OpenInventoryPacket {
                 player.containerMenu = player.inventoryMenu;
             }
         });
-        sup.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }
