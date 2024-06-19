@@ -4,7 +4,7 @@ import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -36,7 +36,7 @@ public class OpenAccessoryGuiPacket {
                     player.openMenu(new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
-                            return MutableComponent.create(new LiteralContents(""));
+                            return MutableComponent.create(new PlainTextContents.LiteralContents(""));
                         }
 
                         @Override

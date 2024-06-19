@@ -4,7 +4,6 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.init.ModItems;
 import com.swacky.ohmega.common.core.init.ModMenus;
-import com.swacky.ohmega.event.ClientEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -24,7 +23,6 @@ public class Ohmega {
 
     public Ohmega() {
         final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.addListener(ClientEvents::clientSetup);
 
         ModMenus.MENUS.register(bus);
         ModItems.ITEMS.register(bus);

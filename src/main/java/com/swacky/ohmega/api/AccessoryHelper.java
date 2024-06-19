@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -100,7 +100,7 @@ public class AccessoryHelper {
      * Otherwise, an example: "Press B to activate invisibility" When "Press &lt;BIND&gt; to activate invisibility" is provided and a slot with key-binding of key B
      */
     public static MutableComponent getBindTooltip(ComponentContents bindDescription, int inSlot, ComponentContents other) {
-        return inSlot == -1 ? MutableComponent.create(other).withStyle(ChatFormatting.GRAY) : MutableComponent.create(new LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage().getString().toUpperCase() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage().getString().toUpperCase() : ModBinds.SPECIAL.getTranslatedKeyMessage().getString().toUpperCase())))).withStyle(ChatFormatting.GRAY);
+        return inSlot == -1 ? MutableComponent.create(other).withStyle(ChatFormatting.GRAY) : MutableComponent.create(new PlainTextContents.LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage().getString().toUpperCase() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage().getString().toUpperCase() : ModBinds.SPECIAL.getTranslatedKeyMessage().getString().toUpperCase())))).withStyle(ChatFormatting.GRAY);
     }
 
     /**

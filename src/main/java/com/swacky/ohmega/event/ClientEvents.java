@@ -26,14 +26,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public class ClientEvents {
-    @SuppressWarnings("RedundantCast")
-    public static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            MenuScreens.register(ModMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<AccessoryInventoryMenu, AccessoryInventoryScreen>) AccessoryInventoryScreen::new);
-            ModNetworking.register();
-        });
-    }
-
     @SubscribeEvent
     public static void addToScreens(ScreenEvent.Init.Post event) {
         if(event.getScreen() instanceof AccessoryInventoryScreen || event.getScreen() instanceof InventoryScreen) {
@@ -52,17 +44,6 @@ public class ClientEvents {
                     btn.visible = !scr.getRecipeBookComponent().isVisible();
                 }
             }
-        }
-    }
-
-    // This is just because it would specifically only fire if the bus was explicitly set to MOD
-    @Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-    protected static class Inner {
-        @SubscribeEvent
-        public static void registerKbs(RegisterKeyMappingsEvent event) {
-            event.register(ModBinds.UTILITY_0);
-            event.register(ModBinds.UTILITY_1);
-            event.register(ModBinds.SPECIAL);
         }
     }
 
@@ -136,6 +117,26 @@ public class ClientEvents {
             } else if(!ModBinds.SPECIAL.isDown()) {
                 down[2] = false;
             }
+        }
+    }
+
+    // This is just because it would specifically only fire if the bus was explicitly set to MOD
+    @Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    protected static class Inner {
+        @SubscribeEvent
+        public static void registerKbs(RegisterKeyMappingsEvent event) {
+            event.register(ModBinds.UTILITY_0);
+            event.register(ModBinds.UTILITY_1);
+            event.register(ModBinds.SPECIAL);
+        }
+
+        @SuppressWarnings("RedundantCast")
+        @SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                MenuScreens.register(ModMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<AccessoryInventoryMenu, AccessoryInventoryScreen>) AccessoryInventoryScreen::new);
+                ModNetworking.register();
+            });
         }
     }
 }
