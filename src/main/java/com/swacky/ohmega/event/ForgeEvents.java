@@ -28,8 +28,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -69,15 +67,6 @@ public class ForgeEvents {
             if (receiver instanceof ServerPlayer svr) {
                 ModNetworking.sendTo(packet, svr);
             }
-        }
-    }
-
-    // Attach accessory capability to the accessory item
-    @SubscribeEvent
-    public static void attachCapsItem(AttachCapabilitiesEvent<ItemStack> event) {
-        ItemStack stack = event.getObject();
-        if(stack.getItem() instanceof IAccessory) {
-            event.addCapability(new ResourceLocation(Ohmega.MODID, "accessory_item"), new AccessoryItemProvider(stack));
         }
     }
 
@@ -175,28 +164,6 @@ public class ForgeEvents {
                     }
                 }
             });
-        }
-    }
-
-    private static class AccessoryItemProvider implements ICapabilityProvider {
-        private final IAccessory inner;
-        private final LazyOptional<IAccessory> cap;
-
-        public AccessoryItemProvider(ItemStack stack) {
-            this.inner = (IAccessory) stack.getItem();
-            this.cap = LazyOptional.of(() -> inner);
-
-            // As soon as the item is created it will have the tags put on it (event fired here)
-            IAccessory.ModifierBuilder builder = new IAccessory.ModifierBuilder();
-            this.inner.addDefaultAttributeModifiers(builder);
-            OhmegaHooks.accessoryAttributeModifiersEvent(stack.getItem(), builder);
-            AccessoryHelper._internalTag(stack).put("AccessoryAttributeModifiers", builder.serialize());
-        }
-
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return Ohmega.ACCESSORY_ITEM.orEmpty(cap, this.cap);
         }
     }
 }

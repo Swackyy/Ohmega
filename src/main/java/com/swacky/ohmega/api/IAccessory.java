@@ -42,7 +42,8 @@ public interface IAccessory {
         return true;
     }
 
-    // Called when the user chooses, such as for the fly ring (example item), this could be utilised to make sure the player can still fly upon switching game modes.
+    // Called when the user chooses, such as for the fly ring (example item),
+    // this could be used to make sure the player can still fly upon switching game modes.
     default void update(Player player, ItemStack stack) {
     }
 
@@ -57,7 +58,7 @@ public interface IAccessory {
     }
 
     // Called when a key bind is pressed for this slot. Will only work for utility and special slots.
-    // It is recommended that when this is overridden and used, that a tooltip will be provided,
+    // It is recommended that when this is overridden and used, that a tooltip will be provided.
     // A component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(Player player, ItemStack stack) {
     }

@@ -28,11 +28,12 @@ public class UseAccessoryKbPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> sup) {
-        sup.get().enqueueWork(() -> {
+        NetworkEvent.Context context = sup.get();
+        context.enqueueWork(() -> {
             if(this.slot < 6) {
-                Objects.requireNonNull(sup.get().getSender()).getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+                Objects.requireNonNull(context.getSender()).getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                     if(a.getStackInSlot(this.slot).getItem() instanceof IAccessory acc) {
-                        Player player = sup.get().getSender();
+                        Player player = context.getSender();
                         ItemStack stack = a.getStackInSlot(slot);
 
                         AccessoryUseEvent event = OhmegaHooks.accessoryUseEvent(player, stack);
@@ -43,6 +44,6 @@ public class UseAccessoryKbPacket {
                 });
             }
         });
-        sup.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }
