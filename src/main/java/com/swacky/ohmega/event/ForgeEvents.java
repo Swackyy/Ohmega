@@ -8,6 +8,7 @@ import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.network.S2C.SyncAccessoriesPacket;
 import com.swacky.ohmega.network.ModNetworking;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,7 +75,7 @@ public class ForgeEvents {
     @SubscribeEvent
     public static void attachCapsPlayer(AttachCapabilitiesEvent<Entity> event) {
         if(event.getObject() instanceof Player player) {
-            event.addCapability(new ResourceLocation(Ohmega.MODID, "accessory_container"), new AccessoryContainerProvider(player));
+            event.addCapability(ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "accessory_container"), new AccessoryContainerProvider(player));
         }
     }
 
@@ -147,12 +148,12 @@ public class ForgeEvents {
         }
 
         @Override
-        public CompoundTag serializeNBT() {
+        public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
             return this.inner.serializeNBT(this.player.registryAccess());
         }
 
         @Override
-        public void deserializeNBT(CompoundTag tag) {
+        public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
             this.inner.deserializeNBT(this.player.registryAccess(), tag);
 
             cap.ifPresent(a -> {

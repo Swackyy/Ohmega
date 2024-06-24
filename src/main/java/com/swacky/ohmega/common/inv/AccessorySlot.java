@@ -24,9 +24,9 @@ public class AccessorySlot extends SlotItemHandler {
     protected final int slot;
     protected final AccessoryType type;
 
-    private static final Material SLOT_NORMAL = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_normal"));
-    private static final Material SLOT_UTILITY = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_utility"));
-    private static final Material SLOT_SPECIAL = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_special"));
+    private static final Material SLOT_NORMAL = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "item/accessory_slot_normal"));
+    private static final Material SLOT_UTILITY = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "item/accessory_slot_utility"));
+    private static final Material SLOT_SPECIAL = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "item/accessory_slot_special"));
     public static final Material[] SLOTS = new Material[]{SLOT_NORMAL, SLOT_UTILITY, SLOT_SPECIAL};
 
     public AccessorySlot(Player player, IItemHandler handler, int index, int x, int y, AccessoryType type) {

@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessoryInventoryButton extends AbstractButton {
-    private static final ResourceLocation LOC = new ResourceLocation(Ohmega.MODID, "textures/gui/accessory_button.png");
+    private static final ResourceLocation LOC = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "textures/gui/accessory_button.png");
     protected final Minecraft mc;
     protected final int xStart;
     protected final int yStart;

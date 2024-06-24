@@ -161,7 +161,7 @@ public class AccessoryHelper {
                 AttributeInstance attribute0 = player.getAttribute(attribute);
                 if(attribute0 != null) {
                     if(add) {
-                        if(!attribute0.hasModifier(modifier)) {
+                        if(!attribute0.hasModifier(modifier.id())) {
                             attribute0.addTransientModifier(modifier);
                         }
                     } else {

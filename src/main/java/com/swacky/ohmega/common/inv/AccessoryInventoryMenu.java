@@ -12,11 +12,11 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +78,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(@Nonnull Container container) {
-       CraftingMenu.slotChangedCraftingGrid(this, this.player.level(), this.player, this.craftMatrix, this.craftResult);
+       CraftingMenu.slotChangedCraftingGrid(this, this.player.level(), this.player, this.craftMatrix, this.craftResult, null);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         if(slot.hasItem()) {
             ItemStack stack0 = slot.getItem();
             stack = stack0.copy();
-            EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(stack);
+            EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(stack);
             if(index == 0) {
                 if (!this.moveItemStackTo(stack0, 9, 45, true)) { // Crafting result out
                     return ItemStack.EMPTY;
@@ -117,7 +117,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Armour out
                     return ItemStack.EMPTY;
                 }
-            } else if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem()) {
+            } else if(equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem()) {
                 int i = 8 - equipmentSlot.getIndex();
                 if (!this.moveItemStackTo(stack0, i, i + 1, false)) { // Armour in
                     return ItemStack.EMPTY;
@@ -198,7 +198,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         @Override
         public boolean mayPickup(@Nonnull Player player) {
             ItemStack stack = this.getItem();
-            return (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(stack)) && super.mayPickup(player);
+            return (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) && super.mayPickup(player));
         }
 
         @Override

@@ -17,7 +17,7 @@ public class ModNetworking {
 
     public static void register() {
         SimpleChannel net = ChannelBuilder
-                .named(new ResourceLocation(Ohmega.MODID, "network"))
+                .named(ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "network"))
                 .networkProtocolVersion(1)
                 .clientAcceptedVersions((status, version) -> true)
                 .serverAcceptedVersions((status, version) -> true)

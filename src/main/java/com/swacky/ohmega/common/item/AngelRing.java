@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 // This is simply a test and example accessory.
 // Its code may be used as a reference to create your own.
@@ -103,9 +103,9 @@ public class AngelRing extends Item implements IAccessory {
     @Override
     public void addDefaultAttributeModifiers(ModifierBuilder builder) {
         // This modifier is only applied when the accessory is active
-        builder.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("04622de9-8f97-46c5-a8dd-20133aa44e4e"), "Strength", 1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        builder.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "angel_ring.effect.strength"), 1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
 
         // This modifier is always applied
-        builder.addModifierActiveOnly(Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString("854a57c3-592c-434b-aa7a-f6658a7857cb"), "MaxHealth", 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        builder.addModifierActiveOnly(Attributes.MAX_HEALTH, new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "angel_ring.effect.health_boost"), 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     }
 }

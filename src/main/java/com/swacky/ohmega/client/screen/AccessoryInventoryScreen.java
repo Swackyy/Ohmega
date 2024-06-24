@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<AccessoryInventoryMenu> {
-    protected static final ResourceLocation ACCESSORY_LOC = new ResourceLocation(Ohmega.MODID, "textures/gui/container/accessory_inventory.png");
+    protected static final ResourceLocation ACCESSORY_LOC = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "textures/gui/container/accessory_inventory.png");
     protected float oldMouseX;
     protected float oldMouseY;
     protected final Inventory inv;
