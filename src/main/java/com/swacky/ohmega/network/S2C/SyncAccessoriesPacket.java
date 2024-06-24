@@ -3,7 +3,7 @@ package com.swacky.ohmega.network.S2C;
 import com.swacky.ohmega.common.core.Ohmega;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -13,10 +13,10 @@ public class SyncAccessoriesPacket {
     private final byte slot;
     private final ItemStack accessory;
 
-    public SyncAccessoriesPacket(FriendlyByteBuf buf) {
+    public SyncAccessoriesPacket(RegistryFriendlyByteBuf buf) {
         this.playerId = buf.readInt();
         this.slot = buf.readByte();
-        this.accessory = buf.readItem();
+        this.accessory = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
     }
 
     public SyncAccessoriesPacket(int playerId, byte slot, ItemStack accessory) {
@@ -25,10 +25,10 @@ public class SyncAccessoriesPacket {
         this.accessory = accessory;
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.playerId);
         buf.writeByte(this.slot);
-        buf.writeItem(this.accessory);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, this.accessory);
     }
 
     public void handle(CustomPayloadEvent.Context context) {

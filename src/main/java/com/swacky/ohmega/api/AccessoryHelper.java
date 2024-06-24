@@ -1,10 +1,13 @@
 package com.swacky.ohmega.api;
 
+import com.google.common.collect.Multimap;
 import com.swacky.ohmega.api.events.AccessoryEquipEvent;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -13,27 +16,43 @@ import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 @SuppressWarnings("unused")
 public class AccessoryHelper {
     // - - - INTERNAL USE START - - - //
     // Internal symbols are denoted by an underscore prefix
-    // You can use these however it is discouraged
+    // You can use these; however, it is discouraged
 
     public static final String _TAG_KEY = "OhmegaInternal";
 
+    // Tags are easier to deal with
+    @SuppressWarnings("deprecation")
     public static CompoundTag _internalTag(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
-        if(tag.contains(_TAG_KEY)) {
-            return tag.getCompound(_TAG_KEY);
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        CompoundTag tag;
+
+        if(data != null) {
+            tag = data.getUnsafe();
+            if(tag.contains(_TAG_KEY)) {
+                return tag.getCompound(_TAG_KEY);
+            }
+        } else {
+            tag = new CompoundTag();
         }
+
         tag.put(_TAG_KEY, new CompoundTag());
-        return tag.getCompound(_TAG_KEY);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        return tag;
     }
 
     // - - - INTERNAL USE END - - - //
@@ -130,6 +149,40 @@ public class AccessoryHelper {
     }
 
     /**
+     * Utility function to add {@link AttributeModifier}s to a {@link Player} from an {@link IAccessory.ModifierBuilder}
+     * @param player add/remove modifiers to/from
+     * @param map contains the modifiers to add or remove
+     * @param add if true, will add the modifiers to the {@link Player}, otherwise existing ones will be removed
+     */
+    public static void changeModifiers(Player player, Multimap<Holder<Attribute>, AttributeModifier> map, boolean add) {
+        for(Holder<Attribute> attribute : map.keys()) {
+            Collection<AttributeModifier> modifiers = map.get(attribute);
+            for(AttributeModifier modifier : modifiers) {
+                AttributeInstance attribute0 = player.getAttribute(attribute);
+                if(attribute0 != null) {
+                    if(add) {
+                        if(!attribute0.hasModifier(modifier)) {
+                            attribute0.addTransientModifier(modifier);
+                        }
+                    } else {
+                        attribute0.removeModifier(modifier);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes both passive and active only {@link AttributeModifier}s
+     * @param player to remove modifiers from
+     * @param builder contains the modifiers to be removed
+     */
+    public static void removeAllModifiers(Player player, IAccessory.ModifierBuilder builder) {
+        changeModifiers(player, builder.getModifiers(), false);
+        changeModifiers(player, builder.getModifiersActiveOnly(), false);
+    }
+
+    /**
      * Adds a tag to show the active state of an {@link IAccessory} item
      * @param player used to add/remove active only attribute modifiers to
      * @param stack the {@link IAccessory} to add the tag to
@@ -141,12 +194,7 @@ public class AccessoryHelper {
             _internalTag(stack).putBoolean("active", value);
         }
 
-        IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-        if(value) {
-            player.getAttributes().addTransientAttributeModifiers(builder.getModifiersActiveOnly());
-        } else {
-            player.getAttributes().removeAttributeModifiers(builder.getModifiersActiveOnly());
-        }
+        changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiersActiveOnly(), value);
     }
 
     /**
@@ -210,11 +258,10 @@ public class AccessoryHelper {
                     stack0.setCount(1);
 
                     if(a.trySetStackInSlot(slot, stack0)) {
+                        changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), true);
+
                         stack.shrink(1);
                         _internalTag(stack0).putInt("slot", slot);
-
-                        IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-                        player.getAttributes().addTransientAttributeModifiers(builder.getModifiers());
 
                         AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(player, stack0);
                         if(!event.isCanceled()) {

@@ -140,8 +140,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                     return ItemStack.EMPTY;
                 }
             } else if(index > 45 && index < 52 && stack0.getItem() instanceof IAccessory acc) {
-                IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack0);
-                this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
+                AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack0).getModifiers(), false);
 
                 AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack0);
                 if(!event.isCanceled()) {
@@ -153,7 +152,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 if(this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
                     return ItemStack.EMPTY;
                 }
-            } else if(!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into top part of inv
+            } else if(!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into the top part of inv
                 return ItemStack.EMPTY;
             }
 

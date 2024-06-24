@@ -2,6 +2,7 @@ package com.swacky.ohmega.api;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -44,7 +45,8 @@ public interface IAccessory {
         return true;
     }
 
-    // Called when the user chooses, such as for the fly ring (example item), this could be utilised to make sure the player can still fly upon switching game modes.
+    // Called when the user chooses, such as for the fly ring (example item),
+    // this could be used to make sure the player can still fly upon switching game modes.
     default void update(Player player, ItemStack stack) {
     }
 
@@ -59,7 +61,7 @@ public interface IAccessory {
     }
 
     // Called when a key bind is pressed for this slot. Will only work for utility and special slots.
-    // It is recommended that when this is overridden and used, that a tooltip will be provided,
+    // It is recommended that when this is overridden and used, that a tooltip will be provided.
     // A component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(Player player, ItemStack stack) {
     }
@@ -70,7 +72,7 @@ public interface IAccessory {
     }
 
     default SoundEvent getEquipSound() {
-        return SoundEvents.ARMOR_EQUIP_GENERIC;
+        return SoundEvents.ARMOR_EQUIP_GENERIC.get();
     }
 
     // Attribute modifiers to be applied when the accessory is equipped (or only when active)
@@ -81,8 +83,8 @@ public interface IAccessory {
      * A utility class for adding default attribute modifiers to accessory items.
      */
     class ModifierBuilder {
-        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        Multimap<Attribute, AttributeModifier> modifiersActiveOnly = HashMultimap.create();
+        Multimap<Holder<Attribute>, AttributeModifier> modifiers = HashMultimap.create();
+        Multimap<Holder<Attribute>, AttributeModifier> modifiersActiveOnly = HashMultimap.create();
 
         public static final ModifierBuilder EMPTY = new ModifierBuilder();
 
@@ -92,7 +94,7 @@ public interface IAccessory {
          * @param modifier defines how the attribute supplied will be modified
          * @param activeOnly if true, the modifier will only be applied when the accessory is active
          */
-        public void addModifier(Attribute attribute, AttributeModifier modifier, boolean activeOnly) {
+        public void addModifier(Holder<Attribute> attribute, AttributeModifier modifier, boolean activeOnly) {
             if(activeOnly) {
                 modifiersActiveOnly.put(attribute, modifier);
             } else {
@@ -105,7 +107,7 @@ public interface IAccessory {
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
-        public void addModifier(Attribute attribute, AttributeModifier modifier) {
+        public void addModifier(Holder<Attribute> attribute, AttributeModifier modifier) {
             addModifier(attribute, modifier, false);
         }
 
@@ -114,21 +116,21 @@ public interface IAccessory {
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
-        public void addModifierActiveOnly(Attribute attribute, AttributeModifier modifier) {
+        public void addModifierActiveOnly(Holder<Attribute> attribute, AttributeModifier modifier) {
             addModifier(attribute, modifier, true);
         }
 
         /**
          * @return all default attribute modifiers that will be applied
          */
-        public Multimap<Attribute, AttributeModifier> getModifiers() {
+        public Multimap<Holder<Attribute>, AttributeModifier> getModifiers() {
             return modifiers;
         }
 
         /**
          * @return all default attribute modifiers that will only be applied when the accessory is active
          */
-        public Multimap<Attribute, AttributeModifier> getModifiersActiveOnly() {
+        public Multimap<Holder<Attribute>, AttributeModifier> getModifiersActiveOnly() {
             return modifiersActiveOnly;
         }
 
@@ -140,20 +142,20 @@ public interface IAccessory {
         public ListTag serialize() {
             ListTag list = new ListTag();
 
-            for(Attribute attribute : this.modifiers.keys()) {
+            for(Holder<Attribute> attribute : this.modifiers.keys()) {
                 for(AttributeModifier modifier : this.modifiers.get(attribute)) {
                     CompoundTag element = modifier.save();
-                    element.putString("AttributeName", Objects.requireNonNull(ForgeRegistries.ATTRIBUTES.getKey(attribute)).toString());
+                    element.putString("AttributeName", Objects.requireNonNull(ForgeRegistries.ATTRIBUTES.getKey(attribute.value())).toString());
                     element.putBoolean("ActiveOnly", false);
 
                     list.add(element);
                 }
             }
 
-            for(Attribute attribute : this.modifiersActiveOnly.keys()) {
+            for(Holder<Attribute> attribute : this.modifiersActiveOnly.keys()) {
                 for(AttributeModifier modifier : this.modifiersActiveOnly.get(attribute)) {
                     CompoundTag element = modifier.save();
-                    element.putString("AttributeName", Objects.requireNonNull(ForgeRegistries.ATTRIBUTES.getKey(attribute)).toString());
+                    element.putString("AttributeName", Objects.requireNonNull(ForgeRegistries.ATTRIBUTES.getKey(attribute.value())).toString());
                     element.putBoolean("ActiveOnly", true);
 
                     list.add(element);
@@ -168,7 +170,7 @@ public interface IAccessory {
 
             for(Tag _tag : AccessoryHelper._internalTag(stack).getList("AccessoryAttributeModifiers", 10)) {
                 CompoundTag tag = (CompoundTag) _tag;
-                Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.tryParse(tag.getString("AttributeName")));
+                Holder<Attribute> attribute = ForgeRegistries.ATTRIBUTES.getHolder(ForgeRegistries.ATTRIBUTES.getValue(ResourceLocation.tryParse(tag.getString("AttributeName")))).orElseThrow();
                 AttributeModifier modifier = AttributeModifier.load(tag);
 
                 if(tag.getBoolean("ActiveOnly")) {

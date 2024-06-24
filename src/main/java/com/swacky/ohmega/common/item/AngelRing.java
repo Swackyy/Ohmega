@@ -34,7 +34,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // This method uses the utility class to easily add tooltips onto the accessory
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip.keybind", null, TranslatableContents.NO_ARGS), stack, new TranslatableContents("item." + Ohmega.MODID + ".flyring.tooltip", null, TranslatableContents.NO_ARGS)));
         tooltip.add(AccessoryHelper.getTypeTooltip(this));
     }
@@ -96,16 +96,16 @@ public class AngelRing extends Item implements IAccessory {
     // The sound to be played when equipped using a right click
     @Override
     public SoundEvent getEquipSound() {
-        return SoundEvents.ARMOR_EQUIP_GOLD;
+        return SoundEvents.ARMOR_EQUIP_GOLD.get();
     }
 
     // Adds modifiers to be applied when the accessory is equipped
     @Override
     public void addDefaultAttributeModifiers(ModifierBuilder builder) {
         // This modifier is only applied when the accessory is active
-        builder.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("04622de9-8f97-46c5-a8dd-20133aa44e4e"), "Strength", 0.2, AttributeModifier.Operation.MULTIPLY_BASE));
+        builder.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("04622de9-8f97-46c5-a8dd-20133aa44e4e"), "Strength", 1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
 
         // This modifier is always applied
-        builder.addModifierActiveOnly(Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString("854a57c3-592c-434b-aa7a-f6658a7857cb"), "MaxHealth", 0.2, AttributeModifier.Operation.MULTIPLY_BASE));
+        builder.addModifierActiveOnly(Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString("854a57c3-592c-434b-aa7a-f6658a7857cb"), "MaxHealth", 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     }
 }

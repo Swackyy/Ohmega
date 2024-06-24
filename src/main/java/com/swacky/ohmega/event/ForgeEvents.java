@@ -28,8 +28,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -72,15 +70,6 @@ public class ForgeEvents {
         }
     }
 
-    // Attach accessory capability to the accessory item
-    @SubscribeEvent
-    public static void attachCapsItem(AttachCapabilitiesEvent<ItemStack> event) {
-        ItemStack stack = event.getObject();
-        if(stack.getItem() instanceof IAccessory) {
-            event.addCapability(new ResourceLocation(Ohmega.MODID, "accessory_item"), new AccessoryItemProvider(stack));
-        }
-    }
-
     // Attaches accessory container provider capability to the player
     @SubscribeEvent
     public static void attachCapsPlayer(AttachCapabilitiesEvent<Entity> event) {
@@ -105,7 +94,7 @@ public class ForgeEvents {
             event.getOriginal().reviveCaps();
             event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(old -> {
                 if((event.isWasDeath() && event.getOriginal().getServer() != null && event.getOriginal().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) || !event.isWasDeath()) {
-                    event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(newStore -> newStore.deserializeNBT(old.serializeNBT()));
+                    event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(newStore -> newStore.deserializeNBT(event.getEntity().registryAccess(), old.serializeNBT(event.getOriginal().registryAccess())));
                     event.getOriginal().invalidateCaps();
                 }
             });
@@ -123,8 +112,7 @@ public class ForgeEvents {
                     if(a.getStackInSlot(i).getItem() instanceof IAccessory acc) {
                         ItemStack stack = a.getStackInSlot(i);
 
-                        IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-                        player.getAttributes().addTransientAttributeModifiers(builder.getModifiers());
+                        AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), false);
 
                         AccessoryUnequipEvent event0 = OhmegaHooks.accessoryUnequipEvent(player, a.getStackInSlot(i));
                         if(!event0.isCanceled()) {
@@ -140,6 +128,7 @@ public class ForgeEvents {
     }
 
     // Inner class for providing a container to a player, utility class.
+    @SuppressWarnings("deprecation")
     private static class AccessoryContainerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         private final AccessoryContainer inner;
         private final LazyOptional<AccessoryContainer> cap;
@@ -159,44 +148,21 @@ public class ForgeEvents {
 
         @Override
         public CompoundTag serializeNBT() {
-            return this.inner.serializeNBT();
+            return this.inner.serializeNBT(this.player.registryAccess());
         }
 
         @Override
         public void deserializeNBT(CompoundTag tag) {
-            this.inner.deserializeNBT(tag);
+            this.inner.deserializeNBT(this.player.registryAccess(), tag);
 
             cap.ifPresent(a -> {
                 for (int i = 0; i < a.getSlots(); i++) {
                     ItemStack stack = a.getStackInSlot(i);
                     if (AccessoryHelper.isActive(stack)) {
-                        IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-                        this.player.getAttributes().addTransientAttributeModifiers(builder.getModifiersActiveOnly());
+                        AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiersActiveOnly(), true);
                     }
                 }
             });
-        }
-    }
-
-    private static class AccessoryItemProvider implements ICapabilityProvider {
-        private final IAccessory inner;
-        private final LazyOptional<IAccessory> cap;
-
-        public AccessoryItemProvider(ItemStack stack) {
-            this.inner = (IAccessory) stack.getItem();
-            this.cap = LazyOptional.of(() -> inner);
-
-            // As soon as the item is created it will have the tags put on it (event fired here)
-            IAccessory.ModifierBuilder builder = new IAccessory.ModifierBuilder();
-            this.inner.addDefaultAttributeModifiers(builder);
-            OhmegaHooks.accessoryAttributeModifiersEvent(stack.getItem(), builder);
-            AccessoryHelper._internalTag(stack).put("AccessoryAttributeModifiers", builder.serialize());
-        }
-
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return Ohmega.ACCESSORY_ITEM.orEmpty(cap, this.cap);
         }
     }
 }

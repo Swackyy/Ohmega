@@ -30,7 +30,7 @@ public class ClientEvents {
     public static void addToScreens(ScreenEvent.Init.Post event) {
         if(event.getScreen() instanceof AccessoryInventoryScreen || event.getScreen() instanceof InventoryScreen) {
             final Minecraft mc = event.getScreen().getMinecraft();
-            if(mc.player != null && !mc.player.isCreative()) {
+            if(mc != null && mc.player != null && !mc.player.isCreative()) {
                 event.addListener(new AccessoryInventoryButton((AbstractContainerScreen<?>) event.getScreen(), 0, 0, 132, 22, 19));
             }
         }
