@@ -29,13 +29,13 @@ public class OpenAccessoryGuiPacket {
         buf.writeInt(this.playerId);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> sup) {
+    public void handle(Supplier<NetworkEvent.Context> sup) {
         NetworkEvent.Context context = sup.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if(player != null) {
                 player.containerMenu.removed(player);
-                if(!player.isCreative())
+                if(!player.isCreative()) {
                     NetworkHooks.openGui(player, new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
@@ -47,8 +47,9 @@ public class OpenAccessoryGuiPacket {
                             return new AccessoryInventoryMenu(id, inv);
                         }
                     });
+                }
             }
         });
-        return true;
+        context.setPacketHandled(true);
     }
 }

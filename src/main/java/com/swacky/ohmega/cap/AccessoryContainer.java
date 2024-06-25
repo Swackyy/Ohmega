@@ -3,7 +3,7 @@ package com.swacky.ohmega.cap;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.events.AccessoryTickEvent;
-import com.swacky.ohmega.event.ForgeEvents;
+import com.swacky.ohmega.event.CommonForgeEvents;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
@@ -31,9 +31,9 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     }
 
     public boolean isValid(ItemStack stack) {
-            if (stack.getItem() instanceof IAccessory acc) {
-                return OhmegaHooks.accessoryCanEquipEvent(player, stack, acc.canEquip(player, stack)).getReturnValue();
-            }
+        if (stack.getItem() instanceof IAccessory acc) {
+            return OhmegaHooks.accessoryCanEquipEvent(player, stack, acc.canEquip(player, stack)).getReturnValue();
+        }
         return false;
     }
 
@@ -89,7 +89,7 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
                         receivers = new ArrayList<>(((ServerLevel) this.player.level).getPlayers((svr0) -> true));
                         receivers.add(svr);
                     }
-                    ForgeEvents.syncSlot(svr, i, stack, receivers);
+                    CommonForgeEvents.syncSlot(svr, i, stack, receivers);
                     this.changed[i] = false;
                     this.previous.set(i, stack.copy());
                 }
