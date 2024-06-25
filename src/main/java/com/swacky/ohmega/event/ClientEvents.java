@@ -39,7 +39,7 @@ public class ClientEvents {
         if(event.getScreen() instanceof AccessoryInventoryScreen || event.getScreen() instanceof InventoryScreen) {
             final Minecraft mc = event.getScreen().getMinecraft();
             if(mc.player != null && !mc.player.isCreative()) {
-                event.addListener(new AccessoryInventoryButton((AbstractContainerScreen<?>) event.getScreen(), 0, 0, 132, 22, 19));
+                event.addListener(new AccessoryInventoryButton((AbstractContainerScreen<?>) event.getScreen(), 0, 0, 132, 61, 19));
             }
         }
     }
