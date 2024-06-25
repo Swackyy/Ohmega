@@ -2,17 +2,14 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.events.AccessoryUseEvent;
+import com.swacky.ohmega.client.screen.AccessoryInventoryButton;
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
-import com.swacky.ohmega.common.core.init.ModMenus;
-import com.swacky.ohmega.common.inv.AccessoryInventoryButton;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.network.C2S.UseAccessoryKbPacket;
 import com.swacky.ohmega.network.ModNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.item.ItemStack;
@@ -21,19 +18,9 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
-public class ClientEvents {
-    @SuppressWarnings("RedundantCast")
-    public static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            MenuScreens.register(ModMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<AccessoryInventoryMenu, AccessoryInventoryScreen>) AccessoryInventoryScreen::new);
-            ModNetworking.register();
-            ModBinds.register();
-        });
-    }
-
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = Ohmega.MODID, value = Dist.CLIENT)
+public class ClientForgeEvents {
     @SubscribeEvent
     public static void addToScreens(ScreenEvent.InitScreenEvent.Post event) {
         if(event.getScreen() instanceof AccessoryInventoryScreen || event.getScreen() instanceof InventoryScreen) {

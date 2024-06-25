@@ -31,9 +31,9 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     }
 
     public boolean isValid(ItemStack stack) {
-            if (stack.getItem() instanceof IAccessory acc) {
-                return OhmegaHooks.accessoryCanEquipEvent(player, stack, acc.canEquip(player, stack)).getReturnValue();
-            }
+        if (stack.getItem() instanceof IAccessory acc) {
+            return OhmegaHooks.accessoryCanEquipEvent(player, stack, acc.canEquip(player, stack)).getReturnValue();
+        }
         return false;
     }
 

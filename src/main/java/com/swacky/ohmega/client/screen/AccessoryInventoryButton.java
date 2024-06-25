@@ -1,8 +1,9 @@
-package com.swacky.ohmega.common.inv;
+package com.swacky.ohmega.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.common.core.Ohmega;
+import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.network.C2S.OpenAccessoryGuiPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.ModNetworking;
@@ -26,7 +27,7 @@ public class AccessoryInventoryButton extends AbstractButton {
     private final int yOffs;
     protected final int yOffsHovered;
     public AccessoryInventoryButton(AbstractContainerScreen<?> screen, int xStart, int yStart, int xOffs, int yOffs, int yOffsHovered) {
-        super(screen.getGuiLeft() + xOffs, screen.getGuiTop() + yOffs, 20, 18, new TextComponent(""));
+        super(screen.getGuiLeft() + xOffs, screen.getGuiTop() + yOffs, 20, 18, TextComponent.EMPTY);
         this.mc = screen.getMinecraft();
         this.screen = screen;
         this.xStart = xStart;
@@ -70,9 +71,5 @@ public class AccessoryInventoryButton extends AbstractButton {
 
         RenderSystem.enableDepthTest();
         blit(stack, this.x, this.y, (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
-        if (this.isHovered) {
-            this.renderToolTip(stack, pMouseX, pMouseY);
-        }
-
     }
 }

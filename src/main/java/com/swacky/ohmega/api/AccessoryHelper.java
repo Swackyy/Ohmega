@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class AccessoryHelper {
     // - - - INTERNAL USE START - - - //
     // Internal symbols are denoted by an underscore prefix
-    // You can use these however it is discouraged
+    // You can use these; however, it is discouraged
 
     public static final String _TAG_KEY = "OhmegaInternal";
 
