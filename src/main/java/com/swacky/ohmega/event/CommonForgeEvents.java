@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ForgeEvents {
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = Ohmega.MODID)
+public class CommonForgeEvents {
     // Syncs slots upon player joining
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinWorldEvent event) {
