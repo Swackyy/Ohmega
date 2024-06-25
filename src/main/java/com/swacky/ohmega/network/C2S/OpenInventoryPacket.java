@@ -27,6 +27,6 @@ public class OpenInventoryPacket {
                 player.containerMenu = player.inventoryMenu;
             }
         });
-        sup.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }

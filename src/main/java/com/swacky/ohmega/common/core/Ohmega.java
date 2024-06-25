@@ -1,10 +1,8 @@
 package com.swacky.ohmega.common.core;
 
-import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.init.ModItems;
 import com.swacky.ohmega.common.core.init.ModMenus;
-import com.swacky.ohmega.event.ClientEvents;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.resources.ResourceLocation;
@@ -24,11 +22,9 @@ public class Ohmega {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<IAccessory> ACCESSORY_ITEM = CapabilityManager.get(new CapabilityToken<>(){});
 
     public Ohmega() {
         final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.addListener(ClientEvents::clientSetup);
 
         ModMenus.MENUS.register(bus);
         ModItems.ITEMS.register(bus);

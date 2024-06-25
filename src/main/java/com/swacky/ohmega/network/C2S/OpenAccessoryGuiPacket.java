@@ -36,7 +36,7 @@ public class OpenAccessoryGuiPacket {
             ServerPlayer player = context.getSender();
             if(player != null) {
                 player.containerMenu.removed(player);
-                if(!player.isCreative())
+                if(!player.isCreative()) {
                     NetworkHooks.openScreen(player, new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
@@ -48,7 +48,9 @@ public class OpenAccessoryGuiPacket {
                             return new AccessoryInventoryMenu(id, inv);
                         }
                     });
+                }
             }
         });
+        context.setPacketHandled(true);
     }
 }
