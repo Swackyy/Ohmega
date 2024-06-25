@@ -3,7 +3,6 @@ package com.swacky.ohmega.cap;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.events.AccessoryTickEvent;
-import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.event.ForgeEvents;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
@@ -11,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -33,13 +31,10 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     }
 
     public boolean isValid(ItemStack stack) {
-        LazyOptional<IAccessory> cap = stack.getCapability(Ohmega.ACCESSORY_ITEM);
-        if(stack.isEmpty() || !cap.isPresent()) {
-            return false;
-        }
-
-        IAccessory accessory = cap.orElseThrow(NullPointerException::new);
-        return OhmegaHooks.accessoryCanEquipEvent(player, stack, accessory.canEquip(player, stack)).getReturnValue();
+            if (stack.getItem() instanceof IAccessory acc) {
+                return OhmegaHooks.accessoryCanEquipEvent(player, stack, acc.canEquip(player, stack)).getReturnValue();
+            }
+        return false;
     }
 
     @Override
@@ -69,13 +64,13 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     public void tick() {
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
-            stack.getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(a -> {
+            if(stack.getItem() instanceof IAccessory a) {
                 AccessoryTickEvent event = OhmegaHooks.accessoryTickEventPre(this.player, stack);
                 if (!event.isCanceled()) {
                     a.tick(this.player, stack);
                     OhmegaHooks.accessoryTickEventPost(this.player, stack);
                 }
-            });
+            }
         }
         this.sync();
     }
@@ -85,7 +80,10 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
             List<ServerPlayer> receivers = null;
             for (byte i = 0; i < getSlots(); i++) {
                 final ItemStack stack = getStackInSlot(i);
-                boolean autoSync = stack.getCapability(Ohmega.ACCESSORY_ITEM).map(a -> a.autoSync(this.player)).orElse(false);
+                boolean autoSync = false;
+                if(stack.getItem() instanceof IAccessory a) {
+                    autoSync = a.autoSync(this.player);
+                }
                 if (this.changed[i] || autoSync && !ItemStack.isSame(stack, this.previous.get(i))) {
                     if (receivers == null) {
                         receivers = new ArrayList<>(((ServerLevel) this.player.level).getPlayers((svr0) -> true));

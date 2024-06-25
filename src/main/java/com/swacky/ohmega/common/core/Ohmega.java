@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.core;
 
-import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.init.ModItems;
 import com.swacky.ohmega.common.core.init.ModMenus;
@@ -24,7 +23,6 @@ public class Ohmega {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<IAccessory> ACCESSORY_ITEM = CapabilityManager.get(new CapabilityToken<>(){});
 
     public Ohmega() {
         final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
