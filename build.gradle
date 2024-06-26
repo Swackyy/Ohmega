@@ -1,29 +1,17 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
-
-        mavenLocal()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
-
 plugins {
-    id 'eclipse'
+    id 'idea'
     id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 version = '1.1.0-forge-1.20-1.20.1'
 group = 'com.swacky.ohmega'
-archivesBaseName = 'ohmega'
+
+base {
+    archivesName = 'ohmega'
+}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -100,7 +88,13 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20-46.0.14'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation fg.deobf("curse.maven:jei-238222:4581323")
+}
+
+mixin {
+    add sourceSets.main, "ohmega.refmap.json"
+    config "ohmega.mixins.json"
 }
 
 jar {

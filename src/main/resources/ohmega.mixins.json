@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.swacky.ohmega.common.core.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "ohmega.refmap.json",
+  "mixins": [
+    "ItemStackMixin"
+  ],
+  "client": [
+  ],
+  "minVersion": "0.8.4"
+}
