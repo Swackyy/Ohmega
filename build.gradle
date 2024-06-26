@@ -1,7 +1,8 @@
 plugins {
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'net.minecraftforge.gradle' version '6.0.16+'
+    id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
@@ -60,10 +61,16 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.3-49.0.2'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // No 1.20.3 JEI
 }
 
-tasks.named('jar', Jar).configure {
+mixin {
+    add sourceSets.main, "ohmega.refmap.json"
+    config "ohmega.mixins.json"
+}
+
+jar {
     manifest {
         attributes([
                 "Specification-Title"     : "ohmega",
@@ -75,9 +82,9 @@ tasks.named('jar', Jar).configure {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-
-    jar.finalizedBy('reobfJar')
 }
+
+jar.finalizedBy('reobfJar')
 
 publishing {
     publications {

@@ -5,9 +5,11 @@ license="All rights reserved"
 modId="ohmega"
 version="${file.jarVersion}"
 displayName="Ohmega"
-logoFile= "ohmega.png"
+logoFile="ohmega.png"
+#credits=""
 authors="Developer: Swacky_"
-description='''A modernized and lightweight accessories mod for Minecraft. For API usage and reference code info, visit https://github.com/Swackyy/ohmega and view the readme.md file'''
+description='''
+A modernized and lightweight accessories mod for Minecraft. For API usage and reference code info, visit https://github.com/Swackyy/ohmega and view the readme.md file'''
 [[dependencies.ohmega]]
     modId="forge"
     mandatory=true
