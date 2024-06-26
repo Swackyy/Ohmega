@@ -1,8 +1,9 @@
-package com.swacky.ohmega.common.inv;
+package com.swacky.ohmega.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.common.core.Ohmega;
+import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.network.C2S.OpenAccessoryGuiPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.ModNetworking;
@@ -20,14 +21,20 @@ import org.jetbrains.annotations.NotNull;
 public class AccessoryInventoryButton extends AbstractButton {
     private static final ResourceLocation LOC = new ResourceLocation(Ohmega.MODID, "textures/gui/accessory_button.png");
     protected final Minecraft mc;
+    private final AbstractContainerScreen<?> screen;
     protected final int xStart;
     protected final int yStart;
+    private final int xOffs;
+    private final int yOffs;
     protected final int yOffsHovered;
     public AccessoryInventoryButton(AbstractContainerScreen<?> screen, int xStart, int yStart, int xOffs, int yOffs, int yOffsHovered) {
-        super(screen.getGuiLeft() + xOffs, screen.height / 2 - yOffs, 20, 18, MutableComponent.create(new LiteralContents("")));
+        super(screen.getGuiLeft() + xOffs, screen.getGuiTop() + yOffs, 20, 18, MutableComponent.create(LiteralContents.EMPTY));
         this.mc = screen.getMinecraft();
+        this.screen = screen;
         this.xStart = xStart;
         this.yStart = yStart;
+        this.xOffs = xOffs;
+        this.yOffs = yOffs;
         this.yOffsHovered = yOffsHovered;
     }
 
@@ -44,12 +51,18 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void updateNarration(@NotNull NarrationElementOutput output) {
+    public void updateWidgetNarration(@NotNull NarrationElementOutput output) {
         this.defaultButtonNarrationText(output);
+    }
+
+    private void fixPos() {
+        this.setX(this.screen.getGuiLeft() + this.xOffs);
+        this.setY(this.screen.getGuiTop() + this.yOffs);
     }
 
     @Override
     public void renderButton(@NotNull PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
+        this.fixPos();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, LOC);
         int offsY = this.yStart;
@@ -58,10 +71,6 @@ public class AccessoryInventoryButton extends AbstractButton {
         }
 
         RenderSystem.enableDepthTest();
-        blit(stack, this.x, this.y, (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
-        if (this.isHovered) {
-            this.renderToolTip(stack, pMouseX, pMouseY);
-        }
-
+        blit(stack, this.getX(), this.getY(), (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
     }
 }
