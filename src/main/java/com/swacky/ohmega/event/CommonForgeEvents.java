@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.events.AccessoryEquipEvent;
 import com.swacky.ohmega.api.events.AccessoryUnequipEvent;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
@@ -31,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ForgeEvents {
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = Ohmega.MODID)
+public class CommonForgeEvents {
     // Syncs slots upon player joining
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinLevelEvent event) {
@@ -87,14 +88,32 @@ public class ForgeEvents {
         }
     }
 
-    // Clones caps when changing dimensions
+    // Clones caps when changing end-overworld or respawn
+    @SuppressWarnings("DataFlowIssue")
     @SubscribeEvent
     public static void onCloneCaps(PlayerEvent.Clone event) {
         try {
             event.getOriginal().reviveCaps();
             event.getOriginal().getCapability(Ohmega.ACCESSORIES).ifPresent(old -> {
                 if((event.isWasDeath() && event.getOriginal().getServer() != null && event.getOriginal().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) || !event.isWasDeath()) {
-                    event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(newStore -> newStore.deserializeNBT(event.getEntity().registryAccess(), old.serializeNBT(event.getOriginal().registryAccess())));
+                    event.getEntity().getCapability(Ohmega.ACCESSORIES).ifPresent(newStore -> {
+                        newStore.deserializeNBT(event.getOriginal().registryAccess(), old.serializeNBT(event.getOriginal().registryAccess()));
+                        if(event.getOriginal().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+                        for(int i = 0; i < newStore.getSlots(); i++) {
+                            ItemStack stack = newStore.getStackInSlot(i);
+                            if(stack.getItem() instanceof IAccessory acc) {
+                                Player player = event.getEntity();
+                                AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), true);
+
+                                AccessoryEquipEvent event0 = OhmegaHooks.accessoryEquipEvent(player, stack);
+                                if(!event0.isCanceled()) {
+                                    acc.onEquip(player, stack);
+                                }
+                                AccessoryHelper._internalTag(stack).putInt("slot", i);
+                            }
+                        }
+                        }
+                    });
                     event.getOriginal().invalidateCaps();
                 }
             });
@@ -109,17 +128,14 @@ public class ForgeEvents {
         if(event.getEntity() instanceof Player player && player.getServer() != null && !player.getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                 for(int i = 0; i < a.getSlots(); i++) {
-                    if(a.getStackInSlot(i).getItem() instanceof IAccessory acc) {
-                        ItemStack stack = a.getStackInSlot(i);
-
-                        AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), false);
-
-                        AccessoryUnequipEvent event0 = OhmegaHooks.accessoryUnequipEvent(player, a.getStackInSlot(i));
+                    ItemStack stack = a.getStackInSlot(i);
+                    if(stack.getItem() instanceof IAccessory acc) {
+                        AccessoryUnequipEvent event0 = OhmegaHooks.accessoryUnequipEvent(player, stack);
                         if(!event0.isCanceled()) {
-                            acc.onUnequip(player, a.getStackInSlot(i));
+                            acc.onUnequip(player, stack);
                         }
-                        AccessoryHelper._internalTag(a.getStackInSlot(i)).putInt("slot", -1);
-                        AccessoryHelper.setActive(player, a.getStackInSlot(i), false);
+                        AccessoryHelper._internalTag(stack).putInt("slot", -1);
+                        AccessoryHelper.setActive(player, stack, false);
                         player.drop(stack, false, false);
                     }
                 }

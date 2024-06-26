@@ -94,6 +94,7 @@ public class AngelRing extends Item implements IAccessory {
     }
 
     // The sound to be played when equipped using a right click
+    @Nullable
     @Override
     public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GOLD.get();
@@ -103,7 +104,7 @@ public class AngelRing extends Item implements IAccessory {
     @Override
     public void addDefaultAttributeModifiers(ModifierBuilder builder) {
         // This modifier is only applied when the accessory is active
-        builder.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("04622de9-8f97-46c5-a8dd-20133aa44e4e"), "Strength", 1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        builder.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("04622de9-8f97-46c5-a8dd-20133aa44e4e"), "Strength", 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
 
         // This modifier is always applied
         builder.addModifierActiveOnly(Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString("854a57c3-592c-434b-aa7a-f6658a7857cb"), "MaxHealth", 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
