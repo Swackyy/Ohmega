@@ -94,6 +94,7 @@ public class AngelRing extends Item implements IAccessory {
     }
 
     // The sound to be played when equipped using a right click
+    @Nullable
     @Override
     public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GOLD.get();

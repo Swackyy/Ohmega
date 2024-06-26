@@ -36,7 +36,7 @@ public class OpenAccessoryGuiPacket {
                     player.openMenu(new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
-                            return MutableComponent.create(new PlainTextContents.LiteralContents(""));
+                            return MutableComponent.create(PlainTextContents.EMPTY);
                         }
 
                         @Override
@@ -47,5 +47,6 @@ public class OpenAccessoryGuiPacket {
                 }
             }
         });
+        context.setPacketHandled(true);
     }
 }

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -71,6 +72,7 @@ public interface IAccessory {
         return false;
     }
 
+    @Nullable
     default SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GENERIC.get();
     }

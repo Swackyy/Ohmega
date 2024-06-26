@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class AccessorySlot extends SlotItemHandler {
     protected final Player player;
@@ -60,7 +59,7 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-        if(!hasItem() && stack.getItem() instanceof IAccessory acc) {
+        if (!hasItem() && stack.getItem() instanceof IAccessory acc) {
             IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
             AccessoryHelper.changeModifiers(player, builder.getModifiers(), false);
 
@@ -106,7 +105,6 @@ public class AccessorySlot extends SlotItemHandler {
         }
     }
 
-    @Nullable
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
         return Pair.of(InventoryMenu.BLOCK_ATLAS, SLOTS[this.type.ordinal()].texture());

@@ -72,7 +72,7 @@ mixin {
     config "ohmega.mixins.json"
 }
 
-tasks.named('jar', Jar).configure {
+jar {
     manifest {
         attributes([
                 "Specification-Title"     : "ohmega",
