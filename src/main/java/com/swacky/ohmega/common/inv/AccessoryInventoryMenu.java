@@ -153,7 +153,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 if(this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
                     return ItemStack.EMPTY;
                 }
-            } else if(!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into top part of inv
+            } else if(!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into the top part of inv
                 return ItemStack.EMPTY;
             }
 

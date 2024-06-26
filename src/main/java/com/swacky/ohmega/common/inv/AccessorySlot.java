@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class AccessorySlot extends SlotItemHandler {
     protected final Player player;
@@ -51,66 +50,63 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPickup(Player player) {
-        return !getItem().isEmpty() && OhmegaHooks.accessoryCanUnequipEvent(player, getItem(), getItem().getCapability(Ohmega.ACCESSORY_ITEM).orElseThrow(NullPointerException::new).canUnequip(player, getItem())).getReturnValue();
+        boolean original = true;
+        if(getItem().getItem() instanceof IAccessory acc) {
+            original = acc.canUnequip(player, getItem());
+        }
+        return !getItem().isEmpty() && OhmegaHooks.accessoryCanUnequipEvent(player, getItem(), original).getReturnValue();
     }
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-        if(!hasItem()) {
-            stack.getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
-                IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-                this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
+        if (!hasItem() && stack.getItem() instanceof IAccessory acc) {
+            IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
+            this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
 
-                AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
-                if(!event.isCanceled()) {
-                    acc.onUnequip(this.player, stack);
-                }
-                AccessoryHelper._internalTag(stack).putInt("slot", -1);
-                AccessoryHelper.setActive(this.player, stack, false);
-            });
+            AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
+            if (!event.isCanceled()) {
+                acc.onUnequip(this.player, stack);
+            }
+            AccessoryHelper._internalTag(stack).putInt("slot", -1);
+            AccessoryHelper.setActive(this.player, stack, false);
         }
         super.onTake(player, stack);
     }
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        if(hasItem() && !ItemStack.isSameItem(stack, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
-            getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
-                IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-                this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
+        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && getItem().getItem() instanceof IAccessory acc) {
+            IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
+            this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
 
-                AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
-                if(!event.isCanceled()) {
-                    acc.onUnequip(this.player, stack);
-                }
+            AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
+            if (!event.isCanceled()) {
+                acc.onUnequip(this.player, stack);
+            }
 
-                AccessoryHelper._internalTag(stack).putInt("slot", -1);
-                AccessoryHelper.setActive(this.player, stack, false);
-                this.setChanged();
-            });
+            AccessoryHelper._internalTag(stack).putInt("slot", -1);
+            AccessoryHelper.setActive(this.player, stack, false);
+            this.setChanged();
         }
 
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if(hasItem() && !ItemStack.isSameItem(old, getItem()) && getItem().getCapability(Ohmega.ACCESSORY_ITEM).isPresent()) {
-            getItem().getCapability(Ohmega.ACCESSORY_ITEM).ifPresent(acc -> {
-                AccessoryHelper._internalTag(stack).putInt("slot", this.slot);
-                AccessoryHelper.setActive(this.player, stack, true);
+        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && getItem().getItem() instanceof IAccessory acc) {
+            AccessoryHelper._internalTag(stack).putInt("slot", this.slot);
+            AccessoryHelper.setActive(this.player, stack, true);
 
-                IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-                this.player.getAttributes().addTransientAttributeModifiers(builder.getModifiers());
+            IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
+            this.player.getAttributes().addTransientAttributeModifiers(builder.getModifiers());
 
-                AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(this.player, stack);
-                if(!event.isCanceled()) {
-                    acc.onEquip(this.player, stack);
-                }
-                this.setChanged();
-            });
+            AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(this.player, stack);
+            if (!event.isCanceled()) {
+                acc.onEquip(this.player, stack);
+            }
+            this.setChanged();
         }
     }
 
-    @Nullable
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
         return Pair.of(InventoryMenu.BLOCK_ATLAS, SLOTS[this.type.ordinal()].texture());

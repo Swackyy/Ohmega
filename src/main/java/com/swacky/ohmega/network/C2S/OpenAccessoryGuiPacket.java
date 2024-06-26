@@ -47,5 +47,6 @@ public class OpenAccessoryGuiPacket {
                 }
             }
         });
+        context.setPacketHandled(true);
     }
 }

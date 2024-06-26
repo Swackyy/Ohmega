@@ -47,7 +47,7 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
             gui.blit(ACCESSORY_LOC, this.leftPos + 178, this.topPos + 20, 178, 37, 26, 116);
 
             // Entity rendering
-            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 26, this.topPos + 8, this.leftPos + 75, this.topPos + 78, 30, 0.0625F, mx, my, this.minecraft.player);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 26, this.topPos + 8, this.leftPos + 75, this.topPos + 78, 30, 0.0625f, mx, my, this.minecraft.player);
         }
     }
 
