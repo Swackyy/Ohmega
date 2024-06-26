@@ -39,7 +39,7 @@ public class OpenAccessoryGuiPacket {
                     NetworkHooks.openGui(player, new MenuProvider() {
                         @Override
                         public @NotNull Component getDisplayName() {
-                            return new TextComponent("");
+                            return TextComponent.EMPTY;
                         }
 
                         @Override
