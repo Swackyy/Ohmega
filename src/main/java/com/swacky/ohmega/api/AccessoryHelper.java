@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class AccessoryHelper {
     // - - - INTERNAL USE START - - - //
     // Internal symbols are denoted by an underscore prefix
-    // You can use these however it is discouraged
+    // You can use these; however, it is discouraged
 
     public static final String _TAG_KEY = "OhmegaInternal";
 
@@ -210,11 +210,11 @@ public class AccessoryHelper {
                     stack0.setCount(1);
 
                     if(a.trySetStackInSlot(slot, stack0)) {
-                        stack.shrink(1);
-                        _internalTag(stack0).putInt("slot", slot);
-
                         IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
                         player.getAttributes().addTransientAttributeModifiers(builder.getModifiers());
+
+                        stack.shrink(1);
+                        _internalTag(stack0).putInt("slot", slot);
 
                         AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(player, stack0);
                         if(!event.isCanceled()) {

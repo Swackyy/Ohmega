@@ -39,7 +39,6 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
         this.renderTooltip(stack, mx, my);
     }
 
-    @SuppressWarnings("SuspiciousNameCombination") // Because of mismatched parchment mappings
     @Override
     protected void renderBg(@NotNull PoseStack stack, float pPartialTick, int pMouseX, int pMouseY) {
         if (this.minecraft != null && this.minecraft.player != null) {

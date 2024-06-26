@@ -34,13 +34,14 @@ public class SyncAccessoriesPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> sup) {
-        sup.get().enqueueWork(() -> {
+        NetworkEvent.Context context = sup.get();
+        context.enqueueWork(() -> {
             ClientLevel level = Minecraft.getInstance().level;
             if(level == null) return;
             if(level.getEntity(playerId) instanceof Player player) {
                 player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> a.setStackInSlot(this.slot, accessory));
             }
         });
-        sup.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }
