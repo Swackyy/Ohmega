@@ -6,7 +6,7 @@ plugins {
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-version = '1.1.0-forge-1.21'
+version = '1.1.0-forge-1.21-1.21.1'
 group = 'com.swacky.ohmega'
 
 base {
@@ -17,7 +17,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '2024.06.23-1.21'
+    mappings channel: 'parchment', version: '1.21-2024.06.23-1.21.1'
     reobf = false
     copyIdeResources = true
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -61,7 +61,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.21-51.0.17'
+    minecraft 'net.minecraftforge:forge:1.21.1-52.0.3'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
     // Can't get JEI to work for some reason
