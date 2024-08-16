@@ -37,8 +37,9 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        if(stack.getItem() instanceof IAccessory accessory) {
-            return ((AccessoryContainer) getItemHandler()).isValid(stack) && accessory.getType() == this.type && AccessoryHelper.isExclusiveType(this.player, stack);
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if(acc != null) {
+            return ((AccessoryContainer) getItemHandler()).isValid(stack) && acc.getType() == this.type && AccessoryHelper.isExclusiveType(this.player, stack);
         }
         return false;
     }
@@ -51,7 +52,8 @@ public class AccessorySlot extends SlotItemHandler {
     @Override
     public boolean mayPickup(Player player) {
         boolean original = true;
-        if(getItem().getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(getItem().getItem());
+        if(acc != null) {
             original = acc.canUnequip(player, getItem());
         }
         return !getItem().isEmpty() && OhmegaHooks.accessoryCanUnequipEvent(player, getItem(), original).getReturnValue();
@@ -59,7 +61,8 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-        if (!hasItem() && stack.getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if (!hasItem() && acc != null) {
             IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
             AccessoryHelper.changeModifiers(player, builder.getModifiers(), false);
 
@@ -75,7 +78,8 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && getItem().getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && acc != null) {
             AccessoryHelper.changeModifiers(this.player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), false);
 
             AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
@@ -91,7 +95,7 @@ public class AccessorySlot extends SlotItemHandler {
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && getItem().getItem() instanceof IAccessory acc) {
+        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && acc != null) {
             AccessoryHelper._internalTag(stack).putInt("slot", this.slot);
             AccessoryHelper.setActive(this.player, stack, true);
 

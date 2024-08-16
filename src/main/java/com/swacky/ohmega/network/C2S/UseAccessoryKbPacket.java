@@ -1,5 +1,6 @@
 package com.swacky.ohmega.network.C2S;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.events.AccessoryUseEvent;
 import com.swacky.ohmega.common.core.Ohmega;
@@ -30,7 +31,8 @@ public class UseAccessoryKbPacket {
         context.enqueueWork(() -> {
             if(this.slot < 6) {
                 Objects.requireNonNull(context.getSender()).getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
-                    if(a.getStackInSlot(this.slot).getItem() instanceof IAccessory acc) {
+                    IAccessory acc = AccessoryHelper.getBoundAccessory(a.getStackInSlot(this.slot).getItem());
+                    if(acc != null) {
                         Player player = context.getSender();
                         ItemStack stack = a.getStackInSlot(slot);
 

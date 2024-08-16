@@ -126,34 +126,38 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(stack0, 45, 46, false)) { // Offhand in
                     return ItemStack.EMPTY;
                 }
-            } else if(stack0.getItem() instanceof IAccessory acc && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, acc.getType()) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, acc.getType())).mayPlace(stack)) { // Accessory in
-                int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
-                stack0.shrink(1);
-                stack.setCount(1);
-                getSlot(46 + accSlot).set(stack);
-            } else if(index >= 9 && index < 36) {
-                if (!this.moveItemStackTo(stack0, 36, 45, false)) { // Top part of inv in
-                    return ItemStack.EMPTY;
-                }
-            } else if(index > 35 && index < 45) {
-                if (!this.moveItemStackTo(stack0, 9, 36, false)) { // Hotbar out
-                    return ItemStack.EMPTY;
-                }
-            } else if(index > 45 && index < 52 && stack0.getItem() instanceof IAccessory acc) {
-                AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack0).getModifiers(), false);
+            } else {
+                IAccessory acc = AccessoryHelper.getBoundAccessory(stack0.getItem());
+                if(acc != null && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, acc.getType()) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, acc.getType())).mayPlace(stack))
+                { // Accessory in
+                    int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
+                    stack0.shrink(1);
+                    stack.setCount(1);
+                    getSlot(46 + accSlot).set(stack);
+                } else if (index >= 9 && index < 36) {
+                    if (!this.moveItemStackTo(stack0, 36, 45, false)) { // Top part of inv in
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index > 35 && index < 45) {
+                    if (!this.moveItemStackTo(stack0, 9, 36, false)) { // Hotbar out
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index > 45 && index < 52 && acc != null) {
+                    AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack0).getModifiers(), false);
 
-                AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack0);
-                if(!event.isCanceled()) {
-                    acc.onUnequip(this.player, stack0);
-                }
+                    AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack0);
+                    if (!event.isCanceled()) {
+                        acc.onUnequip(this.player, stack0);
+                    }
 
-                AccessoryHelper._internalTag(stack0).putInt("slot", -1);
-                AccessoryHelper.setActive(player, stack0, false);
-                if(this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
+                    AccessoryHelper._internalTag(stack0).putInt("slot", -1);
+                    AccessoryHelper.setActive(player, stack0, false);
+                    if (this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into the top part of inv
                     return ItemStack.EMPTY;
                 }
-            } else if(!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into the top part of inv
-                return ItemStack.EMPTY;
             }
 
             if(stack0.isEmpty()) {
