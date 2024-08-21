@@ -84,7 +84,7 @@ jar {
         attributes([
                 "Specification-Title"     : "ohmega",
                 "Specification-Vendor"    : "ohmegaswacky",
-                "Specification-Version"   : "1.2.1",
+                "Specification-Version"   : "1.2.2",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "ohmegaswacky",
