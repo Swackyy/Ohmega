@@ -9,7 +9,6 @@ import com.swacky.ohmega.api.events.AccessoryUnequipEvent;
 import com.swacky.ohmega.cap.AccessoryContainer;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.event.OhmegaHooks;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -23,10 +22,10 @@ public class AccessorySlot extends SlotItemHandler {
     protected final int slot;
     protected final AccessoryType type;
 
-    private static final Material SLOT_NORMAL = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_normal"));
-    private static final Material SLOT_UTILITY = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_utility"));
-    private static final Material SLOT_SPECIAL = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Ohmega.MODID, "item/accessory_slot_special"));
-    public static final Material[] SLOTS = new Material[]{SLOT_NORMAL, SLOT_UTILITY, SLOT_SPECIAL};
+    private static final ResourceLocation SLOT_NORMAL = new ResourceLocation(Ohmega.MODID, "item/accessory_slot_normal");
+    private static final ResourceLocation SLOT_UTILITY = new ResourceLocation(Ohmega.MODID, "item/accessory_slot_utility");
+    private static final ResourceLocation SLOT_SPECIAL = new ResourceLocation(Ohmega.MODID, "item/accessory_slot_special");
+    public static final ResourceLocation[] SLOTS = new ResourceLocation[]{SLOT_NORMAL, SLOT_UTILITY, SLOT_SPECIAL};
 
     public AccessorySlot(Player player, IItemHandler handler, int index, int x, int y, AccessoryType type) {
         super(handler, index, x, y);
@@ -37,8 +36,9 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        if(stack.getItem() instanceof IAccessory accessory) {
-            return ((AccessoryContainer) getItemHandler()).isValid(stack) && accessory.getType() == this.type && AccessoryHelper.isExclusiveType(this.player, stack);
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if(acc != null) {
+            return ((AccessoryContainer) getItemHandler()).isValid(stack) && acc.getType() == this.type && AccessoryHelper.isExclusiveType(this.player, stack);
         }
         return false;
     }
@@ -51,7 +51,8 @@ public class AccessorySlot extends SlotItemHandler {
     @Override
     public boolean mayPickup(Player player) {
         boolean original = true;
-        if(getItem().getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(getItem().getItem());
+        if(acc != null) {
             original = acc.canUnequip(player, getItem());
         }
         return !getItem().isEmpty() && OhmegaHooks.accessoryCanUnequipEvent(player, getItem(), original).getReturnValue();
@@ -59,7 +60,8 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-        if (!hasItem() && stack.getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if (!hasItem() && acc != null) {
             IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
             this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
 
@@ -75,7 +77,8 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && getItem().getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && acc != null) {
             IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
             this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
 
@@ -92,7 +95,7 @@ public class AccessorySlot extends SlotItemHandler {
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && getItem().getItem() instanceof IAccessory acc) {
+        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && acc != null) {
             AccessoryHelper._internalTag(stack).putInt("slot", this.slot);
             AccessoryHelper.setActive(this.player, stack, true);
 
@@ -109,6 +112,6 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-        return Pair.of(InventoryMenu.BLOCK_ATLAS, SLOTS[this.type.ordinal()].texture());
+        return Pair.of(InventoryMenu.BLOCK_ATLAS, SLOTS[this.type.ordinal()]);
     }
 }
