@@ -1,13 +1,22 @@
 package com.swacky.ohmega.event;
 
+import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.events.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingContext;
 
 public class OhmegaHooks {
+    public static ImmutableMap<Item, IAccessory> bindAccessoriesEvent() {
+        BindAccessoriesEvent event = new BindAccessoriesEvent();
+        ModLoader.get().postEventWithWrapInModOrder(event, (mc, event0) -> ModLoadingContext.get().setActiveContainer(mc), (mc, event0) -> ModLoadingContext.get().setActiveContainer(null));
+        return event.collect();
+    }
+
     public static AccessoryTickEvent accessoryTickEventPre(Player player, ItemStack stack) {
         AccessoryTickEvent event = new AccessoryTickEvent(Phase.PRE, player, stack);
         MinecraftForge.EVENT_BUS.post(event);
