@@ -31,7 +31,8 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     }
 
     public boolean isValid(ItemStack stack) {
-        if (stack.getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if (acc != null) {
             return OhmegaHooks.accessoryCanEquipEvent(player, stack, acc.canEquip(player, stack)).getReturnValue();
         }
         return false;
@@ -39,7 +40,7 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if(stack.isEmpty() || this.isValid(stack) && stack.getItem() instanceof IAccessory) {
+        if(stack.isEmpty() || this.isValid(stack) && AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
             super.setStackInSlot(slot, stack);
         }
     }
@@ -64,10 +65,11 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
     public void tick() {
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
-            if(stack.getItem() instanceof IAccessory a) {
+            IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+            if(acc != null) {
                 AccessoryTickEvent event = OhmegaHooks.accessoryTickEventPre(this.player, stack);
                 if (!event.isCanceled()) {
-                    a.tick(this.player, stack);
+                    acc.tick(this.player, stack);
                     OhmegaHooks.accessoryTickEventPost(this.player, stack);
                 }
             }
@@ -81,8 +83,9 @@ public class AccessoryContainer extends ItemStackHandler implements IItemHandler
             for (byte i = 0; i < getSlots(); i++) {
                 final ItemStack stack = getStackInSlot(i);
                 boolean autoSync = false;
-                if(stack.getItem() instanceof IAccessory a) {
-                    autoSync = a.autoSync(this.player);
+                IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+                if(acc != null) {
+                    autoSync = acc.autoSync(this.player);
                 }
                 if (this.changed[i] || autoSync && !ItemStack.isSame(stack, this.previous.get(i))) {
                     if (receivers == null) {

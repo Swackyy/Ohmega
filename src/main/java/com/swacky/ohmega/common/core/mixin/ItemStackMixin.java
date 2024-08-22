@@ -18,18 +18,22 @@ public abstract class ItemStackMixin {
     @Shadow public abstract Item getItem();
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "RETURN"))
-    private void ItemStack(ItemLike item, int count, CompoundTag tag, CallbackInfo ci) {
-        if(item instanceof IAccessory acc) {
-            IAccessory.ModifierBuilder builder = new IAccessory.ModifierBuilder();
-            acc.addDefaultAttributeModifiers(builder);
-            OhmegaHooks.accessoryAttributeModifiersEvent(item.asItem(), builder);
-            AccessoryHelper._internalTag((ItemStack) (Object) (this)).put("AccessoryAttributeModifiers", builder.serialize());
+    private void ItemStack(ItemLike itemLike, int count, CompoundTag tag, CallbackInfo ci) {
+        if(itemLike instanceof Item item) {
+            IAccessory acc = AccessoryHelper.getBoundAccessory(item);
+            if (acc != null) {
+                IAccessory.ModifierBuilder builder = new IAccessory.ModifierBuilder();
+                acc.addDefaultAttributeModifiers(builder);
+                OhmegaHooks.accessoryAttributeModifiersEvent(item.asItem(), builder);
+                AccessoryHelper._internalTag((ItemStack) (Object) (this)).put("AccessoryAttributeModifiers", builder.serialize());
+            }
         }
     }
 
     @Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "RETURN"))
     private void ItemStack(CompoundTag tag, CallbackInfo ci) {
-        if(getItem() instanceof IAccessory acc) {
+        IAccessory acc = AccessoryHelper.getBoundAccessory(getItem());
+        if(acc != null) {
             IAccessory.ModifierBuilder builder = new IAccessory.ModifierBuilder();
             acc.addDefaultAttributeModifiers(builder);
             OhmegaHooks.accessoryAttributeModifiersEvent(getItem(), builder);
