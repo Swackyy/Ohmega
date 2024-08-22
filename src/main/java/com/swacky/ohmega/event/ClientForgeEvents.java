@@ -1,5 +1,6 @@
 package com.swacky.ohmega.event;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.events.AccessoryUseEvent;
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
@@ -57,7 +58,8 @@ public class ClientForgeEvents {
                 if(mc.player != null) {
                     mc.player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                         ItemStack stack = a.getStackInSlot(0 + 3);
-                        if(stack.getItem() instanceof IAccessory acc) {
+                        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+                        if(acc != null) {
                             AccessoryUseEvent event0 = OhmegaHooks.accessoryUseEvent(mc.player, stack);
                             if(!event0.isCanceled()) {
                                 acc.onUse(mc.player, stack);
@@ -78,7 +80,8 @@ public class ClientForgeEvents {
                 if(mc.player != null) {
                     mc.player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                         ItemStack stack = a.getStackInSlot(1 + 3);
-                        if(stack.getItem() instanceof IAccessory acc) {
+                        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+                        if(acc != null) {
                             AccessoryUseEvent event0 = OhmegaHooks.accessoryUseEvent(mc.player, stack);
                             if(!event0.isCanceled()) {
                                 acc.onUse(mc.player, stack);
@@ -99,7 +102,8 @@ public class ClientForgeEvents {
                 if(mc.player != null) {
                     mc.player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                         ItemStack stack = a.getStackInSlot(2 + 3);
-                        if(stack.getItem() instanceof IAccessory acc) {
+                        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+                        if(acc != null) {
                             AccessoryUseEvent event0 = OhmegaHooks.accessoryUseEvent(mc.player, stack);
                             if(!event0.isCanceled()) {
                                 acc.onUse(mc.player, stack);

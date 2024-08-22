@@ -12,7 +12,7 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -100,75 +100,78 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         ItemStack stack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if(slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack stack0 = slot.getItem();
             stack = stack0.copy();
-            EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(stack);
-            if(index == 0) {
+            EquipmentSlot equipmentSlot = LivingEntity.getEquipmentSlotForItem(stack);
+            if (index == 0) {
                 if (!this.moveItemStackTo(stack0, 9, 45, true)) { // Crafting result out
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(stack0, stack);
-            } else if(index >= 1 && index < 5) {
+            } else if (index >= 1 && index < 5) {
                 if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Crafting out
                     return ItemStack.EMPTY;
                 }
-            } else if(index >= 5 && index < 9) {
+            } else if (index >= 5 && index < 9) {
                 if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Armour out
                     return ItemStack.EMPTY;
                 }
-            } else if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem()) {
-                int i = 8 - equipmentSlot.getIndex();
-                if (!this.moveItemStackTo(stack0, i, i + 1, false)) { // Armour in
-                    return ItemStack.EMPTY;
-                }
-            } else if(equipmentSlot == EquipmentSlot.OFFHAND && !this.slots.get(45).hasItem()) {
-                if (!this.moveItemStackTo(stack0, 45, 46, false)) { // Offhand in
-                    return ItemStack.EMPTY;
-                }
-            } else if(stack0.getItem() instanceof IAccessory acc && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, acc.getType()) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, acc.getType())).mayPlace(stack)) { // Accessory in
-                int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
-                stack0.shrink(1);
-                stack.setCount(1);
-                getSlot(46 + accSlot).set(stack);
-            } else if(index >= 9 && index < 36) {
-                if (!this.moveItemStackTo(stack0, 36, 45, false)) { // Top part of inv in
-                    return ItemStack.EMPTY;
-                }
-            } else if(index > 35 && index < 45) {
-                if (!this.moveItemStackTo(stack0, 9, 36, false)) { // Hotbar out
-                    return ItemStack.EMPTY;
-                }
-            } else if(index > 45 && index < 52 && stack0.getItem() instanceof IAccessory acc) {
-                IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack0);
-                this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
+            } else {
+                IAccessory acc = AccessoryHelper.getBoundAccessory(stack0.getItem());
+                if (acc != null && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, acc.getType()) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, acc.getType())).mayPlace(stack)) { // Accessory in
+                    int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
+                    stack0.shrink(1);
+                    stack.setCount(1);
+                    getSlot(46 + accSlot).set(stack);
+                } else if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem()) {
+                    int i = 8 - equipmentSlot.getIndex();
+                    if (!this.moveItemStackTo(stack0, i, i + 1, false)) { // Armour in
+                        return ItemStack.EMPTY;
+                    }
+                } else if (equipmentSlot == EquipmentSlot.OFFHAND && !this.slots.get(45).hasItem()) {
+                    if (!this.moveItemStackTo(stack0, 45, 46, false)) { // Offhand in
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index >= 9 && index < 36) {
+                    if (!this.moveItemStackTo(stack0, 36, 45, false)) { // Top part of inv in
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index > 35 && index < 45) {
+                    if (!this.moveItemStackTo(stack0, 9, 36, false)) { // Hotbar out
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index > 45 && index < 52 && acc != null) {
+                    IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack0);
+                    this.player.getAttributes().removeAttributeModifiers(builder.getModifiers());
 
-                AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack0);
-                if(!event.isCanceled()) {
-                    acc.onUnequip(this.player, stack0);
-                }
+                    AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack0);
+                    if (!event.isCanceled()) {
+                        acc.onUnequip(this.player, stack0);
+                    }
 
-                AccessoryHelper._internalTag(stack0).putInt("slot", -1);
-                AccessoryHelper.setActive(player, stack0, false);
-                if(this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
+                    AccessoryHelper._internalTag(stack0).putInt("slot", -1);
+                    AccessoryHelper.setActive(player, stack0, false);
+                    if (this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into the top part of inv
                     return ItemStack.EMPTY;
                 }
-            } else if(!this.moveItemStackTo(stack0, 9, 45, false)) { // Etc into the top part of inv
-                return ItemStack.EMPTY;
             }
 
-            if(stack0.isEmpty()) {
+            if (stack0.isEmpty()) {
                 slot.set(ItemStack.EMPTY);
             } else {
                 slot.setChanged();
             }
 
-            if(stack0.getCount() == stack.getCount()) {
+            if (stack0.getCount() == stack.getCount()) {
                 return ItemStack.EMPTY;
             }
 
             slot.onTake(player, stack0);
-            if(index == 0) {
+            if (index == 0) {
                 player.drop(stack0, false);
             }
         }
