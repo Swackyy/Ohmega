@@ -6,7 +6,14 @@ plugins {
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-version = '1.1.0-forge-1.19.4'
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+version = '1.2.2'
 group = 'com.swacky.ohmega'
 
 base {
@@ -21,56 +28,28 @@ minecraft {
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
-        client {
+        configureEach {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'ohmega'
+        }
 
-            mods {
-                ohmega {
-                    source sourceSets.main
-                }
-            }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', 'ohmega'
         }
 
         server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'ohmega'
-
-            mods {
-                ohmega {
-                    source sourceSets.main
-                }
-            }
         }
 
         gameTestServer {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'ohmega'
-
-            mods {
-                ohmega {
-                    source sourceSets.main
-                }
-            }
         }
 
         data {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
             args '--mod', 'ohmega', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                ohmega {
-                    source sourceSets.main
-                }
-            }
         }
     }
 }
@@ -102,7 +81,7 @@ jar {
         attributes([
                 "Specification-Title"     : "ohmega",
                 "Specification-Vendor"    : "ohmegaswacky",
-                "Specification-Version"   : "1",
+                "Specification-Version"   : "1.2.2",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "ohmegaswacky",
