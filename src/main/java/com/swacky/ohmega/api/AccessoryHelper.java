@@ -3,6 +3,7 @@ package com.swacky.ohmega.api;
 import com.swacky.ohmega.api.events.AccessoryEquipEvent;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.core.init.ModBinds;
+import com.swacky.ohmega.event.CommonModEvents;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -41,14 +42,14 @@ public class AccessoryHelper {
     /**
      * Finds the slot that a given {@link IAccessory} is found
      * @param player the {@link Player} to check for
-     * @param accessory the {@link IAccessory} to check if the player has it
+     * @param acc the {@link IAccessory} to check if the player has it
      * @return the slot that the passed {@link IAccessory} was found. If not found, returns -1
      */
-    public static <T extends Item & IAccessory> int getSlotFor(Player player, T accessory) {
+    public static int getSlotFor(Player player, Item acc) {
         int[] out = {-1};
         player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
             for(int i = 0; i < a.getSlots(); i++) {
-                if(a.getStackInSlot(i).getItem() == accessory) {
+                if(a.getStackInSlot(i).getItem() == acc) {
                     out[0] = i;
                 }
             }
@@ -59,12 +60,12 @@ public class AccessoryHelper {
     /**
      * Checks if a player has an accessory and allows for the calling of a function upon it
      * @param player the {@link Player} to check for
-     * @param accessory the {@link Player} to check if the player has it
+     * @param acc the {@link Player} to check if the player has it
      * @param holder a holder class for a functional interface, allows users to run methods if the accessory is present
      * @return true if the {@link Player} has the passed accessory, false otherwise
      */
-    public static <T extends Item & IAccessory> boolean runIfPresent(Player player, T accessory, Inner holder) {
-        int slot = getSlotFor(player, accessory);
+    public static boolean runIfPresent(Player player, Item acc, Inner holder) {
+        int slot = getSlotFor(player, acc);
         if(slot != -1) {
             holder.apply(player, getStackInSlot(player, slot));
             return true;
@@ -75,11 +76,11 @@ public class AccessoryHelper {
     /**
      * Checks if a player has an accessory, if true, the accessory will update
      * @param player the player to check for
-     * @param accessory the {@link IAccessory} to check if the player has it
+     * @param acc the {@link IAccessory} to check if the player has it
      * @return true if the player has the passed accessory, false otherwise
      */
-    public static <T extends Item & IAccessory> boolean updateIfPresent(Player player, T accessory) {
-        return runIfPresent(player, accessory, accessory::update);
+    public static <T extends Item & IAccessory> boolean updateIfPresent(Player player, T acc) {
+        return runIfPresent(player, acc, acc::update);
     }
 
     /**
@@ -112,11 +113,11 @@ public class AccessoryHelper {
 
     /**
      * A utility method to get the {@link AccessoryType} of {@link IAccessory} in a component
-     * @param accessory the {@link IAccessory} to get the type from
+     * @param acc the {@link IAccessory} to get the type from
      * @return a {@link MutableComponent} instance of "Accessory type: TYPE"
      */
-    public static MutableComponent getTypeTooltip(IAccessory accessory) {
-        return MutableComponent.create(new TranslatableContents("accessory.type", MutableComponent.create(accessory.getType().getTranslation()).getString())).withStyle(ChatFormatting.DARK_GRAY);
+    public static MutableComponent getTypeTooltip(IAccessory acc) {
+        return MutableComponent.create(new TranslatableContents("accessory.type", MutableComponent.create(acc.getType().getTranslation()).getString())).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     /**
@@ -127,6 +128,24 @@ public class AccessoryHelper {
      */
     public static int getSlot(ItemStack stack) {
         return _internalTag(stack).contains("slot") ? _internalTag(stack).getInt("slot") : -1;
+    }
+
+    /**
+     * Checks if an {@link Item} is in any way an accessory, through either implementing {@link IAccessory} or binding with {@link com.swacky.ohmega.api.events.BindAccessoriesEvent}
+     * @param item the {@link Item} to test
+     * @return  true if an accessory
+     */
+    public static boolean isItemAccessoryBound(Item item) {
+        return CommonModEvents.isItemAccessoryBound(item);
+    }
+
+    /**
+     * Retrieves the {@link IAccessory} instance bound to the passed {@link Item} through implementing {@link IAccessory} or binding with {@link com.swacky.ohmega.api.events.BindAccessoriesEvent}
+     * @param item the {@link Item} to retrieve the bound {@link IAccessory} instance
+     * @return if found, the {@link Item}'s bound {@link IAccessory} instance, else null
+     */
+    public static IAccessory getBoundAccessory(Item item) {
+        return CommonModEvents.getBoundAccessory(item);
     }
 
     /**
@@ -155,7 +174,7 @@ public class AccessoryHelper {
      * @return true if active, false if inactive or not an {{@link IAccessory} item
      */
     public static boolean isActive(ItemStack stack) {
-        if(stack.getItem() instanceof IAccessory) {
+        if(isItemAccessoryBound(stack.getItem())) {
             return _internalTag(stack).getBoolean("active");
         }
         return false;
@@ -203,7 +222,8 @@ public class AccessoryHelper {
         InteractionResultHolder<ItemStack>[] out = new InteractionResultHolder[]{InteractionResultHolder.pass(player.getItemInHand(hand))};
         player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
             ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem() instanceof IAccessory acc) {
+            IAccessory acc = getBoundAccessory(stack.getItem());
+            if (acc != null) {
                 int slot = getFirstOpenSlot(player, acc.getType());
                 if (slot != -1) {
                     ItemStack stack0 = stack.copy();
@@ -290,8 +310,9 @@ public class AccessoryHelper {
     public static ArrayList<IAccessory> getAccessories(Player player) {
         ArrayList<IAccessory> accessories = new ArrayList<>();
         for(ItemStack stack : getStacks(player)) {
-            if(stack.getItem() instanceof IAccessory accessory) {
-                accessories.add(accessory);
+            IAccessory acc = getBoundAccessory(stack.getItem());
+            if(acc != null) {
+                accessories.add(acc);
             }
         }
         return accessories;
@@ -327,13 +348,13 @@ public class AccessoryHelper {
     /**
      * Checks compatibility of the {@link IAccessory} provided with all other equipped accessories
      * @param player the {@link Player} to get the accessory inventory of
-     * @param accessory the {@link IAccessory} to test against
+     * @param acc the {@link IAccessory} to test against
      * @return true if compatible, false if not
      */
-    public static boolean compatibleWith(Player player, IAccessory accessory) {
+    public static boolean compatibleWith(Player player, IAccessory acc) {
         boolean[] out = {true};
-        for(IAccessory accessory0 : getAccessories(player)) {
-            if(!accessory0.isCompatibleWith(accessory)) {
+        for(IAccessory acc0 : getAccessories(player)) {
+            if(!acc0.isCompatibleWith(acc)) {
                 out[0] = false;
             }
         }
@@ -348,10 +369,6 @@ public class AccessoryHelper {
      * @return {@link IAccessory} instance of the provided {@link ItemStack} if found, else null
      */
     public static IAccessory getFromStack(ItemStack stack) {
-        if(stack.getItem() instanceof IAccessory a) {
-            return a;
-        }
-
-        return null;
+        return getBoundAccessory(stack.getItem());
     }
 }

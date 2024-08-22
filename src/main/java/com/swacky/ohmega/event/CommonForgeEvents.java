@@ -101,7 +101,8 @@ public class CommonForgeEvents {
                         if(event.getOriginal().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
                         for(int i = 0; i < newStore.getSlots(); i++) {
                             ItemStack stack = newStore.getStackInSlot(i);
-                            if(stack.getItem() instanceof IAccessory acc) {
+                            IAccessory acc =  AccessoryHelper.getBoundAccessory(stack.getItem());
+                            if(acc != null) {
                                 Player player = event.getEntity();
                                 IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
                                 player.getAttributes().addTransientAttributeModifiers(builder.getModifiers());
@@ -130,7 +131,8 @@ public class CommonForgeEvents {
             player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
                 for(int i = 0; i < a.getSlots(); i++) {
                     ItemStack stack = a.getStackInSlot(i);
-                    if(stack.getItem() instanceof IAccessory acc) {
+                    IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+                    if(acc != null) {
                         AccessoryUnequipEvent event0 = OhmegaHooks.accessoryUnequipEvent(player, stack);
                         if(!event0.isCanceled()) {
                             acc.onUnequip(player, stack);
