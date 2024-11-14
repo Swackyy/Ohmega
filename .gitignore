@@ -1,13 +1,4 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
-
 # idea
-out
 *.ipr
 *.iws
 *.iml
@@ -18,12 +9,8 @@ build
 .gradle
 
 # other
-eclipse
 run
 
-# Files from Forge MDK
-forge*changelog.txt
-
-#misc
+# misc
+src/generated
 genRuns.bat
-/src/main/java/com/swacky/ohmega/event/EventTests.java

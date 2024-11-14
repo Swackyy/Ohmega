@@ -1,22 +1,24 @@
 modLoader="javafml"
-loaderVersion="[51,53)"
-license="All rights reserved"
+loaderVersion="${loader_version_range}"
+license="MIT"
 [[mods]]
-modId="ohmega"
-version="${file.jarVersion}"
+modId="${mod_id}"
+version="${mod_version}"
 displayName="Ohmega"
-logoFile= "ohmega.png"
-authors="Developer: Swacky_"
-description='''A modernized and lightweight accessories mod for Minecraft. For API usage and reference code info, visit https://github.com/Swackyy/ohmega and view the readme.md file'''
-[[dependencies.ohmega]]
+logoFile= "${mod_id}.png"
+authors="${mod_authors}"
+description='''A modernized and lightweight accessories API for Minecraft.
+View the source code here: https://github.com/Swackyy/ohmega
+Or visit the wiki here: https://github.com/Swackyy/Ohmega/wiki'''
+[[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
-    versionRange="[51,53)"
+    versionRange="${forge_version_range}"
     ordering="NONE"
     side="BOTH"
-[[dependencies.ohmega]]
+[[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.21,1.21.2)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

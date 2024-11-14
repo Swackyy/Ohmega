@@ -1,91 +1,198 @@
 package com.swacky.ohmega.api;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.swacky.ohmega.api.events.AccessoryEquipEvent;
+import com.swacky.ohmega.api.event.AccessoryEquipEvent;
+import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.core.Ohmega;
-import com.swacky.ohmega.common.core.init.ModBinds;
+import com.swacky.ohmega.common.core.init.OhmegaBinds;
+import com.swacky.ohmega.common.core.init.OhmegaDataComponents;
+import com.swacky.ohmega.common.core.init.OhmegaTags;
+import com.swacky.ohmega.common.datacomponent.AccessoryDataComponent;
+import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.CommonModEvents;
 import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.network.ModNetworking;
+import com.swacky.ohmega.network.S2C.SyncAccessorySlotPacket;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
-import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import org.codehaus.plexus.util.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @SuppressWarnings("unused")
 public class AccessoryHelper {
-    // - - - INTERNAL USE START - - - //
-    // Internal symbols are denoted by an underscore prefix
-    // You can use these; however, it is discouraged
-
-    public static final String _TAG_KEY = "OhmegaInternal";
-
-    // Tags are easier to deal with
-    @SuppressWarnings("deprecation")
-    public static CompoundTag _internalTag(ItemStack stack) {
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        CompoundTag tag;
-
-        if(data != null) {
-            tag = data.getUnsafe();
-            if(tag.contains(_TAG_KEY)) {
-                return tag.getCompound(_TAG_KEY);
-            }
-        } else {
-            tag = new CompoundTag();
+    /**
+     * This is an internal function; it is in the {@code api} package as you can use it, however it is discouraged
+     * @param stack an {@link ItemStack} instance to retrieve the {@link AccessoryDataComponent} from
+     * @return the {@link AccessoryDataComponent} bound to the {@link ItemStack}
+     */
+    public static AccessoryDataComponent _getInternalData(ItemStack stack) {
+        if (stack.has(OhmegaDataComponents.ACCESSORY.get())) {
+            return stack.get(OhmegaDataComponents.ACCESSORY.get());
         }
-
-        tag.put(_TAG_KEY, new CompoundTag());
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        return tag;
+        return stack.set(OhmegaDataComponents.ACCESSORY.get(), new AccessoryDataComponent(-1, false, ModifierHolder.EMPTY));
     }
 
-    // - - - INTERNAL USE END - - - //
+    /**
+     * Makes any (including vanilla and other mods') {@link Item}(s) into an accessory by binding an {@link IAccessory} instance to it.
+     * @param item the registered {@link Item} target
+     * @param binding an {@link IAccessory} instance to bind the target to
+     * @return true if it can be bound, false if it is already bound
+     */
+    public static boolean bindAccessory(Item item, IAccessory binding) {
+        return Ohmega.bindAccessory(item, binding);
+    }
+
+    /**
+     * Checks if an {@link Item} is in any way an accessory, through either implementing {@link IAccessory} or binding with {@link #bindAccessory(Item, IAccessory)}
+     * @param item the {@link Item} to test
+     * @return  true if an accessory
+     */
+    public static boolean isItemAccessoryBound(Item item) {
+        return Ohmega.isItemAccessoryBound(item);
+    }
+
+    /**
+     * Retrieves the {@link IAccessory} instance bound to the passed {@link Item} through implementing {@link IAccessory} or binding with {@link #bindAccessory(Item, IAccessory)}
+     * @param item the {@link Item} to retrieve the bound {@link IAccessory} instance
+     * @return if found, the {@link Item}'s bound {@link IAccessory} instance, else null
+     */
+    public static IAccessory getBoundAccessory(Item item) {
+        return Ohmega.getBoundAccessory(item);
+    }
 
     /**
      * Finds the slot that a given {@link IAccessory} is found
      * @param player the {@link Player} to check for
-     * @param acc the {@link IAccessory} to check if the player has it
+     * @param acc the {@link IAccessory} to find the slot of
      * @return the slot that the passed {@link IAccessory} was found. If not found, returns -1
      */
-    public static int getSlotFor(Player player, Item acc) {
-        int[] out = {-1};
-        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
-            for(int i = 0; i < a.getSlots(); i++) {
-                if(a.getStackInSlot(i).getItem() == acc) {
-                    out[0] = i;
-                }
+    public static int getSlotFor(Player player, IAccessory acc) {
+        ArrayList<ItemStack> list = getStacks(player);
+        for (int i = 0; i < list.size(); i++) {
+            if (acc == getBoundAccessory(list.get(i).getItem())) {
+                return i;
             }
-        });
-        return out[0];
+        }
+        return -1;
+    }
+
+    /**
+     * A shortcut method to {@link #getSlotFor(Player, IAccessory)}
+     * @param player the {@link Player} to check for
+     * @param item the accessory to find the slot of
+     * @return the slot that the passed accessory was found. If not found, returns -1
+     */
+    public static int getSlotFor(Player player, Item item) {
+        IAccessory acc = getBoundAccessory(item);
+        if (acc != null) {
+            return getSlotFor(player, acc);
+        }
+        return -1;
+    }
+
+    /**
+     * Sets the slot of an accessory {@link ItemStack}
+     * <p>
+     * Does not place the {@link ItemStack} into an accessory slot, but instead adds slot index data to the {@link ItemStack}
+     * @param stack an {@link ItemStack} of an accessory
+     * @param slot the index of the slot to set in
+     */
+    public static void setSlot(ItemStack stack, int slot) {
+        AccessoryDataComponent data = _getInternalData(stack);
+        if (data != null) {
+            data.setSlot(slot);
+        }
+    }
+
+    /**
+     * Gets the item's slot in the player's inventory from an {@link ItemStack}'s tag
+     * @param stack the {@link ItemStack} to test against
+     * @return the slot of the item if the tag is present, -1 otherwise
+     * -1 is returned if not present because otherwise it would return 0, the first slot, which messes things up. Using -1 makes it an outlier
+     */
+    public static int getSlot(ItemStack stack) {
+        AccessoryDataComponent data = _getInternalData(stack);
+        if (data != null) {
+            return data.getSlot();
+        }
+        return -1;
+    }
+
+    /**
+     * Checks if the player has an accessory
+     * @param player the {@link Player} to check for
+     * @param acc the {@link IAccessory} to check if the player has it
+     * @return true if the {@link Player} has the passed {@link IAccessory} equipped, otherwise false
+     */
+    public static boolean hasAccessory(Player player, IAccessory acc) {
+        return getSlotFor(player, acc) != -1;
+    }
+
+    /**
+     * A shortcut method to {@link #hasAccessory(Player, IAccessory)}
+     * @param player the {@link Player} to check for
+     * @param item the accessory to check if the player has it
+     * @return true if the {@link Player} has the passed accessory equipped, otherwise false
+     */
+    public static boolean hasAccessory(Player player, Item item) {
+        IAccessory acc = getBoundAccessory(item);
+        if (acc != null) {
+            return hasAccessory(player, acc);
+        }
+        return false;
+    }
+
+    /**
+     * Returns the {@link ItemStack} corresponding to the slot index of the accessory inventory
+     * @param player the {@link Player} to get the stacks from
+     * @param slot the index of slot, 5 would be the special slot as an example
+     * @return the {@link ItemStack} in the slot provided
+     */
+    public static ItemStack getStackInSlot(Player player, int slot) {
+        ItemStack[] stack = new ItemStack[1];
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> stack[0] = a.getStackInSlot(slot));
+        return stack[0];
+    }
+
+    /**
+     * An inner class allowing functions to be called with a {@link Player} and an {@link ItemStack} argument
+     */
+    @FunctionalInterface
+    public interface Inner {
+        void apply(Player player, ItemStack stack);
     }
 
     /**
      * Checks if a player has an accessory and allows for the calling of a function upon it
      * @param player the {@link Player} to check for
-     * @param acc the {@link Player} to check if the player has it
+     * @param acc checks if the player has this {@link IAccessory} instance
      * @param holder a holder class for a functional interface, allows users to run methods if the accessory is present
      * @return true if the {@link Player} has the passed accessory, false otherwise
      */
-    public static boolean runIfPresent(Player player, Item acc, Inner holder) {
+    public static boolean runIfPresent(Player player, IAccessory acc, Inner holder) {
         int slot = getSlotFor(player, acc);
-        if(slot != -1) {
+        if (slot != -1) {
             holder.apply(player, getStackInSlot(player, slot));
             return true;
         }
@@ -98,107 +205,258 @@ public class AccessoryHelper {
      * @param acc the {@link IAccessory} to check if the player has it
      * @return true if the player has the passed accessory, false otherwise
      */
-    public static <T extends Item & IAccessory> boolean updateIfPresent(Player player, T acc) {
+    public static boolean updateIfPresent(Player player, IAccessory acc) {
         return runIfPresent(player, acc, acc::update);
     }
 
     /**
-     * An inner class allowing functions to be called with a {@link Player} and {@link ItemStack} argument
+     * Gets all the {@link AccessoryType}s that this accessory is marked as.
+     * Consider instead using {@link #getType(Item)}
+     * @param item the {@link Item} of the accessory
+     * @return a non-duplicate {@link ImmutableList} of all {@link AccessoryType}s bound to the given accessory
      */
-    @FunctionalInterface
-    public interface Inner {
-        void apply(Player player, ItemStack stack);
+    @SuppressWarnings("deprecation")
+    public static ImmutableList<AccessoryType> getTypes(Item item) {
+        ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
+
+        if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
+            builder.add(AccessoryType.GENERIC.get());
+        }
+
+        for (OhmegaTags.TagHolder holder : OhmegaTags.getTags()) {
+            if (item.builtInRegistryHolder().is(holder.getTag())) {
+                builder.add(holder.getType());
+            }
+        }
+
+        ImmutableSet<AccessoryType> set = builder.build();
+        if (set.isEmpty()) {
+            return ImmutableList.of(AccessoryType.NORMAL.get());
+        }
+        return ImmutableList.copyOf(set);
+    }
+
+    /**
+     * A shortcut method to {@link #getTypes(Item)}.
+     * Consider instead using {@link #getType(ItemStack)}
+     * @param stack the {@link ItemStack} instance of the given accessory
+     * @return a non-duplicate {@link ImmutableList} of all {@link AccessoryType}s bound to the given accessory
+     */
+    public static ImmutableList<AccessoryType> getTypes(ItemStack stack) {
+        return getTypes(stack.getItem());
+    }
+
+    /**
+     * Retrieves the accessory's effective {@link AccessoryType} (lowest priority index), or if overridden by the {@link com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent}, then that one
+     * @param item the {@link Item} of the accessory
+     * @return the {@link AccessoryType} of lowest priority index bound to the given accessory
+     */
+    @SuppressWarnings("deprecation")
+    public static AccessoryType getType(Item item) {
+        if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
+            return AccessoryType.GENERIC.get();
+        }
+
+        {
+            ImmutableMap<Item, AccessoryType> map = CommonModEvents.getAccessoryTypeOverrides();
+            if (map.containsKey(item)) {
+                return map.get(item);
+            }
+        }
+
+        AccessoryType type = AccessoryType.NORMAL.get();
+
+        for (OhmegaTags.TagHolder holder : OhmegaTags.getTags()) {
+            if (item.builtInRegistryHolder().is(holder.getTag())) {
+                AccessoryType holderType = holder.getType();
+                if (holderType.getPriority() < type.getPriority()) {
+                    type = holderType;
+                }
+            }
+        }
+
+        return type;
+    }
+
+    /**
+     * A shortcut method to {@link #getTypes(Item)}.
+     * @return the {@link AccessoryType} of lowest priority index bound to the given accessory
+     */
+    public static AccessoryType getType(ItemStack stack) {
+        return getType(stack.getItem());
+    }
+
+    /**
+     * Turns config value for slot types into usable data
+     * @return an {@link ImmutableList} of {@link AccessoryType}s from the config value
+     */
+    public static ImmutableList<AccessoryType> getSlotTypes() {
+        if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
+            int size = OhmegaConfig.CONFIG_SERVER.slotTypes.get().size();
+            ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
+            for (int i = 0; i < size; i++) {
+                builder.add(AccessoryType.GENERIC.get());
+            }
+            return builder.build();
+        }
+
+        ImmutableList.Builder<AccessoryType> builder = new ImmutableList.Builder<>();
+        for (String str : OhmegaConfig.CONFIG_SERVER.slotTypes.get()) {
+            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(str)));
+        }
+        return builder.build();
+    }
+
+    /**
+     * @return an {@link ImmutableList} of {@link String}s of accessory slots' types
+     */
+    public static ImmutableList<String> getSlotTypesStr() {
+        if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
+            int size = OhmegaConfig.CONFIG_SERVER.slotTypes.get().size();
+            ImmutableList.Builder<String> builder = ImmutableList.builderWithExpectedSize(size);
+            for (int i = 0; i < size; i++) {
+                builder.add(AccessoryType.GENERIC.get().getId().toString());
+            }
+            return builder.build();
+        }
+
+        return ImmutableList.copyOf(OhmegaConfig.CONFIG_SERVER.slotTypes.get());
+    }
+
+    /**
+     * Turns config value for keybound slot types into usable data, filtering out duplicates
+     * @return an {@link ImmutableList} of {@link AccessoryType}s from the config value
+     */
+    public static ImmutableList<AccessoryType> getKeyboundSlotTypes() {
+        if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
+            return ImmutableList.of(AccessoryType.GENERIC.get());
+        }
+
+        ImmutableList.Builder<AccessoryType> builder = new ImmutableList.Builder<>();
+        for (String str : OhmegaConfig.CONFIG_SERVER.keyboundSlotTypes.get()) {
+            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(str)));
+        }
+        return ImmutableSet.copyOf(builder.build()).asList();
+    }
+
+    /**
+     * @return an {@link ImmutableList} of {@link String}s of key-bound accessory slots' types
+     */
+    @SuppressWarnings("unchecked")
+    public static ImmutableList<String> getKeyboundSlotTypesStr() {
+        if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
+            return ImmutableList.of(AccessoryType.GENERIC.get().getId().toString());
+        }
+
+        return (ImmutableList<String>) ImmutableSet.copyOf(OhmegaConfig.CONFIG_SERVER.keyboundSlotTypes.get()).asList();
     }
 
     /**
      * A utility method to get a description for a key-bind activated {@link IAccessory}.
      * @param bindDescription what will be displayed for the bind to do / activate. Use "&lt;BIND&gt;" to show the bind letter
-     * @param inSlot the accessory slot that the item is in
-     * @param other the "other" tooltip, for displaying when {@link IAccessory} is not in an accessory slot (such as in the normal inventory)
+     * @param stack a {@link ItemStack} instance of the given accessory
+     * @param other the "other" tooltip, for displaying when {@link IAccessory} is not in an accessory slot (such sas in the normal inventory)
      * @return if the slot is a normal category slot: The "other" {@link Component}
      * <p>
-     * Otherwise, an example: "Press B to activate invisibility" When "Press &lt;BIND&gt; to activate invisibility" is provided and a slot with key-binding of key B
-     */
-    public static MutableComponent getBindTooltip(ComponentContents bindDescription, int inSlot, ComponentContents other) {
-        return inSlot == -1 ? MutableComponent.create(other).withStyle(ChatFormatting.GRAY) : MutableComponent.create(new PlainTextContents.LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", (inSlot == 3 ? ModBinds.UTILITY_0.getTranslatedKeyMessage().getString().toUpperCase() : inSlot == 4 ? ModBinds.UTILITY_1.getTranslatedKeyMessage().getString().toUpperCase() : ModBinds.SPECIAL.getTranslatedKeyMessage().getString().toUpperCase())))).withStyle(ChatFormatting.GRAY);
-    }
-
-    /**
-     * A shortcut method to the one defined above, see description there.
+     * An example: {@code "Press B to activate invisibility"} is produced by {@code "Press <BIND> to activate invisibility"} when in a slot with key-binding of key B
      */
     public static MutableComponent getBindTooltip(ComponentContents bindDescription, ItemStack stack, ComponentContents other) {
-        return getBindTooltip(bindDescription, getSlot(stack), other);
+        ImmutableList<AccessoryType> slotTypes = getSlotTypes();
+
+        int slot = getSlot(stack);
+        AccessoryType type;
+        if (slot < 0 || slot >= slotTypes.size()) {
+            type = null;
+        } else {
+            type = slotTypes.get(slot);
+        }
+
+        // Starts at -1 to align properly
+        int typeIndex = -1;
+        if (type != null) {
+            for (int i = 0; i < slot + 1; i++) {
+                if (slotTypes.get(i) == type) {
+                    typeIndex++;
+                }
+            }
+        }
+
+        boolean flag = false;
+        IAccessory acc = getBoundAccessory(stack.getItem());
+        if (acc != null) {
+            for (AccessoryType type0 : getKeyboundSlotTypes()) {
+                if (slotTypes.contains(type0)) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+
+        KeyMapping mapping = OhmegaBinds.Generated.getMapping(type, typeIndex);
+
+        if (slot < 0 || !flag || mapping == null) {
+            return MutableComponent.create(other).withStyle(ChatFormatting.GRAY);
+        } else {
+            return MutableComponent.create(new PlainTextContents.LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", StringUtils.capitaliseAllWords(mapping.getTranslatedKeyMessage().getString())))).withStyle(ChatFormatting.GRAY);
+        }
     }
 
     /**
-     * A utility method to get the {@link AccessoryType} of {@link IAccessory} in a component
-     * @param acc the {@link IAccessory} to get the type from
+     * A utility method to create a {@link MutableComponent} of the translated {@link AccessoryType} bound to an accessory
+     * @param item the {@link Item} of an accessory to get the type from
      * @return a {@link MutableComponent} instance of "Accessory type: TYPE"
      */
-    public static MutableComponent getTypeTooltip(IAccessory acc) {
-        return MutableComponent.create(new TranslatableContents("accessory.type", null, new Object[]{MutableComponent.create(acc.getType().getTranslation()).getString()})).withStyle(ChatFormatting.DARK_GRAY);
+    @Nullable
+    public static MutableComponent getTypeTooltip(Item item) {
+        AccessoryType type = getType(item);
+        if (type.displayHoverText()) {
+            return Component.translatable("accessory_type", type.getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
+        }
+        return null;
     }
 
     /**
-     * Gets the item's slot in the player's inventory from an {@link ItemStack}'s tag
-     * @param stack the {@link ItemStack} to test against
-     * @return the slot of the item if the tag is present, -1 otherwise
-     * -1 is returned if not present because otherwise it would return 0, the first slot, which messes things up. Using -1 makes it an outlier
+     * Utility function to add {@link AttributeModifier}s to a {@link Player} from an {@link ModifierHolder.Builder}
+     * @param player add/remove modifiers to/from this {@link Player}
+     * @param map a {@link Multimap} which contains the modifiers to add or remove
+     * @param add if true, will add the {@link AttributeModifier}(s) to the {@link Player}, otherwise existing ones will be removed
      */
-    public static int getSlot(ItemStack stack) {
-        return _internalTag(stack).contains("slot") ? _internalTag(stack).getInt("slot") : -1;
-    }
-
-    /**
-     * Utility function to add {@link AttributeModifier}s to a {@link Player} from an {@link IAccessory.ModifierBuilder}
-     * @param player add/remove modifiers to/from
-     * @param map contains the modifiers to add or remove
-     * @param add if true, will add the modifiers to the {@link Player}, otherwise existing ones will be removed
-     */
-    public static void changeModifiers(Player player, Multimap<Holder<Attribute>, AttributeModifier> map, boolean add) {
-        for(Holder<Attribute> attribute : map.keys()) {
-            Collection<AttributeModifier> modifiers = map.get(attribute);
-            for(AttributeModifier modifier : modifiers) {
-                AttributeInstance attribute0 = player.getAttribute(attribute);
-                if(attribute0 != null) {
-                    if(add) {
-                        if(!attribute0.hasModifier(modifier.id())) {
-                            attribute0.addTransientModifier(modifier);
-                        }
-                    } else {
-                        attribute0.removeModifier(modifier);
+    public static void changeModifiers(Player player, ItemAttributeModifiers map, boolean add) {
+        for (ItemAttributeModifiers.Entry entry : map.modifiers()) {
+            AttributeInstance attribute0 = player.getAttribute(entry.attribute());
+            if (attribute0 != null) {
+                if (add) {
+                    if (!attribute0.hasModifier(entry.modifier().id())) {
+                        attribute0.addTransientModifier(entry.modifier());
                     }
+                } else {
+                    attribute0.removeModifier(entry.modifier());
                 }
             }
         }
     }
 
     /**
+     * Retrieves the {@link ModifierHolder} from an {@link ItemStack} instance
+     * @param stack an {@link ItemStack} of an accessory
+     * @return the bound {@link ModifierHolder}
+     */
+    public static ModifierHolder getModifiers(ItemStack stack) {
+        var data = _getInternalData(stack);
+        if (data != null) {
+            return data.getModifiers();
+        }
+        return ModifierHolder.EMPTY;
+    }
+
+    /**
      * Removes both passive and active only {@link AttributeModifier}s
      * @param player to remove modifiers from
-     * @param builder contains the modifiers to be removed
+     * @param holder contains the modifiers to be removed
      */
-    public static void removeAllModifiers(Player player, IAccessory.ModifierBuilder builder) {
-        changeModifiers(player, builder.getModifiers(), false);
-        changeModifiers(player, builder.getModifiersActiveOnly(), false);
-    }
-
-    /**
-     * Checks if an {@link Item} is in any way an accessory, through either implementing {@link IAccessory} or binding with {@link com.swacky.ohmega.api.events.BindAccessoriesEvent}
-     * @param item the {@link Item} to test
-     * @return  true if an accessory
-     */
-    public static boolean isItemAccessoryBound(Item item) {
-        return CommonModEvents.isItemAccessoryBound(item);
-    }
-
-    /**
-     * Retrieves the {@link IAccessory} instance bound to the passed {@link Item} through implementing {@link IAccessory} or binding with {@link com.swacky.ohmega.api.events.BindAccessoriesEvent}
-     * @param item the {@link Item} to retrieve the bound {@link IAccessory} instance
-     * @return if found, the {@link Item}'s bound {@link IAccessory} instance, else null
-     */
-    public static IAccessory getBoundAccessory(Item item) {
-        return CommonModEvents.getBoundAccessory(item);
+    public static void removeAllModifiers(Player player, ModifierHolder holder) {
+        changeModifiers(player, holder.getPassive(), false);
+        changeModifiers(player, holder.getActive(), false);
     }
 
     /**
@@ -209,11 +467,14 @@ public class AccessoryHelper {
      * This is handled internally but for whatever reason you want to change the value of this, you can
      */
     public static void setActive(Player player, ItemStack stack, boolean value) {
-        if(isItemAccessoryBound(stack.getItem())) {
-            _internalTag(stack).putBoolean("active", value);
+        if (isItemAccessoryBound(stack.getItem())) {
+            AccessoryDataComponent data = _getInternalData(stack);
+            if (data != null) {
+                data.setActive(value);
+            }
         }
 
-        changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiersActiveOnly(), value);
+        changeModifiers(player, getModifiers(stack).getActive(), value);
     }
 
     /**
@@ -222,8 +483,11 @@ public class AccessoryHelper {
      * @return true if active, false if inactive or not an {{@link IAccessory} item
      */
     public static boolean isActive(ItemStack stack) {
-        if(isItemAccessoryBound(stack.getItem())) {
-            return _internalTag(stack).getBoolean("active");
+        if (isItemAccessoryBound(stack.getItem())) {
+            AccessoryDataComponent data = _getInternalData(stack);
+            if (data != null) {
+                return data.isActive();
+            }
         }
         return false;
     }
@@ -234,7 +498,9 @@ public class AccessoryHelper {
      * @param stack the {@link ItemStack} to activate an accessory on
      */
     public static void activate(Player player, ItemStack stack) {
-        setActive(player, stack, true);
+        if (isItemAccessoryBound(stack.getItem())) {
+            setActive(player, stack, true);
+        }
     }
 
     /**
@@ -243,7 +509,9 @@ public class AccessoryHelper {
      * @param stack the {@link ItemStack} to deactivate an accessory on
      */
     public static void deactivate(Player player, ItemStack stack) {
-        setActive(player, stack, false);
+        if (isItemAccessoryBound(stack.getItem())) {
+            setActive(player, stack, false);
+        }
     }
 
     /**
@@ -252,11 +520,33 @@ public class AccessoryHelper {
      * @param stack the {@link ItemStack} to toggle an accessory's active state
      */
     public static void toggle(Player player, ItemStack stack) {
-        if(isActive(stack)) {
-            deactivate(player, stack);
-        } else {
-            activate(player, stack);
+        if (isItemAccessoryBound(stack.getItem())) {
+            if (isActive(stack)) {
+                deactivate(player, stack);
+            } else {
+                activate(player, stack);
+            }
         }
+    }
+
+    /**
+     * Returns the first open accessory slot for an {@link AccessoryType} or {@link AccessoryType}s
+     * @param player the {@link Player} to test their slots against
+     * @param type the {@link AccessoryType} to check for the slots
+     * @return the first open slot of the type, else if none is found then -1
+     */
+    public static int getFirstOpenSlot(Player player, AccessoryType type) {
+        int[] out = {-1};
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+            ImmutableList<AccessoryType> slotTypes = getSlotTypes();
+            for (int i = 0; i < a.getSlots(); i++) {
+                if (slotTypes.get(i) == type && a.getStackInSlot(i).isEmpty()) {
+                    out[0] = i;
+                    return;
+                }
+            }
+        });
+        return out[0];
     }
 
     /**
@@ -268,69 +558,32 @@ public class AccessoryHelper {
     @SuppressWarnings("unchecked")
     public static InteractionResultHolder<ItemStack> tryEquip(Player player, InteractionHand hand) {
         InteractionResultHolder<ItemStack>[] out = new InteractionResultHolder[]{InteractionResultHolder.pass(player.getItemInHand(hand))};
-        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
-            ItemStack stack = player.getItemInHand(hand);
-            IAccessory acc = getBoundAccessory(stack.getItem());
-            if (acc != null) {
-                int slot = getFirstOpenSlot(player, acc.getType());
-                if (slot != -1) {
-                    ItemStack stack0 = stack.copy();
-                    stack0.setCount(1);
-
-                    if(a.trySetStackInSlot(slot, stack0)) {
-                        changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), true);
+        ItemStack stack = player.getItemInHand(hand);
+        Item item = stack.getItem();
+        IAccessory acc = getBoundAccessory(item);
+        if (acc != null) {
+            player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+                int slot = getFirstOpenSlot(player, getType(item));
+                if (slot >= 0) {
+                    ItemStack stack0 = stack.copyWithCount(1);
+                    if (a.trySetStackInSlot(slot, stack0)) {
+                        changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
                         stack.shrink(1);
-                        _internalTag(stack0).putInt("slot", slot);
+                        setSlot(stack, slot);
 
-                        AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(player, stack0);
-                        if(!event.isCanceled()) {
+                        AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipEvent.Context.RIGHT_CLICK_HELD_ITEM);
+                        if (!event.isCanceled()) {
                             acc.onEquip(player, stack0);
                         }
-                        if(acc.getEquipSound() != null) {
-                            player.playSound(acc.getEquipSound(), 1.0F, 1.0F);
+                        if (acc.getEquipSound() != null) {
+                            player.playSound(acc.getEquipSound().get(), 1, 1);
                         }
-                        out[0] = InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level().isClientSide);
+                        out[0] = InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level().isClientSide());
                     }
                 }
-            }
-        });
-        return out[0];
-    }
-
-    /**
-     * Returns the first open accessory slot for a type
-     * @param player the {@link Player} to test their slots against
-     * @param type the accessory type to check for the slots
-     * @return the first open slot of the type, else if none is found then -1
-     */
-    public static int getFirstOpenSlot(Player player, AccessoryType type) {
-        int[] out = {-1};
-        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
-            switch (type) {
-                case NORMAL -> {
-                    for (int i = 0; i < 3; i++) {
-                        if(a.getStackInSlot(i).isEmpty()) {
-                            out[0] = i;
-                            return;
-                        }
-                    }
-                }
-                case UTILITY -> {
-                    for (int i = 3; i < 5; i++) {
-                        if(a.getStackInSlot(i).isEmpty()) {
-                            out[0] = i;
-                            return;
-                        }
-                    }
-                }
-                case SPECIAL -> {
-                    if(a.getStackInSlot(5).isEmpty()) {
-                        out[0] = 5;
-                    }
-                }
-            }
-        });
+            });
+        }
         return out[0];
     }
 
@@ -341,8 +594,8 @@ public class AccessoryHelper {
      */
     public static ArrayList<ItemStack> getStacks(Player player) {
         ArrayList<ItemStack> stacks = new ArrayList<>();
-        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a ->{
-            for(int i = 0; i < 6; i++) {
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> {
+            for (int i = 0; i < a.getSlots(); i++) {
                 stacks.add(a.getStackInSlot(i));
             }
         });
@@ -356,9 +609,9 @@ public class AccessoryHelper {
      */
     public static ArrayList<IAccessory> getAccessories(Player player) {
         ArrayList<IAccessory> accessories = new ArrayList<>();
-        for(ItemStack stack : getStacks(player)) {
+        for (ItemStack stack : getStacks(player)) {
             IAccessory acc = getBoundAccessory(stack.getItem());
-            if(acc != null) {
+            if (acc != null) {
                 accessories.add(acc);
             }
         }
@@ -366,30 +619,42 @@ public class AccessoryHelper {
     }
 
     /**
-     * Returns the {@link ItemStack} corresponding to the slot index of the accessory inventory
-     * @param player the {@link Player} to get the stacks from
-     * @param slot the index of slot, 5 would be the special slot as an example
-     * @return the stack in the slot provided
+     * Checks if two {@link IAccessory} instances are compatible with each other
+     * @param acc first {@link IAccessory} instance
+     * @param acc0 second {@link IAccessory} instance
+     * @return true if both {@link IAccessory} instances are compatible with one another
      */
-    public static ItemStack getStackInSlot(Player player, int slot) {
-        ItemStack[] stack = new ItemStack[1];
-        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> stack[0] = a.getStackInSlot(slot));
-        return stack[0];
+    public static boolean compatibleWith(IAccessory acc, IAccessory acc0) {
+        return acc.checkCompatibility(acc0) && acc0.checkCompatibility(acc);
     }
 
     /**
-     * Checks whether an {@link IAccessory} is exclusive, or in other words is the only instance of that {@link IAccessory} equipped
-     * @param player the {@link Player} to test against
-     * @param stack the stack of the {@link IAccessory} item
-     * @return true if it is an exclusive type, false if not or not of the {@link IAccessory} type
+     * A shortcut method to {@link #compatibleWith(IAccessory, IAccessory)} with one {@link Item} and one {@link IAccessory} parameter
+     * @param item first {@link Item} accessory instance
+     * @param acc second {@link IAccessory} instance
+     * @return true if both accessories are compatible with one another
      */
-    public static boolean isExclusiveType(Player player, ItemStack stack) {
-        for(ItemStack stack0 : getStacks(player)) {
-            if(stack0.is(stack.getItem())) {
-                return false;
-            }
+    public static boolean compatibleWith(Item item, IAccessory acc) {
+        IAccessory acc0 = getBoundAccessory(item);
+        if (acc0 != null) {
+            return compatibleWith(acc, acc0);
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * A shortcut method to {@link #compatibleWith(IAccessory, IAccessory)} with two {@link Item} parameters
+     * @param item first {@link Item} accessory instance
+     * @param item0 second {@link Item} accessory instance
+     * @return true if both accessories are compatible with one another
+     */
+    public static boolean compatibleWith(Item item, Item item0) {
+        IAccessory acc = getBoundAccessory(item);
+        IAccessory acc0 = getBoundAccessory(item0);
+        if (acc != null && acc0 != null) {
+            return compatibleWith(acc, acc0);
+        }
+        return false;
     }
 
     /**
@@ -400,8 +665,8 @@ public class AccessoryHelper {
      */
     public static boolean compatibleWith(Player player, IAccessory acc) {
         boolean[] out = {true};
-        for(IAccessory acc0 : getAccessories(player)) {
-            if(!acc0.isCompatibleWith(acc)) {
+        for (IAccessory acc0 : getAccessories(player)) {
+            if (!AccessoryHelper.compatibleWith(acc, acc0)) {
                 out[0] = false;
             }
         }
@@ -409,13 +674,53 @@ public class AccessoryHelper {
     }
 
     /**
-     * Converts {@link ItemStack} to {@link IAccessory}
-     * <p>
-     * <strong>IMPORTANT: CHECK FOR NULL CASE</strong>
-     * @param stack the {@link ItemStack} to get the accessory of
-     * @return {@link IAccessory} instance of the provided {@link ItemStack} if found, else null
+     * A shortcut method to {@link #compatibleWith(Player, IAccessory)}
+     * @param player the {@link Player} to get the accessory inventory of
+     * @param item the accessory to test against
+     * @return true if compatible, false if not
      */
-    public static IAccessory getFromStack(ItemStack stack) {
-        return getBoundAccessory(stack.getItem());
+    public static boolean compatibleWith(Player player, Item item) {
+        IAccessory acc = getBoundAccessory(item);
+        if (acc != null) {
+            return compatibleWith(player, acc);
+        }
+        return false;
+    }
+
+    /**
+     * Forcefully notifies the game that a slot has been changed
+     * <p>
+     * You may need to use this when an {@link ItemStack}'s data has been changed, but {@link com.swacky.ohmega.common.inv.AccessoryContainer#setStackInSlot(int, ItemStack)} (or similar) has not been called
+     * @param player {@link Player} to update the {@link com.swacky.ohmega.common.inv.AccessoryContainer} of
+     * @param slot the index of which to notify changes of
+     */
+    public static void setSlotChanged(Player player, int slot) {
+        player.getCapability(Ohmega.ACCESSORIES).ifPresent(a -> a.onContentsChanged(slot));
+    }
+
+    /**
+     * Synchronises one slot from server data with provided clients
+     * @param player a {@link ServerPlayer} to retrieve and send data from
+     * @param slot the index of the slot to sync
+     * @param stack {@link ItemStack} from the server, data used to sync
+     * @param receivers {@link Player}(s)/client(s) to have server data sent to
+     */
+    public static void syncSlot(ServerPlayer player, int slot, ItemStack stack, Collection<ServerPlayer> receivers) {
+        SyncAccessorySlotPacket packet = new SyncAccessorySlotPacket(player.getId(), slot, stack);
+        for (ServerPlayer receiver : receivers) {
+            ModNetworking.sendTo(packet, receiver);
+        }
+    }
+
+    /**
+     * Synchronises all slots from server data with provided clients
+     * @param player a {@link ServerPlayer} to retrieve and send data from
+     * @param receivers {@link Player}(s)/client(s) to have server data sent to
+     */
+    public static void syncAllSlots(ServerPlayer player, Collection<ServerPlayer> receivers) {
+        ArrayList<ItemStack> stacks = getStacks(player);
+        for (int i = 0; i < stacks.size(); i++) {
+            syncSlot(player, i, stacks.get(i), receivers);
+        }
     }
 }

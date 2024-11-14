@@ -1,20 +1,24 @@
 package com.swacky.ohmega.common.inv;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.AccessoryType;
+import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.events.AccessoryUnequipEvent;
-import com.swacky.ohmega.cap.AccessoryContainer;
+import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.common.core.Ohmega;
-import com.swacky.ohmega.common.core.init.ModMenus;
+import com.swacky.ohmega.common.core.init.OhmegaMenus;
+import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -22,52 +26,96 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static com.swacky.ohmega.api.AccessoryType.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccessoryInventoryMenu extends AbstractContainerMenu {
-    protected AccessoryContainer accessories;
-    protected static final AccessorySlot[] SLOTS = new AccessorySlot[6];
-    protected static final AccessoryType[] SLOT_TYPES = new AccessoryType[]{NORMAL, NORMAL, NORMAL, UTILITY, UTILITY, SPECIAL};
     public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+
+    protected static AccessorySlot[] accSlots;
+
+    private final Player player;
+    protected AccessoryContainer accessories;
     private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
-    private final Player player;
 
     public AccessoryInventoryMenu(int id, Inventory inv) {
-        super(ModMenus.ACCESSORY_INVENTORY.get(), id);
-        this.player = inv.player;
+        super(OhmegaMenus.ACCESSORY_INVENTORY.get(), id);
 
+        AccessoryInventoryMenu.accSlots = new AccessorySlot[AccessoryHelper.getSlotTypes().size()];
+
+        this.player = inv.player;
         this.accessories = inv.player.getCapability(Ohmega.ACCESSORIES).orElseThrow(NullPointerException::new);
 
-        this.addSlot(new ResultSlot(inv.player, this.craftMatrix, this.craftResult, 0, 155, 29));
+        this.addSlot(new ResultSlot(inv.player, this.craftMatrix, this.craftResult, 0, 154, 28));
 
-        for(int i = 0; i < 2; ++i) { // Crafting Matrix Slots
-            for(int j = 0; j < 2; ++j) {
+        for (int i = 0; i < 2; ++i) { // Crafting Matrix Slots
+            for (int j = 0; j < 2; ++j) {
                 this.addSlot(new Slot(this.craftMatrix, j + i * 2, 98 + j * 18, 18 + i * 18));
             }
         }
 
-        for(int k = 0; k < 4; ++k) { // Armour Slots
-            var equipmentSlotType = VALID_EQUIPMENT_SLOTS[k];
-            this.addSlot(new ArmorSlot(inv, 36 + (3 - k), 8, 8 + k * 18, equipmentSlotType, this.player));
+        for (int i = 0; i < 4; ++i) { // Armour Slots
+            var equipmentSlotType = VALID_EQUIPMENT_SLOTS[i];
+            this.addSlot(new ArmorSlot(inv, 36 + (3 - i), 8, 8 + i * 18, equipmentSlotType, this.player));
         }
 
-        for(int l = 0; l < 3; ++l) { // Inventory Slots
-            for(int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(inv, j1 + (l + 1) * 9, 8 + j1 * 18, 84 + l * 18));
+        for (int i = 0; i < 3; ++i) { // Inventory Slots
+            for (int j = 0; j < 9; ++j) {
+                this.addSlot(new Slot(inv, j + (i + 1) * 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for(int i1 = 0; i1 < 9; ++i1) { // Hotbar Slots
-            this.addSlot(new Slot(inv, i1, 8 + i1 * 18, 142));
+        for (int i = 0; i < 9; ++i) { // Hotbar Slots
+            this.addSlot(new Slot(inv, i, 8 + i * 18, 142));
         }
 
         this.addSlot(new OffhandSlot(inv, 40, 77, 62)); // Offhand Slot
 
-        for(int index = 0; index < 6; index++) { // Accessory Slots
-            SLOTS[index] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, accessories, index, 183, 25 + index * 18, SLOT_TYPES[index]));
+        ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
+
+        if (!inv.player.level().isClientSide()) {
+            for (int i = 0; i < AccessoryInventoryMenu.accSlots.length; i++) {
+                // Position does not matter (only in rare cases) on server
+                AccessoryInventoryMenu.accSlots[i] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, this.accessories, i, 0, 0, slotTypes.get(i)));
+            }
+        } else {
+            final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+            final int slotsAvailable = Math.min(renderColumns * Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get()), AccessoryHelper.getSlotTypes().size());
+
+            final int x;
+            if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+                // 2px buffer from inv, 4 px buffer on both sides, slots columns width, 1px to align
+                x = - 2 - 4 * 2 - 18 * renderColumns + 1;
+            } else {
+                // Default, 2px buffer from inv, 2px to align
+                x = 175 + 2 + 2;
+            }
+
+            boolean stop = false;
+            int index = 0;
+            for (int i = 0; i < renderColumns; i++) {
+                if (stop) {
+                    break;
+                }
+
+                int slotsCreatedCurrentColumn = 0;
+                for (int j = 0; true; j++) {
+                    AccessoryInventoryMenu.accSlots[j] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, this.accessories, index, x + 4 + 18 * i, 25 + j * 18, slotTypes.get(index)));
+                    index++;
+                    slotsCreatedCurrentColumn++;
+
+                    if (slotsCreatedCurrentColumn >= OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get()) {
+                        break;
+                    }
+
+                    if (index >= slotsAvailable) {
+                        stop = true;
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -86,7 +134,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         super.removed(player);
         this.craftResult.clearContent();
 
-        if(!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             this.clearContainer(player, this.craftMatrix);
         }
     }
@@ -94,6 +142,21 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
     @Override
     public boolean canTakeItemForPickAll(@NotNull ItemStack stack, Slot slot) {
         return slot.container != this.craftResult && super.canTakeItemForPickAll(stack, slot);
+    }
+
+    @Override
+    public void broadcastChanges() {
+        if (this.player instanceof ServerPlayer svr) {
+            List<ServerPlayer> receivers = new ArrayList<>(((ServerLevel) player.level()).getPlayers((svr0) -> true));
+            receivers.add(svr);
+            for (int i = 0; i < this.accessories.getSlots(); i++) {
+                ItemStack stack = this.accessories.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    AccessoryHelper.syncSlot(svr, i, stack, receivers);
+                }
+            }
+        }
+        super.broadcastChanges();
     }
 
     @Override
@@ -118,9 +181,11 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                     return ItemStack.EMPTY;
                 }
             } else {
-                IAccessory acc = AccessoryHelper.getBoundAccessory(stack0.getItem());
-                if (acc != null && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, acc.getType()) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, acc.getType())).mayPlace(stack)) { // Accessory in
-                    int accSlot = AccessoryHelper.getFirstOpenSlot(player, acc.getType());
+                Item item = stack0.getItem();
+                IAccessory acc = AccessoryHelper.getBoundAccessory(item);
+                AccessoryType type = AccessoryHelper.getType(item);
+                if (acc != null && index > 8 && index < 45 && AccessoryHelper.getFirstOpenSlot(player, type) != -1 && getSlot(46 + AccessoryHelper.getFirstOpenSlot(player, type)).mayPlace(stack)) { // Accessory in
+                    int accSlot = AccessoryHelper.getFirstOpenSlot(player, type);
                     stack0.shrink(1);
                     stack.setCount(1);
                     getSlot(46 + accSlot).set(stack);
@@ -142,14 +207,14 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                         return ItemStack.EMPTY;
                     }
                 } else if (index > 45 && index < 52 && acc != null) {
-                    AccessoryHelper.changeModifiers(player, IAccessory.ModifierBuilder.deserialize(stack0).getModifiers(), false);
+                    AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack0).getPassive(), false);
 
                     AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack0);
                     if (!event.isCanceled()) {
                         acc.onUnequip(this.player, stack0);
                     }
 
-                    AccessoryHelper._internalTag(stack0).putInt("slot", -1);
+                    AccessoryHelper.setSlot(stack0, -1);
                     AccessoryHelper.setActive(player, stack0, false);
                     if (this.moveItemStackTo(stack0, 9, 45, false)) { // Accessory out
                         return ItemStack.EMPTY;

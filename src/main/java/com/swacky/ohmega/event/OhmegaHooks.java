@@ -1,8 +1,9 @@
 package com.swacky.ohmega.event;
 
 import com.google.common.collect.ImmutableMap;
-import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.events.*;
+import com.swacky.ohmega.api.ModifierHolder;
+import com.swacky.ohmega.api.event.*;
+import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,24 +11,24 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoader;
 
 public class OhmegaHooks {
-    public static ImmutableMap<Item, IAccessory> bindAccessoriesEvent() {
-        BindAccessoriesEvent event = new BindAccessoriesEvent();
-        ModLoader.get().postEventWrapContainerInModOrder(event);
-        return event.collect();
+    public static ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+        AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
+        ModLoader.get().postEvent(event);
+        return event.get();
     }
 
     public static AccessoryTickEvent accessoryTickEventPre(Player player, ItemStack stack) {
-        AccessoryTickEvent event = new AccessoryTickEvent(Phase.PRE, player, stack);
+        AccessoryTickEvent event = new AccessoryTickEvent.Pre(player, stack);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
     public static void accessoryTickEventPost(Player player, ItemStack stack) {
-        MinecraftForge.EVENT_BUS.post(new AccessoryTickEvent(Phase.POST, player, stack));
+        MinecraftForge.EVENT_BUS.post(new AccessoryTickEvent.Post(player, stack));
     }
 
-    public static AccessoryEquipEvent accessoryEquipEvent(Player player, ItemStack stack) {
-        AccessoryEquipEvent event = new AccessoryEquipEvent(player, stack);
+    public static AccessoryEquipEvent accessoryEquipEvent(Player player, ItemStack stack, AccessoryEquipEvent.Context context) {
+        AccessoryEquipEvent event = new AccessoryEquipEvent(player, stack, context);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -56,7 +57,7 @@ public class OhmegaHooks {
         return event;
     }
 
-    public static void accessoryAttributeModifiersEvent(Item item, IAccessory.ModifierBuilder modifiers) {
-        MinecraftForge.EVENT_BUS.post(new AccessoryAttributeModifiersEvent(item, modifiers));
+    public static void accessoryAttributeModifiersEvent(Item item, ModifierHolder.Builder builder) {
+        MinecraftForge.EVENT_BUS.post(new AccessoryAttributeModifiersEvent(item, builder));
     }
 }

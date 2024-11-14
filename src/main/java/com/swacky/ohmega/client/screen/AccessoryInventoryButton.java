@@ -3,7 +3,8 @@ package com.swacky.ohmega.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
-import com.swacky.ohmega.network.C2S.OpenAccessoryGuiPacket;
+import com.swacky.ohmega.config.OhmegaConfig;
+import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.ModNetworking;
 import net.minecraft.client.Minecraft;
@@ -18,33 +19,37 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessoryInventoryButton extends AbstractButton {
-    private static final ResourceLocation LOC = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "textures/gui/accessory_button.png");
+    private static final ResourceLocation LOC = Ohmega.rl("textures/gui/accessory_addon.png");
     protected final Minecraft mc;
     private final AbstractContainerScreen<?> screen;
-    protected final int xStart;
-    protected final int yStart;
-    private final int xOffs;
-    private final int yOffs;
-    protected final int yOffsHovered;
-    public AccessoryInventoryButton(AbstractContainerScreen<?> screen, int xStart, int yStart, int xOffs, int yOffs, int yOffsHovered) {
-        super(screen.getGuiLeft() + xOffs, screen.getGuiTop() + yOffs, 20, 18, MutableComponent.create(PlainTextContents.EMPTY));
+    protected final int x;
+    protected final int y;
+    protected final int uOffs;
+    protected final int vOffs;
+    protected final boolean shouldUseWidthHovered;
+    public AccessoryInventoryButton(OhmegaConfig.ButtonStyle style, AbstractContainerScreen<?> screen) {
+        super(screen.getGuiLeft() + style.getX(), screen.getGuiTop() + style.getY(), style.getWidth(), style.getHeight(), MutableComponent.create(PlainTextContents.EMPTY));
         this.mc = screen.getMinecraft();
         this.screen = screen;
-        this.xStart = xStart;
-        this.yStart = yStart;
-        this.xOffs = xOffs;
-        this.yOffs = yOffs;
-        this.yOffsHovered = yOffsHovered;
+        this.x = style.getX();
+        this.y = style.getY();
+        this.uOffs = style.getUOffs();
+        this.vOffs = style.getVOffs();
+        this.shouldUseWidthHovered = style.shouldUseWidthHovered();
     }
 
     @Override
     public void onPress() {
-        if (mc.gameMode != null && mc.player != null) {
-            if (mc.player.containerMenu instanceof AccessoryInventoryMenu) {
-                ModNetworking.sendToServer(new OpenInventoryPacket());
-                mc.setScreen(new InventoryScreen(mc.player));
+        if (mc.player != null) {
+            if (!mc.player.isCreative() && !mc.player.isSpectator()) {
+                if (mc.player.containerMenu instanceof AccessoryInventoryMenu) {
+                    ModNetworking.sendToServer(new OpenInventoryPacket());
+                    mc.setScreen(new InventoryScreen(mc.player));
+                } else {
+                    ModNetworking.sendToServer(new OpenAccessoryInventoryPacket());
+                }
             } else {
-                ModNetworking.sendToServer(new OpenAccessoryGuiPacket(mc.player.getId()));
+                ModNetworking.sendToServer(new OpenInventoryPacket());
             }
         }
     }
@@ -55,19 +60,29 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     private void fixPos() {
-        this.setX(this.screen.getGuiLeft() + this.xOffs);
-        this.setY(this.screen.getGuiTop() + this.yOffs);
+        this.setX(this.screen.getGuiLeft() + this.x);
+        this.setY(this.screen.getGuiTop() + this.y);
     }
 
     @Override
     public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         this.fixPos();
-        int offsY = this.yStart;
+        int hoveredOffsX;
+        int hoveredOffsY;
         if (this.isHoveredOrFocused()) {
-            offsY += this.yOffsHovered;
+            if (this.shouldUseWidthHovered) {
+                hoveredOffsX = this.width;
+                hoveredOffsY = 0;
+            } else {
+                hoveredOffsX = 0;
+                hoveredOffsY = this.height;
+            }
+        } else {
+            hoveredOffsX = 0;
+            hoveredOffsY = 0;
         }
 
         RenderSystem.enableDepthTest();
-        gui.blit(LOC, this.getX(), this.getY(), (float)this.xStart, (float)offsY, this.width, this.height, 256, 256);
+        gui.blit(LOC, this.getX(), this.getY(), (float)this.uOffs + hoveredOffsX, (float)this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
     }
 }

@@ -1,11 +1,14 @@
 {
   "required": true,
   "package": "com.swacky.ohmega.common.core.mixin",
-  "compatibilityLevel": "JAVA_18",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ItemStackMixin"
   ],
   "client": [
+    "AbstractContainerScreenMixin",
+    "KeyBindsList$KeyEntryMixin",
+    "KeyBindsListMixin"
   ],
   "minVersion": "0.8.5"
 }

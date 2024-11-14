@@ -1,6 +1,8 @@
 {
     "pack": {
-        "description": "Mod resources for Ohmega",
-        "pack_format": 34
+        "description": {
+            "translate": "dataPack.ohmega.description"
+        },
+        "pack_format": 48
     }
 }

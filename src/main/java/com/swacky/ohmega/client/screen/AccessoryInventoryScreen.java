@@ -1,32 +1,47 @@
 package com.swacky.ohmega.client.screen;
 
-import com.swacky.ohmega.api.AccessoryType;
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.core.Ohmega;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.common.inv.AccessorySlot;
+import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<AccessoryInventoryMenu> {
-    protected static final ResourceLocation ACCESSORY_LOC = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "textures/gui/container/accessory_inventory.png");
+    protected static final ResourceLocation VANILLA_LOC = Ohmega.mcRl("textures/gui/container/inventory.png");
+    protected static final ResourceLocation ACCESSORY_LOC = Ohmega.rl("textures/gui/accessory_addon.png");
+
+    private static int extraWidth = defineExtraWidth();
+
     protected float oldMouseX;
     protected float oldMouseY;
     protected final Inventory inv;
+
     public AccessoryInventoryScreen(AccessoryInventoryMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
         this.inv = inv;
+        if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.RIGHT) {
+            this.imageWidth += AccessoryInventoryScreen.extraWidth;
+        }
     }
 
     @Override
     protected void init() {
         this.renderables.clear();
-        super.init();
+
+        if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+            this.leftPos = (this.width - this.imageWidth) / 2;
+        } else {
+            this.leftPos = (this.width - this.imageWidth + AccessoryInventoryScreen.extraWidth) / 2;
+        }
+
+        this.topPos = (this.height - this.imageHeight) / 2;
     }
 
     @Override
@@ -37,43 +52,111 @@ public class AccessoryInventoryScreen extends EffectRenderingInventoryScreen<Acc
         this.renderTooltip(gui, mx, my);
     }
 
+    public static int defineExtraWidth() {
+        return AccessoryInventoryScreen.extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+    }
+
+    protected void renderAccInv(GuiGraphics gui) {
+        final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+        final int slotsAvailable = Math.min(renderColumns * Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get()), AccessoryHelper.getSlotTypes().size());
+        final int mostSlotsPerColumn = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), AccessoryHelper.getSlotTypes().size());
+
+        final int x;
+        if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+            // Default, 2px buffer from inv, 4 px buffer on both sides, slots columns width, 1px to align
+            x = this.leftPos - 2 - 4 * 2 - 18 * renderColumns;
+        } else {
+            // Default, 2px buffer from inv, 1px to align
+            x = this.leftPos + 175 + 2 + 1;
+        }
+
+        final int lastColumnSlots = slotsAvailable % mostSlotsPerColumn == 0 ? mostSlotsPerColumn : slotsAvailable % mostSlotsPerColumn;
+
+        int index = 0;
+        for (int i = 0; i < renderColumns; i++) {
+            // Slots
+            int slotsCreatedCurrentColumn = 0;
+            for (int j = 0; true; j++) {
+                gui.blit(ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 24 + j * 18, 4, 4, 18, 18, 26, 71);
+                index++;
+                slotsCreatedCurrentColumn++;
+                if (slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
+                    break;
+                }
+            }
+
+            // Top border
+            gui.blit(ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 20, 4, 0, 18, 4, 26, 71);
+
+            // Bottom border
+            if (i >= renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
+                gui.blit(ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, 26, 71);
+            } else {
+                gui.blit(ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, 26, 71);
+            }
+        }
+
+        // Side borders
+        for (int i = 0; i < mostSlotsPerColumn; i++) {
+            // Left
+            gui.blit(ACCESSORY_LOC, x, this.topPos + 24 + 18 * i, 0, 4, 4, 18, 26, 71);
+
+            // Right
+            if (i >= lastColumnSlots) {
+                gui.blit(ACCESSORY_LOC, x + 4 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * i, 22, 4, 4, 18, 26, 71);
+            } else {
+                gui.blit(ACCESSORY_LOC, x + 4 + 18 * renderColumns, this.topPos + 24 + 18 * i, 22, 4, 4, 18, 26, 71);
+            }
+        }
+
+        // Top left corner
+        gui.blit(ACCESSORY_LOC, x, this.topPos + 20, 0, 0, 4, 4, 26, 71);
+
+        // Top right corner
+        gui.blit(ACCESSORY_LOC, x + 4 + 18 * renderColumns, this.topPos + 20, 22, 0, 4, 4, 26, 71);
+
+        // Bottom left corner
+        gui.blit(ACCESSORY_LOC, x, this.topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, 26, 71);
+
+        // Bottom right corner
+        gui.blit(ACCESSORY_LOC, x + 4 + 18 * renderColumns, this.topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, 26, 71);
+        if (lastColumnSlots != mostSlotsPerColumn) {
+            gui.blit(ACCESSORY_LOC, x + 4 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, 26, 71);
+        }
+
+        // Intersecting corner
+        if (lastColumnSlots != mostSlotsPerColumn) {
+            gui.blit(ACCESSORY_LOC, x + 5 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, 26, 71);
+        }
+    }
+
     @Override
     protected void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mx, int my) {
         if (this.minecraft != null && this.minecraft.player != null) {
             // Main inventory
-            gui.blit(ACCESSORY_LOC, this.leftPos, this.topPos, 0, 0, 175, 165);
+            gui.blit(VANILLA_LOC, this.leftPos, this.topPos, 0, 0, 176, 166);
 
             // Accessory Inventory
-            gui.blit(ACCESSORY_LOC, this.leftPos + 178, this.topPos + 20, 178, 37, 26, 116);
+            this.renderAccInv(gui);
 
             // Entity rendering
-            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 26, this.topPos + 8, this.leftPos + 75, this.topPos + 78, 30, 0.0625F, mx, my, this.minecraft.player);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 26, this.topPos + 8, this.leftPos + 75, this.topPos + 78, 30, 0.0625f, mx, my, this.minecraft.player);
         }
     }
 
     @Override
     protected void renderLabels(@NotNull GuiGraphics gui, int mx, int my) {
         if (this.minecraft != null) {
-            gui.drawString(this.minecraft.font, MutableComponent.create(new TranslatableContents("container.crafting", null, TranslatableContents.NO_ARGS)), 97, 6, 4210752, false);
+            gui.drawString(this.minecraft.font, Component.translatable("container.crafting"), 97, 6, 4210752, false);
         }
     }
 
     @Override
     protected void renderTooltip(@NotNull GuiGraphics gui, int mx, int my) {
-        if(this.menu.getCarried().isEmpty() && this.hoveredSlot != null && !this.hoveredSlot.hasItem() && this.minecraft != null) {
-            // Normal
-            for(int i = 0; i < 3; i++) {
-                ScreenHelper.runIfBetween(leftPos + 182, leftPos + 199, topPos + 24 + i * 18, topPos + 41 + i * 18, mx, my, () -> gui.renderTooltip(this.minecraft.font, MutableComponent.create(AccessoryType.NORMAL.getTranslation()), mx, my));
-            }
-
-
-            // Utility
-            for(int i = 0; i < 2; i++) {
-                ScreenHelper.runIfBetween(leftPos + 182, leftPos + 199, topPos + 78 + i * 18, topPos + 95 + i * 18, mx, my, () -> gui.renderTooltip(this.minecraft.font, MutableComponent.create(AccessoryType.UTILITY.getTranslation()), mx, my));
-            }
-
-            // Special
-            ScreenHelper.runIfBetween(leftPos + 182, leftPos + 199, topPos + 114, topPos + 131, mx, my, () -> gui.renderTooltip(this.minecraft.font, MutableComponent.create(AccessoryType.SPECIAL.getTranslation()), mx, my));
-        } else super.renderTooltip(gui, mx, my);
+        if (this.menu.getCarried().isEmpty() && this.hoveredSlot != null && !this.hoveredSlot.hasItem() && this.minecraft != null && this.hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.CONFIG_CLIENT.tooltip.get()) {
+            gui.renderTooltip(this.minecraft.font, accSlot.getType().getTranslation(), mx, my);
+        } else {
+            super.renderTooltip(gui, mx, my);
+        }
     }
 }

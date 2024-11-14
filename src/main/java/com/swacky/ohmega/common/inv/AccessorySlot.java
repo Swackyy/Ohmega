@@ -2,18 +2,18 @@ package com.swacky.ohmega.common.inv;
 
 import com.mojang.datafixers.util.Pair;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.AccessoryType;
+import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.events.AccessoryEquipEvent;
-import com.swacky.ohmega.api.events.AccessoryUnequipEvent;
-import com.swacky.ohmega.cap.AccessoryContainer;
-import com.swacky.ohmega.common.core.Ohmega;
+import com.swacky.ohmega.api.event.AccessoryEquipEvent;
+import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +22,7 @@ public class AccessorySlot extends SlotItemHandler {
     protected final int slot;
     protected final AccessoryType type;
 
-    private static final ResourceLocation SLOT_NORMAL = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "item/accessory_slot_normal");
-    private static final ResourceLocation SLOT_UTILITY = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "item/accessory_slot_utility");
-    private static final ResourceLocation SLOT_SPECIAL = ResourceLocation.fromNamespaceAndPath(Ohmega.MODID, "item/accessory_slot_special");
-    public static final ResourceLocation[] SLOTS = new ResourceLocation[]{SLOT_NORMAL, SLOT_UTILITY, SLOT_SPECIAL};
-
-    public AccessorySlot(Player player, IItemHandler handler, int index, int x, int y, AccessoryType type) {
+    public AccessorySlot(Player player, AccessoryContainer handler, int index, int x, int y, AccessoryType type) {
         super(handler, index, x, y);
         this.player = player;
         this.slot = index;
@@ -36,9 +31,10 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-        if(acc != null) {
-            return ((AccessoryContainer) getItemHandler()).isValid(stack) && acc.getType() == this.type && AccessoryHelper.isExclusiveType(this.player, stack);
+        Item item = stack.getItem();
+        IAccessory acc = AccessoryHelper.getBoundAccessory(item);
+        if (acc != null) {
+            return getItemHandler().isItemValid(this.slot, stack) && AccessoryHelper.getType(item) == this.type;
         }
         return false;
     }
@@ -50,9 +46,10 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public boolean mayPickup(Player player) {
-        boolean original = true;
-        IAccessory acc = AccessoryHelper.getBoundAccessory(getItem().getItem());
-        if(acc != null) {
+        ItemStack stack = getItem();
+        boolean original = EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE);
+        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+        if (acc != null) {
             original = acc.canUnequip(player, getItem());
         }
         return !getItem().isEmpty() && OhmegaHooks.accessoryCanUnequipEvent(player, getItem(), original).getReturnValue();
@@ -62,14 +59,13 @@ public class AccessorySlot extends SlotItemHandler {
     public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
         IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
         if (!hasItem() && acc != null) {
-            IAccessory.ModifierBuilder builder = IAccessory.ModifierBuilder.deserialize(stack);
-            AccessoryHelper.changeModifiers(player, builder.getModifiers(), false);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), false);
 
             AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
             if (!event.isCanceled()) {
                 acc.onUnequip(this.player, stack);
             }
-            AccessoryHelper._internalTag(stack).putInt("slot", -1);
+            AccessoryHelper.setSlot(stack, -1);
             AccessoryHelper.setActive(this.player, stack, false);
         }
         super.onTake(player, stack);
@@ -77,30 +73,30 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public void set(@NotNull ItemStack stack) {
-        IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-        if (hasItem() && !ItemStack.isSameItem(stack, getItem()) && acc != null) {
-            AccessoryHelper.changeModifiers(this.player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), false);
+        IAccessory acc = AccessoryHelper.getBoundAccessory(getItem().getItem());
+        if (hasItem() && stack != getItem() && acc != null) {
+            AccessoryHelper.changeModifiers(this.player, AccessoryHelper.getModifiers(getItem()).getPassive(), false);
 
-            AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
+            AccessoryUnequipEvent event = OhmegaHooks.accessoryUnequipEvent(this.player, getItem());
             if (!event.isCanceled()) {
-                acc.onUnequip(this.player, stack);
+                acc.onUnequip(this.player, getItem());
             }
 
-            AccessoryHelper._internalTag(stack).putInt("slot", -1);
-            AccessoryHelper.setActive(this.player, stack, false);
+            AccessoryHelper.setSlot(getItem(), -1);
+            AccessoryHelper.setActive(this.player, getItem(), false);
             this.setChanged();
         }
 
         ItemStack old = getItem().copy();
         super.set(stack);
 
-        if (hasItem() && !ItemStack.isSameItem(old, getItem()) && acc != null) {
-            AccessoryHelper._internalTag(stack).putInt("slot", this.slot);
-            AccessoryHelper.setActive(this.player, stack, true);
+        acc = AccessoryHelper.getBoundAccessory(getItem().getItem());
+        if (hasItem() && old != getItem() && acc != null) {
+            AccessoryHelper.setSlot(stack, this.slot);
 
-            AccessoryHelper.changeModifiers(this.player, IAccessory.ModifierBuilder.deserialize(stack).getModifiers(), true);
+            AccessoryHelper.changeModifiers(this.player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
-            AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(this.player, stack);
+            AccessoryEquipEvent event = OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipEvent.Context.SLOT_PLACE);
             if (!event.isCanceled()) {
                 acc.onEquip(this.player, stack);
             }
@@ -110,6 +106,10 @@ public class AccessorySlot extends SlotItemHandler {
 
     @Override
     public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-        return Pair.of(InventoryMenu.BLOCK_ATLAS, SLOTS[this.type.ordinal()]);
+        return Pair.of(InventoryMenu.BLOCK_ATLAS, this.type.getEmptySlotLocation());
+    }
+
+    public AccessoryType getType() {
+        return this.type;
     }
 }
