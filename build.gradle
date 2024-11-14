@@ -14,7 +14,7 @@ idea {
     }
 }
 
-version = mod_version
+version = mod_version_file_display
 group = "com.swacky.${mod_id}"
 
 base {

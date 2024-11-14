@@ -86,10 +86,10 @@ public class AccessoryContainer extends ItemStackHandler {
             int j = element.getByte("Slot") & 255;
             if (j < this.stacks.size()) {
                 ItemStack stack = ItemStack.parse(lookup, element).orElse(ItemStack.EMPTY);
-                if(isItemValid(j, stack)) {
+                if (isItemValid(j, stack)) {
                     this.stacks.set(j, stack);
                 } else if (this.player instanceof ServerPlayer) {
-                    if(!this.player.addItem(stack)) {
+                    if (!this.player.addItem(stack)) {
                         this.player.drop(stack, false);
                     }
                 }
@@ -184,10 +184,10 @@ public class AccessoryContainer extends ItemStackHandler {
             ItemStack[] newPrevious = new ItemStack[newSize - oldSize];
             Arrays.fill(newPrevious, ItemStack.EMPTY);
             this.previous = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(this.previous.toArray(new ItemStack[0]), newPrevious));
-        } else if(newSize < oldSize) {
+        } else if (newSize < oldSize) {
             // Drop stacks outside of range
             for (ItemStack stack : Arrays.copyOfRange(this.stacks.toArray(new ItemStack[0]), newSize, oldSize)) {
-                if(!stack.isEmpty()) {
+                if (!stack.isEmpty()) {
                     IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
                     if (acc != null) {
                         AccessoryUnequipEvent event0 = OhmegaHooks.accessoryUnequipEvent(this.player, stack);
@@ -214,7 +214,7 @@ public class AccessoryContainer extends ItemStackHandler {
         ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
         for (int i = 0; i < stacks.size(); i++) {
             ItemStack stack = stacks.get(i);
-            if(!stack.isEmpty()) {
+            if (!stack.isEmpty()) {
                 Item item = stack.getItem();
                 IAccessory acc = AccessoryHelper.getBoundAccessory(item);
 
