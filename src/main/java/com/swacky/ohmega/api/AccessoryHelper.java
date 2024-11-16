@@ -33,7 +33,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import org.codehaus.plexus.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -397,7 +396,7 @@ public class AccessoryHelper {
         if (slot < 0 || !flag || mapping == null) {
             return MutableComponent.create(other).withStyle(ChatFormatting.GRAY);
         } else {
-            return MutableComponent.create(new PlainTextContents.LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", StringUtils.capitaliseAllWords(mapping.getTranslatedKeyMessage().getString())))).withStyle(ChatFormatting.GRAY);
+            return MutableComponent.create(new PlainTextContents.LiteralContents(MutableComponent.create(bindDescription).getString().replace("<BIND>", mapping.getTranslatedKeyMessage().getString()))).withStyle(ChatFormatting.GRAY);
         }
     }
 
