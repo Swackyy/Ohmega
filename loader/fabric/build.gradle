@@ -1,0 +1,76 @@
+plugins {
+    id "loader"
+    id "fabric-loom" version "${pluginLoomV}"
+}
+
+version "fabric+${mcV}"
+
+loom {
+    accessWidenerPath.set file("src/main/resources/aw.accesswidener")
+
+    mods {
+        "${modId}" {
+            sourceSet sourceSets.main
+        }
+    }
+
+    mixin {
+        defaultRefmapName.set "${modId}.refmap.json"
+    }
+
+    runs {
+        configureEach {
+            ideConfigGenerated true
+            runDir "run"
+        }
+
+        client {
+            client()
+            setConfigName "Fabric - Client"
+        }
+
+        server {
+            server()
+            setConfigName "Fabric - Server"
+        }
+    }
+}
+
+repositories {
+    maven {
+        name "Parchment"
+        url "https://maven.parchmentmc.org"
+    }
+
+    maven {
+        name "ModMenu"
+        url "https://maven.terraformersmc.com/releases"
+    }
+
+    maven {
+        name "Config API"
+        url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven"
+    }
+}
+
+fabricApi {
+    configureDataGeneration()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcV}"
+
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${mapsMcV}:${mapsV}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${loaderFabricV}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+
+    modApi("com.terraformersmc:modmenu:11.0.0-beta.1") {
+        exclude module: "fabric-api"
+    }
+
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeConfigApiPortV}"
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "version": "${modV}",
+  "name": "${modName}",
+  "description": "${modDescFabric}",
+  "authors": [
+    "${modAuthors}"
+  ],
+  "contact": {
+    "homepage": "${curseUrl}",
+    "sources": "${gitUrl}",
+    "issues": "${issuesUrl}"
+  },
+  "license": "${license}",
+  "icon": "${modId}.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.swacky.${modId}.common.Ohmega"
+    ],
+    "client": [
+      "com.swacky.${modId}.client.OhmegaClient"
+    ],
+    "fabric-datagen": [
+      "com.swacky.${modId}.datagen.OhmegaDataGen"
+    ]
+  },
+  "mixins": [
+    "${modId}.mixins.json"
+  ],
+  "accessWidener": "aw.accesswidener",
+  "depends": {
+    "fabricloader": "${loaderFabricVRange}",
+    "minecraft": "${mcV}",
+    "java": ">=${javaV}",
+    "fabric-api": "*",
+    "forgeconfigapiport": "${forgeConfigApiPortVRange}"
+  }
+}

@@ -1,0 +1,56 @@
+plugins {
+    id "loader"
+    id "net.minecraftforge.gradle" version "${pluginForgeV}"
+    id "org.spongepowered.mixin" version "0.7.+"
+    id "org.parchmentmc.librarian.forgegradle" version "1.+"
+}
+
+version "forge+${mcV}"
+
+mixin {
+    config "${modId}.mixins.json"
+}
+
+minecraft {
+    if (mapsMcV == mcV) {
+        mappings channel: "parchment", version: "${mapsV}-${mapsMcV}"
+    } else {
+        mappings channel: "parchment", version: "${mapsMcV}-${mapsV}-${mcV}"
+    }
+    reobf false
+    copyIdeResources.set true
+    accessTransformer file("src/main/resources/META-INF/accesstransformer.cfg")
+
+    runs {
+        configureEach {
+            workingDirectory file("run")
+
+            ideaModule "${rootProject.name}.loader.${project.name}.main"
+            property "forge.logging.markers", "REGISTRIES"
+            property "forge.logging.console.level", "debug"
+            property "forge.enabledGameTestNamespaces", "${modId}"
+        }
+
+        client {
+        }
+
+        server {
+        }
+
+        data {
+            args "--mod", "${modId}", "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources/")
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${mcV}-${loaderForgeV}"
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") { version { strictly "5.0.4" } }
+}
+
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir dir
+    it.java.destinationDirectory.set dir
+}

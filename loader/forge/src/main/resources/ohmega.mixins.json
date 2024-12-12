@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.swacky.ohmega.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EnchantmentHelperMixin",
+    "ItemStackMixin"
+  ],
+  "client": [
+    "client.AbstractContainerScreenMixin",
+    "client.KeyBindsList$KeyEntryMixin",
+    "client.KeyBindsListMixin"
+  ],
+  "minVersion": "0.8.5"
+}

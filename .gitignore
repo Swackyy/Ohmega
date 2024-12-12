@@ -7,10 +7,11 @@
 # gradle
 build
 .gradle
-
-# other
 run
 
 # misc
-src/generated
-genRuns.bat
+generated
+test
+remappedSrc
+runs
+*.bat
