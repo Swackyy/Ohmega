@@ -11,6 +11,7 @@ loom {
     mods {
         "${modId}" {
             sourceSet sourceSets.main
+            sourceSet project(":loader:common").sourceSets.main
         }
     }
 
