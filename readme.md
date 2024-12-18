@@ -21,3 +21,10 @@ This mod does not add any accessories in itself (aside from the example), just t
 [Report issues here](https://github.com/Swackyy/Ohmega/issues)
 
 [Join the Discord!](https://discord.gg/B9669WDmZk)
+
+## How to build
+
+1. Clone the repository into a local directory, and open with your IDE.
+2. (Optional) Open the `gradle.properties` file and modify the number in `org.gradle.jvmargs` to specify the amount of RAM to run the game with
+3. Load the gradle project (depends on IDE), this will also generate both NeoForge and Fabric run configurations.
+4. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge`.

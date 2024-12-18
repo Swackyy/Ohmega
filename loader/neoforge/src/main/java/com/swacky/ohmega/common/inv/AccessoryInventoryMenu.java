@@ -10,6 +10,7 @@ import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -117,7 +118,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(@NotNull Container container) {
-       CraftingMenu.slotChangedCraftingGrid(this, this.player.level(), this.player, this.craftMatrix, this.craftResult, null);
+       CraftingMenu.slotChangedCraftingGrid(this, (ServerLevel) this.player.level(), this.player, this.craftMatrix, this.craftResult, null);
     }
 
     @Override

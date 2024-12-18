@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -74,12 +73,11 @@ public class OhmegaCommonEvents {
         }
     }
 
-    public static InteractionResultHolder<ItemStack> onItemRightClick(Player player, Level level, InteractionHand hand) {
-        InteractionResult result = AccessoryHelper.tryEquip(player, hand).getResult();
-        ItemStack stack = player.getItemInHand(hand);
+    public static InteractionResult onItemRightClick(Player player, Level level, InteractionHand hand) {
+        InteractionResult result = AccessoryHelper.tryEquip(player, hand);
         if (result == InteractionResult.SUCCESS) {
-            return InteractionResultHolder.success(stack);
+            return result;
         }
-        return InteractionResultHolder.pass(stack);
+        return InteractionResult.PASS;
     }
 }

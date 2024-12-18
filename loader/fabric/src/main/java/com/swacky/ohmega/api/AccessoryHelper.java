@@ -30,7 +30,7 @@ import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -565,7 +565,7 @@ public class AccessoryHelper {
      * @param hand the {@link InteractionHand} to get the accessory held
      * @return an interaction result of success if the item is equipped, else a pass
      */
-    public static InteractionResultHolder<ItemStack> tryEquip(Player player, InteractionHand hand) {
+    public static InteractionResult tryEquip(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
         IAccessory acc = getBoundAccessory(item);
@@ -585,11 +585,11 @@ public class AccessoryHelper {
                     if (acc.getEquipSound() != null) {
                         player.playSound(acc.getEquipSound().value(), 1, 1);
                     }
-                    return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), player.level().isClientSide());
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
-        return InteractionResultHolder.pass(player.getItemInHand(hand));
+        return InteractionResult.PASS;
     }
 
     /**

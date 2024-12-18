@@ -41,7 +41,7 @@ public class ClientGameEvents {
         if (event.getScreen() instanceof InventoryScreen scr) {
             for (GuiEventListener list : scr.children()) {
                 if (list instanceof AccessoryInventoryButton btn) {
-                    btn.visible = !scr.getRecipeBookComponent().isVisible();
+                    btn.visible = !scr.recipeBookComponent.isVisible();
                 }
             }
         }

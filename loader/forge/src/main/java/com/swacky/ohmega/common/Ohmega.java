@@ -9,7 +9,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -18,16 +17,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class Ohmega {
     public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
 
-    // Future versions need constructor FMLJavaModLoadingContext parameter
-    // "bus" var should just be context.get() as well
-    @SuppressWarnings("removal")
-    public Ohmega() {
-        ModLoadingContext context = ModLoadingContext.get();
-
+    public Ohmega(FMLJavaModLoadingContext context) {
         context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfig.SPEC_CLIENT);
         context.registerConfig(ModConfig.Type.SERVER, OhmegaConfig.SPEC_SERVER);
 
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus bus = context.getModEventBus();
 
         OhmegaItems.ITEMS.register(bus);
         OhmegaMenus.MENUS.register(bus);

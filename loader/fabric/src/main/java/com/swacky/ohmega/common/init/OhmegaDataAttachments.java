@@ -6,11 +6,11 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 
 public class OhmegaDataAttachments {
-    public static final AttachmentType<AccessoryInvDataAttachment> ACCESSORY_HANDLER = AttachmentRegistry.<AccessoryInvDataAttachment>builder()
+    public static final AttachmentType<AccessoryInvDataAttachment> ACCESSORY_HANDLER = AttachmentRegistry.create(OhmegaCommon.rl("accessory_handler"),
+            builder -> builder
             .persistent(AccessoryInvDataAttachment.CODEC)
             .copyOnDeath()
-            .initializer(AccessoryInvDataAttachment::new)
-            .buildAndRegister(OhmegaCommon.rl("accessory_handler"));
+            .initializer(AccessoryInvDataAttachment::new));
 
     public static void init() {}
 }

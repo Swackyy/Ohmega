@@ -59,7 +59,6 @@ processResources {
         expand replaceProperties
     }
 
-    //duplicatesStrategy DuplicatesStrategy.EXCLUDE
     dependsOn configurations.commonResources
     from configurations.commonResources
 }
@@ -77,7 +76,6 @@ jar {
         ])
     }
 
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
     dependsOn configurations.commonJava
     from configurations.commonJava
     dependsOn configurations.commonResources

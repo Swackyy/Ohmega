@@ -91,7 +91,7 @@ public class CommonGameEvents {
 
     @SubscribeEvent
     public static void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        InteractionResult result = AccessoryHelper.tryEquip(event.getEntity(), event.getHand()).getResult();
+        InteractionResult result = AccessoryHelper.tryEquip(event.getEntity(), event.getHand());
         if (result == InteractionResult.SUCCESS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
