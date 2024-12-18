@@ -17,7 +17,7 @@ public class OhmegaItems {
     // This is simply a test and example accessory. Its code may be used as a reference to create your own.
     public static final RegistryObject<Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 
-    private static <T extends Item> RegistryObject<T> register(String id, Function<Item.Properties, T> function, Item.Properties properties) {
-        return ITEMS.register(id, () -> function.apply(properties.setId(ResourceKey.create(Registries.ITEM, OhmegaCommon.rl(id)))));
+    private static <T extends Item> RegistryObject<T> register(String id, Function<Item.Properties, T> function, Item.Properties props) {
+        return ITEMS.register(id, () -> function.apply(props.setId(ResourceKey.create(Registries.ITEM, OhmegaCommon.rl(id)))));
     }
 }
