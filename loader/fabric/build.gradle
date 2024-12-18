@@ -69,7 +69,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     modApi "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
 
-    modApi("com.terraformersmc:modmenu:11.0.0-beta.1") {
+    modApi("com.terraformersmc:modmenu:${loaderFabricModMenuV}") {
         exclude module: "fabric-api"
     }
 
