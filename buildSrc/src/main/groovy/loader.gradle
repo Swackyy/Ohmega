@@ -34,24 +34,24 @@ dependencies {
 
 processResources {
     var replaceProperties = [
-            license                  : license,
-            loaderForgeV             : loaderForgeV,
-            loaderForgeVRange        : loaderForgeVRange,
-            loaderNeoV               : loaderNeoV,
-            loaderNeoVRange          : loaderNeoVRange,
-            loaderFabricVRange       : loaderFabricVRange,
-            modId                    : modId,
-            modV                     : modV,
-            modAuthors               : modAuthorsDisplay,
-            mcV                      : mcV,
-            modName                  : modName,
-            gitUrl                   : gitUrl,
-            issuesUrl                : "${gitUrl}/issues",
-            curseUrl                 : curseUrl,
-            modDescFabric            : modDescMin,
-            modDesc                  : "${modDescMin}\n${modDescSrc}: ${gitUrl}\n${modDescWiki}: ${gitUrl}/wiki",
-            forgeConfigApiPortVRange : forgeConfigApiPortVRange,
-            javaV                    : javaV
+            license                              : license,
+            loaderForgeV                         : loaderForgeV,
+            loaderForgeVRange                    : loaderForgeVRange,
+            loaderNeoV                           : loaderNeoV,
+            loaderNeoVRange                      : loaderNeoVRange,
+            loaderFabricVRange                   : loaderFabricVRange,
+            modId                                : modId,
+            modV                                 : modV,
+            modAuthors                           : modAuthorsDisplay,
+            mcV                                  : mcV,
+            modName                              : modName,
+            gitUrl                               : gitUrl,
+            issuesUrl                            : "${gitUrl}/issues",
+            curseUrl                             : curseUrl,
+            modDescFabric                        : modDescMin,
+            modDesc                              : "${modDescMin}\n${modDescSrc}: ${gitUrl}\n${modDescWiki}: ${gitUrl}/wiki",
+            loaderFabricForgeConfigApiPortVRange : loaderFabricForgeConfigApiPortVRange,
+            javaV                                : javaV
     ]
     inputs.properties replaceProperties
 

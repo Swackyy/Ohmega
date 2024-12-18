@@ -72,5 +72,5 @@ dependencies {
         exclude module: "fabric-api"
     }
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeConfigApiPortV}"
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 }
