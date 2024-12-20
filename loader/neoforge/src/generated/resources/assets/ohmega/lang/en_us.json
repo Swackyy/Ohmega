@@ -1,0 +1,17 @@
+{
+  "accessory_type": "Accessory Type: %s",
+  "accessory_type.ohmega.generic": "Generic",
+  "accessory_type.ohmega.normal": "Normal",
+  "accessory_type.ohmega.special": "Special",
+  "accessory_type.ohmega.utility": "Utility",
+  "dataPack.ohmega.description": "Mod resources for Ohmega",
+  "item.ohmega.angel_ring": "Angel Ring",
+  "item.ohmega.angel_ring.tooltip": "Allows the wearer to fly",
+  "item.ohmega.angel_ring.tooltip.keybind": "Press <BIND> to toggle flight",
+  "key.category.ohmega.ohmega": "Ohmega",
+  "key.ohmega.generic": "Generic %s",
+  "key.ohmega.normal": "Normal %s",
+  "key.ohmega.open_acc_inv": "Open/Close Accessories Inventory",
+  "key.ohmega.special": "Special %s",
+  "key.ohmega.utility": "Utility %s"
+}

@@ -7,10 +7,6 @@ java {
     withSourcesJar()
 }
 
-sourceSets.main.resources {
-    srcDir "src/generated/resources"
-}
-
 configurations {
     commonJava {
         canBeResolved true
@@ -19,6 +15,10 @@ configurations {
     commonResources {
         canBeResolved true
     }
+}
+
+sourceSets.main.resources {
+    srcDir "src/generated/resources"
 }
 
 dependencies {
@@ -77,12 +77,16 @@ jar {
     }
 
     dependsOn configurations.commonJava
-    from configurations.commonJava
+    from configurations.commonJava/*{
+        exclude "com/swacky/ohmega/datagen/**"
+    }*/
     dependsOn configurations.commonResources
     from configurations.commonResources
 }
 
 tasks.withType(JavaCompile).configureEach {
     dependsOn configurations.commonJava
-    source configurations.commonJava
+    source configurations.commonJava/*{
+        exclude "com/swacky/ohmega/datagen/**"
+    }*/
 }

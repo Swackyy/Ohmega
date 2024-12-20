@@ -3,16 +3,28 @@ plugins {
     id "net.neoforged.moddev" version "${pluginNeoV}"
 }
 
+version "common+${mcV}"
+
 neoForge {
-    neoFormVersion = "${mcV}-${neoFormV}"
+    neoFormVersion.set "${mcV}-${neoFormV}"
 
     parchment {
         mappingsVersion.set mapsV
         minecraftVersion.set mapsMcV
     }
-}
 
-version "common+${mcV}"
+    /*runs {
+        data {
+            //systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
+            //systemProperty "forge.logging.markers", "REGISTRIES"
+
+            ideName.set "Common - ${it.name.capitalize()} (${project.path}"
+
+            data()
+            programArguments.addAll "--mod", "${modId}", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources/").getAbsolutePath()
+        }
+    }*/
+}
 
 dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'

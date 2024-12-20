@@ -34,7 +34,7 @@ public class AccessoryContainer {
             }
 
             IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-            if(acc != null) {
+            if (acc != null) {
                 if (!OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipCallback.Context.GENERIC).isCanceled()) {
                     acc.onEquip(this.player, stack);
                 }

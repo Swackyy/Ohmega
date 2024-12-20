@@ -12,11 +12,6 @@ neoForge {
         file("src/main/resources/META-INF/accesstransformer.cfg")
     }
 
-    parchment {
-        mappingsVersion.set mapsV
-        minecraftVersion.set mapsMcV
-    }
-
     mods {
         "${modId}" {
             sourceSet sourceSets.main
@@ -24,12 +19,17 @@ neoForge {
         }
     }
 
+    parchment {
+        mappingsVersion.set mapsV
+        minecraftVersion.set mapsMcV
+    }
+
     runs {
         configureEach {
             systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
             systemProperty "forge.logging.markers", "REGISTRIES"
 
-            ideName.set "NeoForge ${it.name.capitalize()} (${project.path}"
+            ideName.set "NeoForge - ${it.name.capitalize()} (${project.path}"
         }
 
         client {
@@ -42,7 +42,7 @@ neoForge {
 
         data {
             data()
-            programArguments.addAll "--mod", "${modId}", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources/").getAbsolutePath()
+            programArguments.addAll "--mod", "${modId}", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
         }
     }
 }

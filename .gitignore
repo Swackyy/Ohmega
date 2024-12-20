@@ -10,7 +10,7 @@ build
 run
 
 # misc
-generated
+loader/**/src/generated/resources/.cache/
 test
 remappedSrc
 runs

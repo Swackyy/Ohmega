@@ -55,7 +55,9 @@ repositories {
 }
 
 fabricApi {
-    configureDataGeneration()
+    configureDataGeneration(settings -> {
+        settings.getOutputDirectory().set(getProject().file("src/generated/resources"))
+    })
 }
 
 dependencies {

@@ -123,7 +123,7 @@ public class AccessoryContainer extends ItemStackHandler {
             }
 
             IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-            if(acc != null) {
+            if (acc != null) {
                 if (!OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipEvent.Context.GENERIC).isCanceled()) {
                     acc.onEquip(this.player, stack);
                 }
