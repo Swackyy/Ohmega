@@ -72,17 +72,15 @@ jar {
         ])
     }
 
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+
     dependsOn configurations.commonJava
-    from configurations.commonJava/*{
-        exclude "com/swacky/ohmega/datagen/**"
-    }*/
+    from configurations.commonJava
     dependsOn configurations.commonResources
     from configurations.commonResources
 }
 
 tasks.withType(JavaCompile).configureEach {
     dependsOn configurations.commonJava
-    source configurations.commonJava/*{
-        exclude "com/swacky/ohmega/datagen/**"
-    }*/
+    source configurations.commonJava
 }
