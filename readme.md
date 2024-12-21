@@ -30,7 +30,7 @@ Sources Jars also provided there
 For your desired Mod Loader, run the corresponding command below:
 > **Forge**: `./gradlew build -p loader/forge`
 
-> **NeoForge**: `./gradlew build -p loader/neoforge`
+> **NeoForge**: `./gradlew build -p loader/neoforge` (breaks on `compileTestJava` but still builds, check output directory)
 
 > **Fabric**: `./gradlew build -p loader/fabric`
 
