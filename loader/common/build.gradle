@@ -12,18 +12,6 @@ neoForge {
         mappingsVersion.set mapsV
         minecraftVersion.set mapsMcV
     }
-
-    /*runs {
-        data {
-            //systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
-            //systemProperty "forge.logging.markers", "REGISTRIES"
-
-            ideName.set "Common - ${it.name.capitalize()} (${project.path}"
-
-            data()
-            programArguments.addAll "--mod", "${modId}", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources/").getAbsolutePath()
-        }
-    }*/
 }
 
 dependencies {
