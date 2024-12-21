@@ -9,22 +9,33 @@ This mod is a performant, maintained and stable alternative to other Accessory A
 
 Sources Jars also provided there
 
+---
+
 ## For modders
 **[View the Source Code here](https://github.com/Swackyy/Ohmega)**
 
 **[Check out the Wiki](https://github.com/Swackyy/Ohmega/wiki)**
 
----
-## Other info
-This mod does not add any accessories in itself (aside from the example), just the accessory functionality, capabilities to add and create them with ease and the additional segment of the inventory where accessories can be equipped.
+### Cloning Repo Instructions
 
-[Report issues here](https://github.com/Swackyy/Ohmega/issues)
-
-[Join the Discord!](https://discord.gg/B9669WDmZk)
-
-## How to build
+#### How to build in IDE
 
 1. Clone the repository into a local directory, and open with your IDE.
 2. (Optional) Open the `gradle.properties` file and modify the number in `org.gradle.jvmargs` to specify the amount of RAM to run the game with
 3. Load the gradle project (depends on IDE), this will also generate both NeoForge and Fabric run configurations.
 4. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge`.
+
+#### How to build into Jar
+
+For your desired Mod Loader, run the corresponding command below:
+> **Forge**: `./gradlew build -p loader/forge`
+
+> **NeoForge**: `./gradlew build -p loader/neoforge`
+
+> **Fabric**: `./gradlew build -p loader/fabric`
+
+---
+## Other links
+[Report issues here](https://github.com/Swackyy/Ohmega/issues)
+
+[Join the Discord!](https://discord.gg/B9669WDmZk)
