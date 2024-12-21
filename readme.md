@@ -3,6 +3,8 @@ A modernized and lightweight Accessory API for Minecraft, versions 1.18+
 
 This mod is a performant, maintained and stable alternative to other Accessory API mods.
 
+**The Fabric version requires the 'Fabric API' and 'Forge Config API Port' mods to function**
+
 ## Download Links
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/ohmega)
 - [Modrinth](https://modrinth.com/mod/ohmega)
