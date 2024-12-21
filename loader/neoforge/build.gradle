@@ -41,8 +41,9 @@ neoForge {
         }
 
         data {
+            ideName.set "Common - Data Generation"
             data()
-            programArguments.addAll "--mod", "${modId}", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
+            programArguments.addAll "--mod", "${modId}", "--all", "--output", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath() , "--existing", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
         }
     }
 }

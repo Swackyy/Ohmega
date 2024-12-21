@@ -37,9 +37,9 @@ minecraft {
         server {
         }
 
-        data {
+        /*data {
             args "--mod", "${modId}", "--all", "--output", file("src/generated/resources/"), "--existing", project(":loader:common").sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
-        }
+        }*/
     }
 }
 

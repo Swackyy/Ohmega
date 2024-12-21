@@ -17,10 +17,6 @@ configurations {
     }
 }
 
-sourceSets.main.resources {
-    srcDir "src/generated/resources"
-}
-
 dependencies {
     compileOnly(project(":loader:common")) {
         capabilities {

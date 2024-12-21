@@ -54,11 +54,11 @@ repositories {
     }
 }
 
-fabricApi {
+/*fabricApi {
     configureDataGeneration(settings -> {
         settings.getOutputDirectory().set(getProject().file("src/generated/resources"))
     })
-}
+}*/
 
 dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
