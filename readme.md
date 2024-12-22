@@ -20,12 +20,12 @@ Sources Jars also provided there
 
 ### Cloning Repo Instructions
 
-#### How to build in IDE
+#### How to generate IDE runs
 
 1. Clone the repository into a local directory, and open with your IDE.
 2. (Optional) Open the `gradle.properties` file and modify the number in `org.gradle.jvmargs` to specify the amount of RAM to run the game with
 3. Load the gradle project (depends on IDE), this will also generate both NeoForge and Fabric run configurations.
-4. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge`.
+4. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge` (if it fails, run again)
 
 #### How to build into Jar
 
