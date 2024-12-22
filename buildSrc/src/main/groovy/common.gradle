@@ -38,6 +38,18 @@ processResources {
     exclude "META-INF/accesstransformer.cfg"
 }
 
+processResources {
+    var replaceProperties = [
+            packFormatV : packFormatV
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching("pack.mcmeta") {
+        expand replaceProperties
+    }
+}
+
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.release.set JavaLanguageVersion.of(javaV).asInt()
