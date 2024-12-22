@@ -16,9 +16,9 @@ public class Ohmega {
         container.registerConfig(ModConfig.Type.CLIENT, OhmegaConfig.SPEC_CLIENT);
         container.registerConfig(ModConfig.Type.SERVER, OhmegaConfig.SPEC_SERVER);
 
-        OhmegaItems.ITEMS.register(bus);
-        OhmegaMenus.MENUS.register(bus);
-        OhmegaDataComponents.DATA_COMPONENTS.register(bus);
-        OhmegaDataAttachments.ATTACHMENT_TYPES.register(bus);
+        OhmegaItems.register(bus);
+        OhmegaMenus.register(bus);
+        OhmegaDataComponents.register(bus);
+        OhmegaDataAttachments.register(bus);
     }
 }

@@ -23,8 +23,8 @@ public class Ohmega {
 
         IEventBus bus = context.getModEventBus();
 
-        OhmegaItems.ITEMS.register(bus);
-        OhmegaMenus.MENUS.register(bus);
-        OhmegaDataComponents.DATA_COMPONENTS.register(bus);
+        OhmegaItems.register(bus);
+        OhmegaMenus.register(bus);
+        OhmegaDataComponents.register(bus);
     }
 }

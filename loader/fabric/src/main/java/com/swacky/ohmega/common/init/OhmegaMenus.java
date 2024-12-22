@@ -12,8 +12,8 @@ public class OhmegaMenus {
     public static final MenuType<AccessoryInventoryMenu> ACCESSORY_INVENTORY = register("accessory_container",
             new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));
 
-    private static <T extends AbstractContainerMenu> MenuType<T> register(String name, MenuType<T> object) {
-        return Registry.register(BuiltInRegistries.MENU, OhmegaCommon.rl(name), object);
+    private static <T extends AbstractContainerMenu> MenuType<T> register(String id, MenuType<T> object) {
+        return Registry.register(BuiltInRegistries.MENU, OhmegaCommon.rl(id), object);
     }
 
     public static void init() {}

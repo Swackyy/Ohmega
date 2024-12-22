@@ -21,9 +21,6 @@
     ],
     "client": [
       "com.swacky.${modId}.client.OhmegaClient"
-    ],
-    "fabric-datagen": [
-      "com.swacky.${modId}.datagen.OhmegaDataGen"
     ]
   },
   "mixins": [
