@@ -29,7 +29,7 @@ neoForge {
             systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
             systemProperty "forge.logging.markers", "REGISTRIES"
 
-            ideName.set "NeoForge - ${it.name.capitalize()} (${project.path}"
+            ideName.set "NeoForge ${it.name.capitalize()} (${project.path}"
         }
 
         client {
@@ -41,7 +41,7 @@ neoForge {
         }
 
         data {
-            ideName.set "Common - Data Generation"
+            ideName.set "Data Generation"
             data()
             programArguments.addAll "--mod", "${modId}", "--all", "--output", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath() , "--existing", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
         }

@@ -27,12 +27,12 @@ loom {
 
         client {
             client()
-            setConfigName "Fabric - Client"
+            setConfigName "Fabric Client"
         }
 
         server {
             server()
-            setConfigName "Fabric - Server"
+            setConfigName "Fabric Server"
         }
     }
 }
@@ -53,12 +53,6 @@ repositories {
         url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven"
     }
 }
-
-/*fabricApi {
-    configureDataGeneration(settings -> {
-        settings.getOutputDirectory().set(getProject().file("src/generated/resources"))
-    })
-}*/
 
 dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
