@@ -3,8 +3,6 @@ plugins {
     id "net.neoforged.moddev" version "${pluginNeoV}"
 }
 
-version "common+${mcV}"
-
 neoForge {
     neoFormVersion.set "${mcV}-${neoFormV}"
 
