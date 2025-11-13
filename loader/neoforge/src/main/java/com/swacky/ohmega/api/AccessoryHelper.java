@@ -15,7 +15,7 @@ import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.event.CommonModEvents;
+import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.ChatFormatting;
@@ -267,7 +267,7 @@ public class AccessoryHelper {
         }
 
         {
-            ImmutableMap<Item, AccessoryType> map = CommonModEvents.getAccessoryTypeOverrides();
+            ImmutableMap<Item, AccessoryType> map = CommonEvents.getAccessoryTypeOverrides();
             if (map.containsKey(item)) {
                 return map.get(item);
             }
