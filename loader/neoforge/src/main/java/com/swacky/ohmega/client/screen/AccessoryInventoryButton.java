@@ -1,7 +1,6 @@
 package com.swacky.ohmega.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -43,7 +42,7 @@ public class AccessoryInventoryButton extends AbstractButton {
     public void onPress() {
         if (mc.player != null) {
             if (!mc.player.isCreative() && !mc.player.isSpectator()) {
-                if (mc.player.containerMenu instanceof AccessoryInventoryMenu) {
+                if (mc.screen instanceof AccessoryInventoryScreen) {
                     PacketDistributor.sendToServer(new OpenInventoryPacket());
                     mc.setScreen(new InventoryScreen(mc.player));
                 } else {
