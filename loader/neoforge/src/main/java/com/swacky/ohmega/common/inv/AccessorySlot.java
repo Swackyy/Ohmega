@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.inv;
 
-import com.mojang.datafixers.util.Pair;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -8,7 +7,6 @@ import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
@@ -104,8 +102,8 @@ public class AccessorySlot extends SlotItemHandler {
     }
 
     @Override
-    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-        return Pair.of(InventoryMenu.BLOCK_ATLAS, this.type.getEmptySlotLocation());
+    public ResourceLocation getNoItemIcon() {
+        return this.type.getEmptySlotLocation();
     }
 
     public AccessoryType getType() {

@@ -49,7 +49,7 @@ public class ClientModEvents {
             }
 
             Minecraft mc = Minecraft.getInstance();
-            mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
+            mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
             mc.options.load(true);
         }
     }
@@ -58,7 +58,7 @@ public class ClientModEvents {
     public static void onConfigUnload(ModConfigEvent.Unloading event) {
         if (event.getConfig().getSpec() == OhmegaConfig.SPEC_SERVER) {
             Minecraft mc = Minecraft.getInstance();
-            mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]);
+            mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]);
             mc.options.load(true);
         }
     }
@@ -77,7 +77,7 @@ public class ClientModEvents {
                     list.addAll(immutableList);
                 }
 
-                mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
+                mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
                 mc.options.load(true);
 
                 if (mc.player != null) {

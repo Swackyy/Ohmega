@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="${loaderNeoV}"
-issueTrackerURL="${issuesUrl}"
+issueTrackerURL="${gitUrl}/issues"
 license="${license}"
 
 
@@ -8,7 +8,7 @@ license="${license}"
 modId="${modId}"
 version="${modV}"
 displayName="${modName}"
-displayURL="${curseUrl}"
+displayURL="${gitUrl}"
 logoFile= "${modId}.png"
 authors="${modAuthors}"
 description='''${modDesc}'''

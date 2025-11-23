@@ -9,12 +9,16 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * The base interface for all accessory items
+ * <ul>To make an item an accessory, either:
+ * <li>Make your {@link net.minecraft.world.item.Item} class inherit this interface (recommended for your own items)</li>
+ * <li>Bind an {@link IAccessory} instance with AccessoryHelper#bindAccessory (for vanilla and other mods' items)</li>
+ * </ul>
  * <p>
- * Extend from this to make your item an accessory
+ * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki for examples</a>
  */
 @SuppressWarnings("unused")
 public interface IAccessory {
-    // Gets called every tick
+    // Is called every tick when equipped
     default void tick(Player player, ItemStack stack) {
     }
 
@@ -41,12 +45,13 @@ public interface IAccessory {
     default void update(Player player, ItemStack stack) {
     }
 
-    // Override this to make accessories only equipable when certain other accessories are not equipped. Default is just self
+    // Override this to make accessories only equipable when certain other accessories are not equipped
+    // Default behaviour prevents players from equipping two of the same accessory at once
     default boolean checkCompatibility(IAccessory other) {
         return this != other;
     }
 
-    // Called when a key bind is pressed for this slot. Will only work for utility and special slots.
+    // Called when a key-bind is pressed for this slot. Will only work for utility and special slots.
     // It is recommended that when this is overridden and used, that a tooltip will be provided.
     // A component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(Player player, ItemStack stack) {
@@ -61,7 +66,7 @@ public interface IAccessory {
     default void addDefaultAttributeModifiers(ModifierHolder.Builder builder) {
     }
 
-    // A replacement for the vanilla for Minecraft versions 1.19.4+
+    // A replacement for the vanilla for Minecraft versions 1.19.4+ to ensure easier compatibility
     @Nullable
     default Holder<SoundEvent> getEquipSound() {
         return null;

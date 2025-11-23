@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class KeyBindsList$KeyEntryMixin {
     @Redirect(method = "refreshEntry", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;translatable(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;"))
     public MutableComponent refreshEntry(String key) {
-        // Very clunky way of doing this, but it works
         if (key.startsWith(OhmegaCommon.MODID, 4) && !key.equals(OhmegaBinds.OPEN_ACC_INV.getName())) {
             return Component.translatable(key.substring(0, key.indexOf('_')), Integer.parseInt(key.substring(key.indexOf('_') + 1)) + 1);
         }

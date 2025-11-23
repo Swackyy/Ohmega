@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.ModifierHolder;
-import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -121,13 +120,6 @@ public class AccessoryContainer extends ItemStackHandler {
             if (AccessoryHelper.isActive(stack)) {
                 AccessoryHelper.changeModifiers(this.player, modifiers.getActive(), true);
             }
-
-            IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-            if (acc != null) {
-                if (!OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipEvent.Context.GENERIC).isCanceled()) {
-                    acc.onEquip(this.player, stack);
-                }
-            }
         }
     }
 
@@ -209,7 +201,7 @@ public class AccessoryContainer extends ItemStackHandler {
                             acc.onUnequip(this.player, stack);
                         }
                         AccessoryHelper.setSlot(stack, -1);
-                        this.player.drop(stack, false, false);
+                        this.player.drop(stack, true, false);
                     }
                 }
             }

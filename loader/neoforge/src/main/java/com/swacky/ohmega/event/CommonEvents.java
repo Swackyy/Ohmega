@@ -27,7 +27,7 @@ import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -40,16 +40,21 @@ import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = OhmegaCommon.MODID)
 public class CommonEvents {
     private static ImmutableMap<Item, AccessoryType> accessoryTypeOverrides = ImmutableMap.of();
 
+    @SuppressWarnings("resource")
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AccessoryHelper.syncAllSlots(player, Collections.singletonList(player));
+            List<ServerPlayer> receivers = player.serverLevel().players();
+
+            receivers.add(player);
+            AccessoryHelper.syncAllSlots(player, receivers);
         }
     }
 
@@ -119,8 +124,8 @@ public class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void addResourceReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(AccessoryTypeManager.getInstance());
+    public static void addResourceReloadListeners(AddServerReloadListenersEvent event) {
+        event.addListener(OhmegaCommon.rl("accessory_types"), AccessoryTypeManager.getInstance());
     }
 
     @SubscribeEvent

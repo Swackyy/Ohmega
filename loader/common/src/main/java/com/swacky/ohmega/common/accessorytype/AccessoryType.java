@@ -76,7 +76,7 @@ public class AccessoryType {
     }
 
     public boolean isDefault() {
-        return this == NORMAL;
+        return this == NORMAL.get();
     }
 
     public String getTranslationKey() {

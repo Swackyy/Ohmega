@@ -39,7 +39,7 @@ public class OhmegaClientEvents {
         }
     }
 
-    static void addToScreens(Minecraft mc, Screen screen, int width, int height) {
+    private static void addToScreens(Minecraft mc, Screen screen, int width, int height) {
         if (screen instanceof InventoryScreen && OhmegaConfig.CONFIG_CLIENT.buttonStyle.get() != OhmegaConfig.ButtonStyle.HIDDEN) {
             if (mc != null && mc.player != null && !mc.player.isCreative() && !mc.player.isSpectator()) {
                 screen.addRenderableWidget(new AccessoryInventoryButton(OhmegaConfig.CONFIG_CLIENT.buttonStyle.get(), (AbstractContainerScreen<?>) screen));
@@ -47,7 +47,7 @@ public class OhmegaClientEvents {
         }
     }
 
-    static void hide(Minecraft mc, Screen screen, int width, int height) {
+    private static void hide(Minecraft mc, Screen screen, int width, int height) {
         if (screen instanceof InventoryScreen scr) {
             for (GuiEventListener list : scr.children()) {
                 if (list instanceof AccessoryInventoryButton btn) {
@@ -57,7 +57,7 @@ public class OhmegaClientEvents {
         }
     }
 
-    static void onConfigLoad(ModConfig config) {
+    private static void onConfigLoad(ModConfig config) {
         if (config.getSpec() == OhmegaConfig.SPEC_SERVER) {
             ArrayList<KeyMapping> list = new ArrayList<>();
             for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.Generated.getSlotKeys().values()) {
@@ -65,20 +65,20 @@ public class OhmegaClientEvents {
             }
 
             Minecraft mc = Minecraft.getInstance();
-            mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
+            mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
             mc.options.load();
         }
     }
 
-    static void onConfigUnload(ModConfig config) {
+    private static void onConfigUnload(ModConfig config) {
         if (OhmegaConfig.SPEC_CLIENT.isLoaded() && config.getSpec() == OhmegaConfig.SPEC_SERVER) {
             Minecraft mc = Minecraft.getInstance();
-            mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]);
+            mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]);
             mc.options.load();
         }
     }
 
-    static void onConfigReload(ModConfig config) {
+    private static void onConfigReload(ModConfig config) {
         if (OhmegaConfig.SPEC_CLIENT.isLoaded() && OhmegaConfig.SPEC_SERVER.isLoaded()) {
             Minecraft mc = Minecraft.getInstance();
             if (config.getSpec() == OhmegaConfig.SPEC_CLIENT && !OhmegaConfig.CONFIG_CLIENT.compatibilityMode.get()) {
@@ -91,7 +91,7 @@ public class OhmegaClientEvents {
                     list.addAll(immutableList);
                 }
 
-                mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
+                mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
                 mc.options.load();
 
                 if (mc.player != null) {

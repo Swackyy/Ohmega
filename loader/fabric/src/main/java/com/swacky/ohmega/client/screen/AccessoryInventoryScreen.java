@@ -11,16 +11,11 @@ import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryInventoryMenu> {
-    protected static final ResourceLocation VANILLA_LOC = OhmegaCommon.mcRl("textures/gui/container/inventory.png");
-    protected static final ResourceLocation ACCESSORY_LOC = OhmegaCommon.rl("textures/gui/accessory_addon.png");
-
     private static int extraWidth;
-
     protected float oldMouseX;
     protected float oldMouseY;
     protected final Inventory inv;
@@ -90,7 +85,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
             // Slots
             int slotsCreatedCurrentColumn = 0;
             for (int j = 0; true; j++) {
-                gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 24 + j * 18, 4, 4, 18, 18, 26, 71);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, this.topPos + 24 + j * 18, 4, 4, 18, 18, 26, 71);
                 index++;
                 slotsCreatedCurrentColumn++;
                 if (slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
@@ -99,47 +94,47 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
             }
 
             // Top border
-            gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 20, 4, 0, 18, 4, 26, 71);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, this.topPos + 20, 4, 0, 18, 4, 26, 71);
 
             // Bottom border
             if (i >= renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
-                gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, 26, 71);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, this.topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, 26, 71);
             } else {
-                gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * i, this.topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, 26, 71);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, this.topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, 26, 71);
             }
         }
 
         // Side borders
         for (int i = 0; i < mostSlotsPerColumn; i++) {
             // Left
-            gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x, this.topPos + 24 + 18 * i, 0, 4, 4, 18, 26, 71);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, this.topPos + 24 + 18 * i, 0, 4, 4, 18, 26, 71);
 
             // Right
             if (i >= lastColumnSlots) {
-                gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * i, 22, 4, 4, 18, 26, 71);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * i, 22, 4, 4, 18, 26, 71);
             } else {
-                gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * renderColumns, this.topPos + 24 + 18 * i, 22, 4, 4, 18, 26, 71);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, this.topPos + 24 + 18 * i, 22, 4, 4, 18, 26, 71);
             }
         }
 
         // Top left corner
-        gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x, this.topPos + 20, 0, 0, 4, 4, 26, 71);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, this.topPos + 20, 0, 0, 4, 4, 26, 71);
 
         // Top right corner
-        gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * renderColumns, this.topPos + 20, 22, 0, 4, 4, 26, 71);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, this.topPos + 20, 22, 0, 4, 4, 26, 71);
 
         // Bottom left corner
-        gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x, this.topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, 26, 71);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, this.topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, 26, 71);
 
         // Bottom right corner
-        gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * renderColumns, this.topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, 26, 71);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, this.topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, 26, 71);
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 4 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, 26, 71);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, 26, 71);
         }
 
         // Intersecting corner
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderType::guiTextured, ACCESSORY_LOC, x + 5 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, 26, 71);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 5 + 18 * (renderColumns - 1), this.topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, 26, 71);
         }
     }
 
@@ -147,7 +142,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
     protected void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mx, int my) {
         if (this.minecraft != null && this.minecraft.player != null) {
             // Main inventory
-            gui.blit(RenderType::guiTextured, VANILLA_LOC, this.leftPos, this.topPos, 0, 0, 176, 166, 256, 256);
+            gui.blit(RenderType::guiTextured, InventoryScreen.INVENTORY_LOCATION, this.leftPos, this.topPos, 0, 0, 176, 166, 256, 256);
 
             // Accessory Inventory
             this.renderAccInv(gui);

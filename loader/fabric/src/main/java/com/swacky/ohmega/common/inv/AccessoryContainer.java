@@ -3,7 +3,6 @@ package com.swacky.ohmega.common.inv;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.ModifierHolder;
-import com.swacky.ohmega.api.event.AccessoryEquipCallback;
 import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.world.entity.player.Player;
@@ -13,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A wrapper for {@link AccessoryInvDataAttachment} that allows ease of use with a {@link Player} instance
- * <p>
- * Part of this was ported from forge
  */
 public class AccessoryContainer {
     private final Player player;
@@ -31,13 +28,6 @@ public class AccessoryContainer {
             AccessoryHelper.changeModifiers(this.player, modifiers.getPassive(), true);
             if (AccessoryHelper.isActive(stack)) {
                 AccessoryHelper.changeModifiers(this.player, modifiers.getActive(), true);
-            }
-
-            IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-            if (acc != null) {
-                if (!OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipCallback.Context.GENERIC).isCanceled()) {
-                    acc.onEquip(this.player, stack);
-                }
             }
         }
     }

@@ -8,9 +8,9 @@
     "${modAuthors}"
   ],
   "contact": {
-    "homepage": "${curseUrl}",
+    "homepage": "${gitUrl}",
     "sources": "${gitUrl}",
-    "issues": "${issuesUrl}"
+    "issues": "${gitUrl}/issues"
   },
   "license": "${license}",
   "icon": "${modId}.png",
@@ -33,5 +33,17 @@
     "java": ">=${javaV}",
     "fabric-api": "*",
     "forgeconfigapiport": "${loaderFabricForgeConfigApiPortVRange}"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.curseforge": "${curseUrl}",
+        "modmenu.discord": "${discordUrl}",
+        "modmenu.modrinth": "${modrinthUrl}",
+        "modmenu.wiki": "${gitUrl}/wiki"
+      },
+      "badges": ["library"]
+    },
+    "update_checker": true
   }
 }

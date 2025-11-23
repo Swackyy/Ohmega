@@ -74,13 +74,9 @@ public class ClientForgeEvents {
                     // Client handling
                     if (mc.player != null) {
                         AccessoryHelper.getContainer(mc.player).ifPresent(a -> {
-                            int k = 0;
-                            for (; true; j[0]++) {
-                                if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j[0]))) {
-                                    k++;
-                                    if (k > i[0]) {
-                                        break;
-                                    }
+                            for (int k = 0; true; j[0]++) {
+                                if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j[0])) && ++k > i[0]) {
+                                    break;
                                 }
                             }
 

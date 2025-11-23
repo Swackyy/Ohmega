@@ -8,7 +8,6 @@
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
-    "client.KeyBindsList$KeyEntryMixin",
     "client.KeyBindsListMixin"
   ],
   "minVersion": "0.8.5"

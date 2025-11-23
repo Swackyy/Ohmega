@@ -8,9 +8,11 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -55,7 +57,7 @@ public class OhmegaBinds {
                         int key = type == AccessoryType.UTILITY.get() ? count == 0 ? GLFW.GLFW_KEY_G : count == 1 ? GLFW.GLFW_KEY_V : GLFW.GLFW_KEY_UNKNOWN : type == AccessoryType.SPECIAL.get() && count == 0 ? GLFW.GLFW_KEY_B : GLFW.GLFW_KEY_UNKNOWN;
                         builder.computeIfAbsent(type, k -> new ImmutableList.Builder<>());
                         ResourceLocation rl = type.getId();
-                        KeyMappingProxy mapping = new KeyMappingProxy("key." + rl.getNamespace() + "." + rl.getPath() + "_" + count, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, CATEGORY);
+                        OhmegaKeyMapping mapping = new OhmegaKeyMapping("key." + rl.getNamespace() + "." + rl.getPath() + "_" + count, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, CATEGORY);
                         builder.get(type).add(mapping);
                         Generated.orderedSlotKeys.add(mapping);
                         typeCountMap.put(type, count + 1);
@@ -97,10 +99,16 @@ public class OhmegaBinds {
         }
     }
 
-    // No changed behaviour, simply for identification
-    public static class KeyMappingProxy extends KeyMapping {
-        public KeyMappingProxy(String description, IKeyConflictContext conflictContext, InputConstants.Type inputType, int code, String category) {
+    public static class OhmegaKeyMapping extends KeyMapping {
+        public OhmegaKeyMapping(String description, IKeyConflictContext conflictContext, InputConstants.Type inputType, int code, String category) {
             super(description, conflictContext, inputType, code, category);
+        }
+
+        @Override
+        public @NotNull Component getDisplayName() {
+            String key = this.getName();
+
+            return Component.translatable(key.substring(0, key.indexOf('_')), Integer.parseInt(key.substring(key.indexOf('_') + 1)) + 1);
         }
     }
 }

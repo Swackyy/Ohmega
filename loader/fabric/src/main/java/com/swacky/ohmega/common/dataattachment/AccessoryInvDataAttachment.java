@@ -127,7 +127,7 @@ public class AccessoryInvDataAttachment {
                             acc.onUnequip(player, stack);
                         }
                         AccessoryHelper.setSlot(stack, -1);
-                        player.drop(stack, false, false);
+                        player.drop(stack, true, false);
                     }
                 }
             }

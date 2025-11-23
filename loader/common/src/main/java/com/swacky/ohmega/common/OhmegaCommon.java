@@ -13,6 +13,8 @@ public class OhmegaCommon {
     public static final String MODID = "ohmega";
     public static final Logger LOGGER = LogManager.getLogger();
 
+    public static final ResourceLocation ACCESSORY_LOCATION = OhmegaCommon.rl("textures/gui/container/accessory_addon.png");
+
     public static ResourceLocation rl(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }

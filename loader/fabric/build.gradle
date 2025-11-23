@@ -63,10 +63,10 @@ dependencies {
     }
 
     modImplementation "net.fabricmc:fabric-loader:${loaderFabricV}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
 
-    modApi("com.terraformersmc:modmenu:${loaderFabricModMenuV}") {
-        exclude module: "fabric-api"
+    modImplementation("com.terraformersmc:modmenu:${loaderFabricModMenuV}") {
+        //exclude module: "fabric-api"
     }
 
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"

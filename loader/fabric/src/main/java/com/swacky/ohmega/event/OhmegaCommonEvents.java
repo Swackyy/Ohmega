@@ -22,6 +22,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 
 import java.util.Collections;
+import java.util.List;
 
 public class OhmegaCommonEvents {
     private static boolean bootstrapped = false;
@@ -35,18 +36,22 @@ public class OhmegaCommonEvents {
         }
     }
 
-    static void onPlayerJoin(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
+    @SuppressWarnings("resource")
+    private static void onPlayerJoin(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
         ServerPlayer player = handler.getPlayer();
-        AccessoryHelper.syncAllSlots(player, Collections.singletonList(player));
+        List<ServerPlayer> receivers = player.serverLevel().players();
+
+        receivers.add(player);
+        AccessoryHelper.syncAllSlots(player, receivers);
     }
 
-    static void onPlayerTrack(Entity tracked, ServerPlayer tracker) {
+    private static void onPlayerTrack(Entity tracked, ServerPlayer tracker) {
         if (tracked instanceof ServerPlayer player) {
             AccessoryHelper.syncAllSlots(player, Collections.singletonList(tracker));
         }
     }
 
-    public static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
+    private static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
@@ -73,7 +78,7 @@ public class OhmegaCommonEvents {
         }
     }
 
-    public static InteractionResult onItemRightClick(Player player, Level level, InteractionHand hand) {
+    private static InteractionResult onItemRightClick(Player player, Level level, InteractionHand hand) {
         InteractionResult result = AccessoryHelper.tryEquip(player, hand);
         if (result == InteractionResult.SUCCESS) {
             return result;

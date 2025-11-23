@@ -29,6 +29,21 @@ dependencies {
 }
 
 processResources {
+    String modDesc =
+            "${modSummary}\n" +
+            "View the source code here: ${gitUrl}\n" +
+            "Or visit the wiki here: ${gitUrl}/wiki\n" +
+            "And join the discord here: ${discordUrl}";
+
+    String modDescFabric = modSummary;
+
+    if (!modChanges.empty) {
+        String changes = "\n\nChanges this version:\n${modChanges}"
+
+        modDesc += changes;
+        modDescFabric += changes;
+    }
+
     var replaceProperties = [
             license                              : license,
             loaderForgeV                         : loaderForgeV,
@@ -42,10 +57,12 @@ processResources {
             mcV                                  : mcV,
             modName                              : modName,
             gitUrl                               : gitUrl,
-            issuesUrl                            : "${gitUrl}/issues",
             curseUrl                             : curseUrl,
-            modDescFabric                        : modDescMin,
-            modDesc                              : "${modDescMin}\n${modDescSrc}: ${gitUrl}\n${modDescWiki}: ${gitUrl}/wiki",
+            discordUrl                           : discordUrl,
+            modrinthUrl                          : modrinthUrl,
+            modDesc                              : modDesc,
+            modDescFabric                        : modDescFabric,
+            modChanges                           : modChanges,
             loaderFabricForgeConfigApiPortVRange : loaderFabricForgeConfigApiPortVRange,
             javaV                                : javaV
     ]

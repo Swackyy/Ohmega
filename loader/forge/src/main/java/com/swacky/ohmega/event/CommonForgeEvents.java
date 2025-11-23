@@ -37,13 +37,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = OhmegaCommon.MODID)
 public class CommonForgeEvents {
+    @SuppressWarnings("resource")
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AccessoryHelper.syncAllSlots(player, Collections.singletonList(player));
+            List<ServerPlayer> receivers = player.serverLevel().players();
+
+            receivers.add(player);
+            AccessoryHelper.syncAllSlots(player, receivers);
         }
     }
 

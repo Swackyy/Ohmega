@@ -49,13 +49,9 @@ public class KeyboardHandlerMixin {
                 if (mapping.consumeClick()) {
                     // Client handling
                     if (mc.player != null) {
-                        int k = 0;
-                        for (; true; j++) {
-                            if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j))) {
-                                k++;
-                                if (k > i) {
-                                    break;
-                                }
+                        for (int k = 0; true; j++) {
+                            if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j)) && ++k > i) {
+                                break;
                             }
                         }
 

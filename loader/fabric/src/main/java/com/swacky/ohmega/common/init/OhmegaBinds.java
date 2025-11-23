@@ -53,7 +53,7 @@ public class OhmegaBinds {
                         int key = type == AccessoryType.UTILITY.get() ? count == 0 ? GLFW.GLFW_KEY_G : count == 1 ? GLFW.GLFW_KEY_V : GLFW.GLFW_KEY_UNKNOWN : type == AccessoryType.SPECIAL.get() && count == 0 ? GLFW.GLFW_KEY_B : GLFW.GLFW_KEY_UNKNOWN;
                         builder.computeIfAbsent(type, k -> new ImmutableList.Builder<>());
                         ResourceLocation rl = type.getId();
-                        KeyMappingProxy mapping = new KeyMappingProxy("key." + rl.getNamespace() + "." + rl.getPath() + "_" + count, InputConstants.Type.KEYSYM, key, CATEGORY);
+                        OhmegaKeyMapping mapping = new OhmegaKeyMapping("key." + rl.getNamespace() + "." + rl.getPath() + "_" + count, InputConstants.Type.KEYSYM, key, CATEGORY);
                         builder.get(type).add(mapping);
                         Generated.orderedSlotKeys.add(mapping);
                         typeCountMap.put(type, count + 1);
@@ -94,8 +94,8 @@ public class OhmegaBinds {
     }
 
     // No changed behaviour, simply for identification
-    public static class KeyMappingProxy extends KeyMapping {
-        public KeyMappingProxy(String description, InputConstants.Type inputType, int code, String category) {
+    public static class OhmegaKeyMapping extends KeyMapping {
+        public OhmegaKeyMapping(String description, InputConstants.Type inputType, int code, String category) {
             super(description, inputType, code, category);
         }
     }

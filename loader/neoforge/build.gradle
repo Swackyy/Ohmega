@@ -40,9 +40,9 @@ neoForge {
             server()
         }
 
-        data {
+        clientData {
             ideName.set "Data Generation"
-            data()
+            clientData()
             programArguments.addAll "--mod", "${modId}", "--all", "--output", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath() , "--existing", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
         }
     }

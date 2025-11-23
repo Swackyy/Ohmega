@@ -21,6 +21,8 @@ public class AccessoryTypeLow {
 
     public static class Deserializer implements JsonDeserializer<AccessoryTypeLow> {
         private static final Deserializer INSTANCE = new Deserializer();
+        private static final String LOCATION_PREFIX = "container/slot"; // Mojang sometimes changes this
+        private static final String DEFAULT_EMPTY_SLOT = OhmegaCommon.MODID + LOCATION_PREFIX + '/' + ":accessory_slot_normal";
 
         private Deserializer() {
         }
@@ -29,15 +31,17 @@ public class AccessoryTypeLow {
             return INSTANCE;
         }
 
-        private static final String DEFAULT_EMPTY_SLOT = OhmegaCommon.MODID + ":item/accessory_slot_normal";
-
         @Override
         public AccessoryTypeLow deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject json = GsonHelper.convertToJsonObject(element, "entry");
             String emptySlotPath = GsonHelper.getAsString(json, "emptySlotTexture", DEFAULT_EMPTY_SLOT);
+
             if (emptySlotPath.isBlank()) {
                 emptySlotPath = DEFAULT_EMPTY_SLOT;
+            } else {
+                emptySlotPath = LOCATION_PREFIX + '/' + emptySlotPath;
             }
+
             return new AccessoryTypeLow(
                     emptySlotPath,
                     Math.abs(GsonHelper.getAsInt(json, "priority", 0)),

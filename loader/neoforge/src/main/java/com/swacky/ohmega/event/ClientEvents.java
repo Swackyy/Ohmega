@@ -89,13 +89,9 @@ public class ClientEvents {
                     // Client handling
                     if (mc.player != null) {
                         AccessoryContainer a = mc.player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
-                        int k = 0;
-                        for (; true; j++) {
-                            if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j))) {
-                                k++;
-                                if (k > i) {
-                                    break;
-                                }
+                        for (int k = 0; true; j++) {
+                            if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j)) && ++k > i) {
+                                break;
                             }
                         }
 
@@ -134,7 +130,7 @@ public class ClientEvents {
             }
 
             Minecraft mc = Minecraft.getInstance();
-            mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
+            mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
             mc.options.load(true);
         }
     }
@@ -143,7 +139,7 @@ public class ClientEvents {
     public static void onConfigUnload(ModConfigEvent.Unloading event) {
         if (event.getConfig().getSpec() == OhmegaConfig.SPEC_SERVER) {
             Minecraft mc = Minecraft.getInstance();
-            mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]);
+            mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]);
             mc.options.load(true);
         }
     }
@@ -162,7 +158,7 @@ public class ClientEvents {
                     list.addAll(immutableList);
                 }
 
-                mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.KeyMappingProxy)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
+                mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
                 mc.options.load(true);
 
                 if (mc.player != null) {
