@@ -13,5 +13,16 @@
   "key.ohmega.normal": "Normal %s",
   "key.ohmega.open_acc_inv": "Open/Close Accessories Inventory",
   "key.ohmega.special": "Special %s",
-  "key.ohmega.utility": "Utility %s"
+  "key.ohmega.utility": "Utility %s",
+  "ohmega.configuration.buttonStyle": "Button style",
+  "ohmega.configuration.compatibilityMode": "Compatibility mode",
+  "ohmega.configuration.keepAccessories": "Keep accessories behaviour",
+  "ohmega.configuration.keyboundSlotTypes": "Key-bound slot types",
+  "ohmega.configuration.maxColumnRenderSlots": "Max column render slots",
+  "ohmega.configuration.maxColumnSlots": "Max column slots",
+  "ohmega.configuration.maxColumns": "Max columns",
+  "ohmega.configuration.noAccessoryTypes": "No accessory types",
+  "ohmega.configuration.showHoverSlotTooltip": "Show hover slot tooltip",
+  "ohmega.configuration.side": "Side",
+  "ohmega.configuration.slotTypes": "Compatibility mode"
 }

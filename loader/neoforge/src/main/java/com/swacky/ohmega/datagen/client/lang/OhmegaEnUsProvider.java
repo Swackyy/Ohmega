@@ -43,5 +43,16 @@ public class OhmegaEnUsProvider extends LanguageProvider {
         add("key." + OhmegaCommon.MODID + ".normal", "Normal %s");
         add("key." + OhmegaCommon.MODID + ".utility", "Utility %s");
         add("key." + OhmegaCommon.MODID + ".special", "Special %s");
+        add(OhmegaCommon.MODID + ".configuration.compatibilityMode", "Compatibility mode");
+        add(OhmegaCommon.MODID + ".configuration.buttonStyle", "Button style");
+        add(OhmegaCommon.MODID + ".configuration.side", "Side");
+        add(OhmegaCommon.MODID + ".configuration.showHoverSlotTooltip", "Show hover slot tooltip");
+        add(OhmegaCommon.MODID + ".configuration.maxColumns", "Max columns");
+        add(OhmegaCommon.MODID + ".configuration.maxColumnSlots", "Max column slots");
+        add(OhmegaCommon.MODID + ".configuration.maxColumnRenderSlots", "Max column render slots");
+        add(OhmegaCommon.MODID + ".configuration.slotTypes", "Compatibility mode");
+        add(OhmegaCommon.MODID + ".configuration.keyboundSlotTypes", "Key-bound slot types");
+        add(OhmegaCommon.MODID + ".configuration.keepAccessories", "Keep accessories behaviour");
+        add(OhmegaCommon.MODID + ".configuration.noAccessoryTypes", "No accessory types");
     }
 }
