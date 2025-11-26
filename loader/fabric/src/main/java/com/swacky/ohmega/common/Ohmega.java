@@ -15,7 +15,7 @@ import com.swacky.ohmega.network.C2S.ResizeCapPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryKbPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -29,8 +29,8 @@ public class Ohmega implements ModInitializer {
     public void onInitialize() {
         OhmegaCommonEvents.bootstrap();
 
-        NeoForgeConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.CLIENT, OhmegaConfig.SPEC_CLIENT);
-        NeoForgeConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfig.SPEC_SERVER);
+        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.CLIENT, OhmegaConfig.SPEC_CLIENT);
+        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfig.SPEC_SERVER);
 
         OhmegaItems.init();
         OhmegaMenus.init();

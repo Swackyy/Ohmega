@@ -1,6 +1,5 @@
 package com.swacky.ohmega.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -80,7 +79,6 @@ public class AccessoryInventoryButton extends AbstractButton {
             hoveredOffsY = 0;
         }
 
-        RenderSystem.enableDepthTest();
         gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) this.uOffs + hoveredOffsX, (float) this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
     }
 }

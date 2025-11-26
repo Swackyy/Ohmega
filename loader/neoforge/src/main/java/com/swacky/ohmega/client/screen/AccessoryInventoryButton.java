@@ -80,7 +80,6 @@ public class AccessoryInventoryButton extends AbstractButton {
             hoveredOffsY = 0;
         }
 
-        RenderSystem.enableDepthTest();
         gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float)this.uOffs + hoveredOffsX, (float)this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
     }
 }

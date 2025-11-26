@@ -9,7 +9,7 @@ import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeCapPacket;
 import com.swacky.ohmega.common.OhmegaCommon;
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
+import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.KeyMapping;
@@ -33,9 +33,9 @@ public class OhmegaClientEvents {
 
             ScreenEvents.AFTER_INIT.register(OhmegaClientEvents::addToScreens);
             ScreenEvents.BEFORE_INIT.register(OhmegaClientEvents::hide);
-            NeoForgeModConfigEvents.loading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigLoad);
-            NeoForgeModConfigEvents.unloading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigUnload);
-            NeoForgeModConfigEvents.reloading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigReload);
+            ModConfigEvents.loading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigLoad);
+            ModConfigEvents.unloading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigUnload);
+            ModConfigEvents.reloading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigReload);
         }
     }
 

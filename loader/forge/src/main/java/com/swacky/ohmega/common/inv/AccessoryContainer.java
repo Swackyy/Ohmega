@@ -81,10 +81,10 @@ public class AccessoryContainer extends ItemStackHandler {
     public void deserializeNBT(HolderLookup.Provider lookup, CompoundTag tag) {
         onLoad();
 
-        ListTag stacksList = tag.getList("Items", 10);
+        ListTag stacksList = tag.getList("Items").orElseThrow();
         for (int i = 0; i < stacksList.size(); i++) {
-            CompoundTag element = stacksList.getCompound(i);
-            int j = element.getByte("Slot") & 255;
+            CompoundTag element = stacksList.getCompound(i).orElseThrow();
+            int j = element.getByte("Slot").orElseThrow() & 255;
             if (j < this.stacks.size()) {
                 ItemStack stack = ItemStack.parse(lookup, element).orElse(ItemStack.EMPTY);
                 if (isItemValid(j, stack)) {
@@ -98,18 +98,18 @@ public class AccessoryContainer extends ItemStackHandler {
         }
 
 
-        ListTag previousList = tag.getList("PreviousItems", 10);
+        ListTag previousList = tag.getList("PreviousItems").orElseThrow();
         for (int i = 0; i < previousList.size(); i++) {
-            CompoundTag element = previousList.getCompound(i);
-            int j = element.getByte("Slot") & 255;
+            CompoundTag element = previousList.getCompound(i).orElseThrow();
+            int j = element.getByte("Slot").orElseThrow() & 255;
             if (j < this.previous.size()) {
                 this.previous.set(j, ItemStack.parse(lookup, element).orElse(ItemStack.EMPTY));
             }
         }
 
-        ListTag changedList = tag.getList("Changed", 10);
+        ListTag changedList = tag.getList("Changed").orElseThrow();
         for (int i = 0; i < Math.min(changedList.size(), this.changed.length); i++) {
-            this.changed[i] = changedList.getCompound(i).getBoolean("Value");
+            this.changed[i] = changedList.getCompound(i).orElseThrow().getBoolean("Value").orElseThrow();
         }
 
         for (int i = 0; i < this.getSlots(); i++) {

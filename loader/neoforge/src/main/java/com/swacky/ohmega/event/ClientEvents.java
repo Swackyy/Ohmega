@@ -131,7 +131,7 @@ public class ClientEvents {
 
             Minecraft mc = Minecraft.getInstance();
             mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
-            mc.options.load(true);
+            mc.options.load();
         }
     }
 
@@ -140,7 +140,7 @@ public class ClientEvents {
         if (event.getConfig().getSpec() == OhmegaConfig.SPEC_SERVER) {
             Minecraft mc = Minecraft.getInstance();
             mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]);
-            mc.options.load(true);
+            mc.options.load();
         }
     }
 
@@ -159,7 +159,7 @@ public class ClientEvents {
                 }
 
                 mc.options.keyMappings = ArrayUtils.addAll(Arrays.stream(mc.options.keyMappings).filter(v -> !(v instanceof OhmegaBinds.OhmegaKeyMapping)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
-                mc.options.load(true);
+                mc.options.load();
 
                 if (mc.player != null) {
                     mc.player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).reloadCfg();

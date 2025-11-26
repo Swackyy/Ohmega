@@ -16,10 +16,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * This is simply a test and example accessory; its code may be used as a reference to create your own
@@ -32,12 +33,13 @@ public class AngelRing extends Item implements IAccessory {
     }
 
     // This method uses the utility class to easily add tooltips onto the accessory
+    @SuppressWarnings("deprecation")
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        tooltip.add(AccessoryHelper.getBindTooltip(new TranslatableContents(this.getDescriptionId() + ".tooltip.keybind", null, TranslatableContents.NO_ARGS), stack, new TranslatableContents(this.getDescriptionId() + ".tooltip", null, TranslatableContents.NO_ARGS)));
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> tooltip, @NotNull TooltipFlag flag) {
+        tooltip.accept(AccessoryHelper.getBindTooltip(new TranslatableContents(this.getDescriptionId() + ".tooltip.keybind", null, TranslatableContents.NO_ARGS), stack, new TranslatableContents(this.getDescriptionId() + ".tooltip", null, TranslatableContents.NO_ARGS)));
         Component component = AccessoryHelper.getTypeTooltip(this);
         if (component != null) {
-            tooltip.add(component);
+            tooltip.accept(component);
         }
     }
 
