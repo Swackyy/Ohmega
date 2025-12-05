@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.inv.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -12,8 +12,8 @@ import java.util.function.Supplier;
 public class OhmegaDataAttachments {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, OhmegaCommon.MODID);
 
-    public static final Supplier<AttachmentType<AccessoryContainer>> ACCESSORY_HANDLER = register("accessory_handler",
-            () -> AttachmentType.serializable(AccessoryContainer::new).build());
+    public static final Supplier<AttachmentType<AccessoryInvDataAttachment>> ACCESSORY_HANDLER = register("accessory_handler",
+            () -> AttachmentType.builder(AccessoryInvDataAttachment::new).serialize(AccessoryInvDataAttachment.SERIALIZER).build());
 
     private static <T> Supplier<AttachmentType<T>> register(String id, Supplier<AttachmentType<T>> sup) {
         return ATTACHMENT_TYPES.register(id, sup);

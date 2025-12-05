@@ -1,10 +1,12 @@
 package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.storage.ValueInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,5 +31,11 @@ public class PlayerMixin {
         if (this$0.getServer() != null && flag) {
             AccessoryHelper.getContainer(this$0).invalidate();
         }
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At(value = "HEAD"))
+    public void readAdditionalSaveData(ValueInput input, CallbackInfo ci) {
+        Player this$0 = (Player) (Object) this;
+        this$0.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER).initialise(this$0);
     }
 }

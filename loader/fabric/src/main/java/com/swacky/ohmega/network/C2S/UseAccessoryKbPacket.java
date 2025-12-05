@@ -28,9 +28,11 @@ public record UseAccessoryKbPacket(int slot) implements CustomPacketPayload {
             ServerPlayer player = context.player();
             AccessoryContainer a = AccessoryHelper.getContainer(player);
             IAccessory acc = AccessoryHelper.getBoundAccessory(a.getStackInSlot(packet.slot).getItem());
+
             if (acc != null) {
                 ItemStack stack = a.getStackInSlot(packet.slot);
-                if (!OhmegaHooks.accessoryUseEvent(player, stack).isCanceled()) {
+
+                if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
                     acc.onUse(player, stack);
                 }
             }

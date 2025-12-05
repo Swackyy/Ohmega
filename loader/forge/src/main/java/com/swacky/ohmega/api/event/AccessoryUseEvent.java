@@ -2,11 +2,14 @@ package com.swacky.ohmega.api.event;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import org.jetbrains.annotations.NotNull;
 
-@Cancelable
-public class AccessoryUseEvent extends Event {
+public class AccessoryUseEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<@NotNull AccessoryUseEvent> BUS = CancellableEventBus.create(AccessoryUseEvent.class);
+
     private final Player player;
     private final ItemStack stack;
 

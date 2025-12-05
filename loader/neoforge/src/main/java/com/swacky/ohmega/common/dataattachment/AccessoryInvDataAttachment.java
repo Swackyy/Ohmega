@@ -3,11 +3,12 @@ package com.swacky.ohmega.common.dataattachment;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Booleans;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.ModifierHolder;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
@@ -17,6 +18,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +30,28 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AccessoryInvDataAttachment {
-    public static final Codec<AccessoryInvDataAttachment> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+    private static final MapCodec<AccessoryInvDataAttachment> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("previous").forGetter(inst -> inst.previous),
             Codec.list(Codec.BOOL).fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
     ).apply(builder, AccessoryInvDataAttachment::new));
+
+    public static final IAttachmentSerializer<AccessoryInvDataAttachment> SERIALIZER = new IAttachmentSerializer<>() {
+        @SuppressWarnings("deprecation")
+        @Override
+        public @NotNull AccessoryInvDataAttachment read(@NotNull IAttachmentHolder holder, ValueInput input) {
+            AccessoryInvDataAttachment data = input.read(CODEC).orElseThrow();
+            data.initialise((Player) holder);
+            return data;
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean write(@NotNull AccessoryInvDataAttachment data, ValueOutput output) {
+            output.store(CODEC, data);
+            return true;
+        }
+    };
 
     private NonNullList<ItemStack> stacks;
     private NonNullList<ItemStack> previous;

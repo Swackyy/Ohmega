@@ -1,7 +1,7 @@
 package com.swacky.ohmega.network.S2C;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.OhmegaCommon;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -71,7 +71,7 @@ public class SyncAccessorySlotsPacket implements CustomPacketPayload {
             if (level != null) {
                 if (level.getEntity(packet.playerId) instanceof Player player) {
                     for (int i = 0; i < packet.slots.length; i++) {
-                        player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).setStackInSlot(packet.slots[i], packet.stacks.get(i));
+                        AccessoryHelper.getContainer(player).setStackInSlot(packet.slots[i], packet.stacks.get(i));
                     }
                 }
             }

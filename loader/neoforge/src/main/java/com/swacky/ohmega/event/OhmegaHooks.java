@@ -17,44 +17,32 @@ public class OhmegaHooks {
         return event.get();
     }
 
-    public static AccessoryTickEvent accessoryTickEventPre(Player player, ItemStack stack) {
-        AccessoryTickEvent event = new AccessoryTickEvent.Pre(player, stack);
-        NeoForge.EVENT_BUS.post(event);
-        return event;
+    public static boolean accessoryTickEventPre(Player player, ItemStack stack) {
+        return NeoForge.EVENT_BUS.post(new AccessoryTickEvent.Pre(player, stack)).isCanceled();
     }
 
     public static void accessoryTickEventPost(Player player, ItemStack stack) {
         NeoForge.EVENT_BUS.post(new AccessoryTickEvent.Post(player, stack));
     }
 
-    public static AccessoryEquipEvent accessoryEquipEvent(Player player, ItemStack stack, AccessoryEquipEvent.Context context) {
-        AccessoryEquipEvent event = new AccessoryEquipEvent(player, stack, context);
-        NeoForge.EVENT_BUS.post(event);
-        return event;
+    public static boolean accessoryEquipEvent(Player player, ItemStack stack, AccessoryEquipEvent.Context context) {
+        return NeoForge.EVENT_BUS.post(new AccessoryEquipEvent(player, stack, context)).isCanceled();
     }
 
-    public static AccessoryUnequipEvent accessoryUnequipEvent(Player player, ItemStack stack) {
-        AccessoryUnequipEvent event = new AccessoryUnequipEvent(player, stack);
-        NeoForge.EVENT_BUS.post(event);
-        return event;
+    public static boolean accessoryUnequipEvent(Player player, ItemStack stack) {
+        return NeoForge.EVENT_BUS.post(new AccessoryUnequipEvent(player, stack)).isCanceled();
     }
 
-    public static AccessoryCanEquipEvent accessoryCanEquipEvent(Player player, ItemStack stack, boolean flag) {
-        AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, flag);
-        NeoForge.EVENT_BUS.post(event);
-        return event;
+    public static boolean accessoryCanEquipEvent(Player player, ItemStack stack, boolean flag) {
+        return NeoForge.EVENT_BUS.post(new AccessoryCanEquipEvent(player, stack, flag)).getReturnValue();
     }
 
-    public static AccessoryCanUnequipEvent accessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
-        AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, flag);
-        NeoForge.EVENT_BUS.post(event);
-        return event;
+    public static boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
+        return NeoForge.EVENT_BUS.post(new AccessoryCanUnequipEvent(player, stack, flag)).getReturnValue();
     }
 
-    public static AccessoryUseEvent accessoryUseEvent(Player player, ItemStack stack) {
-        AccessoryUseEvent event = new AccessoryUseEvent(player, stack);
-        NeoForge.EVENT_BUS.post(event);
-        return event;
+    public static boolean accessoryUseEvent(Player player, ItemStack stack) {
+        return NeoForge.EVENT_BUS.post(new AccessoryUseEvent(player, stack)).isCanceled();
     }
 
     public static void accessoryAttributeModifiersEvent(Item item, ModifierHolder.Builder builder) {

@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
  * <p>
  * Posted before the tick
  */
+@SuppressWarnings("removal")
 public interface AccessoryTickPreCallback {
     Event<AccessoryTickPreCallback> EVENT = EventFactory.createArrayBacked(AccessoryTickPreCallback.class,
         listeners -> (player, stack) -> {

@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+@SuppressWarnings("removal")
 public interface AccessoryUseCallback {
     Event<AccessoryUseCallback> EVENT = EventFactory.createArrayBacked(AccessoryUseCallback.class,
             listeners -> (player, stack) -> {

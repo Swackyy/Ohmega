@@ -3,27 +3,21 @@ package com.swacky.ohmega.network.C2S;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.network.BasePacket;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-public class OpenAccessoryInventoryPacket extends BasePacket<ByteBuf> {
-    public OpenAccessoryInventoryPacket() {
-    }
+public class OpenAccessoryInventoryPacket extends BasePacket {
+    public static final OpenAccessoryInventoryPacket INSTANCE = new OpenAccessoryInventoryPacket();
+    public static final StreamCodec<RegistryFriendlyByteBuf, OpenAccessoryInventoryPacket> CODEC = StreamCodec.unit(INSTANCE);
 
-    @SuppressWarnings("unused")
-    public OpenAccessoryInventoryPacket(ByteBuf buf) {
-    }
+    private OpenAccessoryInventoryPacket() {}
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-    }
-
-    @Override
-    public void handle(CustomPayloadEvent.Context context) {
+    public static void handle(OpenAccessoryInventoryPacket packet, CustomPayloadEvent.Context context) {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player != null) {
@@ -34,5 +28,10 @@ public class OpenAccessoryInventoryPacket extends BasePacket<ByteBuf> {
             }
         });
         context.setPacketHandled(true);
+    }
+
+    @Override
+    protected String getId() {
+        return "open_accessory_inventory";
     }
 }

@@ -4,45 +4,50 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.BasePacket;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.Objects;
 
-public class UseAccessoryKbPacket extends BasePacket<ByteBuf> {
+public class UseAccessoryKbPacket extends BasePacket {
+    public static final StreamCodec<RegistryFriendlyByteBuf, UseAccessoryKbPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            inst -> inst.slot,
+            UseAccessoryKbPacket::new
+    );
+
     private final int slot;
 
     public UseAccessoryKbPacket(int slot) {
         this.slot = slot;
     }
 
-    public UseAccessoryKbPacket(ByteBuf buf) {
-        this.slot = buf.readInt();
-    }
-
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.slot);
-    }
-
-    @Override
-    public void handle(CustomPayloadEvent.Context context) {
+    public static void handle(UseAccessoryKbPacket packet, CustomPayloadEvent.Context context) {
         context.enqueueWork(() -> {
-            if (this.slot < AccessoryHelper.getSlotTypes().size()) {
+            if (packet.slot < AccessoryHelper.getSlotTypes().size()) {
                 AccessoryHelper.getContainer(Objects.requireNonNull(context.getSender())).ifPresent(a -> {
-                    IAccessory acc = AccessoryHelper.getBoundAccessory(a.getStackInSlot(this.slot).getItem());
+                    IAccessory acc = AccessoryHelper.getBoundAccessory(a.getStackInSlot(packet.slot).getItem());
                     if (acc != null) {
                         Player player = context.getSender();
-                        ItemStack stack = a.getStackInSlot(slot);
+                        ItemStack stack = a.getStackInSlot(packet.slot);
 
-                        if (!OhmegaHooks.accessoryUseEvent(player, stack).isCanceled()) {
+                        if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
                             acc.onUse(player, stack);
                         }
                     }
                 });
             }
         });
+
         context.setPacketHandled(true);
+    }
+
+    @Override
+    protected String getId() {
+        return "use_accessory";
     }
 }

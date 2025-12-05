@@ -24,11 +24,11 @@ public class AccessoryCanEquipEvent extends Event {
         return stack;
     }
 
-    public void setReturnValue(boolean value) {
-        this.ret = value;
-    }
-
     public boolean getReturnValue() {
         return this.ret;
+    }
+
+    public void setReturnValue(boolean value) {
+        this.ret = value;
     }
 }

@@ -2,12 +2,15 @@ package com.swacky.ohmega.api.event;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class AccessoryCanEquipEvent extends Event {
+public final class AccessoryCanEquipEvent extends MutableEvent {
+    public static final EventBus<@NotNull AccessoryCanEquipEvent> BUS = EventBus.create(AccessoryCanEquipEvent.class);
+
     private final Player player;
     private final ItemStack stack;
-
     private boolean ret;
 
     public AccessoryCanEquipEvent(Player player, ItemStack stack, boolean flag) {
@@ -24,11 +27,11 @@ public class AccessoryCanEquipEvent extends Event {
         return stack;
     }
 
-    public void setReturnValue(boolean value) {
-        this.ret = value;
-    }
-
     public boolean getReturnValue() {
         return this.ret;
+    }
+
+    public void setReturnValue(boolean value) {
+        this.ret = value;
     }
 }

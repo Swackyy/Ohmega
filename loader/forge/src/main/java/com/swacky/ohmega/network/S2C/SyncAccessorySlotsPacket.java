@@ -6,13 +6,48 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SyncAccessorySlotsPacket extends BasePacket<RegistryFriendlyByteBuf> {
+public class SyncAccessorySlotsPacket extends BasePacket {
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncAccessorySlotsPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            inst -> inst.playerId,
+            new StreamCodec<>() {
+                @Override
+                public int @NotNull [] decode(@NotNull RegistryFriendlyByteBuf buf) {
+                    int size = VarInt.read(buf);
+
+                    int[] values = new int[size];
+
+                    for (int i = 0; i < size; i++) {
+                        values[i] = VarInt.read(buf);
+                    }
+
+                    return values;
+                }
+
+                @Override
+                public void encode(@NotNull RegistryFriendlyByteBuf buf, int @NotNull [] values) {
+                    VarInt.write(buf, values.length);
+
+                    for (int value : values) {
+                        VarInt.write(buf, value);
+                    }
+                }
+            },
+            inst -> inst.slots,
+            ItemStack.OPTIONAL_LIST_STREAM_CODEC,
+            inst -> inst.stacks,
+            SyncAccessorySlotsPacket::new
+    );
+
     private final int playerId;
     private final int[] slots;
     private final List<ItemStack> stacks;
@@ -26,47 +61,25 @@ public class SyncAccessorySlotsPacket extends BasePacket<RegistryFriendlyByteBuf
         this.stacks = stacks;
     }
 
-    public SyncAccessorySlotsPacket(RegistryFriendlyByteBuf buf) {
-        this.playerId = buf.readInt();
-
-        int size = VarInt.read(buf);
-        int[] values = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            values[i] = VarInt.read(buf);
-        }
-        this.slots = values;
-        this.stacks = ItemStack.OPTIONAL_LIST_STREAM_CODEC.decode(buf);
-    }
-
-    @Override
-    public void toBytes(RegistryFriendlyByteBuf buf) {
-        buf.writeInt(this.playerId);
-
-        VarInt.write(buf, this.slots.length);
-
-        for (int value : this.slots) {
-            VarInt.write(buf, value);
-        }
-
-        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(buf, this.stacks);
-    }
-
-    @Override
-    public void handle(CustomPayloadEvent.Context context) {
-        if (this.slots.length == 0) {
+    public static void handle(SyncAccessorySlotsPacket packet, CustomPayloadEvent.Context context) {
+        if (packet.slots.length == 0) {
             return;
         }
 
         context.enqueueWork(() -> {
             ClientLevel level = Minecraft.getInstance().level;
             if (level != null) {
-                if (level.getEntity(this.playerId) instanceof Player player) {
-                    for (int[] i = {0}; i[0] < this.slots.length; i[0]++) {
-                        AccessoryHelper.getContainer(player).ifPresent(a -> a.setStackInSlot(this.slots[i[0]], this.stacks.get(i[0])));
+                if (level.getEntity(packet.playerId) instanceof Player player) {
+                    for (int[] i = {0}; i[0] < packet.slots.length; i[0]++) {
+                        AccessoryHelper.getContainer(player).ifPresent(a -> a.setStackInSlot(packet.slots[i[0]], packet.stacks.get(i[0])));
                     }
                 }
             }
         });
+    }
+
+    @Override
+    protected String getId() {
+        return "sync_accessory_slots";
     }
 }

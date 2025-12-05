@@ -183,7 +183,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 } else if (index > 45 && index < 52 && acc != null) {
                     AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack0).getPassive(), false);
 
-                    if (!OhmegaHooks.accessoryUnequipEvent(this.player, stack0).isCanceled()) {
+                    if (!OhmegaHooks.accessoryUnequipEvent(this.player, stack0)) {
                         acc.onUnequip(this.player, stack0);
                     }
 

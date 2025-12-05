@@ -4,7 +4,7 @@ import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -24,7 +24,7 @@ public class OhmegaDataComponents {
         return DATA_COMPONENTS.register(id, sup);
     }
 
-    public static void register(IEventBus bus) {
-        DATA_COMPONENTS.register(bus);
+    public static void register(BusGroup group) {
+        DATA_COMPONENTS.register(group);
     }
 }

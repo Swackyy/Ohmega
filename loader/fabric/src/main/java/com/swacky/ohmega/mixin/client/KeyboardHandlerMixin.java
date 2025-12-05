@@ -58,7 +58,7 @@ public class KeyboardHandlerMixin {
                         ItemStack stack = a.getStackInSlot(j);
 
                         IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-                        if (acc != null && !OhmegaHooks.accessoryUseEvent(mc.player, stack).isCanceled()) {
+                        if (acc != null && !OhmegaHooks.accessoryUseEvent(mc.player, stack)) {
                             acc.onUse(mc.player, stack);
                         }
                     }

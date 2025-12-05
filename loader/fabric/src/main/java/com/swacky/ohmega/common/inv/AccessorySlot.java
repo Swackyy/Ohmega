@@ -82,7 +82,7 @@ public class AccessorySlot extends Slot {
 
     @Override
     public @NotNull ItemStack remove(int amount) {
-        return this.handler.extractItem(this.slot, amount, false);
+        return this.handler.removeItem(this.slot, amount);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class AccessorySlot extends Slot {
         if (!hasItem() && acc != null) {
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), false);
 
-            if (!OhmegaHooks.accessoryUnequipEvent(this.player, stack).isCanceled()) {
+            if (!OhmegaHooks.accessoryUnequipEvent(this.player, stack)) {
                 acc.onUnequip(this.player, stack);
             }
             AccessoryHelper.setSlot(stack, -1);
@@ -105,7 +105,7 @@ public class AccessorySlot extends Slot {
         if (hasItem() && stack != getItem() && acc != null) {
             AccessoryHelper.changeModifiers(this.player, AccessoryHelper.getModifiers(getItem()).getPassive(), false);
 
-            if (!OhmegaHooks.accessoryUnequipEvent(this.player, getItem()).isCanceled()) {
+            if (!OhmegaHooks.accessoryUnequipEvent(this.player, getItem())) {
                 acc.onUnequip(this.player, getItem());
             }
 
@@ -123,7 +123,7 @@ public class AccessorySlot extends Slot {
 
             AccessoryHelper.changeModifiers(this.player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
-            if (!OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipCallback.Context.SLOT_PLACE).isCanceled()) {
+            if (!OhmegaHooks.accessoryEquipEvent(this.player, stack, AccessoryEquipCallback.Context.SLOT_PLACE)) {
                 acc.onEquip(this.player, stack);
             }
             this.setChanged();

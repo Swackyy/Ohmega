@@ -8,7 +8,6 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class OhmegaItems {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(OhmegaCommon.MODID);

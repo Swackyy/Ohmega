@@ -1,17 +1,14 @@
 package com.swacky.ohmega.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import com.swacky.ohmega.common.OhmegaCommon;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class BasePacket<T extends ByteBuf> {
-    protected BasePacket() {
+public abstract class BasePacket implements CustomPacketPayload {
+    protected abstract String getId();
+
+    @Override
+    public final @NotNull Type<? extends CustomPacketPayload> type() {
+        return new CustomPacketPayload.Type<>(OhmegaCommon.rl(getId()));
     }
-
-    @SuppressWarnings("unused")
-    public BasePacket(T buf) {
-    }
-
-    public abstract void toBytes(T buf);
-
-    public abstract void handle(CustomPayloadEvent.Context context);
 }

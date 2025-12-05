@@ -2,12 +2,15 @@ package com.swacky.ohmega.api.event;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class AccessoryCanUnequipEvent extends Event {
+public final class AccessoryCanUnequipEvent extends MutableEvent {
+    public static final EventBus<@NotNull AccessoryCanUnequipEvent> BUS = EventBus.create(AccessoryCanUnequipEvent.class);
+
     private final Player player;
     private final ItemStack stack;
-
     private boolean ret;
 
     public AccessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
@@ -24,11 +27,11 @@ public class AccessoryCanUnequipEvent extends Event {
         return stack;
     }
 
-    public void setReturnValue(boolean value) {
-        this.ret = value;
-    }
-
     public boolean getReturnValue() {
         return this.ret;
+    }
+
+    public void setReturnValue(boolean value) {
+        this.ret = value;
     }
 }

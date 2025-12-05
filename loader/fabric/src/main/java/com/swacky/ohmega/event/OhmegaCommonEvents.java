@@ -3,6 +3,7 @@ package com.swacky.ohmega.event;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.AccessoryEquipCallback;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -29,6 +30,9 @@ public class OhmegaCommonEvents {
     public static void bootstrap() {
         if (!bootstrapped) {
             bootstrapped = true;
+            ServerPlayConnectionEvents.INIT.register((o, e) -> o.getPlayer().getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER).initialise(o.getPlayer()));
+            // todo: fix the above not applying health effect upon join before health is set, yeah idk which event to hook onto here
+
             ServerPlayConnectionEvents.JOIN.register(OhmegaCommonEvents::onPlayerJoin);
             EntityTrackingEvents.START_TRACKING.register(OhmegaCommonEvents::onPlayerTrack);
             ServerPlayerEvents.COPY_FROM.register(OhmegaCommonEvents::onClonePlayer);
@@ -36,10 +40,9 @@ public class OhmegaCommonEvents {
         }
     }
 
-    @SuppressWarnings("resource")
     private static void onPlayerJoin(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
         ServerPlayer player = handler.getPlayer();
-        List<ServerPlayer> receivers = player.serverLevel().players();
+        List<ServerPlayer> receivers = player.level().players();
 
         receivers.add(player);
         AccessoryHelper.syncAllSlots(player, receivers);
@@ -69,7 +72,7 @@ public class OhmegaCommonEvents {
                 if (acc != null) {
                     AccessoryHelper.changeModifiers(newPlayer, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
-                    if (!OhmegaHooks.accessoryEquipEvent(newPlayer, stack, AccessoryEquipCallback.Context.GENERIC).isCanceled()) {
+                    if (!OhmegaHooks.accessoryEquipEvent(newPlayer, stack, AccessoryEquipCallback.Context.GENERIC)) {
                         acc.onEquip(newPlayer, stack);
                     }
                     AccessoryHelper.setSlot(stack, i);

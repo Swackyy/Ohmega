@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
  * Cancelling only cancels overrides of {@link com.swacky.ohmega.api.IAccessory#onEquip(Player, ItemStack)} and does not stop the accessory from being equipped;
  * Instead, to achieve such behaviour, use {@link AccessoryCanEquipCallback}
  */
+@SuppressWarnings("removal")
 public interface AccessoryEquipCallback {
     Event<AccessoryEquipCallback> EVENT = EventFactory.createArrayBacked(AccessoryEquipCallback.class,
         listeners -> (player, stack, context) -> {

@@ -7,7 +7,6 @@ import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.client.screen.AccessoryInventoryButton;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
@@ -88,7 +87,7 @@ public class ClientEvents {
                 if (mapping.consumeClick()) {
                     // Client handling
                     if (mc.player != null) {
-                        AccessoryContainer a = mc.player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
+                        AccessoryContainer a = AccessoryHelper.getContainer(mc.player);
                         for (int k = 0; true; j++) {
                             if (AccessoryHelper.getKeyboundSlotTypesStr().contains(slotTypes.get(j)) && ++k > i) {
                                 break;
@@ -98,7 +97,7 @@ public class ClientEvents {
                         ItemStack stack = a.getStackInSlot(j);
 
                         IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-                        if (acc != null && !OhmegaHooks.accessoryUseEvent(mc.player, stack).isCanceled()) {
+                        if (acc != null && !OhmegaHooks.accessoryUseEvent(mc.player, stack)) {
                             acc.onUse(mc.player, stack);
                         }
                     }
@@ -162,7 +161,7 @@ public class ClientEvents {
                 mc.options.load();
 
                 if (mc.player != null) {
-                    mc.player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).reloadCfg();
+                    AccessoryHelper.getContainer(mc.player).reloadCfg();
                     PacketDistributor.sendToServer(new ResizeCapPacket());
 
                     if (!OhmegaConfig.CONFIG_CLIENT.compatibilityMode.get() && mc.player.containerMenu instanceof AccessoryInventoryMenu) {

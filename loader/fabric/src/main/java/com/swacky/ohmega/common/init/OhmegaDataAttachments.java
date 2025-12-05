@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 public class OhmegaDataAttachments {
     public static final AttachmentType<AccessoryInvDataAttachment> ACCESSORY_HANDLER = register("accessory_handler",
             builder -> builder
+            .initializer(AccessoryInvDataAttachment::new)
             .persistent(AccessoryInvDataAttachment.CODEC)
-            .copyOnDeath()
-            .initializer(AccessoryInvDataAttachment::new));
+            .copyOnDeath());
 
     private static <T> AttachmentType<T> register(String id, Consumer<AttachmentRegistry.Builder<T>> consumer) {
         return AttachmentRegistry.create(OhmegaCommon.rl(id), consumer);

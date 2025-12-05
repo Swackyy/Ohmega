@@ -35,7 +35,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         AccessoryInventoryMenu.accSlots = new AccessorySlot[AccessoryHelper.getSlotTypes().size()];
 
         this.player = inv.player;
-        this.accessories = AccessoryHelper.getContainer(inv.player).orElseThrow(NullPointerException::new);
+        this.accessories = AccessoryHelper.getContainer(inv.player).orElseThrow();
 
         this.addSlot(new ResultSlot(inv.player, this.craftMatrix, this.craftResult, 0, 154, 28));
 
@@ -183,7 +183,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 } else if (index > 45 && index < 52 && acc != null) {
                     AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack0).getPassive(), false);
 
-                    if (!OhmegaHooks.accessoryUnequipEvent(this.player, stack0).isCanceled()) {
+                    if (!OhmegaHooks.accessoryUnequipEvent(this.player, stack0)) {
                         acc.onUnequip(this.player, stack0);
                     }
 

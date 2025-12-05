@@ -1,20 +1,20 @@
 package com.swacky.ohmega.network;
 
-import com.swacky.ohmega.network.C2S.*;
+import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
+import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
+import com.swacky.ohmega.network.C2S.ResizeCapPacket;
+import com.swacky.ohmega.network.C2S.UseAccessoryKbPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.*;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.SimpleChannel;
 
 public class ModNetworking {
     public static SimpleChannel INSTANCE;
-    private static int packetId = 0;
-
-    private static int id() {
-        return packetId++;
-    }
 
     public static void register() {
         SimpleChannel net = ChannelBuilder
@@ -23,36 +23,14 @@ public class ModNetworking {
                 .clientAcceptedVersions((status, version) -> true)
                 .serverAcceptedVersions((status, version) -> true)
                 .simpleChannel();
-        net.messageBuilder(OpenAccessoryInventoryPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(OpenAccessoryInventoryPacket::new)
-                .encoder(OpenAccessoryInventoryPacket::toBytes)
-                .consumerMainThread(OpenAccessoryInventoryPacket::handle)
-                .add();
-        net.messageBuilder(OpenInventoryPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(OpenInventoryPacket::new)
-                .encoder(OpenInventoryPacket::toBytes)
-                .consumerMainThread(OpenInventoryPacket::handle)
-                .add();
-        net.messageBuilder(ResizeCapPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(ResizeCapPacket::new)
-                .encoder(ResizeCapPacket::toBytes)
-                .consumerMainThread(ResizeCapPacket::handle)
-                .add();
-        net.messageBuilder(UseAccessoryKbPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(UseAccessoryKbPacket::new)
-                .encoder(UseAccessoryKbPacket::toBytes)
-                .consumerMainThread(UseAccessoryKbPacket::handle)
-                .add();
-        net.messageBuilder(SyncAccessorySlotsPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(SyncAccessorySlotsPacket::new)
-                .encoder(SyncAccessorySlotsPacket::toBytes)
-                .consumerMainThread(SyncAccessorySlotsPacket::handle)
-                .add();
-        net.messageBuilder(SyncAccessoryTypesPacket.class, id(), NetworkDirection.CONFIGURATION_TO_CLIENT)
-                .decoder(SyncAccessoryTypesPacket::new)
-                .encoder(SyncAccessoryTypesPacket::toBytes)
-                .consumerMainThread(SyncAccessoryTypesPacket::handle)
-                .add();
+
+        net.play().serverbound().addMain(OpenAccessoryInventoryPacket.class, OpenAccessoryInventoryPacket.CODEC, OpenAccessoryInventoryPacket::handle);
+        net.play().serverbound().addMain(OpenInventoryPacket.class, OpenInventoryPacket.CODEC, OpenInventoryPacket::handle);
+        net.play().serverbound().addMain(ResizeCapPacket.class, ResizeCapPacket.CODEC, ResizeCapPacket::handle);
+        net.play().serverbound().addMain(UseAccessoryKbPacket.class, UseAccessoryKbPacket.CODEC, UseAccessoryKbPacket::handle);
+        net.play().clientbound().addMain(SyncAccessorySlotsPacket.class, SyncAccessorySlotsPacket.CODEC, SyncAccessorySlotsPacket::handle);
+        net.configuration().clientbound().addMain(SyncAccessoryTypesPacket.class, SyncAccessoryTypesPacket.CODEC, SyncAccessoryTypesPacket::handle);
+
         INSTANCE = net;
     }
 

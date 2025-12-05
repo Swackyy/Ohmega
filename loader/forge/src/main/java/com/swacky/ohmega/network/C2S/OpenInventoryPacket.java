@@ -1,24 +1,18 @@
 package com.swacky.ohmega.network.C2S;
 
 import com.swacky.ohmega.network.BasePacket;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-public class OpenInventoryPacket extends BasePacket<ByteBuf> {
-    public OpenInventoryPacket() {
-    }
+public class OpenInventoryPacket extends BasePacket {
+    public static final OpenInventoryPacket INSTANCE = new OpenInventoryPacket();
+    public static final StreamCodec<RegistryFriendlyByteBuf, OpenInventoryPacket> CODEC = StreamCodec.unit(INSTANCE);
 
-    @SuppressWarnings("unused")
-    public OpenInventoryPacket(ByteBuf buf) {
-    }
+    private OpenInventoryPacket() {}
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-    }
-
-    @Override
-    public void handle(CustomPayloadEvent.Context context) {
+    public static void handle(OpenInventoryPacket packet, CustomPayloadEvent.Context context) {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player != null) {
@@ -27,5 +21,10 @@ public class OpenInventoryPacket extends BasePacket<ByteBuf> {
             }
         });
         context.setPacketHandled(true);
+    }
+
+    @Override
+    protected String getId() {
+        return "open_inventory";
     }
 }

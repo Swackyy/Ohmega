@@ -9,13 +9,14 @@ import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.event.CommonModEvents;
+import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.ModNetworking;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
@@ -41,6 +42,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class AccessoryHelper {
@@ -57,12 +59,17 @@ public class AccessoryHelper {
     }
 
     /**
-     * Retrieves the accessory capability
      * @param player a {@link Player} instance to retrieve data from
-     * @return the capability used for storing accessory inventory data on the {@link Player}
+     * @return the a wrapper of the capability used for storing accessory inventory data on the {@link Player}
      */
-    public static LazyOptional<AccessoryContainer> getContainer(Player player) {
-        return player.getCapability(Ohmega.ACCESSORIES);
+    public static Optional<AccessoryContainer> getContainer(Player player) {
+        LazyOptional<AccessoryInvDataAttachment> opt = player.getCapability(Ohmega.ACCESSORIES);
+
+        if (opt.isPresent()) {
+            return Optional.of(new AccessoryContainer(player, opt.orElseThrow(NullPointerException::new)));
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -270,7 +277,7 @@ public class AccessoryHelper {
         }
 
         {
-            ImmutableMap<Item, AccessoryType> map = CommonModEvents.getAccessoryTypeOverrides();
+            ImmutableMap<Item, AccessoryType> map = CommonEvents.getAccessoryTypeOverrides();
             if (map.containsKey(item)) {
                 return map.get(item);
             }
@@ -572,13 +579,13 @@ public class AccessoryHelper {
                 int slot = getFirstOpenSlot(player, getType(item));
                 if (slot >= 0) {
                     ItemStack stack0 = stack.copyWithCount(1);
-                    if (a.trySetStackInSlot(slot, stack0)) {
+                    if (a.setStackInSlot(slot, stack0)) {
                         changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
                         stack.shrink(1);
                         setSlot(stack, slot);
 
-                        if (!OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipEvent.Context.RIGHT_CLICK_HELD_ITEM).isCanceled()) {
+                        if (!OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipEvent.Context.RIGHT_CLICK_HELD_ITEM)) {
                             acc.onEquip(player, stack0);
                         }
                         if (acc.getEquipSound() != null) {
@@ -586,6 +593,7 @@ public class AccessoryHelper {
                         }
                         out[0] = InteractionResult.SUCCESS;
                     }
+
                 }
             });
         }
@@ -695,8 +703,8 @@ public class AccessoryHelper {
     /**
      * Forcefully notifies the game that a slot has been changed
      * <p>
-     * You may need to use this when an {@link ItemStack}'s data has been changed, but {@link com.swacky.ohmega.common.inv.AccessoryContainer#setStackInSlot(int, ItemStack)} (or similar) has not been called
-     * @param player {@link Player} to update the {@link com.swacky.ohmega.common.inv.AccessoryContainer} of
+     * You may need to use this when an {@link ItemStack}'s data has been changed, but {@link AccessoryInvDataAttachment#setStackInSlot(int, ItemStack)} (or similar) has not been called
+     * @param player {@link Player} to update the {@link AccessoryInvDataAttachment} of
      * @param slot the index of which to notify changes of
      */
     public static void setSlotChanged(Player player, int slot) {

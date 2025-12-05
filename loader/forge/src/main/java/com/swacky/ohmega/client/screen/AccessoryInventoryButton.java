@@ -1,6 +1,5 @@
 package com.swacky.ohmega.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -12,7 +11,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import org.jetbrains.annotations.NotNull;
@@ -41,13 +40,13 @@ public class AccessoryInventoryButton extends AbstractButton {
         if (mc.player != null) {
             if (!mc.player.isCreative() && !mc.player.isSpectator()) {
                 if (mc.screen instanceof AccessoryInventoryScreen) {
-                    ModNetworking.sendToServer(new OpenInventoryPacket());
+                    ModNetworking.sendToServer(OpenInventoryPacket.INSTANCE);
                     mc.setScreen(new InventoryScreen(mc.player));
                 } else {
-                    ModNetworking.sendToServer(new OpenAccessoryInventoryPacket());
+                    ModNetworking.sendToServer(OpenAccessoryInventoryPacket.INSTANCE);
                 }
             } else {
-                ModNetworking.sendToServer(new OpenInventoryPacket());
+                ModNetworking.sendToServer(OpenInventoryPacket.INSTANCE);
             }
         }
     }
@@ -80,6 +79,6 @@ public class AccessoryInventoryButton extends AbstractButton {
             hoveredOffsY = 0;
         }
 
-        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float)this.uOffs + hoveredOffsX, (float)this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
+        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float)this.uOffs + hoveredOffsX, (float)this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
     }
 }

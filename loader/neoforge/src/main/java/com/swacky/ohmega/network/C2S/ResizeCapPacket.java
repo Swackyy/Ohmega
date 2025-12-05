@@ -1,7 +1,7 @@
 package com.swacky.ohmega.network.C2S;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.OhmegaCommon;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -26,7 +26,7 @@ public class ResizeCapPacket implements CustomPacketPayload {
     public static void handle(ResizeCapPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
-                player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).reloadCfg();
+                AccessoryHelper.getContainer(player).reloadCfg();
             }
         });
     }

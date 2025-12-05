@@ -57,20 +57,12 @@ public class AccessoryHelper {
         return stack.set(OhmegaDataComponents.ACCESSORY_ITEM, new AccessoryItemDataComponent(-1, false, ModifierHolder.EMPTY));
     }
 
-    private static final ArrayList<AccessoryContainer> CONTAINERS = new ArrayList<>();
     /**
      * @param player a {@link Player} instance to retrieve data from
-     * @return the {@link AccessoryContainer} bound to the {@link Player} if present, else creates and stores for later use
+     * @return the {@link AccessoryContainer} bound to the {@link Player} if present, else creates one and stores for later use
      */
     public static AccessoryContainer getContainer(Player player) {
-        for (AccessoryContainer container : CONTAINERS) {
-            if (container.owner() == player) {
-                return container;
-            }
-        }
-        AccessoryContainer container = new AccessoryContainer(player, player.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER));
-        CONTAINERS.add(container);
-        return container;
+        return new AccessoryContainer(player, player.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER));
     }
 
     /**
@@ -579,7 +571,7 @@ public class AccessoryHelper {
                     stack.shrink(1);
                     setSlot(stack, slot);
 
-                    if (!OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipCallback.Context.RIGHT_CLICK_HELD_ITEM).isCanceled()) {
+                    if (!OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipCallback.Context.RIGHT_CLICK_HELD_ITEM)) {
                         acc.onEquip(player, stack0);
                     }
                     if (acc.getEquipSound() != null) {

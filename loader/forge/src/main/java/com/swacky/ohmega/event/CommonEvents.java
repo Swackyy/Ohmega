@@ -1,22 +1,25 @@
 package com.swacky.ohmega.event;
 
+import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.common.inv.AccessoryContainer;
+import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.ModNetworking;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -30,8 +33,9 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.config.SimpleConfigurationTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,13 +43,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = OhmegaCommon.MODID)
-public class CommonForgeEvents {
-    @SuppressWarnings("resource")
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.BOTH, modid = OhmegaCommon.MODID)
+public class CommonEvents {
+    private static ImmutableMap<Item, AccessoryType> accessoryTypeOverrides = ImmutableMap.of();
+
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            List<ServerPlayer> receivers = player.serverLevel().players();
+            List<ServerPlayer> receivers = player.level().players();
 
             receivers.add(player);
             AccessoryHelper.syncAllSlots(player, receivers);
@@ -60,17 +65,15 @@ public class CommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void attachCapsPlayer(AttachCapabilitiesEvent<Entity> event) {
+    public static void attachCapsPlayer(AttachCapabilitiesEvent.Entities event) {
         if (event.getObject() instanceof Player player) {
             event.addCapability(OhmegaCommon.rl("accessory_container"), new AccessoryContainerProvider(player));
         }
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            AccessoryHelper.getContainer(event.player).ifPresent(AccessoryContainer::tick);
-        }
+    public static void onPlayerTick(TickEvent.PlayerTickEvent.Post event) {
+        AccessoryHelper.getContainer(event.player).ifPresent(AccessoryContainer::tick);
     }
 
     @SubscribeEvent
@@ -86,8 +89,7 @@ public class CommonForgeEvents {
         oldPlayer.reviveCaps();
         if (event.isWasDeath() || flag) {
             AccessoryHelper.getContainer(oldPlayer).ifPresent(oldA -> AccessoryHelper.getContainer(newPlayer).ifPresent(newA -> {
-                RegistryAccess access = oldPlayer.registryAccess();
-                newA.deserializeNBT(access, oldA.serializeNBT(access));
+                newA.setData(oldA);
             }));
         }
         oldPlayer.invalidateCaps();
@@ -109,12 +111,15 @@ public class CommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public static boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         InteractionResult result = AccessoryHelper.tryEquip(event.getEntity(), event.getHand());
         if (result == InteractionResult.SUCCESS) {
-            event.setCanceled(true);
             event.setCancellationResult(result);
+
+            return true;
         }
+
+        return false;
     }
 
     @SubscribeEvent
@@ -129,14 +134,26 @@ public class CommonForgeEvents {
                 () -> ModNetworking.send(new SyncAccessoryTypesPacket(AccessoryTypeManager.getInstance().getTypes()), event.getConnection())));
     }
 
+    @SubscribeEvent
+    public static void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            ModNetworking.register();
+            CommonEvents.accessoryTypeOverrides = OhmegaHooks.accessoryOverrideTypesEvent();
+        });
+    }
+
+    public static ImmutableMap<Item, AccessoryType> getAccessoryTypeOverrides() {
+        return CommonEvents.accessoryTypeOverrides;
+    }
+
     @SuppressWarnings("deprecation")
     private static class AccessoryContainerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-        private final AccessoryContainer inner;
-        private final LazyOptional<AccessoryContainer> cap;
+        private AccessoryInvDataAttachment inner;
+        private final LazyOptional<AccessoryInvDataAttachment> cap;
         private final Player player;
 
         public AccessoryContainerProvider(Player player) {
-            this.inner = new AccessoryContainer(player);
+            this.inner = new AccessoryInvDataAttachment();
             this.cap = LazyOptional.of(() -> this.inner);
             this.player = player;
         }
@@ -149,12 +166,15 @@ public class CommonForgeEvents {
 
         @Override
         public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-            return this.inner.serializeNBT(this.player.registryAccess());
+            return (CompoundTag) AccessoryInvDataAttachment.CODEC.encodeStart(NbtOps.INSTANCE, inner).result().orElseGet(CompoundTag::new);
         }
 
         @Override
         public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            this.inner.deserializeNBT(this.player.registryAccess(), tag);
+            AccessoryInvDataAttachment.CODEC.parse(NbtOps.INSTANCE, tag).resultOrPartial().ifPresent(data -> {
+                inner = data;
+                inner.initialise(player);
+            });
         }
     }
 }

@@ -5,9 +5,9 @@ import com.google.common.primitives.Booleans;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.ModifierHolder;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
@@ -214,5 +214,11 @@ public class AccessoryInvDataAttachment {
                 }
             }
         }
+    }
+
+    public void setData(AccessoryInvDataAttachment data) {
+        this.stacks = data.stacks;
+        this.previous = data.previous;
+        this.changed = data.changed;
     }
 }

@@ -6,7 +6,6 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -45,13 +44,14 @@ import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = OhmegaCommon.MODID)
 public class CommonEvents {
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types"));
+
     private static ImmutableMap<Item, AccessoryType> accessoryTypeOverrides = ImmutableMap.of();
 
-    @SuppressWarnings("resource")
     @SubscribeEvent
     public static void onPlayerJoin(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            List<ServerPlayer> receivers = player.serverLevel().players();
+            List<ServerPlayer> receivers = player.level().players();
 
             receivers.add(player);
             AccessoryHelper.syncAllSlots(player, receivers);
@@ -67,7 +67,7 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        event.getEntity().getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).tick();
+        AccessoryHelper.getContainer(event.getEntity()).tick();
     }
 
     @SubscribeEvent
@@ -91,7 +91,7 @@ public class CommonEvents {
                 if (acc != null) {
                     AccessoryHelper.changeModifiers(newPlayer, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
-                    if (!OhmegaHooks.accessoryEquipEvent(newPlayer, stack, AccessoryEquipEvent.Context.GENERIC).isCanceled()) {
+                    if (!OhmegaHooks.accessoryEquipEvent(newPlayer, stack, AccessoryEquipEvent.Context.GENERIC)) {
                         acc.onEquip(newPlayer, stack);
                     }
                 }
@@ -109,7 +109,7 @@ public class CommonEvents {
             };
 
             if (player.getServer() != null && flag) {
-                player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).invalidate();
+                AccessoryHelper.getContainer(player).invalidate();
             }
         }
     }
@@ -164,7 +164,6 @@ public class CommonEvents {
                         new MainThreadPayloadHandler<>(SyncAccessoryTypesPacket::handle));
     }
 
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types"));
     @SubscribeEvent
     public static void addConfigTask(RegisterConfigurationTasksEvent event) {
         event.register(new ICustomConfigurationTask() {

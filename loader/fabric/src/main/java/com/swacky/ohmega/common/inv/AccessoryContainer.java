@@ -2,38 +2,22 @@ package com.swacky.ohmega.common.inv;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.ModifierHolder;
 import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A wrapper for {@link AccessoryInvDataAttachment} that allows ease of use with a {@link Player} instance
- */
 public class AccessoryContainer {
     private final Player player;
     private final AccessoryInvDataAttachment data;
 
+    @ApiStatus.Internal
     public AccessoryContainer(Player player, AccessoryInvDataAttachment data) {
         this.player = player;
         this.data = data;
-
-        for (int i = 0; i < this.getSlots(); i++) {
-            ItemStack stack = this.getStackInSlot(i);
-
-            ModifierHolder modifiers = AccessoryHelper.getModifiers(stack);
-            AccessoryHelper.changeModifiers(this.player, modifiers.getPassive(), true);
-            if (AccessoryHelper.isActive(stack)) {
-                AccessoryHelper.changeModifiers(this.player, modifiers.getActive(), true);
-            }
-        }
-    }
-
-    public Player owner() {
-        return this.player;
     }
 
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
@@ -59,7 +43,6 @@ public class AccessoryContainer {
         return this.data.getStackInSlot(index);
     }
 
-    // Is "trySetStackInSlot" for other loaders
     public boolean setStackInSlot(int index, @NotNull ItemStack stack) {
         if (stack.isEmpty() || this.isItemValid(index, stack) && AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
             this.data.setStackInSlot(index, stack);
@@ -68,44 +51,15 @@ public class AccessoryContainer {
         return false;
     }
 
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (amount == 0) {
-            return ItemStack.EMPTY;
-        }
-
-        this.data.validateSlotIndex(slot);
-
-        ItemStack existing = getStackInSlot(slot);
-
-        if (existing.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        int toExtract = Math.min(amount, existing.getMaxStackSize());
-
-        if (existing.getCount() <= toExtract) {
-            if (!simulate) {
-                this.setStackInSlot(slot, ItemStack.EMPTY);
-                onContentsChanged(slot);
-                return existing;
-            } else {
-                return existing.copy();
-            }
-        } else {
-            if (!simulate) {
-                this.setStackInSlot(slot, existing.copyWithCount(existing.getCount() - toExtract));
-                onContentsChanged(slot);
-            }
-
-            return existing.copyWithCount(toExtract);
-        }
+    public ItemStack removeItem(int index, int amount) {
+        return this.data.removeItem(index, amount);
     }
 
     public void tick() {
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
             IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
-            if (acc != null && !OhmegaHooks.accessoryTickEventPre(this.player, stack).isCanceled()) {
+            if (acc != null && !OhmegaHooks.accessoryTickEventPre(this.player, stack)) {
                 acc.tick(this.player, stack);
                 OhmegaHooks.accessoryTickEventPost(this.player, stack);
             }
@@ -117,10 +71,12 @@ public class AccessoryContainer {
         this.data.sync(this.player);
     }
 
+    @ApiStatus.Internal
     public void invalidate() {
         this.data.invalidate(this.player);
     }
 
+    @ApiStatus.Internal
     public void reloadCfg() {
         this.data.reloadCfg(this.player);
     }

@@ -2,8 +2,10 @@ package com.swacky.ohmega.api.event;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is posted when an accessory is equipped
@@ -11,8 +13,9 @@ import net.minecraftforge.eventbus.api.Event;
  * Cancelling only cancels overrides of {@link com.swacky.ohmega.api.IAccessory#onEquip(Player, ItemStack)} and does not stop the accessory from being equipped;
  * Instead, to achieve such behaviour, use {@link AccessoryCanEquipEvent}
  */
-@Cancelable
-public class AccessoryEquipEvent extends Event {
+public final class AccessoryEquipEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<@NotNull AccessoryEquipEvent> BUS = CancellableEventBus.create(AccessoryEquipEvent.class);
+
     private final Player player;
     private final ItemStack stack;
     private final Context context;

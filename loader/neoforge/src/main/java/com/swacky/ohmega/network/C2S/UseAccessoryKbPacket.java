@@ -3,7 +3,6 @@ package com.swacky.ohmega.network.C2S;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.OhmegaCommon;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.inv.AccessoryContainer;
 import com.swacky.ohmega.event.OhmegaHooks;
 import io.netty.buffer.ByteBuf;
@@ -28,12 +27,12 @@ public record UseAccessoryKbPacket(int slot) implements CustomPacketPayload {
         context.enqueueWork(() -> {
             if (packet.slot < AccessoryHelper.getSlotTypes().size()) {
                 Player player = context.player();
-                AccessoryContainer a = player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
+                AccessoryContainer a = AccessoryHelper.getContainer(player);
                 IAccessory acc = AccessoryHelper.getBoundAccessory(a.getStackInSlot(packet.slot).getItem());
                 if (acc != null) {
                     ItemStack stack = a.getStackInSlot(packet.slot);
 
-                    if (!OhmegaHooks.accessoryUseEvent(player, stack).isCanceled()) {
+                    if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
                         acc.onUse(player, stack);
                     }
                 }

@@ -61,7 +61,7 @@ public class AccessoryHelper {
      * @return the {@link AccessoryContainer} used for storing accessory inventory data on the {@link Player}
      */
     public static AccessoryContainer getContainer(Player player) {
-        return player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
+        return new AccessoryContainer(player, player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()));
     }
 
     /**
@@ -181,7 +181,7 @@ public class AccessoryHelper {
      * @return the {@link ItemStack} in the slot provided
      */
     public static ItemStack getStackInSlot(Player player, int slot) {
-        return player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).getStackInSlot(slot);
+        return getContainer(player).getStackInSlot(slot);
     }
 
     /**
@@ -539,7 +539,7 @@ public class AccessoryHelper {
      */
     public static int getFirstOpenSlot(Player player, AccessoryType type) {
         int out = -1;
-        AccessoryContainer a = player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
+        AccessoryContainer a = getContainer(player);
         ImmutableList<AccessoryType> slotTypes = getSlotTypes();
         for (int i = 0; i < a.getSlots(); i++) {
             if (slotTypes.get(i) == type && a.getStackInSlot(i).isEmpty()) {
@@ -562,17 +562,17 @@ public class AccessoryHelper {
         Item item = stack.getItem();
         IAccessory acc = getBoundAccessory(item);
         if (acc != null) {
-            AccessoryContainer a = player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
+            AccessoryContainer a = getContainer(player);
             int slot = getFirstOpenSlot(player, getType(item));
             if (slot >= 0) {
                 ItemStack stack0 = stack.copyWithCount(1);
-                if (a.trySetStackInSlot(slot, stack0)) {
+                if (a.setStackInSlot(slot, stack0)) {
                     changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
                     stack.shrink(1);
                     setSlot(stack, slot);
 
-                    if (!OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipEvent.Context.RIGHT_CLICK_HELD_ITEM).isCanceled()) {
+                    if (!OhmegaHooks.accessoryEquipEvent(player, stack0, AccessoryEquipEvent.Context.RIGHT_CLICK_HELD_ITEM)) {
                         acc.onEquip(player, stack0);
                     }
                     if (acc.getEquipSound() != null) {
@@ -592,7 +592,7 @@ public class AccessoryHelper {
      */
     public static ArrayList<ItemStack> getStacks(Player player) {
         ArrayList<ItemStack> stacks = new ArrayList<>();
-        AccessoryContainer a = player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get());
+        AccessoryContainer a = getContainer(player);
         for (int i = 0; i < a.getSlots(); i++) {
             stacks.add(a.getStackInSlot(i));
         }
@@ -692,7 +692,7 @@ public class AccessoryHelper {
      * @param slot the index of which to notify changes of
      */
     public static void setSlotChanged(Player player, int slot) {
-        player.getData(OhmegaDataAttachments.ACCESSORY_HANDLER.get()).onContentsChanged(slot);
+        getContainer(player).onContentsChanged(slot);
     }
 
     /**

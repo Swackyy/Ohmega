@@ -5,7 +5,7 @@ import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -22,7 +22,7 @@ public class OhmegaMenus {
         return MENUS.register(id, sup);
     }
 
-    public static void register(IEventBus bus) {
-        MENUS.register(bus);
+    public static void register(BusGroup group) {
+        MENUS.register(group);
     }
 }
