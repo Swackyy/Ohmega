@@ -61,9 +61,10 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
     }
 
     protected void renderAccInv(GuiGraphics gui) {
-        final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
-        final int slotsAvailable = Math.min(renderColumns * Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get()), AccessoryHelper.getSlotTypes().size());
-        final int mostSlotsPerColumn = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), AccessoryHelper.getSlotTypes().size());
+        final int renderSlots = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get());
+        final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / renderSlots), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+        final int slotsAvailable = Math.min(renderColumns * renderSlots, AccessoryHelper.getSlotTypes().size());
+        final int mostSlotsPerColumn = Math.min(renderSlots, AccessoryHelper.getSlotTypes().size());
 
         final int x;
         if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {

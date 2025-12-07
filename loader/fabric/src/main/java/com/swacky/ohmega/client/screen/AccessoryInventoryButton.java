@@ -35,17 +35,34 @@ public class AccessoryInventoryButton extends AbstractButton {
         this.shouldUseWidthHovered = style.shouldUseWidthHovered();
     }
 
+    private boolean isVisible() {
+        return this.visible && (this.screen instanceof AccessoryInventoryScreen || (this.screen instanceof InventoryScreen inventoryScreen && !inventoryScreen.recipeBookComponent.isVisible()));
+    }
+
+    private void fixPos() {
+        this.setX(this.screen.leftPos + this.x);
+        this.setY(this.screen.topPos + this.y);
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return this.isVisible() && super.isValidClickButton(button);
+    }
+
     @Override
     public void onPress() {
         if (mc.player != null) {
             if (!mc.player.isCreative() && !mc.player.isSpectator()) {
                 if (mc.screen instanceof AccessoryInventoryScreen) {
-                    ClientPlayNetworking.send(new OpenInventoryPacket());
+                    mc.player.containerMenu = mc.player.inventoryMenu;
                     mc.setScreen(new InventoryScreen(mc.player));
+                    ClientPlayNetworking.send(new OpenInventoryPacket());
                 } else {
                     ClientPlayNetworking.send(new OpenAccessoryInventoryPacket());
                 }
             } else {
+                mc.player.containerMenu = mc.player.inventoryMenu;
+                mc.setScreen(new InventoryScreen(mc.player));
                 ClientPlayNetworking.send(new OpenInventoryPacket());
             }
         }
@@ -56,29 +73,26 @@ public class AccessoryInventoryButton extends AbstractButton {
         this.defaultButtonNarrationText(output);
     }
 
-    private void fixPos() {
-        this.setX(this.screen.leftPos + this.x);
-        this.setY(this.screen.topPos + this.y);
-    }
-
     @Override
     public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
-        this.fixPos();
-        int hoveredOffsX;
-        int hoveredOffsY;
-        if (this.isHoveredOrFocused()) {
-            if (this.shouldUseWidthHovered) {
-                hoveredOffsX = this.width;
-                hoveredOffsY = 0;
+        if (this.isVisible()) {
+            this.fixPos();
+            int hoveredOffsX;
+            int hoveredOffsY;
+            if (this.isHoveredOrFocused()) {
+                if (this.shouldUseWidthHovered) {
+                    hoveredOffsX = this.width;
+                    hoveredOffsY = 0;
+                } else {
+                    hoveredOffsX = 0;
+                    hoveredOffsY = this.height;
+                }
             } else {
                 hoveredOffsX = 0;
-                hoveredOffsY = this.height;
+                hoveredOffsY = 0;
             }
-        } else {
-            hoveredOffsX = 0;
-            hoveredOffsY = 0;
-        }
 
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) this.uOffs + hoveredOffsX, (float) this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) this.uOffs + hoveredOffsX, (float) this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
+        }
     }
 }

@@ -17,7 +17,6 @@ import com.swacky.ohmega.network.ModNetworking;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -44,17 +43,6 @@ public class ClientEvents {
             final Minecraft mc = event.getScreen().getMinecraft();
             if (mc != null && mc.player != null && !mc.player.isCreative() && !mc.player.isSpectator()) {
                 event.addListener(new AccessoryInventoryButton(OhmegaConfig.CONFIG_CLIENT.buttonStyle.get(), (AbstractContainerScreen<?>) event.getScreen()));
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void hide(ScreenEvent.Render.Pre event) {
-        if (event.getScreen() instanceof InventoryScreen scr) {
-            for (GuiEventListener list : scr.children()) {
-                if (list instanceof AccessoryInventoryButton btn) {
-                    btn.visible = !scr.recipeBookComponent.isVisible();
-                }
             }
         }
     }

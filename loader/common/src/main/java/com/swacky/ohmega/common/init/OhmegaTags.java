@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.init;
 
-import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.core.registries.Registries;
@@ -19,15 +18,10 @@ public class OhmegaTags {
     private static final ArrayList<TagHolder> TAGS = new ArrayList<>();
 
     public static void register() {
-        ImmutableList<AccessoryType> types = AccessoryTypeManager.getInstance().getTypes();
-        ArrayList<TagHolder> builder = new ArrayList<>(types.size());
-
-        for (AccessoryType type : types) {
-            builder.add(new TagHolder(type, register(type.getId())));
-        }
-
         TAGS.clear();
-        TAGS.addAll(builder);
+        for (AccessoryType type : AccessoryTypeManager.getInstance().getTypes()) {
+            TAGS.add(new TagHolder(type, register(type.getId())));
+        }
     }
 
     private static TagKey<Item> register(ResourceLocation location) {

@@ -10,10 +10,10 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class AccessoryInventoryButton extends AbstractButton {
@@ -35,18 +35,39 @@ public class AccessoryInventoryButton extends AbstractButton {
         this.shouldUseWidthHovered = style.shouldUseWidthHovered();
     }
 
+    private boolean isVisible() {
+        return this.visible && (this.screen instanceof AccessoryInventoryScreen || (this.screen instanceof InventoryScreen inventoryScreen && !inventoryScreen.recipeBookComponent.isVisible()));
+    }
+
+    private void fixPos() {
+        this.setX(this.screen.getGuiLeft() + this.x);
+        this.setY(this.screen.getGuiTop() + this.y);
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return this.isVisible() && super.isValidClickButton(button);
+    }
+
     @Override
     public void onPress() {
         if (mc.player != null) {
-            if (!mc.player.isCreative() && !mc.player.isSpectator()) {
-                if (mc.screen instanceof AccessoryInventoryScreen) {
-                    PacketDistributor.sendToServer(new OpenInventoryPacket());
-                    mc.setScreen(new InventoryScreen(mc.player));
+            ClientPacketListener connection = mc.getConnection();
+
+            if (connection != null) {
+                if (!mc.player.isCreative() && !mc.player.isSpectator()) {
+                    if (mc.screen instanceof AccessoryInventoryScreen) {
+                        mc.player.containerMenu = mc.player.inventoryMenu;
+                        mc.setScreen(new InventoryScreen(mc.player));
+                        connection.send(new OpenInventoryPacket());
+                    } else {
+                        connection.send(new OpenAccessoryInventoryPacket());
+                    }
                 } else {
-                    PacketDistributor.sendToServer(new OpenAccessoryInventoryPacket());
+                    mc.player.containerMenu = mc.player.inventoryMenu;
+                    mc.setScreen(new InventoryScreen(mc.player));
+                    connection.send(new OpenInventoryPacket());
                 }
-            } else {
-                PacketDistributor.sendToServer(new OpenInventoryPacket());
             }
         }
     }
@@ -56,29 +77,26 @@ public class AccessoryInventoryButton extends AbstractButton {
         this.defaultButtonNarrationText(output);
     }
 
-    private void fixPos() {
-        this.setX(this.screen.getGuiLeft() + this.x);
-        this.setY(this.screen.getGuiTop() + this.y);
-    }
-
     @Override
     public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
-        this.fixPos();
-        int hoveredOffsX;
-        int hoveredOffsY;
-        if (this.isHoveredOrFocused()) {
-            if (this.shouldUseWidthHovered) {
-                hoveredOffsX = this.width;
-                hoveredOffsY = 0;
+        if (this.isVisible()) {
+            this.fixPos();
+            int hoveredOffsX;
+            int hoveredOffsY;
+            if (this.isHoveredOrFocused()) {
+                if (this.shouldUseWidthHovered) {
+                    hoveredOffsX = this.width;
+                    hoveredOffsY = 0;
+                } else {
+                    hoveredOffsX = 0;
+                    hoveredOffsY = this.height;
+                }
             } else {
                 hoveredOffsX = 0;
-                hoveredOffsY = this.height;
+                hoveredOffsY = 0;
             }
-        } else {
-            hoveredOffsX = 0;
-            hoveredOffsY = 0;
-        }
 
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float)this.uOffs + hoveredOffsX, (float)this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) this.uOffs + hoveredOffsX, (float) this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
+        }
     }
 }

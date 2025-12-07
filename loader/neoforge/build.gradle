@@ -6,7 +6,7 @@ plugins {
 version "neoforge+${mcV}"
 
 neoForge {
-    version.set loaderNeoV
+    version = loaderNeoV
 
     accessTransformers {
         file("src/main/resources/META-INF/accesstransformer.cfg")

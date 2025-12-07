@@ -32,7 +32,6 @@ public class OhmegaClientEvents {
             bootstrapped = true;
 
             ScreenEvents.AFTER_INIT.register(OhmegaClientEvents::addToScreens);
-            ScreenEvents.BEFORE_INIT.register(OhmegaClientEvents::hide);
             ModConfigEvents.loading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigLoad);
             ModConfigEvents.unloading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigUnload);
             ModConfigEvents.reloading(OhmegaCommon.MODID).register(OhmegaClientEvents::onConfigReload);
@@ -43,16 +42,6 @@ public class OhmegaClientEvents {
         if (screen instanceof InventoryScreen && OhmegaConfig.CONFIG_CLIENT.buttonStyle.get() != OhmegaConfig.ButtonStyle.HIDDEN) {
             if (mc != null && mc.player != null && !mc.player.isCreative() && !mc.player.isSpectator()) {
                 screen.addRenderableWidget(new AccessoryInventoryButton(OhmegaConfig.CONFIG_CLIENT.buttonStyle.get(), (AbstractContainerScreen<?>) screen));
-            }
-        }
-    }
-
-    private static void hide(Minecraft mc, Screen screen, int width, int height) {
-        if (screen instanceof InventoryScreen scr) {
-            for (GuiEventListener list : scr.children()) {
-                if (list instanceof AccessoryInventoryButton btn) {
-                    btn.visible = !scr.recipeBookComponent.isVisible();
-                }
             }
         }
     }

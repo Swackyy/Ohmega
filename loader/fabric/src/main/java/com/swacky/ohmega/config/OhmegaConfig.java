@@ -76,10 +76,10 @@ public class OhmegaConfig {
             String UTILITY = "ohmega:utility";
             String SPECIAL = "ohmega:special";
             this.slotTypes = builder
-                    .comment("\nDefines the types of accessories that can be key-bound")
+                    .comment("\nDefines the types of slot(s) you can have as accessories")
                     .defineList("slotTypes", List.of(NORMAL, NORMAL, NORMAL, UTILITY, UTILITY, SPECIAL), () -> NORMAL, v -> v instanceof String str && OhmegaTags.existsAt(str));
             this.keyboundSlotTypes = builder
-                    .comment("\nDefines the types of slot(s) you can have as accessories")
+                    .comment("\nDefines the types of accessories that can be key-bound")
                     .defineListAllowEmpty("keyboundSlotTypes", List.of(UTILITY, SPECIAL), () -> NORMAL, v -> v instanceof String str && OhmegaTags.existsAt(str));
             this.keepAccessories = builder
                     .comment("\nDefines how to handle player death in terms of dropping accessories")

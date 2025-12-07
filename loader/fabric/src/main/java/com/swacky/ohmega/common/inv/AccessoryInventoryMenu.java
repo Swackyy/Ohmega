@@ -70,8 +70,9 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                 AccessoryInventoryMenu.accSlots[i] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, this.accessories, i, 0, 0, slotTypes.get(i)));
             }
         } else {
-            final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
-            final int slotsAvailable = Math.min(renderColumns * Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get()), AccessoryHelper.getSlotTypes().size());
+            final int renderSlots = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get());
+            final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / renderSlots), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+            final int slotsAvailable = Math.min(renderColumns * renderSlots, AccessoryHelper.getSlotTypes().size());
 
             final int x;
             if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
@@ -95,7 +96,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
                     index++;
                     slotsCreatedCurrentColumn++;
 
-                    if (slotsCreatedCurrentColumn >= OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get()) {
+                    if (slotsCreatedCurrentColumn >= renderSlots) {
                         break;
                     }
 
@@ -115,7 +116,9 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(@NotNull Container container) {
-       CraftingMenu.slotChangedCraftingGrid(this, (ServerLevel) this.player.level(), this.player, this.craftMatrix, this.craftResult, null);
+        if (this.player.level() instanceof ServerLevel level) {
+            CraftingMenu.slotChangedCraftingGrid(this, level, this.player, this.craftMatrix, this.craftResult, null);
+        }
     }
 
     @Override
