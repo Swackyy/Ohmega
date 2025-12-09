@@ -10,6 +10,8 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.MutableComponent;
@@ -45,12 +47,12 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    protected boolean isValidClickButton(int button) {
-        return this.isVisible() && super.isValidClickButton(button);
+    protected boolean isValidClickButton(@NotNull MouseButtonInfo info) {
+        return this.isVisible() && super.isValidClickButton(info);
     }
 
     @Override
-    public void onPress() {
+    public void onPress(@NotNull InputWithModifiers input) {
         if (mc.player != null) {
             ClientPacketListener connection = mc.getConnection();
 

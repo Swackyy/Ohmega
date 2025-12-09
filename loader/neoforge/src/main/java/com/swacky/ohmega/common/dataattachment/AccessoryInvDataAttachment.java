@@ -12,6 +12,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
@@ -156,7 +157,10 @@ public class AccessoryInvDataAttachment {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
-            case DEFAULT -> player.getServer() == null || !player.getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case DEFAULT -> {
+                MinecraftServer server = player.level().getServer();
+                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            }
         };
 
         if (flag) {

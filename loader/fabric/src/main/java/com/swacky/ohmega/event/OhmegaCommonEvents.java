@@ -54,7 +54,7 @@ public class OhmegaCommonEvents {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
-            case DEFAULT -> oldPlayer.getServer() == null || !oldPlayer.getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case DEFAULT -> !oldPlayer.level().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
         };
 
         if (!alive || flag) {

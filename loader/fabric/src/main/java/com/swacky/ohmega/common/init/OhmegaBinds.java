@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.*;
 
 public class OhmegaBinds {
-    public static final String CATEGORY = "key.category." + OhmegaCommon.MODID + ".ohmega";
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.rl(OhmegaCommon.MODID));
 
     public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + OhmegaCommon.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
 
@@ -95,7 +95,7 @@ public class OhmegaBinds {
 
     // No changed behaviour, simply for identification
     public static class OhmegaKeyMapping extends KeyMapping {
-        public OhmegaKeyMapping(String description, InputConstants.Type inputType, int code, String category) {
+        public OhmegaKeyMapping(String description, InputConstants.Type inputType, int code, Category category) {
             super(description, inputType, code, category);
         }
     }

@@ -19,10 +19,6 @@ public class OhmegaCommon {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
-    public static ResourceLocation mcRl(String path) {
-        return ResourceLocation.withDefaultNamespace(path);
-    }
-
     /**
      * These {@link Item} - {@link IAccessory} binding methods do not have documentation,
      * and it is just recommended that you use their mirrored counterparts in the {@code AccessoryHelper} utility class

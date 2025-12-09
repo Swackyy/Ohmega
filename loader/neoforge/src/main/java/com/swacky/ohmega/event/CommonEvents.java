@@ -16,6 +16,7 @@ import com.swacky.ohmega.network.C2S.UseAccessoryKbPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
@@ -77,7 +78,10 @@ public class CommonEvents {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
-            case DEFAULT -> oldPlayer.getServer() == null || !oldPlayer.getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case DEFAULT -> {
+                MinecraftServer server = oldPlayer.level().getServer();
+                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            }
         };
 
         if (event.isWasDeath() || flag) {
@@ -105,10 +109,13 @@ public class CommonEvents {
             boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
                 case ON -> false;
                 case OFF -> true;
-                case DEFAULT -> player.getServer() == null || !player.getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+                case DEFAULT -> {
+                    MinecraftServer server = player.level().getServer();
+                    yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+                }
             };
 
-            if (player.getServer() != null && flag) {
+            if (flag) {
                 AccessoryHelper.getContainer(player).invalidate();
             }
         }

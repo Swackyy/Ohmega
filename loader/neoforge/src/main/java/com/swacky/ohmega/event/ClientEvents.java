@@ -170,4 +170,9 @@ public class ClientEvents {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        event.registerCategory(OhmegaBinds.CATEGORY);
+    }
 }

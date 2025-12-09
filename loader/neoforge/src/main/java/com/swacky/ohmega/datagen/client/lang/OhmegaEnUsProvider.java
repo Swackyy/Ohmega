@@ -32,7 +32,7 @@ public class OhmegaEnUsProvider extends LanguageProvider {
         add("tag.item." + OhmegaCommon.MODID + ".special", "Special");
 
         // Key-binds
-        add("key.category." + OhmegaCommon.MODID + ".ohmega", "Ohmega");
+        add("key.category." + OhmegaCommon.MODID + '.' + OhmegaCommon.MODID, "Ohmega");
         add("key." + OhmegaCommon.MODID + ".open_acc_inv", "Open/Close Accessories Inventory");
         add("key." + OhmegaCommon.MODID + ".generic", "Generic %s");
         add("key." + OhmegaCommon.MODID + ".normal", "Normal %s");

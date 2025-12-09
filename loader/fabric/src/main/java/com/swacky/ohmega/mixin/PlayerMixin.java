@@ -3,6 +3,7 @@ package com.swacky.ohmega.mixin;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
@@ -25,10 +26,13 @@ public class PlayerMixin {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
-            case DEFAULT -> this$0.getServer() == null || !this$0.getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case DEFAULT -> {
+                MinecraftServer server = this$0.level().getServer();
+                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            }
         };
 
-        if (this$0.getServer() != null && flag) {
+        if (flag) {
             AccessoryHelper.getContainer(this$0).invalidate();
         }
     }

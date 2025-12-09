@@ -2,6 +2,7 @@ package com.swacky.ohmega.common;
 
 import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -19,6 +20,8 @@ import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.impl.resource.v1.ResourceLoaderImpl;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.neoforged.fml.config.ModConfig;
 
@@ -49,6 +52,8 @@ public class Ohmega implements ModInitializer {
 
         PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
+
+        ResourceLoaderImpl.get(PackType.SERVER_DATA).registerReloader(OhmegaCommon.rl(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
 
         accessoryTypeOverrides = OhmegaHooks.accessoryOverrideTypesEvent();
     }

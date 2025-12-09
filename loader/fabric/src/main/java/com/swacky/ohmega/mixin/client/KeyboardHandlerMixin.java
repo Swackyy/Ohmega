@@ -13,6 +13,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardHandler.class)
 public class KeyboardHandlerMixin {
     @Inject(method = "keyPress", at = @At(value = "TAIL"))
-    public void keyPress(long windowPointer, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
+    public void keyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen == null) {
             while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null) {

@@ -3,7 +3,8 @@
         "description": {
             "translate": "dataPack.ohmega.description"
         },
-        "pack_format": ${packFormatV}
+        "min_format": ${packFormatV},
+        "max_format": ${packFormatV}
     }
 }
 
