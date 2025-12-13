@@ -4,7 +4,6 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.OhmegaCommon;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
@@ -66,16 +65,14 @@ public class SyncAccessorySlotsPacket implements CustomPacketPayload {
             return;
         }
 
-        context.client().execute(() -> {
-            ClientLevel level = Minecraft.getInstance().level;
-            if (level != null) {
-                if (level.getEntity(packet.playerId) instanceof Player player) {
-                    for (int i = 0; i < packet.slots.length; i++) {
-                        AccessoryHelper.getContainer(player).setStackInSlot(packet.slots[i], packet.stacks.get(i));
-                    }
+        ClientLevel level = context.client().level;
+        if (level != null) {
+            if (level.getEntity(packet.playerId) instanceof Player player) {
+                for (int i = 0; i < packet.slots.length; i++) {
+                    AccessoryHelper.getContainer(player).setStackInSlot(packet.slots[i], packet.stacks.get(i));
                 }
             }
-        });
+        }
     }
 
     @Override

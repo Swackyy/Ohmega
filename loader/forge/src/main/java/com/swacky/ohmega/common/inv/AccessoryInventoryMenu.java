@@ -18,6 +18,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class AccessoryInventoryMenu extends AbstractContainerMenu {
     public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
@@ -32,55 +34,60 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
     public AccessoryInventoryMenu(int id, Inventory inv) {
         super(OhmegaMenus.ACCESSORY_INVENTORY.get(), id);
 
-        AccessoryInventoryMenu.accSlots = new AccessorySlot[AccessoryHelper.getSlotTypes().size()];
+        ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
+        AccessoryInventoryMenu.accSlots = new AccessorySlot[slotTypes.size()];
 
         this.player = inv.player;
         this.accessories = AccessoryHelper.getContainer(inv.player).orElseThrow();
 
-        this.addSlot(new ResultSlot(inv.player, this.craftMatrix, this.craftResult, 0, 154, 28));
+        int x;
+        if (inv.player.level().isClientSide() && OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+            x = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) slotTypes.size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+        } else {
+            x = 0;
+        }
+
+        this.addSlot(new ResultSlot(inv.player, this.craftMatrix, this.craftResult, 0, x + 154, 28));
 
         for (int i = 0; i < 2; ++i) { // Crafting Matrix Slots
             for (int j = 0; j < 2; ++j) {
-                this.addSlot(new Slot(this.craftMatrix, j + i * 2, 98 + j * 18, 18 + i * 18));
+                this.addSlot(new Slot(this.craftMatrix, j + i * 2, x + 98 + j * 18, 18 + i * 18));
             }
         }
 
         for (int i = 0; i < 4; ++i) { // Armour Slots
             EquipmentSlot equipmentSlotType = VALID_EQUIPMENT_SLOTS[i];
-            this.addSlot(new ArmorSlot(inv, this.player, equipmentSlotType, 36 + (3 - i), 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[equipmentSlotType.getIndex()]));
+            this.addSlot(new ArmorSlot(inv, this.player, equipmentSlotType, 36 + (3 - i), x + 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[equipmentSlotType.getIndex()]));
         }
 
         for (int i = 0; i < 3; ++i) { // Inventory Slots
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inv, j + (i + 1) * 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inv, j + (i + 1) * 9, x + 8 + j * 18, 84 + i * 18));
             }
         }
 
         for (int i = 0; i < 9; ++i) { // Hotbar Slots
-            this.addSlot(new Slot(inv, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(inv, i, x + 8 + i * 18, 142));
         }
 
-        this.addSlot(new OffhandSlot(inv, 40, 77, 62)); // Offhand Slot
-
-        ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
+        this.addSlot(new OffhandSlot(inv, 40, x + 77, 62)); // Offhand Slot
 
         if (!inv.player.level().isClientSide()) {
-            for (int i = 0; i < AccessoryInventoryMenu.accSlots.length; i++) {
+            for (int i = 0; i < slotTypes.size(); i++) {
                 // Position does not matter (only in rare cases) on server
                 AccessoryInventoryMenu.accSlots[i] = (AccessorySlot) this.addSlot(new AccessorySlot(inv.player, this.accessories, i, 0, 0, slotTypes.get(i)));
             }
         } else {
             final int renderSlots = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get());
-            final int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / renderSlots), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
-            final int slotsAvailable = Math.min(renderColumns * renderSlots, AccessoryHelper.getSlotTypes().size());
+            final int renderColumns = (int) Math.min(Math.ceil((double) slotTypes.size() / renderSlots), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
+            final int slotsAvailable = Math.min(renderColumns * renderSlots, slotTypes.size());
 
-            final int x;
             if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
                 // 2px buffer from inv, 4 px buffer on both sides, slots columns width, 1px to align
-                x = - 2 - 4 * 2 - 18 * renderColumns + 1;
+                x += - 2 - 4 * 2 - 18 * renderColumns + 1;
             } else {
                 // Default, 2px buffer from inv, 2px to align
-                x = 175 + 2 + 2;
+                x += 175 + 2 + 2;
             }
 
             boolean stop = false;
@@ -119,6 +126,8 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         if (this.player.level() instanceof ServerLevel level) {
             CraftingMenu.slotChangedCraftingGrid(this, level, this.player, this.craftMatrix, this.craftResult, null);
         }
+
+        super.slotsChanged(container);
     }
 
     @Override
@@ -216,6 +225,20 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         }
 
         return stack;
+    }
+
+    @Override
+    public void initializeContents(int stateId, List<ItemStack> items, @NotNull ItemStack carried) {
+        for (int i = 0; i < Math.min(this.slots.size(), items.size()); i++) {
+            Slot slot = this.getSlot(i);
+            ItemStack stack = items.get(i);
+            if (!ItemStack.matches(slot.getItem(), stack)) {
+                this.getSlot(i).set(stack);
+            }
+        }
+
+        this.setCarried(carried);
+        this.stateId = stateId;
     }
 
     private static class OffhandSlot extends Slot {

@@ -13,7 +13,10 @@ public class OhmegaDataAttachments {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, OhmegaCommon.MODID);
 
     public static final Supplier<AttachmentType<AccessoryInvDataAttachment>> ACCESSORY_HANDLER = register("accessory_handler",
-            () -> AttachmentType.builder(AccessoryInvDataAttachment::new).serialize(AccessoryInvDataAttachment.SERIALIZER).build());
+            () -> AttachmentType.builder(AccessoryInvDataAttachment::new)
+                    .serialize(AccessoryInvDataAttachment.SERIALIZER)
+                    .sync(AccessoryInvDataAttachment.STREAM_CODEC)
+                    .build());
 
     private static <T> Supplier<AttachmentType<T>> register(String id, Supplier<AttachmentType<T>> sup) {
         return ATTACHMENT_TYPES.register(id, sup);

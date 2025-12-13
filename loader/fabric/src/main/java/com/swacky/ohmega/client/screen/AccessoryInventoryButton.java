@@ -21,20 +21,20 @@ import org.jetbrains.annotations.NotNull;
 public class AccessoryInventoryButton extends AbstractButton {
     protected final Minecraft mc;
     private final AbstractContainerScreen<?> screen;
-    protected final int x;
-    protected final int y;
-    protected final int uOffs;
-    protected final int vOffs;
-    protected final boolean shouldUseWidthHovered;
+    protected final OhmegaConfig.ButtonStyle style;
     public AccessoryInventoryButton(OhmegaConfig.ButtonStyle style, AbstractContainerScreen<?> screen) {
-        super(screen.leftPos + style.getX(), screen.topPos + style.getY(), style.getWidth(), style.getHeight(), MutableComponent.create(PlainTextContents.EMPTY));
+        super(getXAdjusted(screen, style), screen.topPos + style.getY(), style.getWidth(), style.getHeight(), MutableComponent.create(PlainTextContents.EMPTY));
         this.mc = screen.minecraft;
         this.screen = screen;
-        this.x = style.getX();
-        this.y = style.getY();
-        this.uOffs = style.getUOffs();
-        this.vOffs = style.getVOffs();
-        this.shouldUseWidthHovered = style.shouldUseWidthHovered();
+        this.style = style;
+    }
+
+    private static int getXAdjusted(AbstractContainerScreen<?> screen, OhmegaConfig.ButtonStyle style) {
+        if (screen instanceof AccessoryInventoryScreen accScreen && OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+            return screen.leftPos + style.getX() + accScreen.getExtraWidth();
+        }
+
+        return screen.leftPos + style.getX();
     }
 
     private boolean isVisible() {
@@ -42,8 +42,8 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     private void fixPos() {
-        this.setX(this.screen.leftPos + this.x);
-        this.setY(this.screen.topPos + this.y);
+        this.setX(getXAdjusted(this.screen, this.style));
+        this.setY(this.screen.topPos + this.style.getY());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AccessoryInventoryButton extends AbstractButton {
             int hoveredOffsX;
             int hoveredOffsY;
             if (this.isHoveredOrFocused()) {
-                if (this.shouldUseWidthHovered) {
+                if (this.style.shouldUseWidthHovered()) {
                     hoveredOffsX = this.width;
                     hoveredOffsY = 0;
                 } else {
@@ -94,7 +94,7 @@ public class AccessoryInventoryButton extends AbstractButton {
                 hoveredOffsY = 0;
             }
 
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) this.uOffs + hoveredOffsX, (float) this.vOffs + hoveredOffsY, this.width, this.height, 26, 71);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) this.style.getUOffs() + hoveredOffsX, (float) this.style.getVOffs() + hoveredOffsY, this.width, this.height, 26, 71);
         }
     }
 }

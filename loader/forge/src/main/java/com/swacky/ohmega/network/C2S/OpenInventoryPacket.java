@@ -16,8 +16,7 @@ public class OpenInventoryPacket extends BasePacket {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player != null) {
-                player.containerMenu.removed(player);
-                player.containerMenu = player.inventoryMenu;
+                player.doCloseContainer();
             }
         });
         context.setPacketHandled(true);

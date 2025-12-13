@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class ResizeCapPacket implements CustomPacketPayload {
@@ -24,9 +23,7 @@ public class ResizeCapPacket implements CustomPacketPayload {
     };
 
     public static void handle(ResizeCapPacket packet, ServerPlayNetworking.Context context) {
-        if (context.player() instanceof ServerPlayer player) {
-            AccessoryHelper.getContainer(player).reloadCfg();
-        }
+        AccessoryHelper.getContainer(context.player()).reloadCfg();
     }
 
     @Override

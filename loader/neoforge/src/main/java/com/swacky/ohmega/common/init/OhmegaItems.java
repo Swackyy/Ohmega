@@ -16,7 +16,7 @@ public class OhmegaItems {
     public static final DeferredItem<Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 
     private static <T extends Item> DeferredItem<T> register(String id, Function<Item.Properties, T> function, Item.Properties props) {
-        return ITEMS.registerItem(id, function, props);
+        return ITEMS.registerItem(id, function, () -> props);
     }
 
     public static void register(IEventBus bus) {

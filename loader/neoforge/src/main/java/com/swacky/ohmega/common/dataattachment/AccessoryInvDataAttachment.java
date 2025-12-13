@@ -12,6 +12,8 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
@@ -25,6 +27,7 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +39,34 @@ public class AccessoryInvDataAttachment {
             Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("previous").forGetter(inst -> inst.previous),
             Codec.list(Codec.BOOL).fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
     ).apply(builder, AccessoryInvDataAttachment::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryInvDataAttachment> STREAM_CODEC = StreamCodec.composite(
+            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
+            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.previous,
+            new StreamCodec<>() {
+                @Override
+                public void encode(@NotNull RegistryFriendlyByteBuf buf, boolean @NotNull [] values) {
+                    buf.writeVarInt(values.length);
+
+                    for (boolean value : values) {
+                        buf.writeBoolean(value);
+                    }
+                }
+
+                @Override
+                public boolean @NotNull [] decode(@NotNull RegistryFriendlyByteBuf buf) {
+                    int size = buf.readVarInt();
+                    boolean[] values = new boolean[size];
+
+                    for (int i = 0; i < size; i++) {
+                        values[i] = buf.readBoolean();
+                    }
+
+                    return values;
+                }
+            }, inst -> inst.changed,
+            AccessoryInvDataAttachment::new
+    );
 
     public static final IAttachmentSerializer<AccessoryInvDataAttachment> SERIALIZER = new IAttachmentSerializer<>() {
         @SuppressWarnings("deprecation")

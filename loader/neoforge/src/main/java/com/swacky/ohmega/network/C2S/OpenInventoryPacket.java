@@ -25,8 +25,7 @@ public class OpenInventoryPacket implements CustomPacketPayload {
     public static void handle(OpenInventoryPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
-                player.containerMenu.removed(player);
-                player.containerMenu = player.inventoryMenu;
+                player.doCloseContainer();
             }
         });
     }

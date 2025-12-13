@@ -26,10 +26,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
         this.effects = new EffectsInInventory(this);
         this.titleLabelX = 97;
         this.extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get())), OhmegaConfig.CONFIG_CLIENT.maxColumns.get());
-
-        if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.RIGHT) {
-            this.imageWidth += extraWidth;
-        }
+        this.imageWidth += extraWidth;
     }
 
     @Override
@@ -40,9 +37,10 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
         addRenderableWidget(button);
 
         if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
-            this.leftPos = (this.width - this.imageWidth) / 2;
+            this.leftPos = (this.width - this.imageWidth - this.extraWidth) / 2;
+            this.titleLabelX += this.extraWidth;
         } else {
-            this.leftPos = (this.width - this.imageWidth + extraWidth) / 2;
+            this.leftPos = (this.width - this.imageWidth + this.extraWidth) / 2;
         }
 
         this.topPos = (this.height - this.imageHeight) / 2;
@@ -68,8 +66,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
 
         final int x;
         if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
-            // Default, 2px buffer from inv, 4 px buffer on both sides, slots columns width, 1px to align
-            x = this.leftPos - 2 - 4 * 2 - 18 * renderColumns;
+            x = this.leftPos;
         } else {
             // Default, 2px buffer from inv, 1px to align
             x = this.leftPos + 175 + 2 + 1;
@@ -138,14 +135,21 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
     @Override
     protected void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mx, int my) {
         if (this.minecraft != null && this.minecraft.player != null) {
+            final int x;
+            if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+                x = this.leftPos + this.extraWidth;
+            } else {
+                x = this.leftPos;
+            }
+
             // Main inventory
-            gui.blit(RenderPipelines.GUI_TEXTURED, InventoryScreen.INVENTORY_LOCATION, this.leftPos, this.topPos, 0, 0, 176, 166, 256, 256);
+            gui.blit(RenderPipelines.GUI_TEXTURED, InventoryScreen.INVENTORY_LOCATION, x, this.topPos, 0, 0, 176, 166, 256, 256);
 
             // Accessory Inventory
             this.renderAccInv(gui);
 
             // Entity rendering
-            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, this.leftPos + 26, this.topPos + 8, this.leftPos + 75, this.topPos + 78, 30, 0.0625f, mx, my, this.minecraft.player);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, x + 26, this.topPos + 8, x + 75, this.topPos + 78, 30, 0.0625f, mx, my, this.minecraft.player);
         }
     }
 
@@ -161,5 +165,58 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
         } else {
             super.renderTooltip(gui, mx, my);
         }
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double x, double y, int left, int top) {
+        if (super.hasClickedOutside(x, y, left, top)) {
+            return true;
+        }
+
+        if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
+            // Ensure on correct side
+            if (x < this.leftPos + this.extraWidth) {
+                // 2px buffer zone
+                if (x >= this.leftPos + this.extraWidth - 2) {
+                    return true;
+                }
+
+                // Above
+                if (y > this.topPos && y < this.topPos + 20) {
+                    return true;
+                }
+
+                final int renderSlots = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get());
+                final int mostSlotsPerColumn = Math.min(renderSlots, AccessoryHelper.getSlotTypes().size());
+
+                // Below
+                return y > this.topPos + 20 + 4 + mostSlotsPerColumn * 18 + 4;
+            }
+        } else {
+            // Ensure on correct side
+            if (x > this.leftPos + 175) {
+                // 2px buffer zone
+                if (x <= this.leftPos + 175 + 2) {
+                    return true;
+                }
+
+                // Above
+                if (y > this.topPos && y < this.topPos + 20) {
+                    return true;
+                }
+
+                final int renderSlots = Math.min(OhmegaConfig.CONFIG_CLIENT.maxColumnSlots.get(), OhmegaConfig.CONFIG_CLIENT.maxColumnRenderSlots.get());
+                final int mostSlotsPerColumn = Math.min(renderSlots, AccessoryHelper.getSlotTypes().size());
+
+                // Below
+                return y > this.topPos + 20 + 4 + mostSlotsPerColumn * 18 + 4;
+            }
+        }
+
+        return false;
+    }
+
+    public int getExtraWidth() {
+        return this.extraWidth;
     }
 }

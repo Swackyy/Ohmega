@@ -15,12 +15,9 @@ public class AccessoryItemDataComponent {
     ).apply(inst, AccessoryItemDataComponent::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryItemDataComponent> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT,
-            AccessoryItemDataComponent::getSlot,
-            ByteBufCodecs.BOOL,
-            AccessoryItemDataComponent::isActive,
-            ModifierHolder.STREAM_CODEC,
-            AccessoryItemDataComponent::getModifiers,
+            ByteBufCodecs.INT, AccessoryItemDataComponent::getSlot,
+            ByteBufCodecs.BOOL, AccessoryItemDataComponent::isActive,
+            ModifierHolder.STREAM_CODEC, AccessoryItemDataComponent::getModifiers,
             AccessoryItemDataComponent::new
     );
 
@@ -60,10 +57,14 @@ public class AccessoryItemDataComponent {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && this.getClass() == obj.getClass()) {
-            AccessoryItemDataComponent component = (AccessoryItemDataComponent) obj;
-            return this.slot == component.slot && this.active == component.active && this.modifierHolder == component.modifierHolder;
+        if (this == obj) {
+            return true;
         }
+
+        if (obj instanceof AccessoryItemDataComponent other) {
+            return this.slot == other.slot && this.active == other.active && this.modifierHolder.equals(other.modifierHolder);
+        }
+        
         return false;
     }
 

@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class OpenInventoryPacket implements CustomPacketPayload {
@@ -23,10 +22,7 @@ public class OpenInventoryPacket implements CustomPacketPayload {
     };
 
     public static void handle(OpenInventoryPacket packet, ServerPlayNetworking.Context context) {
-        if (context.player() instanceof ServerPlayer player) {
-            player.containerMenu.removed(player);
-            player.containerMenu = player.inventoryMenu;
-        }
+        context.player().doCloseContainer();
     }
 
     @Override

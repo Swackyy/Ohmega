@@ -11,6 +11,8 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
@@ -27,10 +29,38 @@ import java.util.List;
 
 public class AccessoryInvDataAttachment {
     public static final Codec<AccessoryInvDataAttachment> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("previous").forGetter(inst -> inst.previous),
-            Codec.list(Codec.BOOL).fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
+            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
+            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("previous").forGetter(inst -> inst.previous),
+            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
     ).apply(builder, AccessoryInvDataAttachment::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryInvDataAttachment> STREAM_CODEC = StreamCodec.composite(
+            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
+            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.previous,
+            new StreamCodec<>() {
+                @Override
+                public void encode(RegistryFriendlyByteBuf buf, boolean[] values) {
+                    buf.writeVarInt(values.length);
+
+                    for (boolean value : values) {
+                        buf.writeBoolean(value);
+                    }
+                }
+
+                @Override
+                public boolean @NotNull [] decode(RegistryFriendlyByteBuf buf) {
+                    int size = buf.readVarInt();
+                    boolean[] values = new boolean[size];
+
+                    for (int i = 0; i < size; i++) {
+                        values[i] = buf.readBoolean();
+                    }
+
+                    return values;
+                }
+            }, inst -> inst.changed,
+            AccessoryInvDataAttachment::new
+    );
 
     private NonNullList<ItemStack> stacks;
     private NonNullList<ItemStack> previous;

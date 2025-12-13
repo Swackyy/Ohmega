@@ -45,6 +45,19 @@ public class ModifierHolder {
         return this.activeModifiers;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof ModifierHolder other) {
+            return this.passiveModifiers.equals(other.passiveModifiers) && this.activeModifiers.equals(other.activeModifiers);
+        }
+
+        return false;
+    }
+
     public static class Builder {
         private ItemAttributeModifiers.Builder passiveModifiers = ItemAttributeModifiers.builder();
         private ItemAttributeModifiers.Builder activeModifiers = ItemAttributeModifiers.builder();
