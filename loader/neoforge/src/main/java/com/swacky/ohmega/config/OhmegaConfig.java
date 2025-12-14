@@ -3,6 +3,7 @@ package com.swacky.ohmega.config;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -24,8 +25,8 @@ public class OhmegaConfig {
 
     public static class Client {
         public ModConfigSpec.BooleanValue compatibilityMode;
-        public ModConfigSpec.EnumValue<ButtonStyle> buttonStyle;
-        public ModConfigSpec.EnumValue<Side> side;
+        public ModConfigSpec.EnumValue<@NotNull ButtonStyle> buttonStyle;
+        public ModConfigSpec.EnumValue<@NotNull Side> side;
         public ModConfigSpec.BooleanValue tooltip;
         public ModConfigSpec.IntValue maxColumns;
         public ModConfigSpec.IntValue maxColumnSlots;
@@ -66,7 +67,7 @@ public class OhmegaConfig {
     public static class Server {
         public ModConfigSpec.ConfigValue<List<? extends String>> slotTypes;
         public ModConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
-        public ModConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessories;
+        public ModConfigSpec.EnumValue<@NotNull KeepAccessoriesBehaviour> keepAccessories;
         public ModConfigSpec.BooleanValue noAccessoryTypes;
 
         public Server(ModConfigSpec.Builder builder) {

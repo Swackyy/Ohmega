@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryInventoryMenu> {
+public class AccessoryInventoryScreen extends AbstractContainerScreen<@NotNull AccessoryInventoryMenu> {
     protected final Inventory inv;
     protected final EffectsInInventory effects;
     private final int extraWidth;
@@ -49,7 +49,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
     @Override
     public void render(@NotNull GuiGraphics gui, int mx, int my, float partialTicks) {
         super.render(gui, mx, my, partialTicks);
-        this.effects.renderEffects(gui, mx, my);
+        this.effects.render(gui, mx, my);
         this.renderTooltip(gui, mx, my);
     }
 
@@ -134,7 +134,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
 
     @Override
     protected void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mx, int my) {
-        if (this.minecraft != null && this.minecraft.player != null) {
+        if (this.minecraft.player != null) {
             final int x;
             if (OhmegaConfig.CONFIG_CLIENT.side.get() == OhmegaConfig.Side.LEFT) {
                 x = this.leftPos + this.extraWidth;
@@ -160,7 +160,7 @@ public class AccessoryInventoryScreen extends AbstractContainerScreen<AccessoryI
 
     @Override
     protected void renderTooltip(@NotNull GuiGraphics gui, int mx, int my) {
-        if (this.menu.getCarried().isEmpty() && this.hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.CONFIG_CLIENT.tooltip.get() && !this.hoveredSlot.hasItem() && this.minecraft != null) {
+        if (this.menu.getCarried().isEmpty() && this.hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.CONFIG_CLIENT.tooltip.get() && !this.hoveredSlot.hasItem()) {
             gui.setTooltipForNextFrame(accSlot.getType().getTranslation(), mx, my);
         } else {
             super.renderTooltip(gui, mx, my);

@@ -47,12 +47,12 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    protected boolean isValidClickButton(MouseButtonInfo info) {
+    protected boolean isValidClickButton(@NotNull MouseButtonInfo info) {
         return this.isVisible() && super.isValidClickButton(info);
     }
 
     @Override
-    public void onPress(InputWithModifiers input) {
+    public void onPress(@NotNull InputWithModifiers input) {
         if (mc.player != null) {
             if (!mc.player.isCreative() && !mc.player.isSpectator()) {
                 if (mc.screen instanceof AccessoryInventoryScreen) {
@@ -76,7 +76,7 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+    protected void renderContents(@NotNull GuiGraphics gui, int mx, int my, float partialTicks) {
         if (this.isVisible()) {
             this.fixPos();
             int hoveredOffsX;

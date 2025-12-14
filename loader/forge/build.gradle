@@ -1,8 +1,8 @@
 plugins {
     id "loader"
-    id "net.minecraftforge.gradle" version "${pluginForgeV}"
-    id "org.spongepowered.mixin" version "0.7.+"
+    id "net.minecraftforge.gradle"
     id "org.parchmentmc.librarian.forgegradle" version "1.+"
+    id "org.spongepowered.mixin" version "0.7.+"
 }
 
 version "forge+${mcV}"

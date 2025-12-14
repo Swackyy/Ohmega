@@ -9,16 +9,17 @@ import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
 public class OhmegaMenus {
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, OhmegaCommon.MODID);
 
-    public static final RegistryObject<MenuType<AccessoryInventoryMenu>> ACCESSORY_INVENTORY = register("accessory_container",
+    public static final RegistryObject<MenuType<@NotNull AccessoryInventoryMenu>> ACCESSORY_INVENTORY = register("accessory_container",
             () -> new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));
 
-    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String id, Supplier<MenuType<T>> sup) {
+    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<@NotNull T>> register(String id, Supplier<MenuType<@NotNull T>> sup) {
         return MENUS.register(id, sup);
     }
 

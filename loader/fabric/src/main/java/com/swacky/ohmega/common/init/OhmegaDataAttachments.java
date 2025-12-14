@@ -13,11 +13,11 @@ public class OhmegaDataAttachments {
             builder -> builder
             .initializer(AccessoryInvDataAttachment::new)
             .persistent(AccessoryInvDataAttachment.CODEC)
-            .syncWith(AccessoryInvDataAttachment.STREAM_CODEC, AttachmentSyncPredicate.all())
+            .syncWith(AccessoryInvDataAttachment.STREAM_CODEC, AttachmentSyncPredicate.allButTarget())
             .copyOnDeath());
 
     private static <T> AttachmentType<T> register(String id, Consumer<AttachmentRegistry.Builder<T>> consumer) {
-        return AttachmentRegistry.create(OhmegaCommon.rl(id), consumer);
+        return AttachmentRegistry.create(OhmegaCommon.id(id), consumer);
     }
 
     public static void init() {}

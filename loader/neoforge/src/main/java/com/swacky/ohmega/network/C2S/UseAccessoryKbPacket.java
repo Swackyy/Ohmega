@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record UseAccessoryKbPacket(int slot) implements CustomPacketPayload {
-    public static final Type<UseAccessoryKbPacket> TYPE = new Type<>(OhmegaCommon.rl("use_accessory_keybind_packet"));
+    public static final Type<@NotNull UseAccessoryKbPacket> TYPE = new Type<>(OhmegaCommon.id("use_accessory_keybind_packet"));
 
     public static final StreamCodec<ByteBuf, UseAccessoryKbPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
@@ -41,7 +41,7 @@ public record UseAccessoryKbPacket(int slot) implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

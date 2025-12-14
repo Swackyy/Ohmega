@@ -13,13 +13,13 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public class AccessoryInvDataAttachment {
             ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.previous,
             new StreamCodec<>() {
                 @Override
-                public void encode(RegistryFriendlyByteBuf buf, boolean[] values) {
+                public void encode(@NotNull RegistryFriendlyByteBuf buf, boolean @NotNull [] values) {
                     buf.writeVarInt(values.length);
 
                     for (boolean value : values) {
@@ -48,7 +48,7 @@ public class AccessoryInvDataAttachment {
                 }
 
                 @Override
-                public boolean @NotNull [] decode(RegistryFriendlyByteBuf buf) {
+                public boolean @NotNull [] decode(@NotNull RegistryFriendlyByteBuf buf) {
                     int size = buf.readVarInt();
                     boolean[] values = new boolean[size];
 
@@ -161,14 +161,11 @@ public class AccessoryInvDataAttachment {
         }
     }
 
-    public void invalidate(Player player) {
+    public void onDeath(Player player) {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
-            case DEFAULT -> {
-                MinecraftServer server = player.level().getServer();
-                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-            }
+            case DEFAULT -> !(player.level() instanceof ServerLevel level) || !level.getGameRules().get(GameRules.KEEP_INVENTORY);
         };
 
         if (flag) {

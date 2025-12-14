@@ -14,20 +14,19 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,14 +183,11 @@ public class AccessoryInvDataAttachment {
         }
     }
 
-    public void invalidate(Player player) {
+    public void onDeath(Player player) {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
             case ON -> false;
             case OFF -> true;
-            case DEFAULT -> {
-                MinecraftServer server = player.level().getServer();
-                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-            }
+            case DEFAULT -> !(player.level() instanceof ServerLevel level) || !level.getGameRules().get(GameRules.KEEP_INVENTORY);
         };
 
         if (flag) {

@@ -8,13 +8,13 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
 public class OhmegaBinds {
-    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.rl(OhmegaCommon.MODID));
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.id(OhmegaCommon.MODID));
 
     public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + OhmegaCommon.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
 
@@ -32,7 +32,7 @@ public class OhmegaBinds {
             Map<AccessoryType, Integer> typeCountMap = new WeakHashMap<>();
 
             if (OhmegaConfig.CONFIG_SERVER.noAccessoryTypes.get()) {
-                OhmegaTags.TagHolder holder = OhmegaTags.get(OhmegaCommon.rl("generic"));
+                OhmegaTags.TagHolder holder = OhmegaTags.get(OhmegaCommon.id("generic"));
                 if (holder != null) {
                     typeCountMap.put(holder.getType(), 0);
                 }
@@ -52,8 +52,8 @@ public class OhmegaBinds {
                         // Special 1: B
                         int key = type == AccessoryType.UTILITY.get() ? count == 0 ? GLFW.GLFW_KEY_G : count == 1 ? GLFW.GLFW_KEY_V : GLFW.GLFW_KEY_UNKNOWN : type == AccessoryType.SPECIAL.get() && count == 0 ? GLFW.GLFW_KEY_B : GLFW.GLFW_KEY_UNKNOWN;
                         builder.computeIfAbsent(type, k -> new ImmutableList.Builder<>());
-                        ResourceLocation rl = type.getId();
-                        OhmegaKeyMapping mapping = new OhmegaKeyMapping("key." + rl.getNamespace() + "." + rl.getPath() + "_" + count, InputConstants.Type.KEYSYM, key, CATEGORY);
+                        Identifier id = type.getId();
+                        OhmegaKeyMapping mapping = new OhmegaKeyMapping("key." + id.getNamespace() + "." + id.getPath() + "_" + count, InputConstants.Type.KEYSYM, key, CATEGORY);
                         builder.get(type).add(mapping);
                         Generated.orderedSlotKeys.add(mapping);
                         typeCountMap.put(type, count + 1);

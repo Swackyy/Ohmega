@@ -1,11 +1,11 @@
 package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;

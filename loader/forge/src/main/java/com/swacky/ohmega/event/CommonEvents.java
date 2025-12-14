@@ -2,6 +2,8 @@ package com.swacky.ohmega.event;
 
 import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
@@ -15,13 +17,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -68,7 +71,7 @@ public class CommonEvents {
     @SubscribeEvent
     public static void attachCapsPlayer(AttachCapabilitiesEvent.Entities event) {
         if (event.getObject() instanceof Player player) {
-            event.addCapability(OhmegaCommon.rl("accessory_container"), new AccessoryContainerProvider(player));
+            event.addCapability(OhmegaCommon.id("accessory_container"), new AccessoryContainerProvider(player));
         }
     }
 
@@ -82,38 +85,37 @@ public class CommonEvents {
         Player oldPlayer = event.getOriginal();
         Player newPlayer = event.getEntity();
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
-            case ON -> false;
-            case OFF -> true;
-            case DEFAULT -> {
-                MinecraftServer server = oldPlayer.level().getServer();
-                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-            }
+            case ON -> true;
+            case OFF -> false;
+            case DEFAULT -> oldPlayer.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.KEEP_INVENTORY);
         };
 
-        oldPlayer.reviveCaps();
-        if (event.isWasDeath() || flag) {
-            AccessoryHelper.getContainer(oldPlayer).ifPresent(oldA -> AccessoryHelper.getContainer(newPlayer).ifPresent(newA -> {
-                newA.setData(oldA);
-            }));
+        if (event.isWasDeath() && flag) {
+            oldPlayer.reviveCaps();
+            AccessoryHelper.getContainer(oldPlayer).ifPresent(oldA ->
+                    AccessoryHelper.getContainer(newPlayer).ifPresent(newA -> {
+                        for (int i = 0; i < newA.getSlots(); i++) {
+                            ItemStack stack = oldA.getStackInSlot(i);
+                            newA.setStackInSlot(i, stack);
+                            IAccessory acc = AccessoryHelper.getBoundAccessory(stack.getItem());
+                            if (acc != null) {
+                                AccessoryHelper.changeModifiers(newPlayer, AccessoryHelper.getModifiers(stack).getPassive(), true);
+
+                                if (!OhmegaHooks.accessoryEquipEvent(newPlayer, stack, AccessoryEquipEvent.Context.GENERIC)) {
+                                    acc.onEquip(newPlayer, stack);
+                                }
+                            }
+                        }
+                    })
+            );
+            oldPlayer.invalidateCaps();
         }
-        oldPlayer.invalidateCaps();
     }
 
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof Player player) {
-            boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
-                case ON -> false;
-                case OFF -> true;
-                case DEFAULT -> {
-                    MinecraftServer server = player.level().getServer();
-                    yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-                }
-            };
-
-            if (flag) {
-                AccessoryHelper.getContainer(player).ifPresent(AccessoryContainer::invalidate);
-            }
+            AccessoryHelper.getContainer(player).ifPresent(AccessoryContainer::onDeath);
         }
     }
 
@@ -134,7 +136,7 @@ public class CommonEvents {
         event.addListener(AccessoryTypeManager.getInstance());
     }
 
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types").toString());
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types").toString());
     @SubscribeEvent
     public static void addConfigTask(GatherLoginConfigurationTasksEvent event) {
         event.addTask(new SimpleConfigurationTask(TYPE,

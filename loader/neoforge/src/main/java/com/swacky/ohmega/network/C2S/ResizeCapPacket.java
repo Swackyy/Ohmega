@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ResizeCapPacket implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ResizeCapPacket> TYPE = new CustomPacketPayload.Type<>(OhmegaCommon.rl("resize_cap_packet"));
+    public static final CustomPacketPayload.Type<@NotNull ResizeCapPacket> TYPE = new CustomPacketPayload.Type<>(OhmegaCommon.id("resize_cap_packet"));
 
     public static final StreamCodec<ByteBuf, ResizeCapPacket> CODEC = new StreamCodec<>() {
         @Override
@@ -32,7 +32,7 @@ public class ResizeCapPacket implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

@@ -7,7 +7,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class AccessoryInventoryMenu extends AbstractContainerMenu {
-    public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
+    public static final Identifier[] ARMOR_SLOT_TEXTURES = new Identifier[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     protected static AccessorySlot[] accSlots;
@@ -252,7 +252,7 @@ public class AccessoryInventoryMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public ResourceLocation getNoItemIcon() {
+        public Identifier getNoItemIcon() {
             return InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD;
         }
     }

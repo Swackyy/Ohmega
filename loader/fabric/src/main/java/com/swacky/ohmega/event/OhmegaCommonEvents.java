@@ -18,8 +18,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,12 +52,12 @@ public class OhmegaCommonEvents {
 
     private static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
-            case ON -> false;
-            case OFF -> true;
-            case DEFAULT -> !oldPlayer.level().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case ON -> true;
+            case OFF -> false;
+            case DEFAULT -> oldPlayer.level().getGameRules().get(GameRules.KEEP_INVENTORY);
         };
 
-        if (!alive || flag) {
+        if (!alive && flag) {
             AccessoryContainer oldA = AccessoryHelper.getContainer(oldPlayer);
             AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
 

@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class OpenAccessoryInventoryPacket implements CustomPacketPayload {
-    public static final Type<OpenAccessoryInventoryPacket> TYPE = new Type<>(OhmegaCommon.rl("open_accessory_inventory_packet"));
+    public static final Type<@NotNull OpenAccessoryInventoryPacket> TYPE = new Type<>(OhmegaCommon.id("open_accessory_inventory_packet"));
 
     public static final StreamCodec<ByteBuf, OpenAccessoryInventoryPacket> CODEC = new StreamCodec<>() {
         @Override
@@ -39,7 +39,7 @@ public class OpenAccessoryInventoryPacket implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

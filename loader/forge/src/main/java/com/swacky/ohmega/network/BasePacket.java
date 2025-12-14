@@ -8,7 +8,7 @@ public abstract class BasePacket implements CustomPacketPayload {
     protected abstract String getId();
 
     @Override
-    public final @NotNull Type<? extends CustomPacketPayload> type() {
-        return new CustomPacketPayload.Type<>(OhmegaCommon.rl(getId()));
+    public final @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
+        return new CustomPacketPayload.Type<>(OhmegaCommon.id(getId()));
     }
 }

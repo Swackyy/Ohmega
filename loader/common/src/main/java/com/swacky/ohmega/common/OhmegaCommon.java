@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.IAccessory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,10 +13,10 @@ public class OhmegaCommon {
     public static final String MODID = "ohmega";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final ResourceLocation ACCESSORY_LOCATION = OhmegaCommon.rl("textures/gui/container/accessory_addon.png");
+    public static final Identifier ACCESSORY_LOCATION = OhmegaCommon.id("textures/gui/container/accessory_addon.png");
 
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 
     /**

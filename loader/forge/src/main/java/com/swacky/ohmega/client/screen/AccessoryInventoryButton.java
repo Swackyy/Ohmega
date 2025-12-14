@@ -77,7 +77,7 @@ public class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+    protected void renderContents(@NotNull GuiGraphics gui, int mx, int my, float partialTicks) {
         if (this.isVisible()) {
             this.fixPos();
             int hoveredOffsX;

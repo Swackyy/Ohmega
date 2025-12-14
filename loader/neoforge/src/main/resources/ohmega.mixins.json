@@ -7,8 +7,7 @@
     "ItemStackMixin"
   ],
   "client": [
-    "client.AbstractContainerScreenMixin",
-    "client.KeyBindsListMixin"
+    "client.AbstractContainerScreenMixin"
   ],
   "minVersion": "0.8.5"
 }

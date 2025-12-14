@@ -8,7 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  * You may also add a recipe to this if desired for survival use, or change how it functions through the use of events provided by the API
  */
 public class AngelRing extends Item implements IAccessory {
-    private static final ResourceLocation ATTR_PLAYER_MAYFLY = OhmegaCommon.rl("player_mayfly");
+    private static final Identifier ATTR_PLAYER_MAYFLY = OhmegaCommon.id("player_mayfly");
 
     public AngelRing(Properties properties) {
         super(properties);
@@ -103,10 +103,10 @@ public class AngelRing extends Item implements IAccessory {
     @Override
     public void addDefaultAttributeModifiers(ModifierHolder.Builder builder) {
         // This modifier is only applied when the accessory is active
-        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(OhmegaCommon.rl(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
+        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(OhmegaCommon.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
 
         // This modifier is always applied
-        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(OhmegaCommon.rl(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
+        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(OhmegaCommon.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
     }
 
     // The sound to be played when equipped using a right click

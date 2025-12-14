@@ -12,7 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.NotNull;
 
 public class SyncAccessoryTypesPacket implements CustomPacketPayload {
-    public static final Type<SyncAccessoryTypesPacket> TYPE = new Type<>(OhmegaCommon.rl("sync_accessory_types_packet"));
+    public static final Type<@NotNull SyncAccessoryTypesPacket> TYPE = new Type<>(OhmegaCommon.id("sync_accessory_types_packet"));
 
     public static final StreamCodec<ByteBuf, SyncAccessoryTypesPacket> CODEC = StreamCodec.composite(
             new StreamCodec<>() {
@@ -49,7 +49,7 @@ public class SyncAccessoryTypesPacket implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

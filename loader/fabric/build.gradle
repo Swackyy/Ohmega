@@ -1,6 +1,6 @@
 plugins {
+    id "fabric-loom"
     id "loader"
-    id "fabric-loom" version "${pluginLoomV}"
 }
 
 version "fabric+${mcV}"

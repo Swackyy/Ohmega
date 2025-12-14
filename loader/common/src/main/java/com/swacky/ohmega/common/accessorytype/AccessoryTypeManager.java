@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.common.OhmegaCommon;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -38,7 +38,7 @@ public class AccessoryTypeManager extends SimplePreparableReloadListener<Immutab
         ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(3);
         for (String namespace : resourceManager.getNamespaces()) {
             try {
-                for (Resource resource : resourceManager.getResourceStack(ResourceLocation.fromNamespaceAndPath(namespace, "ohmega/accessory_types.json"))) {
+                for (Resource resource : resourceManager.getResourceStack(Identifier.fromNamespaceAndPath(namespace, "ohmega/accessory_types.json"))) {
                     try (Reader reader = resource.openAsReader()) {
                         Map<String, AccessoryTypeLow> map = GsonHelper.fromJson(GSON, reader, TOKEN);
                         for (Map.Entry<String, AccessoryTypeLow> entry : map.entrySet()) {
@@ -79,9 +79,9 @@ public class AccessoryTypeManager extends SimplePreparableReloadListener<Immutab
         return ImmutableList.copyOf(this.types);
     }
 
-    public AccessoryType get(ResourceLocation location) {
+    public AccessoryType get(Identifier id) {
         for (AccessoryType type : this.types) {
-            if (type.getId().equals(location)) {
+            if (type.getId().equals(id)) {
                 return type;
             }
         }

@@ -1,6 +1,6 @@
 plugins {
     id "common"
-    id "net.neoforged.moddev" version "${pluginNeoV}"
+    id "net.neoforged.moddev"
 }
 
 neoForge {

@@ -31,6 +31,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,7 @@ public class ClientEvents {
         if (mc.screen == null) {
             ClientPacketListener connection = mc.getConnection();
             if (connection != null) {
-                while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null) {
+                while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null && (mc.player.portalProcess == null || !mc.player.portalProcess.isInsidePortalThisTick())) {
                     if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                         mc.player.sendOpenInventory();
                     } else if (!mc.player.isCreative() && !mc.player.isSpectator()) {
@@ -108,7 +109,7 @@ public class ClientEvents {
     @SuppressWarnings("RedundantCast")
     @SubscribeEvent
     public static void registerMenus(RegisterMenuScreensEvent event) {
-        event.register(OhmegaMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<AccessoryInventoryMenu, AccessoryInventoryScreen>) AccessoryInventoryScreen::new);
+        event.register(OhmegaMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<@NotNull AccessoryInventoryMenu, @NotNull AccessoryInventoryScreen>) AccessoryInventoryScreen::new);
     }
 
     @SubscribeEvent

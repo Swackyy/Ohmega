@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.NotNull;
 
 public class ResizeCapPacket implements CustomPacketPayload {
-    public static final Type<ResizeCapPacket> TYPE = new Type<>(OhmegaCommon.rl("resize_cap_packet"));
+    public static final Type<@NotNull ResizeCapPacket> TYPE = new Type<>(OhmegaCommon.id("resize_cap_packet"));
 
     public static final StreamCodec<ByteBuf, ResizeCapPacket> CODEC = new StreamCodec<>() {
         @Override
@@ -27,7 +27,7 @@ public class ResizeCapPacket implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

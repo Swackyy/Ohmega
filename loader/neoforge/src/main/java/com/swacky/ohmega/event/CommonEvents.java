@@ -16,14 +16,14 @@ import com.swacky.ohmega.network.C2S.UseAccessoryKbPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -45,7 +45,7 @@ import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = OhmegaCommon.MODID)
 public class CommonEvents {
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types"));
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types"));
 
     private static ImmutableMap<Item, AccessoryType> accessoryTypeOverrides = ImmutableMap.of();
 
@@ -76,15 +76,12 @@ public class CommonEvents {
         Player oldPlayer = event.getOriginal();
         Player newPlayer = event.getEntity();
         boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
-            case ON -> false;
-            case OFF -> true;
-            case DEFAULT -> {
-                MinecraftServer server = oldPlayer.level().getServer();
-                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-            }
+            case ON -> true;
+            case OFF -> false;
+            case DEFAULT -> oldPlayer.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.KEEP_INVENTORY);
         };
 
-        if (event.isWasDeath() || flag) {
+        if (event.isWasDeath() && flag) {
             AccessoryContainer oldA = AccessoryHelper.getContainer(oldPlayer);
             AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
 
@@ -106,18 +103,7 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof Player player) {
-            boolean flag = switch (OhmegaConfig.CONFIG_SERVER.keepAccessories.get()) { // Inverse
-                case ON -> false;
-                case OFF -> true;
-                case DEFAULT -> {
-                    MinecraftServer server = player.level().getServer();
-                    yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-                }
-            };
-
-            if (flag) {
-                AccessoryHelper.getContainer(player).invalidate();
-            }
+            AccessoryHelper.getContainer(player).onDeath();
         }
     }
 
@@ -132,7 +118,7 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void addResourceReloadListeners(AddServerReloadListenersEvent event) {
-        event.addListener(OhmegaCommon.rl("accessory_types"), AccessoryTypeManager.getInstance());
+        event.addListener(OhmegaCommon.id("accessory_types"), AccessoryTypeManager.getInstance());
     }
 
     @SubscribeEvent

@@ -2,14 +2,10 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven {
-            name "Parchment"
-            url "https://maven.parchmentmc.org"
-        }
 
         maven {
-            name "Sponge"
-            url "https://repo.spongepowered.org/repository/maven-public"
+            name "Fabric"
+            url "https://maven.fabricmc.net"
         }
 
         maven {
@@ -23,14 +19,19 @@ pluginManagement {
         }
 
         maven {
-            name "Fabric"
-            url "https://maven.fabricmc.net"
+            name "Parchment"
+            url "https://maven.parchmentmc.org"
+        }
+
+        maven {
+            name "Sponge"
+            url "https://repo.spongepowered.org/repository/maven-public"
         }
     }
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 rootProject.setName modName

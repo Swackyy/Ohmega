@@ -12,7 +12,7 @@ import net.minecraftforge.fml.ModLoader;
 public class OhmegaHooks {
     public static ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
         AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
-        ModLoader.get().postEvent(event);
+        ModLoader.postEvent(event);
         return event.get();
     }
 

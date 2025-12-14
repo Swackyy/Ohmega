@@ -72,8 +72,8 @@ public class AccessoryContainer {
     }
 
     @ApiStatus.Internal
-    public void invalidate() {
-        this.data.invalidate(this.player);
+    public void onDeath() {
+        this.data.onDeath(this.player);
     }
 
     @ApiStatus.Internal

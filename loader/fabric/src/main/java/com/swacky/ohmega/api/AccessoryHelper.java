@@ -27,7 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -312,7 +312,7 @@ public class AccessoryHelper {
 
         ImmutableList.Builder<AccessoryType> builder = new ImmutableList.Builder<>();
         for (String str : OhmegaConfig.CONFIG_SERVER.slotTypes.get()) {
-            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(str)));
+            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(str)));
         }
         return builder.build();
     }
@@ -344,7 +344,7 @@ public class AccessoryHelper {
 
         ImmutableList.Builder<AccessoryType> builder = new ImmutableList.Builder<>();
         for (String str : OhmegaConfig.CONFIG_SERVER.keyboundSlotTypes.get()) {
-            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(str)));
+            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(str)));
         }
         return ImmutableSet.copyOf(builder.build()).asList();
     }

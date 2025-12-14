@@ -26,7 +26,7 @@ public class KeyboardHandlerMixin {
     public void keyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen == null) {
-            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null) {
+            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null && (mc.player.portalProcess == null || !mc.player.portalProcess.isInsidePortalThisTick())) {
                 if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                     mc.player.sendOpenInventory();
                 } else if (!mc.player.isCreative() && !mc.player.isSpectator()) {

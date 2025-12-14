@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class SyncAccessorySlotsPacket implements CustomPacketPayload {
-    public static final Type<SyncAccessorySlotsPacket> TYPE = new Type<>(OhmegaCommon.rl("sync_accessory_slots_packet"));
+    public static final Type<@NotNull SyncAccessorySlotsPacket> TYPE = new Type<>(OhmegaCommon.id("sync_accessory_slots_packet"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncAccessorySlotsPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
@@ -76,7 +76,7 @@ public class SyncAccessorySlotsPacket implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

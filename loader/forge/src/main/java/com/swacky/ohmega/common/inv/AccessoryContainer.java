@@ -71,13 +71,9 @@ public class AccessoryContainer {
         this.data.sync(this.player);
     }
 
-    public void setData(AccessoryContainer container) {
-        this.data.setData(container.data);
-    }
-
     @ApiStatus.Internal
-    public void invalidate() {
-        this.data.invalidate(this.player);
+    public void onDeath() {
+        this.data.onDeath(this.player);
     }
 
     @ApiStatus.Internal

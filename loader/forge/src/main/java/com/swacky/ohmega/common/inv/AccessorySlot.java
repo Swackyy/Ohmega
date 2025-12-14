@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.event.OhmegaHooks;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -128,7 +128,7 @@ public class AccessorySlot extends Slot {
     }
 
     @Override
-    public ResourceLocation getNoItemIcon() {
+    public Identifier getNoItemIcon() {
         return this.type.getEmptySlotLocation();
     }
 

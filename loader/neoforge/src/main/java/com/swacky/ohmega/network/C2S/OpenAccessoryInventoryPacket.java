@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class OpenAccessoryInventoryPacket implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<OpenAccessoryInventoryPacket> TYPE = new CustomPacketPayload.Type<>(OhmegaCommon.rl("open_accessory_inventory_packet"));
+    public static final CustomPacketPayload.Type<@NotNull OpenAccessoryInventoryPacket> TYPE = new CustomPacketPayload.Type<>(OhmegaCommon.id("open_accessory_inventory_packet"));
 
     public static final StreamCodec<ByteBuf, OpenAccessoryInventoryPacket> CODEC = new StreamCodec<>() {
         @Override
@@ -43,7 +43,7 @@ public class OpenAccessoryInventoryPacket implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return TYPE;
     }
 }

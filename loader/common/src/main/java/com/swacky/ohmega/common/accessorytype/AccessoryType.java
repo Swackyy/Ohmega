@@ -7,15 +7,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Supplier;
 
 public class AccessoryType {
     public static final StreamCodec<ByteBuf, AccessoryType> CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             AccessoryType::getId,
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT,
             AccessoryType::getPriority,
@@ -26,19 +26,19 @@ public class AccessoryType {
             AccessoryType::new
     );
 
-    private final ResourceLocation id;
-    private final ResourceLocation emptySlotLocation;
+    private final Identifier id;
+    private final Identifier emptySlotLocation;
     private final int priority;
     private final int hoverTextColour;
     private final boolean displayHoverText;
 
     // Deferred to ensure they are non-null
-    public static final Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.rl("generic"));
-    public static final Supplier<AccessoryType> NORMAL = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.rl("normal"));
-    public static final Supplier<AccessoryType> UTILITY = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.rl("utility"));
-    public static final Supplier<AccessoryType> SPECIAL = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.rl("special"));
+    public static final Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.id("generic"));
+    public static final Supplier<AccessoryType> NORMAL = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.id("normal"));
+    public static final Supplier<AccessoryType> UTILITY = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.id("utility"));
+    public static final Supplier<AccessoryType> SPECIAL = () -> AccessoryTypeManager.getInstance().get(OhmegaCommon.id("special"));
 
-    protected AccessoryType(ResourceLocation id, ResourceLocation emptySlotLocation, int priority, int hoverTextColour, boolean displayHoverText) {
+    protected AccessoryType(Identifier id, Identifier emptySlotLocation, int priority, int hoverTextColour, boolean displayHoverText) {
         this.id = id;
         this.emptySlotLocation = emptySlotLocation;
         this.priority = priority;
@@ -48,18 +48,18 @@ public class AccessoryType {
 
     protected AccessoryType(String modid, String idPath, AccessoryTypeLow data) {
         this(
-                ResourceLocation.fromNamespaceAndPath(modid, idPath),
-                data.emptySlotPath.indexOf(':') == -1 ? ResourceLocation.fromNamespaceAndPath(modid, data.emptySlotPath) : ResourceLocation.parse(data.emptySlotPath),
+                Identifier.fromNamespaceAndPath(modid, idPath),
+                data.emptySlotPath.indexOf(':') == -1 ? Identifier.fromNamespaceAndPath(modid, data.emptySlotPath) : Identifier.parse(data.emptySlotPath),
                 data.priority,
                 data.hoverTextColour,
                 data.displayHoverText);
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return this.id;
     }
 
-    public ResourceLocation getEmptySlotLocation() {
+    public Identifier getEmptySlotLocation() {
         return this.emptySlotLocation;
     }
 

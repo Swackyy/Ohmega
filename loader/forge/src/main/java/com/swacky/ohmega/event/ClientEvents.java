@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public class ClientEvents {
     public static void onKeyInput(InputEvent.Key event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen == null) {
-            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null) {
+            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && mc.player != null && (mc.player.portalProcess == null || !mc.player.portalProcess.isInsidePortalThisTick())) {
                 if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                     mc.player.sendOpenInventory();
                 } else if (!mc.player.isCreative() && !mc.player.isSpectator()) {
@@ -108,7 +109,7 @@ public class ClientEvents {
     @SuppressWarnings("RedundantCast")
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> MenuScreens.register(OhmegaMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<AccessoryInventoryMenu, AccessoryInventoryScreen>) AccessoryInventoryScreen::new));
+        event.enqueueWork(() -> MenuScreens.register(OhmegaMenus.ACCESSORY_INVENTORY.get(), (MenuScreens.ScreenConstructor<@NotNull AccessoryInventoryMenu, @NotNull AccessoryInventoryScreen>) AccessoryInventoryScreen::new));
     }
 
     @SubscribeEvent

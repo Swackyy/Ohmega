@@ -35,7 +35,7 @@ public class AngelRing extends Item implements IAccessory {
     // This method uses the utility class to easily add tooltips onto the accessory
     @SuppressWarnings("deprecation")
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, @NotNull TooltipFlag flag) {
         tooltip.accept(AccessoryHelper.getBindTooltip(new TranslatableContents(this.getDescriptionId() + ".tooltip.keybind", null, TranslatableContents.NO_ARGS), stack, new TranslatableContents(this.getDescriptionId() + ".tooltip", null, TranslatableContents.NO_ARGS)));
         Component component = AccessoryHelper.getTypeTooltip(this);
         if (component != null) {
@@ -89,10 +89,10 @@ public class AngelRing extends Item implements IAccessory {
     @Override
     public void addDefaultAttributeModifiers(ModifierHolder.Builder builder) {
         // This modifier is only applied when the accessory is active
-        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(OhmegaCommon.rl(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
+        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(OhmegaCommon.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
 
         // This modifier is always applied
-        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(OhmegaCommon.rl(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
+        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(OhmegaCommon.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
     }
 
     // The sound to be played when equipped using a right click

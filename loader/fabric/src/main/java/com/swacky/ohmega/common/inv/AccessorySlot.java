@@ -5,7 +5,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.AccessoryEquipCallback;
 import com.swacky.ohmega.event.OhmegaHooks;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +47,7 @@ public class AccessorySlot extends Slot {
     }
 
     @Override
-    public boolean mayPickup(Player player) {
+    public boolean mayPickup(@NotNull Player player) {
         ItemStack stack = getItem();
         if (stack.isEmpty()) {
             return false;
@@ -68,7 +68,7 @@ public class AccessorySlot extends Slot {
     }
 
     @Override
-    public void onQuickCraft(ItemStack oldStack, ItemStack newStack) {}
+    public void onQuickCraft(@NotNull ItemStack oldStack, @NotNull ItemStack newStack) {}
 
     @Override
     public int getMaxStackSize() {
@@ -76,7 +76,7 @@ public class AccessorySlot extends Slot {
     }
 
     @Override
-    public int getMaxStackSize(ItemStack stack) {
+    public int getMaxStackSize(@NotNull ItemStack stack) {
         return getMaxStackSize();
     }
 
@@ -131,7 +131,7 @@ public class AccessorySlot extends Slot {
     }
 
     @Override
-    public ResourceLocation getNoItemIcon() {
+    public Identifier getNoItemIcon() {
         return this.type.getEmptySlotLocation();
     }
 

@@ -1,5 +1,8 @@
 plugins {
+    id "fabric-loom" version "${pluginLoomV}" apply false
     id "idea"
+    id "net.minecraftforge.gradle" version "${pluginForgeV}" apply false
+    id "net.neoforged.moddev" version "${pluginNeoV}" apply false
 }
 
 idea {
