@@ -3,18 +3,18 @@ plugins {
     id "java"
 }
 
-java {
-    withSourcesJar()
+configurations {
+    "commonJava" {
+        canBeResolved = true
+    }
+
+    "commonResources" {
+        canBeResolved = true
+    }
 }
 
-configurations {
-    commonJava {
-        canBeResolved true
-    }
-
-    commonResources {
-        canBeResolved true
-    }
+java {
+    withSourcesJar()
 }
 
 dependencies {
@@ -72,32 +72,21 @@ processResources {
         expand replaceProperties
     }
 
-    dependsOn configurations.commonResources
     from configurations.commonResources
 }
 
 jar {
-    manifest {
-        attributes([
-                "Specification-Title"    : modId,
-                "Specification-Vendor"   : modAuthors,
-                "Specification-Version"  : modV,
-                "Implementation-Title"   : project.name,
-                "Implementation-Version" : modV,
-                "Implementation-Vendor"  : modAuthors,
-                "MixinConfigs"           : "${modId}.mixins.json"
-        ])
-    }
-
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
-
-    dependsOn configurations.commonJava
-    from configurations.commonJava
-    dependsOn configurations.commonResources
     from configurations.commonResources
+
+    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named("sourcesJar") {
+    from project(":loader:common").sourceSets.main.allSource
+
+    exclude "META-INF/accesstransformer.cfg"
 }
 
 tasks.withType(JavaCompile).configureEach {
-    dependsOn configurations.commonJava
     source configurations.commonJava
 }

@@ -12,12 +12,12 @@ import net.neoforged.bus.api.ICancellableEvent;
  * Instead, to achieve such behaviour, use {@link AccessoryCanEquipEvent}
  */
 
-public class AccessoryEquipEvent extends Event implements ICancellableEvent {
+public final class AccessoryEquipEvent extends Event implements ICancellableEvent {
     private final Player player;
     private final ItemStack stack;
-    private final Context context;
+    private final EquipContext context;
 
-    public AccessoryEquipEvent(Player player, ItemStack stack, Context context) {
+    public AccessoryEquipEvent(Player player, ItemStack stack, EquipContext context) {
         this.player = player;
         this.stack = stack;
         this.context = context;
@@ -31,13 +31,7 @@ public class AccessoryEquipEvent extends Event implements ICancellableEvent {
         return this.stack;
     }
 
-    public Context getContext() {
+    public EquipContext getContext() {
         return this.context;
-    }
-
-    public enum Context {
-        GENERIC,
-        SLOT_PLACE,
-        RIGHT_CLICK_HELD_ITEM
     }
 }

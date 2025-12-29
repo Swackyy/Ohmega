@@ -3,9 +3,9 @@ package com.swacky.ohmega.api.event;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This event is posted when an accessory is equipped
@@ -13,34 +13,6 @@ import org.jetbrains.annotations.NotNull;
  * Cancelling only cancels overrides of {@link com.swacky.ohmega.api.IAccessory#onEquip(Player, ItemStack)} and does not stop the accessory from being equipped;
  * Instead, to achieve such behaviour, use {@link AccessoryCanEquipEvent}
  */
-public final class AccessoryEquipEvent extends MutableEvent implements Cancellable {
-    public static final CancellableEventBus<@NotNull AccessoryEquipEvent> BUS = CancellableEventBus.create(AccessoryEquipEvent.class);
-
-    private final Player player;
-    private final ItemStack stack;
-    private final Context context;
-
-    public AccessoryEquipEvent(Player player, ItemStack stack, Context context) {
-        this.player = player;
-        this.stack = stack;
-        this.context = context;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
-    }
-
-    public Context getContext() {
-        return this.context;
-    }
-
-    public enum Context {
-        GENERIC,
-        SLOT_PLACE,
-        RIGHT_CLICK_HELD_ITEM
-    }
+public record AccessoryEquipEvent(Player player, ItemStack stack, EquipContext context) implements RecordEvent, Cancellable {
+    public static final CancellableEventBus<@NonNull AccessoryEquipEvent> BUS = CancellableEventBus.create(AccessoryEquipEvent.class);
 }

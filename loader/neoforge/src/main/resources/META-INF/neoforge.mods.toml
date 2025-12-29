@@ -17,6 +17,9 @@ description='''${modDesc}'''
 [[mixins]]
 config="${modId}.mixins.json"
 
+[[mixins]]
+config="${modId}_common.mixins.json"
+
 
 [[dependencies.${modId}]]
 modId="neoforge"

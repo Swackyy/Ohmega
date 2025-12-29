@@ -4,10 +4,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public final class AccessoryCanEquipEvent extends MutableEvent {
-    public static final EventBus<@NotNull AccessoryCanEquipEvent> BUS = EventBus.create(AccessoryCanEquipEvent.class);
+    public static final EventBus<@NonNull AccessoryCanEquipEvent> BUS = EventBus.create(AccessoryCanEquipEvent.class);
 
     private final Player player;
     private final ItemStack stack;

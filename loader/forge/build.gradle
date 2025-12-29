@@ -5,10 +5,11 @@ plugins {
     id "org.spongepowered.mixin" version "0.7.+"
 }
 
-version "forge+${mcV}"
+version = "forge+${mcV}"
 
 mixin {
     config "${modId}.mixins.json"
+    config "${modId}_common.mixins.json"
 }
 
 minecraft {
@@ -17,39 +18,39 @@ minecraft {
     } else {
         mappings channel: "parchment", version: "${mapsMcV}-${mapsV}-${mcV}"
     }
-    reobf false
+
+    reobf = false
+    accessTransformer = file "src/main/resources/META-INF/accesstransformer.cfg"
+
     copyIdeResources.set true
-    accessTransformer file("src/main/resources/META-INF/accesstransformer.cfg")
 
     runs {
         configureEach {
-            workingDirectory file("run")
+            ideaModule = "${rootProject.name}.loader.${project.name}.main"
 
-            ideaModule "${rootProject.name}.loader.${project.name}.main"
-            property "forge.logging.markers", "REGISTRIES"
-            property "forge.logging.console.level", "debug"
+            workingDirectory file("run")
             property "forge.enabledGameTestNamespaces", "${modId}"
             property "eventbus.api.strictRuntimeChecks", "true"
         }
 
-        client {
-        }
+        client {}
 
-        server {
-        }
+        server {}
     }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mcV}-${loaderForgeV}"
-    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
-    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") { version { strictly "5.0.4" } }
 
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     annotationProcessor "net.minecraftforge:eventbus-validator:7.0-beta.7"
+
+    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") { version { strictly "5.0.4" } }
 }
 
 sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
-    it.output.resourcesDir dir
-    it.java.destinationDirectory.set dir
+    it.output.resourcesDir = dir
+
+    it.java.destinationDirectory.set dir.get()
 }

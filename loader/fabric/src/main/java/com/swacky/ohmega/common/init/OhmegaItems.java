@@ -10,8 +10,8 @@ import net.minecraft.world.item.Item;
 
 import java.util.function.Function;
 
-public class OhmegaItems {
-    // This is simply a test and example accessory. Its code may be used as a reference to create your own.
+@SuppressWarnings("unused")
+public final class OhmegaItems {
     public static final Item ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 
     private static <T extends Item> T register(String id, Function<Item.Properties, T> function, Item.Properties props) {

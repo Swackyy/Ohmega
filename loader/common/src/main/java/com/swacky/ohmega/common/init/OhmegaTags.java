@@ -14,18 +14,19 @@ import java.util.ArrayList;
  * <p>
  * Dynamically creates tags matching each registered {@link AccessoryType}
  */
-public class OhmegaTags {
+public final class OhmegaTags {
     private static final ArrayList<TagHolder> TAGS = new ArrayList<>();
 
-    public static void register() {
+    public static void refresh() {
         TAGS.clear();
+
         for (AccessoryType type : AccessoryTypeManager.getInstance().getTypes()) {
             TAGS.add(new TagHolder(type, register(type.getId())));
         }
     }
 
-    private static TagKey<Item> register(Identifier location) {
-        return TagKey.create(Registries.ITEM, location);
+    private static TagKey<Item> register(Identifier id) {
+        return TagKey.create(Registries.ITEM, id);
     }
 
     public static ArrayList<TagHolder> getTags() {
@@ -38,19 +39,8 @@ public class OhmegaTags {
                 return holder;
             }
         }
+
         return null;
-    }
-
-    public static boolean existsAt(Identifier location) {
-        return get(location) != null;
-    }
-
-    public static boolean existsAt(String str) {
-        Identifier id = Identifier.tryParse(str);
-        if (id != null) {
-            return existsAt(id);
-        }
-        return false;
     }
 
     public static class TagHolder {

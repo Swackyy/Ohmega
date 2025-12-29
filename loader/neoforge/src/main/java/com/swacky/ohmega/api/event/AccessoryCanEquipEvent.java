@@ -4,7 +4,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 
-public class AccessoryCanEquipEvent extends Event {
+public final class AccessoryCanEquipEvent extends Event {
     private final Player player;
     private final ItemStack stack;
 

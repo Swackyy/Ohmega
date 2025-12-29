@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 
-public class AccessoryUseEvent extends Event implements ICancellableEvent {
+public final class AccessoryUseEvent extends Event implements ICancellableEvent {
     private final Player player;
     private final ItemStack stack;
 

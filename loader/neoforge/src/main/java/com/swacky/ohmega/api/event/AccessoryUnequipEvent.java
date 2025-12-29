@@ -11,7 +11,7 @@ import net.neoforged.bus.api.ICancellableEvent;
  * Cancelling only cancels overrides of {@link com.swacky.ohmega.api.IAccessory#onUnequip(Player, ItemStack)} and does not stop the accessory from being equipped;
  * Instead, to achieve such behaviour, use {@link AccessoryCanUnequipEvent}
  */
-public class AccessoryUnequipEvent extends Event implements ICancellableEvent {
+public final class AccessoryUnequipEvent extends Event implements ICancellableEvent {
     private final Player player;
     private final ItemStack stack;
 

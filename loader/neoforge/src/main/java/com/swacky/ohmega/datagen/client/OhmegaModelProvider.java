@@ -9,22 +9,22 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.stream.Stream;
 
-public class OhmegaModelProvider extends ModelProvider {
+public final class OhmegaModelProvider extends ModelProvider {
     public OhmegaModelProvider(PackOutput output) {
         super(output, OhmegaCommon.MODID);
     }
 
     @Override
-    protected @NotNull Stream<? extends Holder<Item>> getKnownItems() {
+    protected @NonNull Stream<? extends Holder<Item>> getKnownItems() {
         return Stream.of(OhmegaItems.ANGEL_RING);
     }
 
     @Override
-    protected void registerModels(@NotNull BlockModelGenerators blocks, ItemModelGenerators items) {
+    protected void registerModels(@NonNull BlockModelGenerators blocks, ItemModelGenerators items) {
         items.generateFlatItem(OhmegaItems.ANGEL_RING.get(), ModelTemplates.FLAT_ITEM);
     }
 }

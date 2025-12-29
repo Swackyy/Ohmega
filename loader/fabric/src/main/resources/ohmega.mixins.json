@@ -3,17 +3,11 @@
   "package": "com.swacky.ohmega.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "EnchantmentHelperMixin",
-    "ItemStackMixin",
     "PlayerMixin",
-    "ReloadableServerResourcesMixin",
-    "ServerConfigurationPacketListenerImplMixin",
-    "ServerPlayerMixin"
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
     "client.KeyBindsList$KeyEntryMixin",
-    "client.KeyBindsListMixin",
     "client.KeyboardHandlerMixin"
   ],
   "minVersion": "0.8.5"

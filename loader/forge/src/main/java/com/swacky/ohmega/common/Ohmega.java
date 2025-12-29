@@ -1,10 +1,10 @@
 package com.swacky.ohmega.common;
 
-import com.swacky.ohmega.common.dataattachment.AccessoryInvDataAttachment;
-import com.swacky.ohmega.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.common.init.OhmegaMenus;
-import com.swacky.ohmega.config.OhmegaConfig;
+import com.swacky.ohmega.common.init.OhmegaMenusImpl;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -14,17 +14,19 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(OhmegaCommon.MODID)
-public class Ohmega {
-    public static final Capability<AccessoryInvDataAttachment> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
+public final class Ohmega {
+    public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
 
     public Ohmega(FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfig.SPEC_CLIENT);
-        context.registerConfig(ModConfig.Type.SERVER, OhmegaConfig.SPEC_SERVER);
+        OhmegaCommon.bootstrap();
+
+        context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+        context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         BusGroup group = context.getModBusGroup();
 
+        OhmegaDataComponentsImpl.register(group);
         OhmegaItems.register(group);
-        OhmegaMenus.register(group);
-        OhmegaDataComponents.register(group);
+        OhmegaMenusImpl.register(group);
     }
 }

@@ -1,19 +1,17 @@
 package com.swacky.ohmega.common;
 
-import com.google.common.collect.ImmutableMap;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.common.init.OhmegaMenus;
-import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.event.OhmegaCommonEvents;
-import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.common.init.OhmegaMenusImpl;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
-import com.swacky.ohmega.network.C2S.ResizeCapPacket;
-import com.swacky.ohmega.network.C2S.UseAccessoryKbPacket;
+import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
+import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
+import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
@@ -22,43 +20,36 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.impl.resource.ResourceLoaderImpl;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.item.Item;
 import net.neoforged.fml.config.ModConfig;
 
-public class Ohmega implements ModInitializer {
-    private static ImmutableMap<Item, AccessoryType> accessoryTypeOverrides = ImmutableMap.of();
-
+@SuppressWarnings("unused")
+public final class Ohmega implements ModInitializer {
     @Override
     public void onInitialize() {
-        OhmegaCommonEvents.bootstrap();
+        OhmegaCommon.bootstrap();
+        CommonEvents.bootstrap();
 
-        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.CLIENT, OhmegaConfig.SPEC_CLIENT);
-        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfig.SPEC_SERVER);
+        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
-        OhmegaItems.init();
-        OhmegaMenus.init();
-        OhmegaDataComponents.init();
         OhmegaDataAttachments.init();
+        OhmegaDataComponentsImpl.init();
+        OhmegaItems.init();
+        OhmegaMenusImpl.init();
 
         PayloadTypeRegistry.playC2S().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(OpenInventoryPacket.TYPE, OpenInventoryPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(ResizeCapPacket.TYPE, ResizeCapPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(UseAccessoryKbPacket.TYPE, UseAccessoryKbPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(ResizeContainerPacket.TYPE, ResizeContainerPacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
 
-        ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket::handle);
-        ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.TYPE, OpenInventoryPacket::handle);
-        ServerPlayNetworking.registerGlobalReceiver(ResizeCapPacket.TYPE, ResizeCapPacket::handle);
-        ServerPlayNetworking.registerGlobalReceiver(UseAccessoryKbPacket.TYPE, UseAccessoryKbPacket::handle);
+        ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenAccessoryInventory);
+        ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenInventory);
+        ServerPlayNetworking.registerGlobalReceiver(ResizeContainerPacket.TYPE, OhmegaNetworkingImpl.C2S::handleResizeContainer);
+        ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleUseAccessory);
 
         PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
 
         ResourceLoaderImpl.get(PackType.SERVER_DATA).registerReloader(OhmegaCommon.id(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
-
-        accessoryTypeOverrides = OhmegaHooks.accessoryOverrideTypesEvent();
-    }
-
-    public static ImmutableMap<Item, AccessoryType> getAccessoryTypeOverrides() {
-        return accessoryTypeOverrides;
     }
 }
