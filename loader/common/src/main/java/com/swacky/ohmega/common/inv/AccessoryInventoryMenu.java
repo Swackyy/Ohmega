@@ -46,7 +46,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         for (int i = 0; i < 4; i++) { // Armour Slots
             EquipmentSlot equipmentSlotType = VALID_EQUIPMENT_SLOTS[i];
-            addSlot(new ArmorSlot(inv, player, equipmentSlotType, 36 + i, x + 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[equipmentSlotType.getIndex()]));
+            addSlot(new ArmorSlot(inv, player, equipmentSlotType, 39 - i, x + 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[equipmentSlotType.getIndex()]));
         }
 
         addStandardInventorySlots(inv, x + 8, 84);
