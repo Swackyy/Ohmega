@@ -35,6 +35,10 @@ loom {
     }
 }
 
+remapJar {
+    targetNamespace = "named"
+}
+
 remapSourcesJar {
     targetNamespace = "named"
 }
@@ -69,6 +73,6 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
-    modImplementation("com.terraformersmc:modmenu:${loaderFabricModMenuV}")
+    modImplementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 }
