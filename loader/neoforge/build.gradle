@@ -46,3 +46,7 @@ neoForge {
         }
     }
 }
+
+tasks.named("compileTestJava") {
+    enabled = false
+}

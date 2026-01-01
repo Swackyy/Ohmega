@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id "fabric-loom"
     id "loader"
@@ -35,9 +37,13 @@ loom {
     }
 }
 
-remapJar {
+var namedJar = tasks.register("namedJar", RemapJarTask) {
+    inputFile = jar.archiveFile
+    archiveClassifier = "dev"
     targetNamespace = "named"
 }
+
+build.dependsOn(namedJar)
 
 remapSourcesJar {
     targetNamespace = "named"

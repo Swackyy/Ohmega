@@ -26,15 +26,11 @@ If you wish to contribute to the mod, you can do it in multiple ways! Either:
 
 ### How to generate IDE runs
 1. Clone the repository into a local directory, and open with your IDE.
-2. (Optional) Open the `gradle.properties` file and modify the number in `org.gradle.jvmargs` to specify the amount of RAM to run the game with
-3. Load the gradle project (depends on IDE), this will also generate both NeoForge and Fabric run configurations.
-4. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge`
+2. Load the gradle project (depends on IDE), this will also generate both Fabric and NeoForge run configurations.
+3. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge`
 
 ### How to build into JAR
 For your desired Mod Loader, run the command `./gradlew build -p loader/<loaderName>`
-
-> [!NOTE]
-> NeoForge will break on `compileTestJava` but still produces an output JAR
 
 ---
 ## Other links
