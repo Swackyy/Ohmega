@@ -43,6 +43,10 @@ public interface IAccessory {
 
     // Override this to make accessories only equipable when certain other accessories are not equipped
     // Default behaviour prevents players from equipping two of the same accessory at once
+    /**
+     * Will be removed by {@code v1.6.0} with a method accepting {@link ItemStack}s
+     */
+    @Deprecated(since = "1.5.4")
     default boolean compatibleWith(@NonNull IAccessory other) {
         return this != other;
     }

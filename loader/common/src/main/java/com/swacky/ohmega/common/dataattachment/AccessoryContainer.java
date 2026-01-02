@@ -83,6 +83,7 @@ public final class AccessoryContainer {
         this.changed = new boolean[size];
     }
 
+    @SuppressWarnings("deprecation")
     public boolean isItemValid(Player player, int slot, @NonNull ItemStack stack) {
         if (slot >= 0 && slot < stacks.size()) {
             Item item = stack.getItem();
