@@ -76,17 +76,23 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         return ImmutableSet.copyOf(types);
     }
 
-    public AccessoryType get(Identifier id) {
+    public @NonNull AccessoryType get(Identifier id) {
         for (AccessoryType type : types) {
             if (type.getId().equals(id)) {
                 return type;
             }
         }
 
-        return null;
+        return AccessoryType.NORMAL.get();
     }
 
     public boolean exists(String id) {
-        return get(Identifier.parse(id)) != null;
+        for (AccessoryType type : types) {
+            if (type.getId().equals(Identifier.parse(id))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

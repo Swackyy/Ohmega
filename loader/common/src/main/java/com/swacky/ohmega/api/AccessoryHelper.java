@@ -297,15 +297,8 @@ public final class AccessoryHelper {
             return builder.build();
         }
 
-        for (String str : OhmegaConfig.Server.slotTypes()) {
-            Identifier id = Identifier.parse(str);
-            AccessoryType type = AccessoryTypeManager.getInstance().get(id);
-
-            if (type != null) {
-                builder.add(type);
-            } else {
-                OhmegaCommon.LOGGER.error("Accessory type with identifier '{}' could not be found", id);
-            }
+        for (String id : OhmegaConfig.Server.slotTypes()) {
+            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(id)));
         }
 
         return builder.build();
@@ -322,15 +315,8 @@ public final class AccessoryHelper {
 
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
-        for (String str : OhmegaConfig.Server.keyboundSlotTypes()) {
-            Identifier id = Identifier.parse(str);
-            AccessoryType type = AccessoryTypeManager.getInstance().get(id);
-
-            if (type != null) {
-                builder.add(type);
-            } else {
-                OhmegaCommon.LOGGER.error("Accessory type with identifier '{}' could not be found", id);
-            }
+        for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
+            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(id)));
         }
 
         return builder.build().asList();
