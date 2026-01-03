@@ -1,10 +1,15 @@
 package com.swacky.ohmega.common;
 
 import com.google.common.collect.ImmutableMap;
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.Item;
@@ -24,21 +29,31 @@ public final class OhmegaCommon {
     public static final int ACCESSORY_ADDON_HEIGHT = 103;
     private static final Map<Item, IAccessory> BOUND_ACCESSORIES = new WeakHashMap<>();
 
+    private static int NUM_SERVICES = 0;
     private static ImmutableMap<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
-
-    public static void bootstrap() {
-        OhmegaConfig.bootstrap();
-
-        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
-    }
 
     public static <T> T loadService(Class<T> clazz) {
         String name = clazz.getName();
         T service = ServiceLoader.load(clazz).findFirst().orElseThrow(() ->
                 new RuntimeException("Could not load service '" + name + "' as no implementation was found"));
+        NUM_SERVICES++;
 
-        LOGGER.info("Loaded implementation '{}' for service '{}'", service.getClass().getName(), name);
+        LOGGER.debug("Loaded implementation '{}' for service '{}'", service.getClass().getName(), name);
         return service;
+    }
+
+    public static void bootstrap() {
+        AccessoryHelper.bootstrap();
+        OhmegaBinds.bootstrap();
+        OhmegaDataComponents.bootstrap();
+        OhmegaMenus.bootstrap();
+        OhmegaConfig.bootstrap();
+        OhmegaHooks.bootstrap();
+        OhmegaNetworking.bootstrap();
+
+        LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
+
+        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
     }
 
     public static @Nullable AccessoryType getTypeOverride(Item item) {

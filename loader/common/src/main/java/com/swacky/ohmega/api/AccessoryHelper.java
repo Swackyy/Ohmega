@@ -40,6 +40,8 @@ import java.util.Set;
 public final class AccessoryHelper {
     private static final Service IMPL = OhmegaCommon.loadService(Service.class);
 
+    public static void bootstrap() {}
+
     /**
      * Retrieves the built-in data stored on each accessory type,
      * you should most likely use wrappers here such as {@link #isActive(ItemStack)} and {@link #setActive(Player, ItemStack, boolean)}

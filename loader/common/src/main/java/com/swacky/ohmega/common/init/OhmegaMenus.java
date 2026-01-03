@@ -8,6 +8,8 @@ import org.jspecify.annotations.NonNull;
 public final class OhmegaMenus {
     private static final Service IMPL = OhmegaCommon.loadService(Service.class);
 
+    public static void bootstrap() {}
+
     public static MenuType<@NonNull AccessoryInventoryMenu> getAccessoryMenu() {
         return IMPL.getAccessoryMenu();
     }

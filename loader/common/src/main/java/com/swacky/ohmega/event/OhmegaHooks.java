@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 public final class OhmegaHooks {
     private static final Service IMPL = OhmegaCommon.loadService(Service.class);
 
+    public static void bootstrap() {}
+
     public static ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
         return IMPL.accessoryOverrideTypesEvent();
     }

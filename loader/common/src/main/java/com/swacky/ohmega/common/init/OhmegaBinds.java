@@ -16,6 +16,8 @@ import java.util.*;
 public final class OhmegaBinds {
     private static final Service INST = OhmegaCommon.loadService(Service.class);
 
+    public static void bootstrap() {}
+
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.id(OhmegaCommon.MODID));
 
     public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + OhmegaCommon.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);

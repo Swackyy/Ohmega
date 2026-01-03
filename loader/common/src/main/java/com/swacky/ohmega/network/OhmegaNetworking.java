@@ -5,8 +5,15 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 public final class OhmegaNetworking {
+    public static void bootstrap() {
+        C2S.bootstrap();
+        S2C.bootstrap();
+    }
+
     public static final class C2S {
         private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+
+        public static void bootstrap() {}
 
         public static void send(CustomPacketPayload packet) {
             IMPL.send(packet);
@@ -19,6 +26,8 @@ public final class OhmegaNetworking {
 
     public static final class S2C {
         private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+
+        public static void bootstrap() {}
 
         public static void send(ServerPlayer receiver, CustomPacketPayload packet) {
             IMPL.send(receiver, packet);
