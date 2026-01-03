@@ -174,9 +174,14 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                     stack.setCount(1);
                     getSlot(46 + openIndex).set(stack);
                 } else {
-                    int i = 8 - equipmentSlot.getIndex();
+                    if (index > 45 && index < 52) {
+                        if (moveItemStackTo(stack0, 9, 45, false)) { // Accessory -> inventory
+                            AccessoryHelper.getContainer(player).doUnequip(player, stack);
+                            return ItemStack.EMPTY;
+                        }
+                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
+                        int i = 8 - equipmentSlot.getIndex();
 
-                    if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(i).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
                         if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
                             return ItemStack.EMPTY;
                         }
@@ -190,12 +195,6 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                         }
                     } else if (index > 35 && index < 45) {
                         if (!moveItemStackTo(stack0, 9, 36, false)) { // Hotbar -> extended inventory
-                            return ItemStack.EMPTY;
-                        }
-                    } else if (index > 45 && index < 52) {
-
-                        if (moveItemStackTo(stack0, 9, 45, false)) { // Accessory -> inventory
-                            AccessoryHelper.getContainer(player).doUnequip(player, stack);
                             return ItemStack.EMPTY;
                         }
                     } else if (!moveItemStackTo(stack0, 9, 45, false)) { // Etc -> inventory
