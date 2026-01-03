@@ -45,7 +45,19 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     annotationProcessor "net.minecraftforge:eventbus-validator:7.0-beta.7"
 
-    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") { version { strictly "5.0.4" } }
+    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
+        version {
+            strictly "5.0.4"
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                "MixinConfigs": "${modId}.mixins.json, ${modId}_common.mixins.json"
+        ])
+    }
 }
 
 sourceSets.each {

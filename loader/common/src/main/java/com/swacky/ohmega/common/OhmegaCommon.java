@@ -28,6 +28,7 @@ public final class OhmegaCommon {
 
     public static void bootstrap() {
         OhmegaConfig.bootstrap();
+
         ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
     }
 
