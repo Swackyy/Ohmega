@@ -13,6 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
@@ -136,12 +137,12 @@ public final class CommonEvents {
 
         @Override
         public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(NbtOps.INSTANCE, inner).result().orElseGet(CompoundTag::new);
+            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner).result().orElseGet(CompoundTag::new);
         }
 
         @Override
         public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            AccessoryContainer.CODEC.parse(NbtOps.INSTANCE, tag).resultOrPartial().ifPresent(data -> {
+            AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag).resultOrPartial().ifPresent(data -> {
                 inner = data;
                 inner.onAttach(player);
             });
