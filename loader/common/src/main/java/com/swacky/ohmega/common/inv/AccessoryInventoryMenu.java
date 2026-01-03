@@ -176,7 +176,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 } else {
                     int i = 8 - equipmentSlot.getIndex();
 
-                    if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !slots.get(i).hasItem()) {
+                    if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(i).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
                         if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
                             return ItemStack.EMPTY;
                         }
