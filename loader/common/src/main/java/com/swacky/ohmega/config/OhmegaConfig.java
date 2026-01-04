@@ -10,15 +10,10 @@ import java.util.function.Predicate;
 
 // Descriptions written in the config file are all in English
 public final class OhmegaConfig {
-    public static void bootstrap() {
-        Client.bootstrap();
-        Server.bootstrap();
-    }
-
     public static final class Client {
         private static final Service IMPL = OhmegaCommon.loadService(Service.class);
 
-        private static void bootstrap() {}
+        public static void bootstrap() {}
 
         public static boolean compatibilityMode() {
             return IMPL.compatibilityMode();
@@ -196,7 +191,7 @@ public final class OhmegaConfig {
     public static final class Server {
         private static final Service IMPL = OhmegaCommon.loadService(Service.class);
 
-        private static void bootstrap() {}
+        public static void bootstrap() {}
 
         @SuppressWarnings("unchecked")
         public static List<String> slotTypes() {

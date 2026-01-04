@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(OhmegaCommon.MODID)
 public final class Ohmega {
@@ -20,7 +21,6 @@ public final class Ohmega {
     public Ohmega(FMLJavaModLoadingContext context) {
         OhmegaCommon.bootstrap();
 
-        context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
         context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         BusGroup group = context.getModBusGroup();
@@ -28,5 +28,11 @@ public final class Ohmega {
         OhmegaDataComponentsImpl.register(group);
         OhmegaItems.register(group);
         OhmegaMenusImpl.register(group);
+
+        if (FMLEnvironment.dist.isClient()) {
+            OhmegaCommon.bootstrapClient();
+
+            context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+        }
     }
 }

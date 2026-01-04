@@ -30,6 +30,7 @@ public final class OhmegaCommon {
     private static final Map<Item, IAccessory> BOUND_ACCESSORIES = new WeakHashMap<>();
 
     private static int NUM_SERVICES = 0;
+    private static int NUM_SERVICES_COMMON = 0;
     private static ImmutableMap<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
 
     public static <T> T loadService(Class<T> clazz) {
@@ -44,15 +45,22 @@ public final class OhmegaCommon {
 
     public static void bootstrap() {
         AccessoryHelper.bootstrap();
-        OhmegaBinds.bootstrap();
         OhmegaDataComponents.bootstrap();
         OhmegaMenus.bootstrap();
-        OhmegaConfig.bootstrap();
+        OhmegaConfig.Server.bootstrap();
         OhmegaHooks.bootstrap();
         OhmegaNetworking.bootstrap();
         LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
 
+        NUM_SERVICES_COMMON = NUM_SERVICES;
         ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
+    }
+
+    public static void bootstrapClient() {
+        OhmegaBinds.bootstrap();
+        OhmegaConfig.Client.bootstrap();
+
+        LOGGER.info("Successfully loaded {} client services", NUM_SERVICES - NUM_SERVICES_COMMON);
     }
 
     public static @Nullable AccessoryType getTypeOverride(Item item) {

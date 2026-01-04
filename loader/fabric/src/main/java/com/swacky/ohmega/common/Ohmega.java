@@ -29,7 +29,6 @@ public final class Ohmega implements ModInitializer {
         OhmegaCommon.bootstrap();
         CommonEvents.bootstrap();
 
-        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
         ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         OhmegaDataAttachments.init();
