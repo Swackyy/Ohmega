@@ -4,6 +4,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.function.BiConsumer;
 
+// todo: add methods that accept alternate namespaces here
 /**
  * Use this to easily add translations for your own accessory types in data generation
  */
@@ -21,13 +22,13 @@ public final class OhmegaLangHelper {
 
     /**
      * Adds translations for an accessory type
-     * @param path accessory type key, e.g: "normal", "utility"
+     * @param typeKey accessory type key, e.g: "normal", "utility"
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */
-    public void addType(String path, String translation) {
-        adder.accept("accessory_type." + namespace + '.' + path, translation);
-        adder.accept("key." + namespace + '.' + path, translation + " %s");
-        adder.accept("tag.item." + namespace + '.' + path, translation);
+    public void addType(String typeKey, String translation) {
+        adder.accept("accessory_type." + namespace + '.' + typeKey, translation);
+        adder.accept("key." + namespace + '.' + typeKey, translation + " %s");
+        adder.accept("tag.item." + namespace + '.' + typeKey, translation);
     }
 
     /**

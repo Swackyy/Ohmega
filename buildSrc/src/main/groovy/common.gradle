@@ -14,7 +14,9 @@ java {
 
 processResources {
     var replaceProperties = [
-            packFormatV: packFormatV
+            modId          : modId,
+            packFormatMinV : packFormatMinV,
+            packFormatMaxV : packFormatMaxV
     ]
 
     inputs.properties replaceProperties

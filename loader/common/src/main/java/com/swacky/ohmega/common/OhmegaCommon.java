@@ -50,7 +50,6 @@ public final class OhmegaCommon {
         OhmegaConfig.bootstrap();
         OhmegaHooks.bootstrap();
         OhmegaNetworking.bootstrap();
-
         LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
 
         ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
@@ -65,21 +64,21 @@ public final class OhmegaCommon {
     }
 
     /**
-     * Use {@link com.swacky.ohmega.api.AccessoryHelper#getBoundAccessory}
+     * Use {@link AccessoryHelper#getBoundAccessory}
      */
     public static IAccessory getBoundAccessory(Item item) {
         return item instanceof IAccessory accessory ? accessory : BOUND_ACCESSORIES.get(item);
     }
 
     /**
-     * Use {@link com.swacky.ohmega.api.AccessoryHelper#isItemAccessoryBound}
+     * Use {@link AccessoryHelper#isItemAccessoryBound}
      */
     public static boolean isItemAccessoryBound(Item item) {
         return getBoundAccessory(item) != null;
     }
 
     /**
-     * Use {@link com.swacky.ohmega.api.AccessoryHelper#bindAccessory}
+     * Use {@link AccessoryHelper#bindAccessory}
      */
     public static boolean bindAccessory(Item item, IAccessory binding) {
         if (isItemAccessoryBound(item) || item instanceof AirItem) {

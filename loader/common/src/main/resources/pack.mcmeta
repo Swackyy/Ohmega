@@ -1,10 +1,13 @@
 {
-    "pack": {
-        "description": {
-            "translate": "dataPack.ohmega.description"
-        },
-        "min_format": ${packFormatV},
-        "max_format": ${packFormatV}
-    }
+  "pack": {
+    "description": {
+      "translate": "dataPack.${modId}.description"
+    },
+    "max_format": ${packFormatMaxV},
+    "min_format": [
+      ${packFormatMaxV},
+      ${packFormatMinV}
+    ]
+  }
 }
 
