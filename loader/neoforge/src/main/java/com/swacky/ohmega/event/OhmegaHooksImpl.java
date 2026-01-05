@@ -54,7 +54,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryAttributeModifiersEvent(Item item, AccessoryModifiers.Builder builder) {
-        NeoForge.EVENT_BUS.post(new AccessoryAttributeModifiersEvent(item, builder));
+    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        NeoForge.EVENT_BUS.post(new AccessoryAttributeModifiersEvent(stack, builder));
     }
 }

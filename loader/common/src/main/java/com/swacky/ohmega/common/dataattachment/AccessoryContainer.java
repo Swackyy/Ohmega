@@ -117,7 +117,7 @@ public final class AccessoryContainer {
                 accessory.onUnequip(player, stack);
             }
 
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(accessory).getPassive(), true);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
             AccessoryHelper.setNoSlot(stack);
         }
     }
@@ -127,7 +127,7 @@ public final class AccessoryContainer {
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(accessory).getPassive(), true);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
             if (!OhmegaHooks.accessoryEquipEvent(player, stack, context)) {
                 accessory.onEquip(player, stack);

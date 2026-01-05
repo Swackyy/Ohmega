@@ -50,7 +50,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryAttributeModifiersEvent(Item item, AccessoryModifiers.Builder builder) {
-        AccessoryAttributeModifiersEvent.EVENT.invoker().process(item, builder);
+    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        AccessoryAttributeModifiersEvent.EVENT.invoker().process(stack, builder);
     }
 }
