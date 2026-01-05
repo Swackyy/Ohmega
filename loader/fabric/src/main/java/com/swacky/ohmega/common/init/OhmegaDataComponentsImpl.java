@@ -15,7 +15,7 @@ public final class OhmegaDataComponentsImpl implements  OhmegaDataComponents.Ser
                     .build());
 
     private static <T> DataComponentType<T> register(String id, DataComponentType<T> object) {
-        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, OhmegaCommon.id(id), object);
+        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, OhmegaCommon.rl(id), object);
     }
 
     public static void init() {}

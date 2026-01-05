@@ -12,8 +12,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
@@ -40,8 +40,8 @@ import java.util.Collections;
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = OhmegaCommon.MODID)
 public final class CommonEvents {
-    private static final Identifier CAPABILITY_ID = OhmegaCommon.id("accessory_data");
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types").toString());
+    private static final ResourceLocation CAPABILITY_ID = OhmegaCommon.rl("accessory_data");
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types").toString());
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent.Entities event) {

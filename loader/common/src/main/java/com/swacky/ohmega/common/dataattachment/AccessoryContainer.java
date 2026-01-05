@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.GameRules;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jspecify.annotations.NonNull;
 
@@ -117,7 +117,7 @@ public final class AccessoryContainer {
                 accessory.onUnequip(player, stack);
             }
 
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(accessory).getPassive(), true);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
             AccessoryHelper.setNoSlot(stack);
         }
     }
@@ -127,7 +127,7 @@ public final class AccessoryContainer {
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(accessory).getPassive(), true);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
             if (!OhmegaHooks.accessoryEquipEvent(player, stack, context)) {
                 accessory.onEquip(player, stack);
@@ -246,7 +246,7 @@ public final class AccessoryContainer {
         boolean flag = switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) { // Inverse
             case ALWAYS_ON -> false;
             case ALWAYS_OFF -> true;
-            case DEFAULT -> !player.level().getGameRules().get(GameRules.KEEP_INVENTORY);
+            case DEFAULT -> !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
         };
 
         if (flag) {

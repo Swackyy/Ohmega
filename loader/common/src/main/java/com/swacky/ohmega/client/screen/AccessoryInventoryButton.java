@@ -54,21 +54,24 @@ public final class AccessoryInventoryButton extends AbstractButton {
     @Override
     public void onPress(@NonNull InputWithModifiers input) {
         Minecraft mc = screen.minecraft;
-        LocalPlayer player = mc.player;
 
-        if (player != null) {
-            if (!player.isCreative() && !player.isSpectator()) {
-                if (screen instanceof AccessoryInventoryScreen) {
+        if (mc != null) {
+            LocalPlayer player = mc.player;
+
+            if (player != null) {
+                if (!player.isCreative() && !player.isSpectator()) {
+                    if (screen instanceof AccessoryInventoryScreen) {
+                        player.containerMenu = player.inventoryMenu;
+                        mc.setScreen(new InventoryScreen(player));
+                        OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
+                    } else {
+                        OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
+                    }
+                } else {
                     player.containerMenu = player.inventoryMenu;
                     mc.setScreen(new InventoryScreen(player));
                     OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
-                } else {
-                    OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
                 }
-            } else {
-                player.containerMenu = player.inventoryMenu;
-                mc.setScreen(new InventoryScreen(player));
-                OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
             }
         }
     }
@@ -79,7 +82,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    protected void renderContents(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
+    protected void renderWidget(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
         if (isVisible()) {
             fixPos();
 

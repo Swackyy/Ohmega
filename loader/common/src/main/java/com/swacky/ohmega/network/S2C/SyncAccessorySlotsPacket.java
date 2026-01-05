@@ -13,7 +13,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks) implements CustomPacketPayload {
-    public static final Type<@NonNull SyncAccessorySlotsPacket> TYPE = new Type<>(OhmegaCommon.id("sync_accessory_slots"));
+    public static final Type<@NonNull SyncAccessorySlotsPacket> TYPE = new Type<>(OhmegaCommon.rl("sync_accessory_slots"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncAccessorySlotsPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.INT, inst -> inst.playerId,
             new StreamCodec<ByteBuf, int[]>() {

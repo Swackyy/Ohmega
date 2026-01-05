@@ -14,7 +14,7 @@ public final class OhmegaMenusImpl implements OhmegaMenus.Service {
             new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));
 
     private static <T extends AbstractContainerMenu> MenuType<@NonNull T> register(String id, MenuType<@NonNull T> object) {
-        return Registry.register(BuiltInRegistries.MENU, OhmegaCommon.id(id), object);
+        return Registry.register(BuiltInRegistries.MENU, OhmegaCommon.rl(id), object);
     }
 
     public static void init() {}

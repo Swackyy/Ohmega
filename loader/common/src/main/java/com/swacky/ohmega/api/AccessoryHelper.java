@@ -12,6 +12,7 @@ import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
+import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.ChatFormatting;
@@ -20,7 +21,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -236,7 +237,7 @@ public final class AccessoryHelper {
             data.setActive(value);
         }
 
-        changeModifiers(player, getModifiers(getBoundAccessory(stack.getItem())).getActive(), value);
+        changeModifiers(player, getModifiers(stack).getActive(), value);
     }
 
     /**
@@ -250,12 +251,18 @@ public final class AccessoryHelper {
 
     /**
      * Retrieves the {@link AccessoryModifiers} from an accessory
-     * @param accessory {@link IAccessory} to find the modifiers of
+     * @param stack {@link ItemStack} of an accessory to find the modifiers of
      * @return the {@link AccessoryModifiers} to apply when accessory equipped
      */
-    public static AccessoryModifiers getModifiers(IAccessory accessory) {
+    public static AccessoryModifiers getModifiers(ItemStack stack) {
+        IAccessory accessory = getBoundAccessory(stack.getItem());
         AccessoryModifiers.Builder builder = new AccessoryModifiers.Builder();
-        accessory.addDefaultAttributeModifiers(builder);
+
+        if (accessory != null) {
+            accessory.addDefaultAttributeModifiers(builder);
+            OhmegaHooks.accessoryAttributeModifiersEvent(stack, builder);
+        }
+
         return builder.build();
     }
 
@@ -300,7 +307,7 @@ public final class AccessoryHelper {
         }
 
         for (String id : OhmegaConfig.Server.slotTypes()) {
-            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(id)));
+            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(id)));
         }
 
         return builder.build();
@@ -318,7 +325,7 @@ public final class AccessoryHelper {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
         for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
-            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(id)));
+            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(id)));
         }
 
         return builder.build().asList();

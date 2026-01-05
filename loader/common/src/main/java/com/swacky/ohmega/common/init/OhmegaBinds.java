@@ -8,7 +8,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -18,7 +18,7 @@ public final class OhmegaBinds {
 
     public static void bootstrap() {}
 
-    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.id(OhmegaCommon.MODID));
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.rl(OhmegaCommon.MODID));
 
     public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + OhmegaCommon.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
 
@@ -39,7 +39,7 @@ public final class OhmegaBinds {
             Map<AccessoryType, Integer> typeCountMap = new WeakHashMap<>();
 
             if (OhmegaConfig.Server.disableAccessoryTypes()) {
-                OhmegaTags.TagHolder holder = OhmegaTags.get(OhmegaCommon.id("generic"));
+                OhmegaTags.TagHolder holder = OhmegaTags.get(OhmegaCommon.rl("generic"));
 
                 if (holder != null) {
                     typeCountMap.put(holder.getType(), 0);
@@ -69,7 +69,7 @@ public final class OhmegaBinds {
 
                         builder.computeIfAbsent(type, k -> new ImmutableList.Builder<>());
 
-                        Identifier id = type.getId();
+                        ResourceLocation id = type.getId();
                         KeyMapping mapping = INST.createMapping("key." + id.getNamespace() + "." + id.getPath() + "_" + count, key);
 
                         builder.get(type).add(mapping);

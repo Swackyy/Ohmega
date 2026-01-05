@@ -53,7 +53,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
     @Override
     public void render(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
         super.render(gui, mx, my, partialTicks);
-        effects.render(gui, mx, my);
+        effects.renderEffects(gui, mx, my);
         renderTooltip(gui, mx, my);
     }
 
@@ -138,25 +138,27 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
 
     @Override
     protected void renderBg(@NonNull GuiGraphics gui, float partialTicks, int mx, int my) {
-        LocalPlayer player = minecraft.player;
+        if (minecraft != null) {
+            LocalPlayer player = minecraft.player;
 
-        if (player != null) {
-            int x;
+            if (player != null) {
+                int x;
 
-            if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
-                x = leftPos + extraWidth;
-            } else {
-                x = leftPos;
+                if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
+                    x = leftPos + extraWidth;
+                } else {
+                    x = leftPos;
+                }
+
+                // Main inventory
+                gui.blit(RenderPipelines.GUI_TEXTURED, InventoryScreen.INVENTORY_LOCATION, x, topPos, 0, 0, 176, 166, 256, 256);
+
+                // Accessory Inventory
+                renderAccInv(gui);
+
+                // Entity rendering
+                InventoryScreen.renderEntityInInventoryFollowsMouse(gui, x + 26, topPos + 8, x + 75, topPos + 78, 30, 0.0625f, mx, my, player);
             }
-
-            // Main inventory
-            gui.blit(RenderPipelines.GUI_TEXTURED, InventoryScreen.INVENTORY_LOCATION, x, topPos, 0, 0, 176, 166, 256, 256);
-
-            // Accessory Inventory
-            renderAccInv(gui);
-
-            // Entity rendering
-            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, x + 26, topPos + 8, x + 75, topPos + 78, 30, 0.0625f, mx, my, player);
         }
     }
 

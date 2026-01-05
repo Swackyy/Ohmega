@@ -33,7 +33,7 @@ public final class OhmegaNetworkingImpl {
 
     public static void bootstrap() {
         SimpleChannel net = ChannelBuilder
-                .named(OhmegaCommon.id("network"))
+                .named(OhmegaCommon.rl("network"))
                 .networkProtocolVersion(1)
                 .clientAcceptedVersions((status, version) -> true)
                 .serverAcceptedVersions((status, version) -> true)

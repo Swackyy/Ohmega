@@ -3,7 +3,7 @@ package com.swacky.ohmega.common.init;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -25,7 +25,7 @@ public final class OhmegaTags {
         }
     }
 
-    private static TagKey<Item> register(Identifier id) {
+    private static TagKey<Item> register(ResourceLocation id) {
         return TagKey.create(Registries.ITEM, id);
     }
 
@@ -33,7 +33,7 @@ public final class OhmegaTags {
         return TAGS;
     }
 
-    public static TagHolder get(Identifier id) {
+    public static TagHolder get(ResourceLocation id) {
         for (TagHolder holder : TAGS) {
             if (holder.getType().getId().equals(id)) {
                 return holder;

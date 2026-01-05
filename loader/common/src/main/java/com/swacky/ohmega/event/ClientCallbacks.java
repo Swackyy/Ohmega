@@ -111,7 +111,7 @@ public final class ClientCallbacks {
         if (screen instanceof InventoryScreen && OhmegaConfig.Client.buttonStyle() != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
             Minecraft mc = screen.minecraft;
 
-            if (mc.player != null && !mc.player.isCreative() && !mc.player.isSpectator()) {
+            if (mc != null && mc.player != null && !mc.player.isCreative() && !mc.player.isSpectator()) {
                 widgetConsumer.accept(new AccessoryInventoryButton(OhmegaConfig.Client.buttonStyle(), (AbstractContainerScreen<?>) screen));
             }
         }

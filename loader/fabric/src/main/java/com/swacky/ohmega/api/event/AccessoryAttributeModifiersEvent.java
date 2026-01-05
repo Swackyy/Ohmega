@@ -3,7 +3,7 @@ package com.swacky.ohmega.api.event;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Fired after {@link com.swacky.ohmega.api.IAccessory#addDefaultAttributeModifiers(AccessoryModifiers.Builder)}
@@ -18,5 +18,5 @@ public interface AccessoryAttributeModifiersEvent {
         }
     );
 
-    void process(Item item, AccessoryModifiers.Builder builder);
+    void process(ItemStack stack, AccessoryModifiers.Builder builder);
 }

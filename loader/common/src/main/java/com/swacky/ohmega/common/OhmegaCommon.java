@@ -10,7 +10,7 @@ import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.OhmegaNetworking;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +24,7 @@ import java.util.WeakHashMap;
 public final class OhmegaCommon {
     public static final String MODID = "ohmega";
     public static final Logger LOGGER = LogManager.getLogger("Ohmega");
-    public static final Identifier ACCESSORY_LOCATION = OhmegaCommon.id("textures/gui/container/accessory_addon.png");
+    public static final ResourceLocation ACCESSORY_LOCATION = OhmegaCommon.rl("textures/gui/container/accessory_addon.png");
     public static final int ACCESSORY_ADDON_WIDTH = 26;
     public static final int ACCESSORY_ADDON_HEIGHT = 103;
     private static final Map<Item, IAccessory> BOUND_ACCESSORIES = new WeakHashMap<>();
@@ -67,8 +67,8 @@ public final class OhmegaCommon {
         return ACCESSORY_TYPE_OVERRIDES.get(item);
     }
 
-    public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath(MODID, path);
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
     /**

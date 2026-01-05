@@ -57,7 +57,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryAttributeModifiersEvent(Item item, AccessoryModifiers.Builder builder) {
-        AccessoryAttributeModifiersEvent.BUS.post(new AccessoryAttributeModifiersEvent(item, builder));
+    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        AccessoryAttributeModifiersEvent.BUS.post(new AccessoryAttributeModifiersEvent(stack, builder));
     }
 }

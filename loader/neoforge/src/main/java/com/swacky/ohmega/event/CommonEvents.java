@@ -11,7 +11,7 @@ import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
@@ -34,8 +34,8 @@ import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = OhmegaCommon.MODID)
 public final class CommonEvents {
-    private static final Identifier RELOAD_LISTENER_ID = OhmegaCommon.id("accessory_type_manager");
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types"));
+    private static final ResourceLocation RELOAD_LISTENER_ID = OhmegaCommon.rl("accessory_type_manager");
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types"));
 
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {

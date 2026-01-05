@@ -46,8 +46,8 @@ public final class OhmegaHooks {
         return IMPL.accessoryUseEvent(player, stack);
     }
 
-    public static void accessoryAttributeModifiersEvent(Item item, AccessoryModifiers.Builder builder) {
-        IMPL.accessoryAttributeModifiersEvent(item, builder);
+    public static void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        IMPL.accessoryAttributeModifiersEvent(stack, builder);
     }
 
     public interface Service {
@@ -67,6 +67,6 @@ public final class OhmegaHooks {
 
         boolean accessoryUseEvent(Player player, ItemStack stack);
 
-        void accessoryAttributeModifiersEvent(Item item, AccessoryModifiers.Builder builder);
+        void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder);
     }
 }

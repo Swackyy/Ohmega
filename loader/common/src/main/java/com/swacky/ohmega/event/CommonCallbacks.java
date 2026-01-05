@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.GameRules;
 
 import java.util.Collections;
 
@@ -27,7 +27,7 @@ public final class CommonCallbacks {
         return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) { // Inverse
             case ALWAYS_ON -> true;
             case ALWAYS_OFF -> false;
-            case DEFAULT -> player.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.KEEP_INVENTORY);
+            case DEFAULT -> player.level() instanceof ServerLevel level && level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
         };
     }
 

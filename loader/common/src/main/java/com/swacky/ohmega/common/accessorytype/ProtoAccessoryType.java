@@ -22,7 +22,7 @@ public final class ProtoAccessoryType {
 
     public static class Deserializer implements JsonDeserializer<ProtoAccessoryType> {
         private static final Deserializer INSTANCE = new Deserializer();
-        private static final String DEFAULT_EMPTY_SLOT = OhmegaCommon.id("accessory_slot_normal").toString();
+        private static final String DEFAULT_EMPTY_SLOT = OhmegaCommon.rl("accessory_slot_normal").toString();
 
         private Deserializer() {}
 

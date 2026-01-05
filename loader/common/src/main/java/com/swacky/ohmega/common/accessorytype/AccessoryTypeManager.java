@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaTags;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -40,7 +40,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(DEFAULT_SIZE);
 
         for (String namespace : manager.getNamespaces()) {
-            for (Resource resource : manager.getResourceStack(Identifier.fromNamespaceAndPath(namespace, LOCATION))) {
+            for (Resource resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(namespace, LOCATION))) {
                 try (Reader reader = resource.openAsReader()) {
                     Map<String, ProtoAccessoryType> map = GsonHelper.fromJson(GSON, reader, TOKEN);
 
@@ -76,7 +76,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         return ImmutableSet.copyOf(types);
     }
 
-    public @NonNull AccessoryType get(Identifier id) {
+    public @NonNull AccessoryType get(ResourceLocation id) {
         for (AccessoryType type : types) {
             if (type.getId().equals(id)) {
                 return type;
@@ -88,7 +88,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
 
     public boolean exists(String id) {
         for (AccessoryType type : types) {
-            if (type.getId().equals(Identifier.parse(id))) {
+            if (type.getId().equals(ResourceLocation.parse(id))) {
                 return true;
             }
         }

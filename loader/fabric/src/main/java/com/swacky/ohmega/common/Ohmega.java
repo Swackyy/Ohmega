@@ -18,7 +18,7 @@ import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.impl.resource.ResourceLoaderImpl;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.server.packs.PackType;
 import net.neoforged.fml.config.ModConfig;
 
@@ -49,6 +49,6 @@ public final class Ohmega implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
 
-        ResourceLoaderImpl.get(PackType.SERVER_DATA).registerReloader(OhmegaCommon.id(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(OhmegaCommon.rl(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
     }
 }

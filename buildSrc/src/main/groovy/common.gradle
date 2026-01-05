@@ -12,6 +12,10 @@ java {
     toolchain.languageVersion.set JavaLanguageVersion.of(javaV)
 }
 
+dependencies {
+    implementation "org.jspecify:jspecify:1.0.0"
+}
+
 processResources {
     var replaceProperties = [
             modId          : modId,
