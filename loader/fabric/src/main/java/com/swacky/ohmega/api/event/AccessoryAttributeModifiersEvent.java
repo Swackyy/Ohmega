@@ -11,9 +11,9 @@ import net.minecraft.world.item.ItemStack;
  */
 public interface AccessoryAttributeModifiersEvent {
     Event<AccessoryAttributeModifiersEvent> EVENT = EventFactory.createArrayBacked(AccessoryAttributeModifiersEvent.class,
-        listeners -> (item, builder) -> {
+        listeners -> (stack, builder) -> {
             for (AccessoryAttributeModifiersEvent listener : listeners) {
-                listener.process(item, builder);
+                listener.process(stack, builder);
             }
         }
     );
