@@ -7,14 +7,14 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryCanEquipEvent {
     Event<AccessoryCanEquipEvent> EVENT = EventFactory.createArrayBacked(AccessoryCanEquipEvent.class,
-        listeners -> (player, stack, ret) -> {
+        listeners -> (player, stack, context, ret) -> {
             for (AccessoryCanEquipEvent listener : listeners) {
-                ret = listener.process(player, stack, ret);
+                ret = listener.process(player, stack, context, ret);
             }
 
             return ret;
         }
     );
 
-    boolean process(Player player, ItemStack stack, boolean currentReturnValue);
+    boolean process(Player player, ItemStack stack, EquipContext context, boolean currentReturnValue);
 }

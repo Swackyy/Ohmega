@@ -7,12 +7,13 @@ import net.neoforged.bus.api.Event;
 public final class AccessoryCanEquipEvent extends Event {
     private final Player player;
     private final ItemStack stack;
-
+    private final EquipContext context;
     private boolean ret;
 
-    public AccessoryCanEquipEvent(Player player, ItemStack stack, boolean flag) {
+    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean flag) {
         this.player = player;
         this.stack = stack;
+        this.context = context;
         this.ret = flag;
     }
 
@@ -22,6 +23,10 @@ public final class AccessoryCanEquipEvent extends Event {
 
     public ItemStack getStack() {
         return stack;
+    }
+
+    public EquipContext getContext() {
+        return context;
     }
 
     public boolean getReturnValue() {
