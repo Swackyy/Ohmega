@@ -14,59 +14,59 @@ public final class OhmegaHooks {
 
     public static void bootstrap() {}
 
-    public static ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
-        return IMPL.accessoryOverrideTypesEvent();
+    public static void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        IMPL.accessoryAttributeModifiersEvent(stack, builder);
     }
 
-    public static boolean accessoryTickEventPre(Player player, ItemStack stack) {
-        return IMPL.accessoryTickEventPre(player, stack);
-    }
-
-    public static void accessoryTickEventPost(Player player, ItemStack stack) {
-        IMPL.accessoryTickEventPost(player, stack);
-    }
-
-    public static boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context) {
-        return IMPL.accessoryEquipEvent(player, stack, context);
-    }
-
-    public static boolean accessoryUnequipEvent(Player player, ItemStack stack) {
-        return IMPL.accessoryUnequipEvent(player, stack);
-    }
-
-    public static boolean accessoryCanEquipEvent(Player player, ItemStack stack, boolean initial) {
-        return IMPL.accessoryCanEquipEvent(player, stack, initial);
+    public static boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
+        return IMPL.accessoryCanEquipEvent(player, stack, context, initial);
     }
 
     public static boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
         return IMPL.accessoryCanUnequipEvent(player, stack, initial);
     }
 
+    public static boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context) {
+        return IMPL.accessoryEquipEvent(player, stack, context);
+    }
+
+    public static ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+        return IMPL.accessoryOverrideTypesEvent();
+    }
+
+    public static void accessoryTickEventPost(Player player, ItemStack stack) {
+        IMPL.accessoryTickEventPost(player, stack);
+    }
+
+    public static boolean accessoryTickEventPre(Player player, ItemStack stack) {
+        return IMPL.accessoryTickEventPre(player, stack);
+    }
+
+    public static boolean accessoryUnequipEvent(Player player, ItemStack stack) {
+        return IMPL.accessoryUnequipEvent(player, stack);
+    }
+
     public static boolean accessoryUseEvent(Player player, ItemStack stack) {
         return IMPL.accessoryUseEvent(player, stack);
     }
 
-    public static void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
-        IMPL.accessoryAttributeModifiersEvent(stack, builder);
-    }
-
     public interface Service {
-        ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent();
+        void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder);
 
-        boolean accessoryTickEventPre(Player player, ItemStack stack);
-
-        void accessoryTickEventPost(Player player, ItemStack stack);
-
-        boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context);
-
-        boolean accessoryUnequipEvent(Player player, ItemStack stack);
-
-        boolean accessoryCanEquipEvent(Player player, ItemStack stack, boolean initial);
+        boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial);
 
         boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial);
 
-        boolean accessoryUseEvent(Player player, ItemStack stack);
+        boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context);
 
-        void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder);
+        ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent();
+
+        void accessoryTickEventPost(Player player, ItemStack stack);
+
+        boolean accessoryTickEventPre(Player player, ItemStack stack);
+
+        boolean accessoryUnequipEvent(Player player, ItemStack stack);
+
+        boolean accessoryUseEvent(Player player, ItemStack stack);
     }
 }

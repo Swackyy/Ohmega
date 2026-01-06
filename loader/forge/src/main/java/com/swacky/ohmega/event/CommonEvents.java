@@ -31,7 +31,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.config.SimpleConfigurationTask;
 import org.jspecify.annotations.NonNull;
 
@@ -61,11 +60,6 @@ public final class CommonEvents {
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
             oldPlayer.invalidateCaps();
         }
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(OhmegaNetworkingImpl::bootstrap);
     }
 
     @SubscribeEvent

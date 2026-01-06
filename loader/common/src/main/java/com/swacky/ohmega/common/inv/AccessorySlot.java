@@ -46,7 +46,7 @@ public final class AccessorySlot extends Slot {
         IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
 
         if (accessory != null) {
-            return handler.isItemValid(player, getContainerSlot(), stack) && AccessoryHelper.getType(item) == type;
+            return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE) && AccessoryHelper.getType(item) == type;
         }
 
         return false;

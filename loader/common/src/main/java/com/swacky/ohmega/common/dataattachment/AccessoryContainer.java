@@ -84,13 +84,13 @@ public final class AccessoryContainer {
     }
 
     @SuppressWarnings("deprecation")
-    public boolean isItemValid(Player player, int slot, @NonNull ItemStack stack) {
+    public boolean isItemValid(Player player, int slot, @NonNull ItemStack stack, EquipContext context) {
         if (slot >= 0 && slot < stacks.size()) {
             Item item = stack.getItem();
             IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
 
             if (accessory != null && (AccessoryHelper.compatibleWith(player, accessory) || ItemStack.isSameItem(stack, stacks.get(slot)))) {
-                return OhmegaHooks.accessoryCanEquipEvent(player, stack, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(slot);
+                return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(slot);
             }
         }
 
@@ -142,7 +142,7 @@ public final class AccessoryContainer {
 
     // Try not to use this for deserialising and syncing
     public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
-        if (stack.isEmpty() || isItemValid(player, index, stack) && AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
+        if (stack.isEmpty() || isItemValid(player, index, stack, context) && AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
             ItemStack current = stacks.get(index);
 
             if (!ItemStack.isSameItemSameComponents(current, stack)) {

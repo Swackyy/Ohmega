@@ -10,18 +10,18 @@ import net.minecraft.world.item.ItemStack;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
-    public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
-        return (ImmutableMap<Item, AccessoryType>) AccessoryOverrideTypesEvent.EVENT.invoker().process(ImmutableMap.of());
+    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        AccessoryAttributeModifiersEvent.EVENT.invoker().process(stack, builder);
     }
 
     @Override
-    public boolean accessoryTickEventPre(Player player, ItemStack stack) {
-        return AccessoryTickEvent.Pre.EVENT.invoker().process(player, stack);
+    public boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
+        return AccessoryCanEquipEvent.EVENT.invoker().process(player, stack, context, initial);
     }
 
     @Override
-    public void accessoryTickEventPost(Player player, ItemStack stack) {
-        AccessoryTickEvent.Post.EVENT.invoker().process(player, stack);
+    public boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
+        return AccessoryCanUnequipEvent.EVENT.invoker().process(player, stack, initial);
     }
 
     @Override
@@ -30,27 +30,27 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+        return (ImmutableMap<Item, AccessoryType>) AccessoryOverrideTypesEvent.EVENT.invoker().process(ImmutableMap.of());
+    }
+
+    @Override
+    public void accessoryTickEventPost(Player player, ItemStack stack) {
+        AccessoryTickEvent.Post.EVENT.invoker().process(player, stack);
+    }
+
+    @Override
+    public boolean accessoryTickEventPre(Player player, ItemStack stack) {
+        return AccessoryTickEvent.Pre.EVENT.invoker().process(player, stack);
+    }
+
+    @Override
     public boolean accessoryUnequipEvent(Player player, ItemStack stack) {
         return AccessoryUnequipEvent.EVENT.invoker().process(player, stack);
     }
 
     @Override
-    public boolean accessoryCanEquipEvent(Player player, ItemStack stack, boolean flag) {
-        return AccessoryCanEquipEvent.EVENT.invoker().process(player, stack, flag);
-    }
-
-    @Override
-    public boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
-        return AccessoryCanUnequipEvent.EVENT.invoker().process(player, stack, flag);
-    }
-
-    @Override
     public boolean accessoryUseEvent(Player player, ItemStack stack) {
         return AccessoryUseEvent.EVENT.invoker().process(player, stack);
-    }
-
-    @Override
-    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
-        AccessoryAttributeModifiersEvent.EVENT.invoker().process(stack, builder);
     }
 }

@@ -11,20 +11,22 @@ import net.minecraftforge.fml.ModLoader;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
-    public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
-        AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
-        ModLoader.postEvent(event);
-        return event.get();
+    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        AccessoryAttributeModifiersEvent.BUS.post(new AccessoryAttributeModifiersEvent(stack, builder));
     }
 
     @Override
-    public boolean accessoryTickEventPre(Player player, ItemStack stack) {
-        return AccessoryTickEvent.Pre.BUS.post(new AccessoryTickEvent.Pre(player, stack));
+    public boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
+        AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, context, initial);
+        AccessoryCanEquipEvent.BUS.post(event);
+        return event.getReturnValue();
     }
 
     @Override
-    public void accessoryTickEventPost(Player player, ItemStack stack) {
-        AccessoryTickEvent.Post.BUS.post(new AccessoryTickEvent.Post(player, stack));
+    public boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
+        AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, initial);
+        AccessoryCanUnequipEvent.BUS.post(event);
+        return event.getReturnValue();
     }
 
     @Override
@@ -33,31 +35,29 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+        AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
+        ModLoader.postEvent(event);
+        return event.get();
+    }
+
+    @Override
+    public void accessoryTickEventPost(Player player, ItemStack stack) {
+        AccessoryTickEvent.Post.BUS.post(new AccessoryTickEvent.Post(player, stack));
+    }
+
+    @Override
+    public boolean accessoryTickEventPre(Player player, ItemStack stack) {
+        return AccessoryTickEvent.Pre.BUS.post(new AccessoryTickEvent.Pre(player, stack));
+    }
+
+    @Override
     public boolean accessoryUnequipEvent(Player player, ItemStack stack) {
         return AccessoryUnequipEvent.BUS.post(new AccessoryUnequipEvent(player, stack));
     }
 
     @Override
-    public boolean accessoryCanEquipEvent(Player player, ItemStack stack, boolean flag) {
-        AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, flag);
-        AccessoryCanEquipEvent.BUS.post(event);
-        return event.getReturnValue();
-    }
-
-    @Override
-    public boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
-        AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, flag);
-        AccessoryCanUnequipEvent.BUS.post(event);
-        return event.getReturnValue();
-    }
-
-    @Override
     public boolean accessoryUseEvent(Player player, ItemStack stack) {
         return AccessoryUseEvent.BUS.post(new AccessoryUseEvent(player, stack));
-    }
-
-    @Override
-    public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
-        AccessoryAttributeModifiersEvent.BUS.post(new AccessoryAttributeModifiersEvent(stack, builder));
     }
 }
