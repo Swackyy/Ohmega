@@ -5,6 +5,7 @@ import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -28,6 +29,8 @@ public final class Ohmega {
         OhmegaDataComponentsImpl.register(group);
         OhmegaItems.register(group);
         OhmegaMenusImpl.register(group);
+
+        OhmegaNetworkingImpl.bootstrap();
 
         if (FMLEnvironment.dist.isClient()) {
             OhmegaCommon.bootstrapClient();
