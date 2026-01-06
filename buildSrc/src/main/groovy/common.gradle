@@ -18,9 +18,8 @@ dependencies {
 
 processResources {
     var replaceProperties = [
-            modId          : modId,
-            packFormatMinV : packFormatMinV,
-            packFormatMaxV : packFormatMaxV
+            modId       : modId,
+            packFormatV : packFormatV
     ]
 
     inputs.properties replaceProperties

@@ -177,8 +177,8 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
     }
 
     @Override
-    protected boolean hasClickedOutside(double x, double y, int left, int top) {
-        if (super.hasClickedOutside(x, y, left, top)) {
+    protected boolean hasClickedOutside(double x, double y, int left, int top, int button) {
+        if (super.hasClickedOutside(x, y, left, top, button)) {
             return true;
         }
 

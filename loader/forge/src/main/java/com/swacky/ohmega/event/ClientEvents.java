@@ -19,7 +19,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = OhmegaCommon.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.BOTH, modid = OhmegaCommon.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {

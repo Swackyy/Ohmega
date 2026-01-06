@@ -11,8 +11,6 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.MutableComponent;
@@ -47,12 +45,12 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    protected boolean isValidClickButton(@NonNull MouseButtonInfo info) {
-        return isVisible() && super.isValidClickButton(info);
+    protected boolean isValidClickButton(int button) {
+        return isVisible() && super.isValidClickButton(button);
     }
 
     @Override
-    public void onPress(@NonNull InputWithModifiers input) {
+    public void onPress() {
         Minecraft mc = screen.minecraft;
 
         if (mc != null) {

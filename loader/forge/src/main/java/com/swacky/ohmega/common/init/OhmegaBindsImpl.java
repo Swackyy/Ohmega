@@ -15,7 +15,7 @@ public final class OhmegaBindsImpl implements OhmegaBinds.Service {
 
     private static class OhmegaKeyMapping extends KeyMapping {
         public OhmegaKeyMapping(String name, int key) {
-            super(name, key, OhmegaBinds.CATEGORY);
+            super(name, key, OhmegaBinds.CATEGORY_KEY);
         }
     }
 }

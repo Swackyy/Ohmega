@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 public final class OhmegaCommon {
     public static final String MODID = "ohmega";
     public static final Logger LOGGER = LogManager.getLogger("Ohmega");
+    public static final ResourceLocation RELOAD_LISTENER_ID = OhmegaCommon.rl("accessory_type_manager");
     public static final ResourceLocation ACCESSORY_LOCATION = OhmegaCommon.rl("textures/gui/container/accessory_addon.png");
     public static final int ACCESSORY_ADDON_WIDTH = 26;
     public static final int ACCESSORY_ADDON_HEIGHT = 103;

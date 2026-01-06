@@ -38,7 +38,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Collections;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = OhmegaCommon.MODID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.BOTH, modid = OhmegaCommon.MODID)
 public final class CommonEvents {
     private static final ResourceLocation CAPABILITY_ID = OhmegaCommon.rl("accessory_data");
     private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types").toString());
@@ -61,11 +61,6 @@ public final class CommonEvents {
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
             oldPlayer.invalidateCaps();
         }
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(OhmegaNetworkingImpl::bootstrap);
     }
 
     @SubscribeEvent
@@ -92,7 +87,7 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onPlayerPostTick(TickEvent.PlayerTickEvent.Post event) {
-        Player player = event.player();
+        Player player = event.player;
 
         if (AccessoryHelperImpl.isPlayerDataPresent(player)) {
             CommonCallbacks.onPlayerPostTick(player);

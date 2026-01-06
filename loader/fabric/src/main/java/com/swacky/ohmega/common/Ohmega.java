@@ -18,9 +18,16 @@ import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.neoforged.fml.config.ModConfig;
+import org.jspecify.annotations.NonNull;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @SuppressWarnings("unused")
 public final class Ohmega implements ModInitializer {
@@ -49,6 +56,17 @@ public final class Ohmega implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
 
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(OhmegaCommon.rl(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(OhmegaCommon.RELOAD_LISTENER_ID, lookup -> new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return OhmegaCommon.RELOAD_LISTENER_ID;
+            }
+
+            @Override
+            public @NonNull CompletableFuture<Void> reload(PreparationBarrier barrier, ResourceManager manager, Executor backgroundExecutor, Executor gameExecutor) {
+                AccessoryTypeManager.getInstance().reload(barrier, manager, backgroundExecutor, gameExecutor);
+                return CompletableFuture.completedFuture(null);
+            }
+        });
     }
 }

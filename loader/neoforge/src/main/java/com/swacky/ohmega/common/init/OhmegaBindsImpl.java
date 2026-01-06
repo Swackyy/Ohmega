@@ -19,7 +19,7 @@ public final class OhmegaBindsImpl implements OhmegaBinds.Service {
 
     private static class OhmegaKeyMapping extends KeyMapping {
         public OhmegaKeyMapping(String name, int key) {
-            super(name, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, OhmegaBinds.CATEGORY);
+            super(name, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, OhmegaBinds.CATEGORY_KEY);
         }
 
         @Override

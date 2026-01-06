@@ -2,7 +2,6 @@ package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.event.CommonCallbacks;
-import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
-abstract class PlayerMixin extends Avatar {
+abstract class PlayerMixin extends LivingEntity {
     private PlayerMixin(EntityType<? extends LivingEntity> type, Level level) {
         super(type, level);
     }

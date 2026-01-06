@@ -53,7 +53,6 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onKeybindRegistration(RegisterKeyMappingsEvent event) {
-        event.registerCategory(OhmegaBinds.CATEGORY);
         event.register(OhmegaBinds.OPEN_ACC_INV);
     }
 

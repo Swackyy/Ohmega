@@ -4,23 +4,25 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class OhmegaBinds {
     private static final Service INST = OhmegaCommon.loadService(Service.class);
 
     public static void bootstrap() {}
 
-    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(OhmegaCommon.rl(OhmegaCommon.MODID));
+    public static final String CATEGORY_KEY = "key.category." + OhmegaCommon.MODID + '.' + OhmegaCommon.MODID;
 
-    public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + OhmegaCommon.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
+    public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + OhmegaCommon.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY_KEY);
 
     public static boolean isInstance(KeyMapping other) {
         return INST.isInstance(other);

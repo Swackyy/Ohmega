@@ -8,7 +8,7 @@ public final class AccessoryHelperImpl implements AccessoryHelper.Service {
     @Override
     public AccessoryContainer getContainer(Player player) {
         return player.getCapability(Ohmega.ACCESSORIES).orElseThrow(() ->
-                new NullPointerException("Accessory data fetched on player '" + player.nameAndId() + "' is not present"));
+                new NullPointerException("Accessory data fetched on player '" + player.getScoreboardName() + '#' + player.getId() + "' is not present"));
     }
 
     public static boolean isPlayerDataPresent(Player player) {
