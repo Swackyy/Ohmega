@@ -9,5 +9,4 @@ import org.jspecify.annotations.NonNull;
 
 public record AccessoryUseEvent(Player player, ItemStack stack) implements RecordEvent, Cancellable {
     public static final CancellableEventBus<@NonNull AccessoryUseEvent> BUS = CancellableEventBus.create(AccessoryUseEvent.class);
-
 }

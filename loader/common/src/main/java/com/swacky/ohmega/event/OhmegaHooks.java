@@ -9,6 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Set;
+
 public final class OhmegaHooks {
     private static final Service IMPL = OhmegaCommon.loadService(Service.class);
 
@@ -50,6 +52,10 @@ public final class OhmegaHooks {
         return IMPL.accessoryUseEvent(player, stack);
     }
 
+    public static Set<AccessoryType> registerAccessoryTypesEvent() {
+        return IMPL.registerAccessoryTypesEvent();
+    }
+
     public interface Service {
         void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder);
 
@@ -68,5 +74,7 @@ public final class OhmegaHooks {
         boolean accessoryUnequipEvent(Player player, ItemStack stack);
 
         boolean accessoryUseEvent(Player player, ItemStack stack);
+
+        Set<AccessoryType> registerAccessoryTypesEvent();
     }
 }

@@ -38,7 +38,7 @@ neoForge {
             server()
         }
 
-        clientData {
+        data {
             clientData()
 
             ideName.set "Data Generation"

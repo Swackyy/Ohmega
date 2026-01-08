@@ -1,11 +1,10 @@
 package com.swacky.ohmega.common.accessorytype;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -21,11 +20,8 @@ import java.util.Map;
 public final class AccessoryTypeManager extends SimplePreparableReloadListener<ImmutableSet<AccessoryType>> {
     private static final AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
     private static final int DEFAULT_SIZE = 4;
-    private static final String LOCATION = OhmegaCommon.MODID + "/accessory_types.json";
-    private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(ProtoAccessoryType.class, ProtoAccessoryType.Deserializer.getInstance())
-            .create();
-    private static final TypeToken<Map<String, ProtoAccessoryType>> TOKEN = new TypeToken<>() {};
+    public static final String LOCATION = OhmegaCommon.MODID + "/accessory_types.json";
+    private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
 
     private final HashSet<AccessoryType> types = new HashSet<>();
 
@@ -42,10 +38,10 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         for (String namespace : manager.getNamespaces()) {
             for (Resource resource : manager.getResourceStack(Identifier.fromNamespaceAndPath(namespace, LOCATION))) {
                 try (Reader reader = resource.openAsReader()) {
-                    Map<String, ProtoAccessoryType> map = GsonHelper.fromJson(GSON, reader, TOKEN);
+                    Map<String, AccessoryType.Builder> map = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
 
-                    for (Map.Entry<String, ProtoAccessoryType> entry : map.entrySet()) {
-                        builder.add(new AccessoryType(namespace, entry.getKey(), entry.getValue()));
+                    for (Map.Entry<String, AccessoryType.Builder> entry : map.entrySet()) {
+                        builder.add(entry.getValue().build(namespace, entry.getKey()));
                     }
                 } catch (Exception e) {
                     OhmegaCommon.LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
@@ -53,7 +49,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
             }
         }
 
-        return builder.build();
+        return builder.addAll(OhmegaHooks.registerAccessoryTypesEvent()).build();
     }
 
     public void apply(ImmutableSet<AccessoryType> types) {
