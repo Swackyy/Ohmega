@@ -212,6 +212,7 @@ public final class OhmegaConfig {
         }
 
         public interface Service {
+            String GENERIC  = AccessoryType.GENERIC_ID.toString();
             String NORMAL  = AccessoryType.NORMAL_ID.toString();
             String UTILITY = AccessoryType.UTILITY_ID.toString();
             String SPECIAL = AccessoryType.SPECIAL_ID.toString();
@@ -232,6 +233,7 @@ public final class OhmegaConfig {
             String KEYBOUND_SLOT_TYPES_DESCRIPTION = """
                     Defines the types of accessories that can be key-bound""";
             List<String> KEYBOUND_SLOT_TYPES_DEFAULT = List.of(
+                    GENERIC,
                     UTILITY,
                     SPECIAL);
             String KEYBOUND_SLOT_TYPES_NEW_VALUE_DEFAULT = "";

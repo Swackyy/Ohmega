@@ -1,10 +1,9 @@
-package com.swacky.ohmega.api.datagen;
+package com.swacky.ohmega.api.datagen.client;
 
 import net.minecraft.world.item.Item;
 
 import java.util.function.BiConsumer;
 
-// todo: add methods that accept alternate namespaces here
 /**
  * Use this to easily add translations for your own accessory types in data generation
  */
@@ -22,13 +21,22 @@ public final class OhmegaLangHelper {
 
     /**
      * Adds translations for an accessory type
+     * @param namespace specify an alternate namespace that does not match the {@link OhmegaLangHelper#namespace} field
+     * @param typeKey accessory type key, e.g: "normal", "utility"
+     * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
+     */
+    public void addType(String namespace, String typeKey, String translation) {
+        adder.accept("accessory_type." + namespace + '.' + typeKey, translation);
+        adder.accept("tag.item." + namespace + '.' + typeKey, translation);
+    }
+
+    /**
+     * Adds translations for an accessory type
      * @param typeKey accessory type key, e.g: "normal", "utility"
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */
     public void addType(String typeKey, String translation) {
-        adder.accept("accessory_type." + namespace + '.' + typeKey, translation);
-        adder.accept("key." + namespace + '.' + typeKey, translation + " %s");
-        adder.accept("tag.item." + namespace + '.' + typeKey, translation);
+        addType(namespace, typeKey, translation);
     }
 
     /**

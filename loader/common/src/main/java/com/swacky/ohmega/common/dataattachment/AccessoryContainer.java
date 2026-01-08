@@ -227,9 +227,12 @@ public final class AccessoryContainer {
             List<ItemStack> stacks = new ArrayList<>();
 
             for (int i = 0; i < this.stacks.size(); i++) {
-                if (changed[i]) {
+                ItemStack stack = getStackInSlot(i);
+                IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+
+                if (changed[i] || (accessory != null && accessory.autoSync(player, stack))) {
                     slots.add(i);
-                    stacks.add(getStackInSlot(i));
+                    stacks.add(stack);
 
                     changed[i] = false;
                 }

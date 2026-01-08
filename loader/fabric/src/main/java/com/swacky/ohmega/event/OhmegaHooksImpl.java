@@ -8,6 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Set;
+
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
@@ -52,5 +54,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean accessoryUseEvent(Player player, ItemStack stack) {
         return AccessoryUseEvent.EVENT.invoker().process(player, stack);
+    }
+
+    @Override
+    public Set<AccessoryType> registerAccessoryTypesEvent() {
+        return RegisterAccessoryTypesEvent.EVENT.invoker().process();
     }
 }

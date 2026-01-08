@@ -3,9 +3,11 @@
   "package": "com.swacky.ohmega.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "EnchantmentHelperMixin"
+    "EnchantmentHelperMixin",
+    "ServerPlayerGameModeMixin"
   ],
   "client": [
+    "client.MultiPlayerGameModeMixin"
   ],
   "minVersion": "0.8.5"
 }

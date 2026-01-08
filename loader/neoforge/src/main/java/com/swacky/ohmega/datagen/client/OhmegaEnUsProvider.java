@@ -1,6 +1,6 @@
-package com.swacky.ohmega.datagen.client.lang;
+package com.swacky.ohmega.datagen.client;
 
-import com.swacky.ohmega.api.datagen.OhmegaLangHelper;
+import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -35,6 +35,7 @@ public final class OhmegaEnUsProvider extends LanguageProvider {
         helper.addType("special", "Special");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
+        add("key.ohmega.accessory_type", "%s %s");
         add("key.category." + OhmegaCommon.MODID + '.' + OhmegaCommon.MODID, "Ohmega");
         add("key." + OhmegaCommon.MODID + ".open_acc_inv", "Open/Close Accessories Inventory");
 

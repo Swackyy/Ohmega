@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
@@ -39,42 +40,38 @@ public final class OhmegaBinds {
             Map<AccessoryType, Integer> typeCountMap = new WeakHashMap<>();
 
             if (OhmegaConfig.Server.disableAccessoryTypes()) {
-                OhmegaTags.TagHolder holder = OhmegaTags.get(OhmegaCommon.rl("generic"));
-
-                if (holder != null) {
-                    typeCountMap.put(holder.getType(), 0);
-                }
+                typeCountMap.put(AccessoryType.GENERIC.get(), 0);
             } else {
-                for (OhmegaTags.TagHolder holder : OhmegaTags.getTags()) {
-                    typeCountMap.put(holder.getType(), 0);
+                for (AccessoryType type : AccessoryTypeManager.getInstance().getTypes()) {
+                    typeCountMap.put(type, 0);
                 }
             }
 
             for (AccessoryType slotType : AccessoryHelper.getSlotTypes()) {
-                for (AccessoryType type : keyBoundSlotTypes) {
-                    if (type == slotType) {
-                        int count = typeCountMap.get(type);
+                for (AccessoryType keyboundType : keyBoundSlotTypes) {
+                    if (keyboundType == slotType) {
+                        int count = typeCountMap.get(keyboundType);
                         // Default bindings in ternary:
                         // Utility 1: G
                         // Utility 2: V
                         // Special 1: B
                         int key =
-                                type == AccessoryType.UTILITY.get() ?
+                                keyboundType == AccessoryType.UTILITY.get() ?
                                         count == 0 ? GLFW.GLFW_KEY_G :
                                         count == 1 ? GLFW.GLFW_KEY_V :
                                         GLFW.GLFW_KEY_UNKNOWN :
-                                type == AccessoryType.SPECIAL.get() &&
+                                keyboundType == AccessoryType.SPECIAL.get() &&
                                         count == 0 ? GLFW.GLFW_KEY_B :
                                         GLFW.GLFW_KEY_UNKNOWN;
 
-                        builder.computeIfAbsent(type, k -> new ImmutableList.Builder<>());
+                        builder.computeIfAbsent(keyboundType, k -> new ImmutableList.Builder<>());
 
-                        ResourceLocation id = type.getId();
+                        ResourceLocation id = keyboundType.getId();
                         KeyMapping mapping = INST.createMapping("key." + id.getNamespace() + "." + id.getPath() + "_" + count, key);
 
-                        builder.get(type).add(mapping);
+                        builder.get(keyboundType).add(mapping);
                         Generated.ORDERED_SLOT_KEYS.add(mapping);
-                        typeCountMap.put(type, count + 1);
+                        typeCountMap.put(keyboundType, count + 1);
                         break;
                     }
                 }

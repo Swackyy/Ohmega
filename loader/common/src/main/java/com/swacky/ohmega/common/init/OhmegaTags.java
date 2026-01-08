@@ -1,5 +1,7 @@
 package com.swacky.ohmega.common.init;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.core.registries.Registries;
@@ -7,57 +9,40 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
-import java.util.ArrayList;
-
 /**
  * <strong>Mostly for internal use</strong>
  * <p>
  * Dynamically creates tags matching each registered {@link AccessoryType}
  */
 public final class OhmegaTags {
-    private static final ArrayList<TagHolder> TAGS = new ArrayList<>();
+    private static ImmutableMap<AccessoryType, TagKey<Item>> TAG_MAP = ImmutableMap.of();
 
     public static void refresh() {
-        TAGS.clear();
+        ImmutableSet<AccessoryType> types = AccessoryTypeManager.getInstance().getTypes();
+        ImmutableMap.Builder<AccessoryType, TagKey<Item>> builder = ImmutableMap.builderWithExpectedSize(types.size());
 
-        for (AccessoryType type : AccessoryTypeManager.getInstance().getTypes()) {
-            TAGS.add(new TagHolder(type, register(type.getId())));
+        for (AccessoryType type : types) {
+            builder.put(type, TagKey.create(Registries.ITEM, type.getId()));
         }
+
+        TAG_MAP = builder.build();
     }
 
-    private static TagKey<Item> register(ResourceLocation id) {
-        return TagKey.create(Registries.ITEM, id);
+    public static ImmutableMap<AccessoryType, TagKey<Item>> getTags() {
+        return TAG_MAP;
     }
 
-    public static ArrayList<TagHolder> getTags() {
-        return TAGS;
+    /**
+     * Do not use this in data generation, it will not work and will stack overflow
+     */
+    public static TagKey<Item> get(AccessoryType type) {
+        return TAG_MAP.get(type);
     }
 
-    public static TagHolder get(ResourceLocation id) {
-        for (TagHolder holder : TAGS) {
-            if (holder.getType().getId().equals(id)) {
-                return holder;
-            }
-        }
-
-        return null;
-    }
-
-    public static class TagHolder {
-        private final AccessoryType type;
-        private final TagKey<Item> tag;
-
-        private TagHolder(AccessoryType type, TagKey<Item> tag) {
-            this.type = type;
-            this.tag = tag;
-        }
-
-        public AccessoryType getType() {
-            return this.type;
-        }
-
-        public TagKey<Item> getTag() {
-            return this.tag;
-        }
+    /**
+     * Use this for data generation, it does not do any validation that the tag exists but it is the easiest way
+     */
+    public static TagKey<Item> get(ResourceLocation location) {
+        return TagKey.create(Registries.ITEM, location);
     }
 }
