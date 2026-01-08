@@ -6,8 +6,6 @@ import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.gamerules.GameRules;
 
@@ -39,9 +37,5 @@ public final class CommonCallbacks {
         for (int i = 0; i < Math.min(oldA.getSlots(), newA.getSlots()); i++) {
             newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC);
         }
-    }
-
-    public static InteractionResult onItemRightClick(Player player, InteractionHand hand) {
-        return AccessoryHelper.tryEquip(player, hand);
     }
 }

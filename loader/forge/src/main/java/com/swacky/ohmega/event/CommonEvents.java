@@ -16,7 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -27,7 +26,6 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -60,14 +58,6 @@ public final class CommonEvents {
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
             oldPlayer.invalidateCaps();
         }
-    }
-
-    @SubscribeEvent
-    public static boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        InteractionResult result = CommonCallbacks.onItemRightClick(event.getEntity(), event.getHand());
-
-        event.setCancellationResult(result);
-        return result == InteractionResult.SUCCESS;
     }
 
     @SubscribeEvent
