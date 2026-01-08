@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -32,10 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
@@ -123,9 +121,9 @@ public final class AccessoryHelper {
             builder.add(override);
         }
 
-        for (OhmegaTags.TagHolder holder : OhmegaTags.getTags()) {
-            if (item.builtInRegistryHolder().is(holder.getTag())) {
-                builder.add(holder.getType());
+        for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
+            if (item.builtInRegistryHolder().is(entry.getValue())) {
+                builder.add(entry.getKey());
             }
         }
 
@@ -158,12 +156,12 @@ public final class AccessoryHelper {
 
         AccessoryType type = null;
 
-        for (OhmegaTags.TagHolder holder : OhmegaTags.getTags()) {
-            if (item.builtInRegistryHolder().is(holder.getTag())) {
-                AccessoryType holderType = holder.getType();
+        for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
+            if (item.builtInRegistryHolder().is(entry.getValue())) {
+                AccessoryType candidate = entry.getKey();
 
-                if (type == null || holderType.getPriority() < type.getPriority()) {
-                    type = holderType;
+                if (type == null || candidate.getPriority() < type.getPriority()) {
+                    type = candidate;
                 }
             }
         }
@@ -318,10 +316,6 @@ public final class AccessoryHelper {
      * @return a list of {@link AccessoryType}s which can be key-bound
      */
     public static ImmutableList<AccessoryType> getKeyboundSlotTypes() {
-        if (OhmegaConfig.Server.disableAccessoryTypes()) {
-            return ImmutableList.of(AccessoryType.GENERIC.get());
-        }
-
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
         for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
@@ -333,7 +327,7 @@ public final class AccessoryHelper {
 
     /**
      * You should most likely use {@link #getBindTooltip(ItemStack)} as it is easier
-     * and uses standardised key formats that work with {@link com.swacky.ohmega.api.datagen.OhmegaLangHelper}
+     * and uses standardised key formats that work with {@link com.swacky.ohmega.api.datagen.client.OhmegaLangHelper}
      * <p>
      * A utility method used to get a description for key-bound capable accessories
      * @param stack {@link ItemStack} instance of an accessory
@@ -379,14 +373,14 @@ public final class AccessoryHelper {
 
         if (slot < 0 || !flag || mapping == null) {
             return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);
-        } else {
-            return Component.translatable(bindKey, mapping.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY);
         }
+
+        return Component.translatable(bindKey, mapping.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY);
     }
 
     /**
      * A shortcut method to {@link #getBindTooltip(ItemStack, String, String)} that uses standardised key formats
-     * that work with {@link com.swacky.ohmega.api.datagen.OhmegaLangHelper}
+     * that work with {@link com.swacky.ohmega.api.datagen.client.OhmegaLangHelper}
      * @param stack {@link ItemStack} instance of an accessory
      * @return example: "Press G to toggle flight", "Allows the wearer to fly"
      */
@@ -401,14 +395,14 @@ public final class AccessoryHelper {
      * @param item accessory item
      * @return example: "Accessory Type: Utility"
      */
-    public static MutableComponent getTypeTooltip(Item item) {
+    public static @Nullable MutableComponent getTypeTooltip(Item item) {
         AccessoryType type = getType(item);
 
         if (type.displayHoverText()) {
             return Component.translatable("accessory_type", type.getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
         }
 
-        return Component.empty();
+        return null;
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.swacky.ohmega.datagen.client.lang;
+package com.swacky.ohmega.datagen.client;
 
 import com.swacky.ohmega.common.OhmegaCommon;
 import net.neoforged.neoforge.common.data.LanguageProvider;
