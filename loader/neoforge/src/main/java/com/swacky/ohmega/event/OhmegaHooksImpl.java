@@ -10,6 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.NeoForge;
 
+import java.util.Set;
+
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
@@ -56,5 +58,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean accessoryUseEvent(Player player, ItemStack stack) {
         return NeoForge.EVENT_BUS.post(new AccessoryUseEvent(player, stack)).isCanceled();
+    }
+
+    @Override
+    public Set<AccessoryType> registerAccessoryTypesEvent() {
+        return NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent()).getTypes();
     }
 }

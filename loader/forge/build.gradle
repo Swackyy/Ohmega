@@ -42,6 +42,9 @@ minecraft {
 dependencies {
     minecraft "net.minecraftforge:forge:${mcV}-${loaderForgeV}"
 
+    implementation "io.github.llamalad7:mixinextras-common:0.5.2"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
+
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     annotationProcessor "net.minecraftforge:eventbus-validator:7.0-beta.7"
 

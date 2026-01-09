@@ -56,6 +56,11 @@ public interface IAccessory {
     // A component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(@NonNull Player player, @NonNull ItemStack stack) {}
 
+    // If true, will automatically synchronise with the client every tick when worn
+    default boolean autoSync(@NonNull Player player, @NonNull ItemStack stack) {
+        return false;
+    }
+
     // Attribute modifiers to be applied when the accessory is equipped (or only when active)
     default void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {}
 

@@ -9,6 +9,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModLoader;
 
+import java.util.Set;
+
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
@@ -18,6 +20,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
         AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, context, initial);
+
         AccessoryCanEquipEvent.BUS.post(event);
         return event.getReturnValue();
     }
@@ -25,6 +28,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
         AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, initial);
+
         AccessoryCanUnequipEvent.BUS.post(event);
         return event.getReturnValue();
     }
@@ -37,6 +41,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
         AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
+
         ModLoader.get().postEvent(event);
         return event.get();
     }
@@ -59,5 +64,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean accessoryUseEvent(Player player, ItemStack stack) {
         return AccessoryUseEvent.BUS.post(new AccessoryUseEvent(player, stack));
+    }
+
+    @Override
+    public Set<AccessoryType> registerAccessoryTypesEvent() {
+        RegisterAccessoryTypesEvent event = new RegisterAccessoryTypesEvent();
+
+        RegisterAccessoryTypesEvent.BUS.post(event);
+        return event.getTypes();
     }
 }
