@@ -213,7 +213,7 @@ public final class AccessoryType {
         private Deserializer() {}
 
         @Override
-        public Builder deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public Builder deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
             Builder builder = new Builder();
             JsonObject json = GsonHelper.convertToJsonObject(element, "entry");
 

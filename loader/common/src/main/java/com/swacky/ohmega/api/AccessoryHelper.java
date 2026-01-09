@@ -2,7 +2,6 @@ package com.swacky.ohmega.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -328,7 +327,7 @@ public final class AccessoryHelper {
 
     /**
      * You should most likely use {@link #getBindTooltip(ItemStack)} as it is easier
-     * and uses standardised key formats that work with {@link OhmegaLangHelper}
+     * and uses standardised key formats that work with {@link com.swacky.ohmega.api.datagen.client.OhmegaLangHelper}
      * <p>
      * A utility method used to get a description for key-bound capable accessories
      * @param stack {@link ItemStack} instance of an accessory
@@ -381,7 +380,7 @@ public final class AccessoryHelper {
 
     /**
      * A shortcut method to {@link #getBindTooltip(ItemStack, String, String)} that uses standardised key formats
-     * that work with {@link OhmegaLangHelper}
+     * that work with {@link com.swacky.ohmega.api.datagen.client.OhmegaLangHelper}
      * @param stack {@link ItemStack} instance of an accessory
      * @return example: "Press G to toggle flight", "Allows the wearer to fly"
      */
