@@ -12,7 +12,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import org.jspecify.annotations.NonNull;
@@ -100,7 +100,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
                 hoveredOffsY = 0;
             }
 
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
     }
 }

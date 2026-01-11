@@ -2,9 +2,11 @@ package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
@@ -18,21 +20,20 @@ import java.util.function.Supplier;
 public final class OhmegaDataAttachments {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, OhmegaCommon.MODID);
 
-    private static final IAttachmentSerializer<AccessoryContainer> SERIALIZER = new IAttachmentSerializer<>() {
-        @SuppressWarnings("deprecation")
+    private static final IAttachmentSerializer<CompoundTag, AccessoryContainer> SERIALIZER = new IAttachmentSerializer<>() {
         @Override
-        public @NonNull AccessoryContainer read(@NonNull IAttachmentHolder holder, ValueInput input) {
-            AccessoryContainer data = input.read(AccessoryContainer.MAP_CODEC).orElseThrow();
+        public @NonNull AccessoryContainer read(@NonNull IAttachmentHolder holder, @NonNull CompoundTag tag, HolderLookup.@NonNull Provider provider) {
+            AccessoryContainer data = AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, provider), tag).resultOrPartial().orElseThrow();
 
             data.onAttach((Player) holder);
             return data;
         }
 
-        @SuppressWarnings("deprecation")
+
         @Override
-        public boolean write(@NonNull AccessoryContainer data, ValueOutput output) {
-            output.store(AccessoryContainer.MAP_CODEC, data);
-            return true;
+        public CompoundTag write(@NonNull AccessoryContainer data, HolderLookup.@NonNull Provider provider) {
+            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, provider), data)
+                    .resultOrPartial().orElse(new CompoundTag());
         }
     };
 

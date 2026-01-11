@@ -9,7 +9,7 @@ import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -24,11 +24,11 @@ public final class Ohmega {
 
         context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
-        BusGroup group = context.getModBusGroup();
+        IEventBus bus = context.getModEventBus();
 
-        OhmegaDataComponentsImpl.register(group);
-        OhmegaItems.register(group);
-        OhmegaMenusImpl.register(group);
+        OhmegaDataComponentsImpl.register(bus);
+        OhmegaItems.register(bus);
+        OhmegaMenusImpl.register(bus);
 
         OhmegaNetworkingImpl.bootstrap();
 

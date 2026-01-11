@@ -10,21 +10,13 @@ import net.neoforged.bus.api.ICancellableEvent;
  * <p>
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
-public abstract sealed class AccessoryTickEvent extends Event implements ICancellableEvent permits AccessoryTickEvent.Pre, AccessoryTickEvent.Post {
-    private final Player player;
-    private final ItemStack stack;
+public abstract sealed class AccessoryTickEvent extends Event implements ICancellableEvent {
+    public final Player player;
+    public final ItemStack stack;
 
     public AccessoryTickEvent(Player player, ItemStack stack) {
         this.player = player;
         this.stack = stack;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
     }
 
     public static final class Pre extends AccessoryTickEvent {

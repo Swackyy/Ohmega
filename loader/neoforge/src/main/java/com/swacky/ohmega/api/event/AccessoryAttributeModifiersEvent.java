@@ -9,19 +9,11 @@ import net.neoforged.bus.api.Event;
  * Using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
  */
 public final class AccessoryAttributeModifiersEvent extends Event {
-    private final ItemStack stack;
-    private final AccessoryModifiers.Builder builder;
+    public final ItemStack stack;
+    public final AccessoryModifiers.Builder builder;
 
     public AccessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
         this.stack = stack;
         this.builder = builder;
-    }
-
-    public ItemStack getStack() {
-        return stack;
-    }
-
-    public AccessoryModifiers.Builder getBuilder() {
-        return this.builder;
     }
 }

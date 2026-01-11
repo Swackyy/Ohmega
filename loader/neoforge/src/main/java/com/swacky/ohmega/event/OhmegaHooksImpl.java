@@ -1,6 +1,5 @@
 package com.swacky.ohmega.event;
 
-import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -10,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.NeoForge;
 
+import java.util.Map;
 import java.util.Set;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
@@ -20,12 +20,12 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
-        return NeoForge.EVENT_BUS.post(new AccessoryCanEquipEvent(player, stack, context, initial)).getReturnValue();
+        return NeoForge.EVENT_BUS.post(new AccessoryCanEquipEvent(player, stack, context, initial)).returnValue;
     }
 
     @Override
     public boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
-        return NeoForge.EVENT_BUS.post(new AccessoryCanUnequipEvent(player, stack, initial)).getReturnValue();
+        return NeoForge.EVENT_BUS.post(new AccessoryCanUnequipEvent(player, stack, initial)).returnValue;
     }
 
     @Override
@@ -34,10 +34,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+    public Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
         AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
+
         ModLoader.postEvent(event);
-        return event.get();
+        return event.overrideRemaps;
     }
 
     @Override
@@ -62,6 +63,6 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Set<AccessoryType> registerAccessoryTypesEvent() {
-        return NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent()).getTypes();
+        return NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent()).types;
     }
 }

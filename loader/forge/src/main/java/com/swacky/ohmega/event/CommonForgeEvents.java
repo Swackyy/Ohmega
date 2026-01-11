@@ -16,6 +16,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -27,21 +28,20 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.config.SimpleConfigurationTask;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collections;
 
-@SuppressWarnings("unused")
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.BOTH, modid = OhmegaCommon.MODID)
-public final class CommonEvents {
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = OhmegaCommon.MODID)
+public final class CommonForgeEvents {
     private static final ResourceLocation CAPABILITY_ID = OhmegaCommon.rl("accessory_data");
     private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types").toString());
 
     @SubscribeEvent
-    public static void onAttachEntityCaps(AttachCapabilitiesEvent.Entities event) {
+    public static void onAttachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player player) {
             event.addCapability(CAPABILITY_ID, new AccessoryContainerProvider(player));
         }

@@ -14,6 +14,7 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -239,8 +240,8 @@ public final class AccessoryContainer {
             }
 
             if (!slots.isEmpty()) {
-                AccessoryHelper.syncSlots(svr, slots.stream().mapToInt(Integer::intValue).toArray(),
-                        stacks, svr.level().getPlayers(svr0 -> true));
+                //noinspection resource
+                AccessoryHelper.syncSlots(svr, slots.stream().mapToInt(Integer::intValue).toArray(), stacks, svr.serverLevel().players());
             }
         }
     }
@@ -249,7 +250,11 @@ public final class AccessoryContainer {
         boolean flag = switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) { // Inverse
             case ALWAYS_ON -> false;
             case ALWAYS_OFF -> true;
-            case DEFAULT -> !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case DEFAULT -> {
+                MinecraftServer server = player.getServer();
+
+                yield server == null || server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            }
         };
 
         if (flag) {

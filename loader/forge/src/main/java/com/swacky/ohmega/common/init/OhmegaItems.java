@@ -1,11 +1,11 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.item.AngelRing;
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -22,7 +22,7 @@ public final class OhmegaItems {
         return ITEMS.register(id, () -> function.apply(props.setId(ResourceKey.create(Registries.ITEM, OhmegaCommon.rl(id)))));
     }
 
-    public static void register(BusGroup group) {
-        ITEMS.register(group);
+    public static void register(IEventBus bus) {
+        ITEMS.register(bus);
     }
 }

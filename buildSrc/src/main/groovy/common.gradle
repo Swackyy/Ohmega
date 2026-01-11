@@ -36,7 +36,7 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set JavaLanguageVersion.of(javaV).asInt()
 }
 
-['apiElements', 'runtimeElements'].each { variant ->
+["apiElements", "runtimeElements"].each { variant ->
     configurations."${variant}".outgoing {
         capability("${group}:${base.archivesName.get()}:${version}")
         capability("${group}:${modId}-${project.name}-${mcV}:${version}")

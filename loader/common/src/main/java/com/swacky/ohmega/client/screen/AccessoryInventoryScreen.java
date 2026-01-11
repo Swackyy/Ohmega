@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jspecify.annotations.NonNull;
@@ -53,7 +53,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
     @Override
     public void render(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
         super.render(gui, mx, my, partialTicks);
-        effects.renderEffects(gui, mx, my);
+        effects.render(gui, mx, my, partialTicks);
         renderTooltip(gui, mx, my);
     }
 
@@ -83,7 +83,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             // Slots
             int slotsCreatedCurrentColumn = 0;
             for (int j = 0; true; j++) {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + j * 18, 4, 4, 18, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + j * 18, 4, 4, 18, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
                 index++;
 
                 if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
@@ -92,47 +92,47 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             }
 
             // Top border
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 20, 4, 0, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 20, 4, 0, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
             // Bottom border
             if (i >= renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             } else {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             }
         }
 
         // Side borders
         for (int i = 0; i < mostSlotsPerColumn; i++) {
             // Left
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * i, 0, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * i, 0, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
             // Right
             if (i >= lastColumnSlots) {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             } else {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             }
         }
 
         // Top left corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 20, 0, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 20, 0, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
         // Top right corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 20, 22, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 20, 22, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
         // Bottom left corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
         // Bottom right corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
 
         // Intersecting corner
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 5 + 18 * (renderColumns - 1), topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 5 + 18 * (renderColumns - 1), topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
     }
 
@@ -151,7 +151,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
                 }
 
                 // Main inventory
-                gui.blit(RenderPipelines.GUI_TEXTURED, InventoryScreen.INVENTORY_LOCATION, x, topPos, 0, 0, 176, 166, 256, 256);
+                gui.blit(RenderType::guiTextured, InventoryScreen.INVENTORY_LOCATION, x, topPos, 0, 0, 176, 166, 256, 256);
 
                 // Accessory Inventory
                 renderAccInv(gui);
@@ -170,7 +170,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
     @Override
     protected void renderTooltip(@NonNull GuiGraphics gui, int mx, int my) {
         if (menu.getCarried().isEmpty() && hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.Client.showHoverTooltip() && !hoveredSlot.hasItem()) {
-            gui.setTooltipForNextFrame(accSlot.getType().getTranslation(), mx, my);
+            gui.renderTooltip(font, accSlot.getType().getTranslation(), mx, my);
         } else {
             super.renderTooltip(gui, mx, my);
         }

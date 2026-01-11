@@ -5,30 +5,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 
 public final class AccessoryCanUnequipEvent extends Event {
-    private final Player player;
-    private final ItemStack stack;
-
-    private boolean ret;
+    public final Player player;
+    public final ItemStack stack;
+    public boolean returnValue;
 
     public AccessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
         this.player = player;
         this.stack = stack;
-        this.ret = flag;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public ItemStack getStack() {
-        return stack;
-    }
-
-    public boolean getReturnValue() {
-        return this.ret;
-    }
-
-    public void setReturnValue(boolean value) {
-        this.ret = value;
+        this.returnValue = flag;
     }
 }

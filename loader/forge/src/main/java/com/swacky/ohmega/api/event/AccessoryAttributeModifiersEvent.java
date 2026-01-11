@@ -2,14 +2,20 @@ package com.swacky.ohmega.api.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import org.jspecify.annotations.NonNull;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Fired after {@link com.swacky.ohmega.api.IAccessory#addDefaultAttributeModifiers(AccessoryModifiers.Builder)}
- * Using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
+ * Cancelling and using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
  */
-public record AccessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) implements RecordEvent {
-    public static final EventBus<@NonNull AccessoryAttributeModifiersEvent> BUS = EventBus.create(AccessoryAttributeModifiersEvent.class);
+@Cancelable
+public class AccessoryAttributeModifiersEvent extends Event {
+    public final ItemStack stack;
+    public final AccessoryModifiers.Builder builder;
+
+    public AccessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
+        this.stack = stack;
+        this.builder = builder;
+    }
 }

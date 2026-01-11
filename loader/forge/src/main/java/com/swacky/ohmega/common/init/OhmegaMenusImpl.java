@@ -1,11 +1,11 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -23,8 +23,8 @@ public final class OhmegaMenusImpl implements OhmegaMenus.Service {
         return MENUS.register(id, sup);
     }
 
-    public static void register(BusGroup group) {
-        MENUS.register(group);
+    public static void register(IEventBus bus) {
+        MENUS.register(bus);
     }
 
     @Override

@@ -6,14 +6,16 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.ItemTagsProvider;
+import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
 public class OhmegaTagsProvider extends ItemTagsProvider {
-    public OhmegaTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider, OhmegaCommon.MODID);
+    public OhmegaTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagsProvider.TagLookup<Block>> blockTags) {
+        super(output, provider, blockTags, OhmegaCommon.MODID);
     }
 
     @Override
