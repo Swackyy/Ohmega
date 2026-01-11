@@ -13,10 +13,6 @@ configurations {
     }
 }
 
-java {
-    withSourcesJar()
-}
-
 dependencies {
     compileOnly(project(":loader:common")) {
         capabilities {

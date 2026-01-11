@@ -1,11 +1,7 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
     id "fabric-loom"
     id "loader"
 }
-
-version "fabric+${mcV}"
 
 loom {
     accessWidenerPath.set file("src/main/resources/aw.accesswidener")
@@ -36,14 +32,6 @@ loom {
         }
     }
 }
-
-var namedJar = tasks.register("namedJar", RemapJarTask) {
-    inputFile = jar.archiveFile
-    archiveClassifier = "dev"
-    targetNamespace = "named"
-}
-
-build.dependsOn(namedJar)
 
 remapSourcesJar {
     targetNamespace = "named"
