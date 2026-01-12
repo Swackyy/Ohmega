@@ -28,7 +28,11 @@ import java.util.function.Predicate;
 
 @Mixin(EnchantmentHelper.class)
 abstract class EnchantmentHelperMixin {
-    @Inject(method = "getRandomItemWith", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(
+            method = "getRandomItemWith",
+            at = @At(
+                    value = "RETURN"),
+            cancellable = true)
     private static void getRandomItemWith(DataComponentType<?> dataType, LivingEntity entity, Predicate<ItemStack> filter, CallbackInfoReturnable<Optional<EnchantedItemInUse>> cir) {
         int original = 0;
 
