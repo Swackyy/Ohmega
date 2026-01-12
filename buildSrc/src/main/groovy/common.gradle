@@ -39,6 +39,10 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set JavaLanguageVersion.of(javaV).asInt()
 }
 
+tasks.withType(Javadoc).configureEach {
+    options.quiet()
+}
+
 tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
 }
