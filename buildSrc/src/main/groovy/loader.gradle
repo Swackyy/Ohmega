@@ -86,3 +86,34 @@ tasks.named("sourcesJar") {
 tasks.withType(JavaCompile).configureEach {
     source configurations.commonJava
 }
+
+if (rootProject.file("secrets.properties").exists()) {
+    tasks.register("internalPublishCurseForge", net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        apiToken = findProperty("secretsCurseForgeToken")
+
+        def rootFile = upload(889368, jar)
+        String changelog = modChanges.replace("| ", "+ ")
+        String projectName = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
+
+        rootFile.addGameVersion(mcV)
+        rootFile.addModLoader()
+        rootFile.changelog = changelog
+        rootFile.changelogType = "markdown"
+        rootFile.displayName = "${modName} ${modV} ${projectName} ${mcV}"
+        rootFile.releaseType = "release"
+
+        if (project.name == "fabric") {
+            rootFile.addRequirement("fabric-api")
+            rootFile.addRequirement("forge-config-api-port")
+        }
+
+        def sourcesFile = rootFile.withAdditionalFile(sourcesJar)
+
+        sourcesFile.changelog = changelog
+        sourcesFile.displayName = "${modName} ${modV} ${projectName} ${mcV} (sources)"
+    }
+
+    tasks.register("internalPublishModrinth") {
+
+    }
+}

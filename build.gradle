@@ -21,16 +21,15 @@ idea {
 File secretsFile = file("secrets.properties")
 
 if (secretsFile.exists()) {
-    secretsFile.withInputStream {
-        stream ->
-            {
-                Properties secrets = new Properties()
+    secretsFile.withInputStream { stream ->
+        {
+            Properties secrets = new Properties()
 
-                secrets.load(stream)
-                secrets.forEach {
-                    key, value -> project.ext.set((String) key, value)
-                }
+            secrets.load(stream)
+            secrets.forEach {
+                key, value -> project.ext.set((String) key, value)
             }
+        }
     }
 
     // Publishes the mod to the following platforms:
@@ -40,10 +39,14 @@ if (secretsFile.exists()) {
     tasks.register("completeRelease") {
         group = "publishing"
 
-        subprojects.each {
-            sub ->
+        subprojects.each { sub ->
                 sub.plugins.withType(MavenPublishPlugin).configureEach {
                     dependsOn sub.tasks.named("publish")
+
+                    if (sub.name != "common") {
+                        dependsOn sub.tasks.named("internalPublishCurseForge")
+                        dependsOn sub.tasks.named("internalPublishModrinth")
+                    }
                 }
         }
 
