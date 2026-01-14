@@ -44,8 +44,7 @@ if (secretsFile.exists()) {
                     dependsOn sub.tasks.named("publish")
 
                     if (sub.name != "common") {
-                        dependsOn sub.tasks.named("internalPublishCurseForge")
-                        dependsOn sub.tasks.named("internalPublishModrinth")
+                        dependsOn sub.tasks.named("publishMods")
                     }
                 }
         }

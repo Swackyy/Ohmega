@@ -1,6 +1,7 @@
 plugins {
     id "common"
     id "java"
+    id "me.modmuss50.mod-publish-plugin"
 }
 
 configurations {
@@ -88,32 +89,47 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 if (rootProject.file("secrets.properties").exists()) {
-    tasks.register("internalPublishCurseForge", net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-        apiToken = findProperty("secretsCurseForgeToken")
+    publishMods {
+        String name = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
 
-        def rootFile = upload(889368, jar)
-        String changelog = modChanges.replace("| ", "+ ")
-        String projectName = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
+        file = jar.archiveFile
+        changelog = modChanges.replace("| ", "+ ")
+        type = STABLE
 
-        rootFile.addGameVersion(mcV)
-        rootFile.addModLoader()
-        rootFile.changelog = changelog
-        rootFile.changelogType = "markdown"
-        rootFile.displayName = "${modName} ${modV} ${projectName} ${mcV}"
-        rootFile.releaseType = "release"
+        modLoaders.add(project.name)
 
-        if (project.name == "fabric") {
-            rootFile.addRequirement("fabric-api")
-            rootFile.addRequirement("forge-config-api-port")
+        displayName = "${modName} ${modV} ${name} ${mcV}"
+
+        // Plugin does not currently support labeling Modrinth sources file as "sources"
+        additionalFiles.from(sourcesJar.archiveFile) {
+            displayName = "${modName} ${modV} name ${mcV} (sources)"
         }
 
-        def sourcesFile = rootFile.withAdditionalFile(sourcesJar)
+        curseforge {
+            accessToken = findProperty("secretsCurseForgeToken")
+            projectId = "889368"
+            clientRequired = true
+            serverRequired = true
 
-        sourcesFile.changelog = changelog
-        sourcesFile.displayName = "${modName} ${modV} ${projectName} ${mcV} (sources)"
-    }
+            javaVersions.add(JavaVersion.toVersion(javaV))
+            minecraftVersions.add(mcV)
 
-    tasks.register("internalPublishModrinth") {
+            if (project.name == "fabric") {
+                requires "fabric-api"
+                requires "forge-config-api-port"
+            }
+        }
 
+        modrinth {
+            accessToken = findProperty("secretsModrinthToken")
+            projectId = "scvT0o5w"
+
+            minecraftVersions.add(mcV)
+
+            if (project.name == "fabric") {
+                requires "fabric-api"
+                requires "forge-config-api-port"
+            }
+        }
     }
 }
