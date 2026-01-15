@@ -102,7 +102,6 @@ if (secretsFile.exists()) {
                         //noinspection GroovyAssignabilityCheck
                         license {
                             name = license
-                            url = "https://opensource.org/license/mit"
                         }
                     }
 

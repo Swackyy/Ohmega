@@ -13,10 +13,6 @@ This mod aims to be a performant and stable alternative to other accessory API m
 ---
 
 ## Contributing
-> [!IMPORTANT]
-> Although this project is licensed under "All rights reserved", Permission is granted to
-> modify the source code, but not redistribute without explicit written permission from the author(s)
-
 If you wish to contribute to the mod, you can do it in multiple ways! Either:
 - Create an issue report, detailing that a bug be fixed, or a desire for a new feature, or to improve on an existing one
 - Submit a pull request to the GitHub repository
