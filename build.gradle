@@ -32,6 +32,48 @@ if (secretsFile.exists()) {
         }
     }
 
+    tasks.register("publishMavenCentral") {
+        doLast {
+            println "publishing to maven central!"
+            group = "publishing"
+
+            String auth = Base64.getEncoder().encodeToString("${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes())
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> getResponse = client.send(HttpRequest.newBuilder()
+                    .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/search/repositories"))
+                    .header("Authorization", "Bearer ${auth}")
+                    .GET()
+                    .build(), HttpResponse.BodyHandlers.ofString())
+
+            // Success
+            int getStatus = getResponse.statusCode();
+
+            if (getStatus == 200) {
+                String key = new JsonSlurper().parseText(getResponse.body()).repositories[0]?.key
+
+                if (key) {
+                    HttpResponse<String> uploadResponse = client.send(HttpRequest.newBuilder()
+                            .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/upload/repository/${key}?publishingType=AUTOMATIC"))
+                            .header("Authorization", "Bearer ${auth}")
+                            .POST(HttpRequest.BodyPublishers.noBody())
+                            .build(), HttpResponse.BodyHandlers.ofString())
+
+                    int uploadStatus = uploadResponse.statusCode()
+
+                    if (uploadStatus == 200) {
+                        println "Successfully published to Maven Central"
+                    } else {
+                        System.err.println("Status code ${uploadStatus} -- Failed to flush and publish")
+                    }
+                } else {
+                    System.err.println("No open repository found for namespace: 'io.github.swackyy'")
+                }
+            } else {
+                System.err.println("Status code ${getStatus} -- Failed to get repositories")
+            }
+        }
+    }
+
     // Publishes the mod to the following platforms:
     // Maven central repository
     // CurseForge
@@ -49,38 +91,6 @@ if (secretsFile.exists()) {
                 }
         }
 
-        doLast {
-            String auth = Base64.getEncoder().encodeToString("${findProperty("secretsUsername")}:${findProperty("secretsPassword")}".getBytes())
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> getResponse = client.send(HttpRequest.newBuilder()
-                    .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/search/repositories"))
-                    .header("Authorization", "Bearer ${auth}")
-                    .GET()
-                    .build(), HttpResponse.BodyHandlers.ofString())
-
-            // Success
-            int getStatus = getResponse.statusCode();
-            if (getStatus == 200) {
-                String key = new JsonSlurper().parseText(getResponse.body()).repositories[0]?.key
-
-                if (key) {
-                    HttpResponse<String> uploadResponse = client.send(HttpRequest.newBuilder()
-                            .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/upload/repository/${key}?publishingType=AUTOMATIC"))
-                            .header("Authorization", "Bearer ${auth}")
-                            .POST(HttpRequest.BodyPublishers.noBody())
-                            .build(), HttpResponse.BodyHandlers.ofString())
-
-                    if (uploadResponse.statusCode() == 200) {
-                        println "Successfully published to Maven Central"
-                    } else {
-                        System.err.println("Status code ${getStatus} -- Failed to flush and publish")
-                    }
-                } else {
-                    println "No open repository found for namespace: 'io.github.swackyy'"
-                }
-            } else {
-                System.err.println("Status code ${getStatus} -- Failed to get repositories")
-            }
-        }
+        finalizedBy("publishMavenCentral")
     }
 }

@@ -56,18 +56,18 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     }
 }
 
-File secretsFile = file("secrets.properties")
+File secretsFile = rootProject.file("secrets.properties")
 
 if (secretsFile.exists()) {
     secretsFile.withInputStream { stream ->
-            {
-                Properties secrets = new Properties()
+        {
+            Properties secrets = new Properties()
 
-                secrets.load(stream)
-                secrets.forEach {
-                    key, value -> project.ext.set((String) key, value)
-                }
+            secrets.load(stream)
+            secrets.forEach {
+                key, value -> project.ext.set((String) key, value)
             }
+        }
     }
 
     publishing {
@@ -132,8 +132,8 @@ if (secretsFile.exists()) {
                 url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
 
                 credentials {
-                    username = getProperty("secretsUsername")
-                    password = getProperty("secretsPassword")
+                    username = getProperty("secretsMavenCentralUsername")
+                    password = getProperty("secretsMavenCentralPassword")
                 }
             }
         }
