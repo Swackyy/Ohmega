@@ -35,7 +35,6 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     public AccessoryInventoryMenu(int id, Inventory inv) {
         super(OhmegaMenus.getAccessoryMenu(), id);
         this.player = inv.player;
-
         int x;
 
         if (player.level().isClientSide() && OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {

@@ -10,7 +10,6 @@ import java.util.Map;
 public interface AccessoryOverrideTypesEvent {
     Event<AccessoryOverrideTypesEvent> EVENT = EventFactory.createArrayBacked(AccessoryOverrideTypesEvent.class,
         listeners -> (overrideRemaps) -> {
-
             for (AccessoryOverrideTypesEvent listener : listeners) {
                 listener.process(overrideRemaps);
             }

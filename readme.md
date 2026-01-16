@@ -1,5 +1,5 @@
 # Ohmega
-A modernized and lightweight data-driven accessory API for Minecraft, versions 1.18+
+A modernised and lightweight data-driven accessory API for Minecraft, versions 1.18+
 
 This mod aims to be a performant and stable alternative to other accessory API mods, while maintaining a plentiful amount of useful features both for users and developers
 
