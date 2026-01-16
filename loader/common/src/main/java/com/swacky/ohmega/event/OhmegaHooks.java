@@ -1,6 +1,5 @@
 package com.swacky.ohmega.event;
 
-import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.OhmegaCommon;
@@ -9,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Map;
 import java.util.Set;
 
 public final class OhmegaHooks {
@@ -32,7 +32,7 @@ public final class OhmegaHooks {
         return IMPL.accessoryEquipEvent(player, stack, context);
     }
 
-    public static ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+    public static Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
         return IMPL.accessoryOverrideTypesEvent();
     }
 
@@ -65,7 +65,7 @@ public final class OhmegaHooks {
 
         boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context);
 
-        ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent();
+        Map<Item, AccessoryType> accessoryOverrideTypesEvent();
 
         void accessoryTickEventPost(Player player, ItemStack stack);
 

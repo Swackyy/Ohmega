@@ -6,19 +6,11 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 
 public final class AccessoryUseEvent extends Event implements ICancellableEvent {
-    private final Player player;
-    private final ItemStack stack;
+    public final Player player;
+    public final ItemStack stack;
 
     public AccessoryUseEvent(Player player, ItemStack stack) {
         this.player = player;
         this.stack = stack;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
     }
 }

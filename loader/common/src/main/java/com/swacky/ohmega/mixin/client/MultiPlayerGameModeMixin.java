@@ -12,7 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MultiPlayerGameMode.class)
 abstract class MultiPlayerGameModeMixin {
-    @Inject(method = "useItem", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(
+            method = "useItem",
+            at = @At(
+                    value = "RETURN"),
+            cancellable = true)
     private void useItem(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         if (!cir.getReturnValue().consumesAction()) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, hand);

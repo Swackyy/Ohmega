@@ -19,12 +19,18 @@ abstract class PlayerMixin extends Avatar {
         super(type, level);
     }
 
-    @Inject(method = "tick", at = @At(value = "TAIL"))
+    @Inject(
+            method = "tick",
+            at = @At(
+                    value = "TAIL"))
     public void tick(CallbackInfo ci) {
         CommonCallbacks.onPlayerPostTick(((Player) (Object) this));
     }
 
-    @Inject(method = "readAdditionalSaveData", at = @At(value = "HEAD"))
+    @Inject(
+            method = "readAdditionalSaveData",
+            at = @At(
+                    value = "HEAD"))
     public void readAdditionalSaveData(ValueInput input, CallbackInfo ci) {
         this.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER).onAttach((Player) (Object) this);
     }
