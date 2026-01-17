@@ -32,7 +32,6 @@ import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = OhmegaCommon.MODID)
 public final class CommonEvents {
-    private static final Identifier RELOAD_LISTENER_ID = OhmegaCommon.id("accessory_type_manager");
     private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types"));
 
     @SubscribeEvent
@@ -119,6 +118,6 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddServerReloadListenersEvent event) {
-        event.addListener(RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
+        event.addListener(OhmegaCommon.RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
     }
 }

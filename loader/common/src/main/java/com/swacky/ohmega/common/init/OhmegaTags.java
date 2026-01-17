@@ -31,7 +31,7 @@ public final class OhmegaTags {
     }
 
     /**
-     * Do not use this in data generation, it will not work and will stack overflow
+     * Do not use this in data generation, it will return null
      */
     public static TagKey<Item> get(AccessoryType type) {
         return TAG_MAP.get(type);
