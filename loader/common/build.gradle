@@ -17,8 +17,8 @@ sourceSets.main.resources {
 }
 
 dependencies {
-    compileOnly "org.spongepowered:mixin:0.8.7"
-    compileOnly "io.github.llamalad7:mixinextras-common:0.5.2"
+    implementation "org.spongepowered:mixin:0.8.7"
+    implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
 }
 

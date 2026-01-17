@@ -5,8 +5,6 @@ plugins {
     id "loader"
 }
 
-version "fabric+${mcV}"
-
 loom {
     accessWidenerPath.set file("src/main/resources/aw.accesswidener")
 

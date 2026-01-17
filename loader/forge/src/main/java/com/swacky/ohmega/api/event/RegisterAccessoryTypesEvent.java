@@ -11,13 +11,5 @@ import java.util.Set;
 public class RegisterAccessoryTypesEvent extends MutableEvent {
     public static final EventBus<@NonNull RegisterAccessoryTypesEvent> BUS = EventBus.create(RegisterAccessoryTypesEvent.class);
 
-    private final Set<AccessoryType> types = new HashSet<>();
-
-    public void addTypes(AccessoryType... types) {
-        this.types.addAll(Set.of(types));
-    }
-
-    public Set<AccessoryType> getTypes() {
-        return types;
-    }
+    public final Set<AccessoryType> types = new HashSet<>();
 }

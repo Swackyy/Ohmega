@@ -18,7 +18,10 @@ abstract class KeyBindsList$KeyEntryMixin extends KeyBindsList.Entry {
     @Shadow
     private Component name;
 
-    @Inject(method = "<init>", at = @At(value = "RETURN"))
+    @Inject(
+            method = "<init>",
+            at = @At(
+                    value = "RETURN"))
     private void KeyMapping(KeyBindsList list, KeyMapping mapping, Component name, CallbackInfo ci) {
         if (OhmegaBinds.isInstance(mapping)) {
             String key = mapping.getName();

@@ -9,35 +9,15 @@ import org.jspecify.annotations.NonNull;
 public final class AccessoryCanEquipEvent extends MutableEvent {
     public static final EventBus<@NonNull AccessoryCanEquipEvent> BUS = EventBus.create(AccessoryCanEquipEvent.class);
 
-    private final Player player;
-    private final ItemStack stack;
-    private final EquipContext context;
-    private boolean ret;
+    public final Player player;
+    public final ItemStack stack;
+    public final EquipContext context;
+    public boolean returnValue;
 
-    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean flag) {
+    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
         this.player = player;
         this.stack = stack;
         this.context = context;
-        this.ret = flag;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public ItemStack getStack() {
-        return stack;
-    }
-
-    public EquipContext getContext() {
-        return context;
-    }
-
-    public boolean getReturnValue() {
-        return this.ret;
-    }
-
-    public void setReturnValue(boolean value) {
-        this.ret = value;
+        this.returnValue = initial;
     }
 }

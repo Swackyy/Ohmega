@@ -16,7 +16,12 @@ abstract class AbstractContainerScreenMixin extends Screen {
         super(title);
     }
 
-    @Redirect(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;matches(Lnet/minecraft/client/input/KeyEvent;)Z", ordinal = 0))
+    @Redirect(
+            method = "keyPressed",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/KeyMapping;matches(Lnet/minecraft/client/input/KeyEvent;)Z",
+                    ordinal = 0))
     public boolean keyPressed(KeyMapping instance, KeyEvent event) {
         if (minecraft != null) {
             return minecraft.options.keyInventory.matches(event) || OhmegaBinds.OPEN_ACC_INV.matches(event);

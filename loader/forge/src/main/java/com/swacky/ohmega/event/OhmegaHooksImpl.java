@@ -1,6 +1,5 @@
 package com.swacky.ohmega.event;
 
-import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModLoader;
 
+import java.util.Map;
 import java.util.Set;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
@@ -22,7 +22,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
         AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, context, initial);
 
         AccessoryCanEquipEvent.BUS.post(event);
-        return event.getReturnValue();
+        return event.returnValue;
     }
 
     @Override
@@ -30,7 +30,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
         AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, initial);
 
         AccessoryCanUnequipEvent.BUS.post(event);
-        return event.getReturnValue();
+        return event.returnValue;
     }
 
     @Override
@@ -39,11 +39,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public ImmutableMap<Item, AccessoryType> accessoryOverrideTypesEvent() {
+    public Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
         AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
 
         ModLoader.postEvent(event);
-        return event.get();
+        return event.overrides;
     }
 
     @Override
@@ -71,6 +71,6 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
         RegisterAccessoryTypesEvent event = new RegisterAccessoryTypesEvent();
 
         RegisterAccessoryTypesEvent.BUS.post(event);
-        return event.getTypes();
+        return event.types;
     }
 }
