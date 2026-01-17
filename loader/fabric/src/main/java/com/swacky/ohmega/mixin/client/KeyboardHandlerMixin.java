@@ -14,7 +14,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class KeyboardHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
 
-    @Inject(method = "keyPress", at = @At(value = "TAIL"))
+    @Inject(
+            method = "keyPress",
+            at = @At(
+                    value = "TAIL"))
     public void keyPress(long window, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
         if (window == minecraft.getWindow().getWindow()) {
             ClientCallbacks.onKeyInput();

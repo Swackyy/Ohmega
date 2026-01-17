@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common;
 
-import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -32,7 +31,7 @@ public final class OhmegaCommon {
 
     private static int NUM_SERVICES = 0;
     private static int NUM_SERVICES_COMMON = 0;
-    private static ImmutableMap<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
+    private static Map<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
 
     public static <T> T loadService(Class<T> clazz) {
         String name = clazz.getName();
