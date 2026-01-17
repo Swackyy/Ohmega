@@ -13,25 +13,13 @@ import net.neoforged.bus.api.ICancellableEvent;
  */
 
 public final class AccessoryEquipEvent extends Event implements ICancellableEvent {
-    private final Player player;
-    private final ItemStack stack;
-    private final EquipContext context;
+    public final Player player;
+    public final ItemStack stack;
+    public final EquipContext context;
 
     public AccessoryEquipEvent(Player player, ItemStack stack, EquipContext context) {
         this.player = player;
         this.stack = stack;
         this.context = context;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
-    }
-
-    public EquipContext getContext() {
-        return this.context;
     }
 }
