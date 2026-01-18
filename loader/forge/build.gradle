@@ -5,8 +5,6 @@ plugins {
     id "org.spongepowered.mixin" version "0.7.+"
 }
 
-version = "forge+${mcV}"
-
 mixin {
     config "${modId}.mixins.json"
     config "${modId}_common.mixins.json"
@@ -45,13 +43,7 @@ dependencies {
     implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
 
-    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
-
-    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
-        version {
-            strictly "5.0.4"
-        }
-    }
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
 }
 
 jar {

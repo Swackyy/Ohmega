@@ -9,9 +9,9 @@ public final class AccessoryCanUnequipEvent extends Event {
     public final ItemStack stack;
     public boolean returnValue;
 
-    public AccessoryCanUnequipEvent(Player player, ItemStack stack, boolean flag) {
+    public AccessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
         this.player = player;
         this.stack = stack;
-        this.returnValue = flag;
+        this.returnValue = initial;
     }
 }

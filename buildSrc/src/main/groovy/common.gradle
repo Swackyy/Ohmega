@@ -1,8 +1,12 @@
 plugins {
+    id "idea"
     id "java"
+    id "maven-publish"
+    id "signing"
 }
 
-group "com.swacky.${modId}"
+group "com.swacky"
+version "${project.name}+${mcV}"
 
 base {
     archivesName.set "${modId}-${modV}"
@@ -10,6 +14,9 @@ base {
 
 java {
     toolchain.languageVersion.set JavaLanguageVersion.of(javaV)
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -36,10 +43,117 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set JavaLanguageVersion.of(javaV).asInt()
 }
 
+tasks.withType(Javadoc).configureEach {
+    options.quiet()
+}
+
+tasks.withType(GenerateModuleMetadata).configureEach {
+    enabled = false
+}
+
 ["apiElements", "runtimeElements"].each { variant ->
     configurations."${variant}".outgoing {
         capability("${group}:${base.archivesName.get()}:${version}")
         capability("${group}:${modId}-${project.name}-${mcV}:${version}")
         capability("${group}:${modId}:$version")
+    }
+}
+
+File secretsFile = rootProject.file("secrets.properties")
+
+if (secretsFile.exists()) {
+    secretsFile.withInputStream { stream ->
+        {
+            Properties secrets = new Properties()
+
+            secrets.load(stream)
+            secrets.forEach {
+                key, value -> project.ext.set((String) key, value)
+            }
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = "io.github.swackyy"
+                artifactId = "${modId}-${project.name}"
+                version = "${modV}-mc${mcV}"
+
+                if (project.name == "fabric") {
+                    artifact(remapJar) {
+                        builtBy remapJar
+                    }
+
+                    artifact(remapSourcesJar) {
+                        builtBy remapSourcesJar
+                    }
+
+                    artifact(javadocJar) {
+                        builtBy javadocJar
+                    }
+                } else {
+                    from components.java
+                }
+
+                pom {
+                    name = "${modName} ${project.name}"
+                    description = modSummary
+                    url = gitUrl
+
+                    licenses {
+                        //noinspection GroovyAssignabilityCheck
+                        license {
+                            name = license
+                        }
+                    }
+
+                    scm {
+                        url = "github.com"
+                        connection = "scm:git:git:github.com"
+                        developerConnection = "scm:git:ssh://github.com"
+                    }
+
+                    developers {
+                        developer {
+                            id = "swackyy"
+                            name = modAuthorsDisplay
+                            email = "68652827+Swackyy@users.noreply.github.com"
+                        }
+                    }
+                }
+
+                suppressPomMetadataWarningsFor("apiElements")
+                suppressPomMetadataWarningsFor("runtimeElements")
+            }
+        }
+
+        repositories {
+            maven {
+                name = "Maven"
+                url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+
+                credentials {
+                    username = getProperty("secretsMavenCentralUsername")
+                    password = getProperty("secretsMavenCentralPassword")
+                }
+            }
+        }
+    }
+
+    plugins.withType(MavenPublishPlugin).configureEach {
+        signing {
+            String id = findProperty("secretsSigningId")
+            String key = findProperty("secretsSigningKey")
+            String password = findProperty("secretsSigningPassword")
+
+            if (id && key && password) {
+                useInMemoryPgpKeys(id, key, password)
+                sign publishing.publications.mavenJava
+            } else {
+                System.err.println "Could not sign project ${project.name}"
+                required = false
+            }
+        }
     }
 }

@@ -18,12 +18,18 @@ abstract class PlayerMixin extends LivingEntity {
         super(type, level);
     }
 
-    @Inject(method = "tick", at = @At(value = "TAIL"))
+    @Inject(
+            method = "tick",
+            at = @At(
+                    value = "TAIL"))
     public void tick(CallbackInfo ci) {
         CommonCallbacks.onPlayerPostTick(((Player) (Object) this));
     }
 
-    @Inject(method = "readAdditionalSaveData", at = @At(value = "HEAD"))
+    @Inject(
+            method = "readAdditionalSaveData",
+            at = @At(
+                    value = "HEAD"))
     public void readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
         this.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER).onAttach((Player) (Object) this);
     }

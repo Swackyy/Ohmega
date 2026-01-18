@@ -10,10 +10,10 @@ public final class AccessoryCanEquipEvent extends Event {
     public final EquipContext context;
     public boolean returnValue;
 
-    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean flag) {
+    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
         this.player = player;
         this.stack = stack;
         this.context = context;
-        this.returnValue = flag;
+        this.returnValue = initial;
     }
 }

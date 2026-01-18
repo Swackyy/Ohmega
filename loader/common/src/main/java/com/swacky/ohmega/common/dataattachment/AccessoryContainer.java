@@ -211,6 +211,7 @@ public final class AccessoryContainer {
         return stacks;
     }
 
+    @SuppressWarnings("resource")
     public void tick(Player player) {
         for (int i = 0; i < stacks.size(); i++) {
             ItemStack stack = getStackInSlot(i);
@@ -240,7 +241,6 @@ public final class AccessoryContainer {
             }
 
             if (!slots.isEmpty()) {
-                //noinspection resource
                 AccessoryHelper.syncSlots(svr, slots.stream().mapToInt(Integer::intValue).toArray(), stacks, svr.serverLevel().players());
             }
         }
@@ -253,7 +253,7 @@ public final class AccessoryContainer {
             case DEFAULT -> {
                 MinecraftServer server = player.getServer();
 
-                yield server == null || server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+                yield server == null || !server.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
             }
         };
 

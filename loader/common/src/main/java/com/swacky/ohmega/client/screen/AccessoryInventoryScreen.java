@@ -18,6 +18,7 @@ import org.jspecify.annotations.NonNull;
 public final class AccessoryInventoryScreen extends AbstractContainerScreen<@NonNull AccessoryInventoryMenu> {
     private final EffectsInInventory effects;
     private final int extraWidth;
+    private final int mostSlotsPerColumn;
 
     @SuppressWarnings("unused")
     public AccessoryInventoryScreen(AccessoryInventoryMenu menu, Inventory inv, Component title) {
@@ -31,6 +32,8 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         } else {
             this.titleLabelX = 97;
         }
+
+        this.mostSlotsPerColumn = Math.min(menu.renderSlots, AccessoryHelper.getSlotTypes().size());
     }
 
     @Override
@@ -63,10 +66,6 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
     }
 
     private void renderAccInv(GuiGraphics gui) {
-        int renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
-        int renderColumns = (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / renderSlots), OhmegaConfig.Client.maxColumns());
-        int slotsAvailable = Math.min(renderColumns * renderSlots, AccessoryHelper.getSlotTypes().size());
-        int mostSlotsPerColumn = Math.min(renderSlots, AccessoryHelper.getSlotTypes().size());
         int x;
 
         if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
@@ -76,17 +75,17 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             x = leftPos + 175 + 2 + 1;
         }
 
-        int lastColumnSlots = slotsAvailable % mostSlotsPerColumn == 0 ? mostSlotsPerColumn : slotsAvailable % mostSlotsPerColumn;
+        int lastColumnSlots = menu.slotsAvailable % mostSlotsPerColumn == 0 ? mostSlotsPerColumn : menu.slotsAvailable % mostSlotsPerColumn;
         int index = 0;
 
-        for (int i = 0; i < renderColumns; i++) {
+        for (int i = 0; i < menu.renderColumns; i++) {
             // Slots
             int slotsCreatedCurrentColumn = 0;
             for (int j = 0; true; j++) {
                 gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + j * 18, 4, 4, 18, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
                 index++;
 
-                if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
+                if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= menu.slotsAvailable) {
                     break;
                 }
             }
@@ -95,7 +94,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 20, 4, 0, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
             // Bottom border
-            if (i >= renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
+            if (i >= menu.renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
                 gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             } else {
                 gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
@@ -109,9 +108,9 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
 
             // Right
             if (i >= lastColumnSlots) {
-                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             } else {
-                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
             }
         }
 
@@ -119,20 +118,20 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 20, 0, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
         // Top right corner
-        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 20, 22, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 20, 22, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
         // Bottom left corner
         gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
 
         // Bottom right corner
-        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * renderColumns, topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (renderColumns - 1), topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
 
         // Intersecting corner
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 5 + 18 * (renderColumns - 1), topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderType::guiTextured, OhmegaCommon.ACCESSORY_LOCATION, x + 5 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
     }
 
@@ -190,9 +189,6 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
                     return true;
                 }
 
-                int renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
-                int mostSlotsPerColumn = Math.min(renderSlots, AccessoryHelper.getSlotTypes().size());
-
                 // Below
                 return y > topPos + 20 + 4 + mostSlotsPerColumn * 18 + 4;
             }
@@ -203,9 +199,6 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
                 if (y > topPos && y < topPos + 20) {
                     return true;
                 }
-
-                int renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
-                int mostSlotsPerColumn = Math.min(renderSlots, AccessoryHelper.getSlotTypes().size());
 
                 // Below
                 return y > topPos + 20 + 4 + mostSlotsPerColumn * 18 + 4;

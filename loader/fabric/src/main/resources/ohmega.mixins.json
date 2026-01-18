@@ -3,7 +3,7 @@
   "package": "com.swacky.ohmega.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "PlayerMixin",
+    "PlayerMixin"
   ],
   "client": [
     "client.AbstractContainerScreenMixin",

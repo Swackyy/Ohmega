@@ -9,7 +9,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The base interface for all accessory items
- * <ul>To make an item an accessory, either:
+ * <p>
+ * To make an item an accessory, either:
+ * <ul>
  * <li>Make your {@link net.minecraft.world.item.Item} class inherit this interface (recommended for your own items)</li>
  * <li>Bind an {@link IAccessory} instance with AccessoryHelper#bindAccessory (for vanilla and other mods' items)</li>
  * </ul>
