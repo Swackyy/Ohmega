@@ -10,8 +10,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 /**
- * <strong>Mostly for internal use</strong>
- * <p>
  * Dynamically creates tags matching each registered {@link AccessoryType}
  */
 public final class OhmegaTags {

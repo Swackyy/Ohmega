@@ -12,19 +12,11 @@ import net.neoforged.bus.api.ICancellableEvent;
  * Instead, to achieve such behaviour, use {@link AccessoryCanUnequipEvent}
  */
 public final class AccessoryUnequipEvent extends Event implements ICancellableEvent {
-    private final Player player;
-    private final ItemStack stack;
+    public final Player player;
+    public final ItemStack stack;
 
     public AccessoryUnequipEvent(Player player, ItemStack stack) {
         this.player = player;
         this.stack = stack;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public ItemStack getStack() {
-        return this.stack;
     }
 }

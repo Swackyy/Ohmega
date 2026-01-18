@@ -15,3 +15,6 @@ test
 remappedSrc
 runs
 *.bat
+
+# oh no you don't
+secrets.properties
