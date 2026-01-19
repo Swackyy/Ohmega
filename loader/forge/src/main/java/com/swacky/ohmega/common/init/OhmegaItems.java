@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.item.AngelRing;
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
