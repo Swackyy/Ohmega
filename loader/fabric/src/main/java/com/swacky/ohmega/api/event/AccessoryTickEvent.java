@@ -33,17 +33,11 @@ public final class AccessoryTickEvent {
         Event<Post> EVENT = EventFactory.createArrayBacked(Post.class,
                 listeners -> (player, stack) -> {
                     for (Post listener : listeners) {
-                        boolean result = listener.process(player, stack);
-
-                        if (result) {
-                            return true;
-                        }
+                        listener.process(player, stack);
                     }
-
-                    return false;
                 }
         );
 
-        boolean process(Player player, ItemStack stack);
+        void process(Player player, ItemStack stack);
     }
 }
