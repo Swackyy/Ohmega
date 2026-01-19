@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraftforge.eventbus.api.IEventBus;

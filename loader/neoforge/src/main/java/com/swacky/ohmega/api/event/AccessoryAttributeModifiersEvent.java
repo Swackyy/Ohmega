@@ -3,12 +3,13 @@ package com.swacky.ohmega.api.event;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 /**
  * Fired after {@link com.swacky.ohmega.api.IAccessory#addDefaultAttributeModifiers(AccessoryModifiers.Builder)}
- * Using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
+ * Cancelling and using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
  */
-public final class AccessoryAttributeModifiersEvent extends Event {
+public final class AccessoryAttributeModifiersEvent extends Event implements ICancellableEvent {
     public final ItemStack stack;
     public final AccessoryModifiers.Builder builder;
 
