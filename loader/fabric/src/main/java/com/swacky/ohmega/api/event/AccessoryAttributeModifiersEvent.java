@@ -7,16 +7,20 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Fired after {@link com.swacky.ohmega.api.IAccessory#addDefaultAttributeModifiers(AccessoryModifiers.Builder)}
- * Using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
+ * Cancelling and using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
  */
 public interface AccessoryAttributeModifiersEvent {
     Event<AccessoryAttributeModifiersEvent> EVENT = EventFactory.createArrayBacked(AccessoryAttributeModifiersEvent.class,
         listeners -> (stack, builder) -> {
             for (AccessoryAttributeModifiersEvent listener : listeners) {
-                listener.process(stack, builder);
+                if (listener.process(stack, builder)) {
+                    return true;
+                }
             }
+
+            return false;
         }
     );
 
-    void process(ItemStack stack, AccessoryModifiers.Builder builder);
+    boolean process(ItemStack stack, AccessoryModifiers.Builder builder);
 }
