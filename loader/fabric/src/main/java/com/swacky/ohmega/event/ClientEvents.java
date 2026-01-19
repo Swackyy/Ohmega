@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
-import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
@@ -22,9 +22,9 @@ public final class ClientEvents {
         if (!bootstrapped) {
             bootstrapped = true;
 
-            ModConfigEvents.loading(OhmegaCommon.MODID).register(ClientEvents::onConfigLoad);
-            ModConfigEvents.reloading(OhmegaCommon.MODID).register(ClientEvents::onConfigReload);
-            ModConfigEvents.unloading(OhmegaCommon.MODID).register(ClientEvents::onConfigUnload);
+            NeoForgeModConfigEvents.loading(OhmegaCommon.MODID).register(ClientEvents::onConfigLoad);
+            NeoForgeModConfigEvents.reloading(OhmegaCommon.MODID).register(ClientEvents::onConfigReload);
+            NeoForgeModConfigEvents.unloading(OhmegaCommon.MODID).register(ClientEvents::onConfigUnload);
             ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
         } else {

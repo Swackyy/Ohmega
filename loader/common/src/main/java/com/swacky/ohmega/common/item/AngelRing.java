@@ -15,11 +15,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 /**
  * This is simply a test and example accessory; its code may be used as a reference to create your own
@@ -32,10 +31,9 @@ public class AngelRing extends Item implements IAccessory {
     }
 
     // This method uses the utility class to easily add tooltips onto the accessory
-    @SuppressWarnings("deprecation")
     @Override
-    public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, @NonNull TooltipFlag flag) {
-        tooltip.accept(AccessoryHelper.getBindTooltip(stack));
+    public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull List<Component> tooltip, @NonNull TooltipFlag flag) {
+        tooltip.add(AccessoryHelper.getBindTooltip(stack));
     }
 
     // Activates the accessory when you equip it
