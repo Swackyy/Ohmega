@@ -11,11 +11,13 @@ mixin {
 }
 
 minecraft {
-    if (mapsMcV == mcV) {
+    mappings channel: "official", version: mcV
+
+    /*if (mapsMcV == mcV) {
         mappings channel: "parchment", version: "${mapsV}-${mapsMcV}"
     } else {
         mappings channel: "parchment", version: "${mapsMcV}-${mapsV}-${mcV}"
-    }
+    }*/
 
     reobf = false
     accessTransformer = file "src/main/resources/META-INF/accesstransformer.cfg"
