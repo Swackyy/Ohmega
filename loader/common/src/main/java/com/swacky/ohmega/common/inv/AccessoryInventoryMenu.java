@@ -27,15 +27,16 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     private final Player player;
     private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
-    public final int renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
-    private final ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
-    public final int renderColumns = (int) Math.min(Math.ceil((double) slotTypes.size() / renderSlots), OhmegaConfig.Client.maxColumns());
-    public final int slotsAvailable = Math.min(renderColumns * renderSlots, slotTypes.size());
+    public final int renderSlots;
+    public final int renderColumns;
+    public final int slotsAvailable;
 
     public AccessoryInventoryMenu(int id, Inventory inv) {
         super(OhmegaMenus.getAccessoryMenu(), id);
         this.player = inv.player;
         int x;
+
+        ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
 
         if (player.level().isClientSide() && OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
             x = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) slotTypes.size() / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
@@ -57,11 +58,19 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         AccessoryContainer container = AccessoryHelper.getContainer(player);
 
         if (!player.level().isClientSide()) {
+            renderSlots = 0;
+            renderColumns = 0;
+            slotsAvailable = 0;
+
             for (int i = 0; i < slotTypes.size(); i++) {
                 // Position does not matter (only in rare cases) on server
                 addSlot(new AccessorySlot(player, container, i, 0, 0, slotTypes.get(i)));
             }
         } else {
+            renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
+            renderColumns = (int) Math.min(Math.ceil((double) slotTypes.size() / renderSlots), OhmegaConfig.Client.maxColumns());
+            slotsAvailable = Math.min(renderColumns * renderSlots, slotTypes.size());
+
             if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
                 // 2px buffer from inv, 4 px buffer on both sides, indexes columns width, 1px to align
                 x += - 2 - 4 * 2 - 18 * renderColumns + 1;
