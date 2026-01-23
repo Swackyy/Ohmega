@@ -11,8 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// Not applied on NeoForge as their extension allows custom display names
-@SuppressWarnings("UnusedMixin")
 @Mixin(KeyBindsList.KeyEntry.class)
 abstract class KeyBindsList$KeyEntryMixin extends KeyBindsList.Entry {
     @Shadow

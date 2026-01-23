@@ -1,6 +1,7 @@
 package com.swacky.ohmega.common.inv;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -257,8 +258,8 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public ResourceLocation getNoItemIcon() {
-            return InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD;
+        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+            return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD);
         }
     }
 }

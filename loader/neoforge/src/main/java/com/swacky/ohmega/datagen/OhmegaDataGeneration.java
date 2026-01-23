@@ -11,6 +11,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.jspecify.annotations.NonNull;
 
@@ -19,24 +20,24 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(modid = OhmegaCommon.MODID)
 public final class OhmegaDataGeneration {
     @SubscribeEvent
-    public static void onGatherData(GatherDataEvent.Client event) {
+    public static void onGatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
+        ExistingFileHelper helper = event.getExistingFileHelper();
 
-        generator.addProvider(true, new OhmegaModelProvider(output));
+        generator.addProvider(true, new OhmegaModelProvider(output, helper));
         generator.addProvider(true, new OhmegaEnUsProvider(output));
 
         // Server
         generator.addProvider(true, new OhmegaAccessoryTypeProvider(output));
 
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        BlockTagsProvider blockTags = new BlockTagsProvider(output, lookupProvider, OhmegaCommon.MODID) {
+        BlockTagsProvider blockTags = new BlockTagsProvider(output, lookupProvider, OhmegaCommon.MODID, helper) {
             @Override
             protected void addTags(HolderLookup.@NonNull Provider provider) {}
         };
 
-
         generator.addProvider(true, blockTags);
-        generator.addProvider(true, new OhmegaTagsProvider(output, lookupProvider,  blockTags.contentsGetter()));
+        generator.addProvider(true, new OhmegaTagsProvider(output, lookupProvider,  blockTags.contentsGetter(), helper));
     }
 }

@@ -150,7 +150,7 @@ public final class AccessoryType {
 
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
-        private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
+        private static final String LOCATION_PREFIX = "item/"; // Mojang sometimes changes this
 
         private boolean displayHoverText = true;
         private String emptySlotPath = OhmegaCommon.rl("accessory_slot_normal").toString();

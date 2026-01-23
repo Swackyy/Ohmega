@@ -5,8 +5,7 @@
   "mixins": [
   ],
   "client": [
-    "client.AbstractContainerScreenMixin",
-    "client.KeyBindsList$KeyEntryMixin"
+    "client.AbstractContainerScreenMixin"
   ],
   "minVersion": "0.8.5"
 }

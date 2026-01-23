@@ -16,7 +16,7 @@ import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -116,7 +116,7 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void onRegisterServerReloadListeners(AddServerReloadListenersEvent event) {
-        event.addListener(OhmegaCommon.RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
+    public static void onRegisterServerReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(AccessoryTypeManager.getInstance());
     }
 }
