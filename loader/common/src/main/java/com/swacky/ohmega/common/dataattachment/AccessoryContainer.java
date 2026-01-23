@@ -3,7 +3,6 @@ package com.swacky.ohmega.common.dataattachment;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Booleans;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
@@ -12,8 +11,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -32,40 +29,6 @@ public final class AccessoryContainer {
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
     ).apply(builder, AccessoryContainer::new));
-
-    @SuppressWarnings("unused")
-    public static final MapCodec<AccessoryContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
-    ).apply(builder, AccessoryContainer::new));
-
-    // Currently unused, but will be when tested further and forge supports this natively
-    @SuppressWarnings("unused")
-    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryContainer> STREAM_CODEC = StreamCodec.composite(
-            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
-            new StreamCodec<>() {
-                @Override
-                public void encode(@NonNull RegistryFriendlyByteBuf buf, boolean @NonNull [] values) {
-                    buf.writeVarInt(values.length);
-
-                    for (boolean value : values) {
-                        buf.writeBoolean(value);
-                    }
-                }
-
-                @Override
-                public boolean @NonNull [] decode(@NonNull RegistryFriendlyByteBuf buf) {
-                    int size = buf.readVarInt();
-                    boolean[] values = new boolean[size];
-
-                    for (int i = 0; i < size; i++) {
-                        values[i] = buf.readBoolean();
-                    }
-
-                    return values;
-                }
-            }, inst -> inst.changed,
-            AccessoryContainer::new);
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
