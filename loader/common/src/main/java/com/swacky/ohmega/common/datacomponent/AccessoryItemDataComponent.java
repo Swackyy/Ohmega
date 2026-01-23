@@ -45,8 +45,8 @@ public final class AccessoryItemDataComponent {
         return active;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @SuppressWarnings("unused")
+    public boolean actuallyEquals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -54,12 +54,26 @@ public final class AccessoryItemDataComponent {
         if (obj instanceof AccessoryItemDataComponent other) {
             return slot == other.slot && active == other.active;
         }
-        
+
         return false;
+    }
+
+    /**
+     * Use {@link #actuallyEquals(Object)} instead, this is only to fix a Minecraft-internal bug
+     */
+    @Override
+    public boolean equals(Object obj) {
+        // Annoyingly, this fixes the drag-click desync but may cause other issues
+        return obj instanceof AccessoryItemDataComponent;
     }
 
     @Override
     public int hashCode() {
         return 31 * slot + Boolean.hashCode(active);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "[slot=" + slot + ", active=" + active + ']';
     }
 }

@@ -33,6 +33,7 @@ public final class AccessoryContainer {
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
     ).apply(builder, AccessoryContainer::new));
 
+    @SuppressWarnings("unused")
     public static final MapCodec<AccessoryContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
@@ -142,16 +143,14 @@ public final class AccessoryContainer {
     }
 
     // Try not to use this for deserialising and syncing
-    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
-        if (stack.isEmpty() || isItemValid(player, index, stack, context) && AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
+    public boolean setStackInSlot(Player player, int index, ItemStack stack, EquipContext context) {
+        if (stack.isEmpty() || isItemValid(player, index, stack, context)) {
             ItemStack current = stacks.get(index);
 
             if (!ItemStack.isSameItemSameComponents(current, stack)) {
                 doUnequip(player, current);
                 doSetStackInSlot(index, stack);
                 doEquip(player, stack, index, context);
-            } else if (changed[index]) {
-                changed[index] = false;
             }
 
             return true;
