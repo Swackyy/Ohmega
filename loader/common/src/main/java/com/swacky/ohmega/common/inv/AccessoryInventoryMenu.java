@@ -31,7 +31,6 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     public final int renderSlots;
     public final int renderColumns;
     public final int slotsAvailable;
-    private boolean suppressRemoteCarried;
 
     public AccessoryInventoryMenu(int id, Inventory inv) {
         super(OhmegaMenus.getAccessoryMenu(), id);
