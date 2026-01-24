@@ -35,7 +35,6 @@ public final class OhmegaDataGeneration {
             protected void addTags(HolderLookup.@NonNull Provider provider) {}
         };
 
-
         generator.addProvider(true, blockTags);
         generator.addProvider(true, new OhmegaTagsProvider(output, lookupProvider,  blockTags.contentsGetter()));
     }
