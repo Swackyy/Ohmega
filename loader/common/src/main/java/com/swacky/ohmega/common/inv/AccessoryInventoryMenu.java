@@ -31,7 +31,6 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     public final int renderSlots;
     public final int renderColumns;
     public final int slotsAvailable;
-    private boolean suppressRemoteCarried;
 
     public AccessoryInventoryMenu(int id, Inventory inv) {
         super(OhmegaMenus.getAccessoryMenu(), id);
@@ -54,7 +53,16 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
             addSlot(new ArmorSlot(inv, player, equipmentSlotType, 39 - i, x + 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[equipmentSlotType.getIndex()]));
         }
 
-        addStandardInventorySlots(inv, x + 8, 84);
+        for (int i = 0; i < 3; ++i) { // Inventory Slots
+            for (int j = 0; j < 9; ++j) {
+                this.addSlot(new Slot(inv, j + (i + 1) * 9, x + 8 + j * 18, 84 + i * 18));
+            }
+        }
+
+        for (int i = 0; i < 9; ++i) { // Hotbar Slots
+            this.addSlot(new Slot(inv, i, x + 8 + i * 18, 142));
+        }
+
         addSlot(new OffhandSlot(inv, 40, x + 77, 62)); // Offhand Slot
 
         AccessoryContainer container = AccessoryHelper.getContainer(player);
@@ -188,7 +196,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                             AccessoryHelper.getContainer(player).doUnequip(player, stack);
                             return ItemStack.EMPTY;
                         }
-                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
+                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.canUseSlot(equipmentSlot)) {
                         int i = 8 - equipmentSlot.getIndex();
 
                         if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour

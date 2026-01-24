@@ -31,6 +31,6 @@ final class InternalLangHelper {
     }
 
     void addConfigButton(String key, String translation) {
-        addConfig(key + ".button", translation);
+        provider.add(key + ".button", translation);
     }
 }

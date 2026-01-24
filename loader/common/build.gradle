@@ -3,10 +3,8 @@ plugins {
     id "net.neoforged.moddev"
 }
 
-version "common+${mcV}"
-
 neoForge {
-    neoFormVersion.set "${mcV}-${neoFormV}"
+    neoFormVersion = "${mcV}-${neoFormV}"
 
     parchment {
         mappingsVersion.set mapsV

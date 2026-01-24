@@ -21,7 +21,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 public final class OhmegaNetworkingImpl {
@@ -36,7 +35,10 @@ public final class OhmegaNetworkingImpl {
             ServerPlayer player = context.player();
             ItemStack stack = player.containerMenu.getCarried();
             if (!stack.isEmpty()) {
-                AbstractContainerMenu.dropOrPlaceInInventory(player, stack);
+                if (!player.getInventory().add(stack)) {
+                    player.drop(stack, false);
+                }
+
                 player.containerMenu.setCarried(ItemStack.EMPTY);
             }
 

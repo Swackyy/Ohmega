@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.fml.config.ModConfig;
 import org.jspecify.annotations.NonNull;
 
@@ -63,9 +64,9 @@ public final class Ohmega implements ModInitializer {
             }
 
             @Override
-            public @NonNull CompletableFuture<Void> reload(PreparationBarrier barrier, ResourceManager manager, Executor backgroundExecutor, Executor gameExecutor) {
-                AccessoryTypeManager.getInstance().reload(barrier, manager, backgroundExecutor, gameExecutor);
-                return CompletableFuture.completedFuture(null);
+            public @NonNull CompletableFuture<Void> reload(PreparationBarrier barrier, ResourceManager manager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
+                AccessoryTypeManager.getInstance().reload(barrier, manager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
+                return CompletableFuture.allOf();
             }
         });
     }

@@ -26,6 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -430,9 +431,9 @@ public final class AccessoryHelper {
      * Used when trying to equip an accessory via right-clicking the held item
      * @param player {@link Player} to equip the accessory on
      * @param hand the used {@link InteractionHand} to get the held item from
-     * @return {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
+     * @return Holder for {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
      */
-    public static InteractionResult tryEquip(Player player, InteractionHand hand) {
+    public static InteractionResultHolder<ItemStack> tryEquip(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
         IAccessory accessory = getBoundAccessory(item);
@@ -450,12 +451,12 @@ public final class AccessoryHelper {
                         player.playSound(accessory.getEquipSound().value(), 1, 1);
                     }
 
-                    return InteractionResult.SUCCESS;
+                    return InteractionResultHolder.sidedSuccess(stack, player.level().isClientSide());
                 }
             }
         }
 
-        return InteractionResult.PASS;
+        return InteractionResultHolder.pass(stack);
     }
 
     /**

@@ -3,7 +3,7 @@ package com.swacky.ohmega.mixin;
 import com.swacky.ohmega.api.AccessoryHelper;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,14 +17,14 @@ abstract class ServerPlayerGameModeMixin {
             method = "useItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
-    private InteractionResult useItem(ItemStack stack, Level level, Player player, InteractionHand hand) {
-        InteractionResult original = stack.use(level, player, hand);
+                    target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;"))
+    private InteractionResultHolder<ItemStack> useItem(ItemStack stack, Level level, Player player, InteractionHand hand) {
+        InteractionResultHolder<ItemStack> original = stack.use(level, player, hand);
 
-        if (!original.consumesAction()) {
-            InteractionResult candidate = AccessoryHelper.tryEquip(player, hand);
+        if (!original.getResult().consumesAction()) {
+            InteractionResultHolder<ItemStack> candidate = AccessoryHelper.tryEquip(player, hand);
 
-            if (candidate.consumesAction()) {
+            if (candidate.getResult().consumesAction()) {
                 return candidate;
             }
         }
