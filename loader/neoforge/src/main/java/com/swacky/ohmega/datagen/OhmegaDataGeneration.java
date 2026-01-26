@@ -17,7 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = OhmegaCommon.MODID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = OhmegaCommon.MODID)
 public final class OhmegaDataGeneration {
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {

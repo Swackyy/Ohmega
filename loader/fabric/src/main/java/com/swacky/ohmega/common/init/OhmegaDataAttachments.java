@@ -14,7 +14,10 @@ public final class OhmegaDataAttachments {
             .persistent(AccessoryContainer.CODEC));
 
     private static <T> AttachmentType<T> register(String id, Consumer<AttachmentRegistry.Builder<T>> consumer) {
-        return AttachmentRegistry.create(OhmegaCommon.rl(id), consumer);
+        AttachmentRegistry.Builder<T> builder = AttachmentRegistry.builder();
+
+        consumer.accept(builder);
+        return builder.buildAndRegister(OhmegaCommon.rl(id));
     }
 
     public static void init() {}

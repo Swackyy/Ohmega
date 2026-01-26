@@ -11,14 +11,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-@EventBusSubscriber(modid = OhmegaCommon.MODID, value = Dist.CLIENT)
-public final class ClientEvents {
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = OhmegaCommon.MODID, value = Dist.CLIENT)
+public class ClientModEvents {
     @SubscribeEvent
     public static void onConfigLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
@@ -47,27 +44,12 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onItemTooltip(ItemTooltipEvent event) {
-        ClientCallbacks.onItemTooltip(event.getItemStack(), event.getToolTip());
-    }
-
-    @SubscribeEvent
     public static void onKeybindRegistration(RegisterKeyMappingsEvent event) {
         event.register(OhmegaBinds.OPEN_ACC_INV);
     }
 
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.Key event) {
-        ClientCallbacks.onKeyInput();
-    }
-
-    @SubscribeEvent
     public static void onMenuRegistration(RegisterMenuScreensEvent event) {
         event.register(OhmegaMenus.getAccessoryMenu(), AccessoryInventoryScreen::new);
-    }
-
-    @SubscribeEvent
-    public static void onPostScreenInit(ScreenEvent.Init.Post event) {
-        ClientCallbacks.onPostScreenInit(event.getScreen(), event::addListener);
     }
 }
