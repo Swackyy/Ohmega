@@ -10,8 +10,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(OhmegaCommon.MODID)
 public final class Ohmega {
@@ -29,7 +27,6 @@ public final class Ohmega {
             OhmegaCommon.bootstrapClient();
 
             container.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
-            container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         }
     }
 }

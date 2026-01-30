@@ -16,7 +16,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jspecify.annotations.NonNull;
 
@@ -63,7 +62,7 @@ public final class AccessorySlot extends Slot {
         }
 
         IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
-        boolean original = !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE);
+        boolean original = !EnchantmentHelper.hasBindingCurse(stack);
 
         if (accessory != null) {
             original &= accessory.canUnequip(player, getItem());

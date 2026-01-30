@@ -12,17 +12,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
 public final class AccessoryInventoryMenu extends AbstractContainerMenu {
-    public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     private final Player player;
@@ -50,7 +52,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         for (int i = 0; i < 4; i++) { // Armour Slots
             EquipmentSlot equipmentSlotType = VALID_EQUIPMENT_SLOTS[i];
-            addSlot(new ArmorSlot(inv, player, equipmentSlotType, 39 - i, x + 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[equipmentSlotType.getIndex()]));
+            addSlot(new ArmorSlot(inv, player, equipmentSlotType, 39 - i, x + 8, 8 + i * 18));
         }
 
         for (int i = 0; i < 3; ++i) { // Inventory Slots
@@ -135,7 +137,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     @Override
     public void slotsChanged(@NonNull Container container) {
         if (player.level() instanceof ServerLevel level) {
-            CraftingMenu.slotChangedCraftingGrid(this, level, player, craftMatrix, craftResult, null);
+            CraftingMenu.slotChangedCraftingGrid(this, level, player, craftMatrix, craftResult);
         }
 
         super.slotsChanged(container);
@@ -184,7 +186,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 AccessoryType type = AccessoryHelper.getType(item);
                 int openIndex = AccessoryHelper.getFirstOpenSlot(player, type);
                 IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
-                EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(stack);
+                EquipmentSlot equipmentSlot = LivingEntity.getEquipmentSlotForItem(stack);
 
                 if (accessory != null && index > 8 && index < 45 && openIndex != -1 && getSlot(46 + openIndex).mayPlace(stack)) { // Inventory -> accessory
                     stack0.shrink(1);
@@ -196,7 +198,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                             AccessoryHelper.getContainer(player).doUnequip(player, stack);
                             return ItemStack.EMPTY;
                         }
-                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.canUseSlot(equipmentSlot)) {
+                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.canUseSlot(equipmentSlot)) {
                         int i = 8 - equipmentSlot.getIndex();
 
                         if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
@@ -253,6 +255,42 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         setCarried(carried);
         this.stateId = stateId;
+    }
+
+    private static class ArmorSlot extends Slot {
+        private static final ResourceLocation[] EMPTY_SLOT_LOCATIONS = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
+
+        private final Player player;
+        private final EquipmentSlot slot;
+
+        public ArmorSlot(Container container, Player player, EquipmentSlot slot, int index, int x, int y) {
+            super(container, index, x, y);
+            this.player = player;
+            this.slot = slot;
+        }
+
+        public void setByPlayer(@NonNull ItemStack newStack, @NonNull ItemStack oldStack) {
+            InventoryMenu.onEquipItem(player, slot, newStack, oldStack);
+            super.setByPlayer(newStack, oldStack);
+        }
+
+        public int getMaxStackSize() {
+            return 1;
+        }
+
+        public boolean mayPlace(@NonNull ItemStack stack) {
+            return slot == Mob.getEquipmentSlotForItem(stack);
+        }
+
+        public boolean mayPickup(@NonNull Player player) {
+            ItemStack stack = this.getItem();
+
+            return super.mayPickup(player) && (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(stack));
+        }
+
+        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+            return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_LOCATIONS[slot.getIndex()]);
+        }
     }
 
     private static class OffhandSlot extends Slot {

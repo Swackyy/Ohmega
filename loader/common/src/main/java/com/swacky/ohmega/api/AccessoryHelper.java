@@ -278,7 +278,7 @@ public final class AccessoryHelper {
 
             if (attribute != null) {
                 if (add) {
-                    if (!attribute.hasModifier(entry.modifier().id())) {
+                    if (!attribute.hasModifier(entry.modifier())) {
                         attribute.addTransientModifier(entry.modifier());
                     }
                 } else {
@@ -306,7 +306,7 @@ public final class AccessoryHelper {
         }
 
         for (String id : OhmegaConfig.Server.slotTypes()) {
-            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(id)));
+            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.tryParse(id)));
         }
 
         return builder.build();
@@ -320,7 +320,7 @@ public final class AccessoryHelper {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
         for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
-            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.parse(id)));
+            builder.add(AccessoryTypeManager.getInstance().get(ResourceLocation.tryParse(id)));
         }
 
         return builder.build().asList();

@@ -194,14 +194,32 @@ public final class AccessoryType {
         }
 
         public AccessoryType build(String namespace, String path) {
-            return new AccessoryType(
-                    ResourceLocation.fromNamespaceAndPath(namespace, path),
-                    displayHoverText,
-                    emptySlotPath.indexOf(':') == -1 ?
-                            ResourceLocation.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath) :
-                            ResourceLocation.parse(emptySlotPath).withPrefix(LOCATION_PREFIX),
-                    hoverTextColour,
-                    priority);
+            ResourceLocation id = ResourceLocation.tryBuild(namespace, path);
+
+            if (id != null) {
+                ResourceLocation location;
+
+                if (emptySlotPath.indexOf(':') == -1){
+                    location = ResourceLocation.tryBuild(namespace, LOCATION_PREFIX + emptySlotPath);
+                } else {
+                    location = ResourceLocation.tryParse(emptySlotPath);
+
+                    if (location != null) {
+                        location = location.withPrefix(LOCATION_PREFIX);
+                    }
+                }
+
+                if (location != null) {
+                    return new AccessoryType(
+                            id,
+                            displayHoverText,
+                            location,
+                            hoverTextColour,
+                            priority);
+                }
+            }
+
+            return null;
         }
     }
 

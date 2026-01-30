@@ -57,7 +57,7 @@ public final class Ohmega implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
 
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(OhmegaCommon.RELOAD_LISTENER_ID, lookup -> new IdentifiableResourceReloadListener() {
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
                 return OhmegaCommon.RELOAD_LISTENER_ID;

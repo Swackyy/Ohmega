@@ -58,7 +58,7 @@ public final class ClientCallbacks {
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.screen == null && mc.player != null) {
-            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && (mc.player.portalProcess == null || !mc.player.portalProcess.isInsidePortalThisTick())) {
+            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && !mc.player.isInsidePortal) {
                 if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                     mc.player.sendOpenInventory();
                 } else if (!mc.player.isCreative() && !mc.player.isSpectator()) {

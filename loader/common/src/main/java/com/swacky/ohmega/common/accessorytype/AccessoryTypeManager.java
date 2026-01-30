@@ -36,15 +36,25 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(DEFAULT_SIZE);
 
         for (String namespace : manager.getNamespaces()) {
-            for (Resource resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(namespace, LOCATION))) {
-                try (Reader reader = resource.openAsReader()) {
-                    Map<String, AccessoryType.Builder> map = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
+            ResourceLocation location = ResourceLocation.tryBuild(namespace, LOCATION);
 
-                    for (Map.Entry<String, AccessoryType.Builder> entry : map.entrySet()) {
-                        builder.add(entry.getValue().build(namespace, entry.getKey()));
+            if (location != null) {
+                for (Resource resource : manager.getResourceStack(location)) {
+                    try (Reader reader = resource.openAsReader()) {
+                        Map<String, AccessoryType.Builder> map = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
+
+                        for (Map.Entry<String, AccessoryType.Builder> entry : map.entrySet()) {
+                            AccessoryType type = entry.getValue().build(namespace, entry.getKey());
+
+                            if (type != null) {
+                                builder.add(type);
+                            } else {
+                                OhmegaCommon.LOGGER.warn("Skipping malformed accessory type definition with id: '{}' in DataPack '{}'", entry.getKey(), resource.sourcePackId());
+                            }
+                        }
+                    } catch (Exception e) {
+                        OhmegaCommon.LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
                     }
-                } catch (Exception e) {
-                    OhmegaCommon.LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
                 }
             }
         }
@@ -84,7 +94,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
 
     public boolean exists(String id) {
         for (AccessoryType type : types) {
-            if (type.getId().equals(ResourceLocation.parse(id))) {
+            if (type.getId().equals(ResourceLocation.tryParse(id))) {
                 return true;
             }
         }

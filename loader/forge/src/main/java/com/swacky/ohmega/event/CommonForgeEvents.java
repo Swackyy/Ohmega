@@ -9,10 +9,8 @@ import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
@@ -120,13 +118,13 @@ public final class CommonForgeEvents {
         }
 
         @Override
-        public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner).result().orElseGet(CompoundTag::new);
+        public CompoundTag serializeNBT() {
+            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(NbtOps.INSTANCE, inner).result().orElseGet(CompoundTag::new);
         }
 
         @Override
-        public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag).resultOrPartial().ifPresent(data -> {
+        public void deserializeNBT(CompoundTag tag) {
+            AccessoryContainer.CODEC.parse(NbtOps.INSTANCE, tag).resultOrPartial().ifPresent(data -> {
                 inner = data;
                 inner.onAttach(player);
             });
