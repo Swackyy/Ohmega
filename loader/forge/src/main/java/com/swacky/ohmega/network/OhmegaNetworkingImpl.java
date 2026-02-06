@@ -2,6 +2,7 @@ package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.SimpleChannel;
 
@@ -38,14 +40,39 @@ public final class OhmegaNetworkingImpl {
                 .serverAcceptedVersions((status, version) -> true)
                 .simpleChannel();
 
-        net.play().serverbound().addMain(OpenAccessoryInventoryPacket.class, OpenAccessoryInventoryPacket.CODEC, C2S::handleOpenAccessoryInventory);
-        net.play().serverbound().addMain(OpenInventoryPacket.class, OpenInventoryPacket.CODEC, C2S::handleOpenInventory);
-        net.play().serverbound().addMain(ResizeContainerPacket.class, ResizeContainerPacket.CODEC, C2S::handleResizeContainer);
-        net.play().serverbound().addMain(UseAccessoryPacket.class, UseAccessoryPacket.CODEC, C2S::handleUseAccessory);
+        int packetId = 0;
 
-        net.play().clientbound().addMain(SyncAccessorySlotsPacket.class, SyncAccessorySlotsPacket.CODEC, S2C::handleSyncAccessorySlots);
-        net.configuration().clientbound().addMain(SyncAccessoryTypesPacket.class, SyncAccessoryTypesPacket.CODEC, S2C::handleSyncAccessoryTypes);
+        net.messageBuilder(OpenAccessoryInventoryPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenAccessoryInventoryPacket::write)
+                .decoder(OpenAccessoryInventoryPacket::new)
+                .consumerMainThread(C2S::handleOpenAccessoryInventory)
+                .add();
+        net.messageBuilder(OpenInventoryPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenInventoryPacket::write)
+                .decoder(OpenInventoryPacket::new)
+                .consumerMainThread(C2S::handleOpenInventory)
+                .add();
+        net.messageBuilder(ResizeContainerPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ResizeContainerPacket::write)
+                .decoder(ResizeContainerPacket::new)
+                .consumerMainThread(C2S::handleResizeContainer)
+                .add();
+        net.messageBuilder(UseAccessoryPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(UseAccessoryPacket::write)
+                .decoder(UseAccessoryPacket::new)
+                .consumerMainThread(C2S::handleUseAccessory)
+                .add();
 
+        net.messageBuilder(SyncAccessorySlotsPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncAccessorySlotsPacket::write)
+                .decoder(SyncAccessorySlotsPacket::new)
+                .consumerMainThread(S2C::handleSyncAccessorySlots)
+                .add();
+        net.messageBuilder(SyncAccessoryTypesPacket.class, packetId, NetworkDirection.LOGIN_TO_CLIENT)
+                .encoder(SyncAccessoryTypesPacket::write)
+                .decoder(SyncAccessoryTypesPacket::new)
+                .consumerMainThread(S2C::handleSyncAccessoryTypes)
+                .add();
         OhmegaNetworkingImpl.channel = net;
     }
 
@@ -145,7 +172,14 @@ public final class OhmegaNetworkingImpl {
                 ClientLevel level = Minecraft.getInstance().level;
                 if (level != null) {
                     if (level.getEntity(packet.playerId()) instanceof Player player) {
-                        AccessoryHelper.getContainer(player).syncSlots(player, packet.indexes(), packet.stacks());
+                        AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+                        for (int i = 0; i < packet.indexes().length; i++) {
+                            ItemStack stack = packet.stacks().get(i);
+                            int index = packet.indexes()[i];
+
+                            container.setStackInSlot(player, index, stack, EquipContext.GENERIC);
+                        }
                     }
                 }
             });
@@ -154,7 +188,7 @@ public final class OhmegaNetworkingImpl {
         }
 
         public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, CustomPayloadEvent.Context context) {
-            context.enqueueWork(() -> AccessoryTypeManager.getInstance().apply(packet.types));
+            context.enqueueWork(() -> AccessoryTypeManager.getInstance().apply(packet.types()));
             context.setPacketHandled(true);
         }
     }

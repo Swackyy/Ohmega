@@ -5,28 +5,52 @@ import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.login.custom.CustomQueryAnswerPayload;
+import net.minecraft.network.protocol.login.custom.CustomQueryPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
-public final class SyncAccessoryTypesPacket implements CustomPacketPayload {
-    public static final Type<@NonNull SyncAccessoryTypesPacket> TYPE = new Type<>(OhmegaCommon.rl("sync_accessory_types"));
-    public static final StreamCodec<FriendlyByteBuf, SyncAccessoryTypesPacket> CODEC = StreamCodec.composite(
-            AccessoryType.SET_STREAM_CODEC, inst -> inst.types,
-            SyncAccessoryTypesPacket::new);
+import java.util.function.IntSupplier;
 
-    public final ImmutableSet<AccessoryType> types;
-
-    private SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) {
-        this.types = types;
-    }
+public record SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) implements CustomPacketPayload, CustomQueryAnswerPayload, CustomQueryPayload, IntSupplier {
+    public static final ResourceLocation ID = OhmegaCommon.rl("sync_accessory_types");
 
     public SyncAccessoryTypesPacket() {
         this(AccessoryTypeManager.getInstance().getTypes());
     }
 
+    public SyncAccessoryTypesPacket(FriendlyByteBuf buf) {
+        this(readTypes(buf));
+    }
+
+    private static ImmutableSet<AccessoryType> readTypes(FriendlyByteBuf buf) {
+        int size = buf.readVarInt();
+        ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(size);
+
+        for (int i = 0; i < size; i++) {
+            builder.add(AccessoryType.read(buf));
+        }
+
+        return builder.build();
+    }
+
     @Override
-    public @NonNull Type<? extends @NonNull CustomPacketPayload> type() {
-        return TYPE;
+    public void write(@NonNull FriendlyByteBuf buf) {
+        buf.writeVarInt(types.size());
+
+        for (AccessoryType type : types) {
+            type.write(buf);
+        }
+    }
+
+    @Override
+    public @NonNull ResourceLocation id() {
+        return ID;
+    }
+
+    @Override
+    public int getAsInt() {
+        return 0;
     }
 }

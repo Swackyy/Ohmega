@@ -12,10 +12,13 @@ import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.neoforged.fml.config.ModConfig;
+
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
 public final class OhmegaClient implements ClientModInitializer {
@@ -29,7 +32,16 @@ public final class OhmegaClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(OhmegaBinds.OPEN_ACC_INV);
         MenuScreens.register(OhmegaMenusImpl.ACCESSORY_INVENTORY, AccessoryInventoryScreen::new);
 
-        ClientPlayNetworking.registerGlobalReceiver(SyncAccessorySlotsPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessorySlots);
-        ClientConfigurationNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessoryTypes);
+        ClientLoginNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.ID, (client, handler, buf, sender) -> {
+            SyncAccessoryTypesPacket packet = new SyncAccessoryTypesPacket(buf);
+
+            OhmegaNetworkingImpl.S2C.handleSyncAccessoryTypes(packet);
+            return CompletableFuture.completedFuture(PacketByteBufs.empty());
+        });
+        ClientPlayNetworking.registerGlobalReceiver(SyncAccessorySlotsPacket.ID, (client, handler, buf, sender) -> {
+            SyncAccessorySlotsPacket packet = new SyncAccessorySlotsPacket(buf);
+
+            client.execute(() -> OhmegaNetworkingImpl.S2C.handleSyncAccessorySlots(packet, client.level));
+        });
     }
 }

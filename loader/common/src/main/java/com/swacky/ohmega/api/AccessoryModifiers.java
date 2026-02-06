@@ -1,13 +1,10 @@
 package com.swacky.ohmega.api;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.world.entity.EquipmentSlotGroup;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 /**
  * A class for adding default {@link AttributeModifier}s to accessory items.
@@ -15,30 +12,25 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * Supports attributes added when equipped, and when equipped but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
 public final class AccessoryModifiers {
-    public static final Codec<AccessoryModifiers> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            ItemAttributeModifiers.CODEC.fieldOf("passiveModifiers").forGetter(AccessoryModifiers::getPassive),
-            ItemAttributeModifiers.CODEC.fieldOf("activeModifiers").forGetter(AccessoryModifiers::getActive)
-    ).apply(inst, AccessoryModifiers::new));
+    private final Multimap<Attribute, AttributeModifier> passiveModifiers;
+    private final Multimap<Attribute, AttributeModifier> activeModifiers;
 
-    private final ItemAttributeModifiers passiveModifiers;
-    private final ItemAttributeModifiers activeModifiers;
-
-    private AccessoryModifiers(ItemAttributeModifiers passiveModifiers, ItemAttributeModifiers activeModifiers) {
+    private AccessoryModifiers(Multimap<Attribute, AttributeModifier> passiveModifiers, Multimap<Attribute, AttributeModifier> activeModifiers) {
         this.passiveModifiers = passiveModifiers;
         this.activeModifiers = activeModifiers;
     }
 
-    public ItemAttributeModifiers getPassive() {
+    public Multimap<Attribute, AttributeModifier> getPassive() {
         return passiveModifiers;
     }
 
-    public ItemAttributeModifiers getActive() {
+    public Multimap<Attribute, AttributeModifier> getActive() {
         return activeModifiers;
     }
 
     public static class Builder {
-        private ItemAttributeModifiers.Builder passiveModifiers = ItemAttributeModifiers.builder();
-        private ItemAttributeModifiers.Builder activeModifiers = ItemAttributeModifiers.builder();
+        private ImmutableMultimap.Builder<Attribute, AttributeModifier> passiveModifiers = new ImmutableMultimap.Builder<>();
+        private ImmutableMultimap.Builder<Attribute, AttributeModifier> activeModifiers = new ImmutableMultimap.Builder<>();
 
         /**
          * Add a modifier to the accessory to be applied when equipped
@@ -46,11 +38,11 @@ public final class AccessoryModifiers {
          * @param modifier defines how the attribute supplied will be modified
          * @param active if true, the modifier will only be applied when the accessory is active
          */
-        public void add(Holder<Attribute> attribute, AttributeModifier modifier, boolean active) {
+        public void add(Attribute attribute, AttributeModifier modifier, boolean active) {
             if (active) {
-                activeModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
+                activeModifiers.put(attribute, modifier);
             } else {
-                passiveModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
+                passiveModifiers.put(attribute, modifier);
             }
         }
 
@@ -59,7 +51,7 @@ public final class AccessoryModifiers {
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
-        public void addPassive(Holder<Attribute> attribute, AttributeModifier modifier) {
+        public void addPassive(Attribute attribute, AttributeModifier modifier) {
             add(attribute, modifier, false);
         }
 
@@ -68,7 +60,7 @@ public final class AccessoryModifiers {
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
-        public void addActive(Holder<Attribute> attribute, AttributeModifier modifier) {
+        public void addActive(Attribute attribute, AttributeModifier modifier) {
             add(attribute, modifier, true);
         }
 
@@ -76,7 +68,7 @@ public final class AccessoryModifiers {
          * @return all default attribute modifiers that will be applied when built ({@link #build()}) into a {@link AccessoryModifiers}
          */
         @SuppressWarnings("unused")
-        public ItemAttributeModifiers getPassiveModifiers() {
+        public Multimap<Attribute, AttributeModifier> getPassiveModifiers() {
             return passiveModifiers.build();
         }
 
@@ -84,7 +76,7 @@ public final class AccessoryModifiers {
          * @return all default attribute modifiers that will only be applied when the accessory is active when built ({@link #build()}) into a {@link AccessoryModifiers}
          */
         @SuppressWarnings("unused")
-        public ItemAttributeModifiers getActiveModifiers() {
+        public Multimap<Attribute, AttributeModifier> getActiveModifiers() {
             return activeModifiers.build();
         }
 
@@ -92,8 +84,8 @@ public final class AccessoryModifiers {
          * Clears all attribute modifiers
          */
         public void clear() {
-            passiveModifiers = ItemAttributeModifiers.builder();
-            activeModifiers = ItemAttributeModifiers.builder();
+            passiveModifiers = ImmutableMultimap.builder();
+            activeModifiers = ImmutableMultimap.builder();
         }
 
         /**

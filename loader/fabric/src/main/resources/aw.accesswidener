@@ -3,7 +3,6 @@ accessWidener v2 named
 mutable field net/minecraft/client/gui/screens/controls/KeyBindsList$KeyEntry name Lnet/minecraft/network/chat/Component;
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen leftPos I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen topPos I
-accessible field net/minecraft/client/gui/screens/inventory/AbstractRecipeBookScreen recipeBookComponent Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;
 accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
 accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraft/client/Minecraft;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;

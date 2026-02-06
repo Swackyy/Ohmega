@@ -1,79 +1,32 @@
 package com.swacky.ohmega.common.datacomponent;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.nbt.CompoundTag;
+
+import java.util.function.Supplier;
 
 public final class AccessoryItemDataComponent {
-    public static final Codec<AccessoryItemDataComponent> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            Codec.INT.fieldOf("slot").forGetter(AccessoryItemDataComponent::getSlot),
-            Codec.BOOL.fieldOf("active").forGetter(AccessoryItemDataComponent::isActive)
-    ).apply(inst, AccessoryItemDataComponent::new));
+    private static final String SLOT_KEY = "Slot";
+    private static final String ACTIVE_KEY = "Active";
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryItemDataComponent> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, AccessoryItemDataComponent::getSlot,
-            ByteBufCodecs.BOOL, AccessoryItemDataComponent::isActive,
-            AccessoryItemDataComponent::new);
+    private final Supplier<CompoundTag> supplier;
 
-    private int slot;
-    private boolean active;
-
-    private AccessoryItemDataComponent(int slot, boolean active) {
-        this.slot = slot;
-        this.active = active;
-    }
-
-    public AccessoryItemDataComponent() {
-        this(-1, false);
+    public AccessoryItemDataComponent(Supplier<CompoundTag> supplier) {
+        this.supplier = supplier;
     }
 
     public void setSlot(int slot) {
-        this.slot = slot;
+        supplier.get().putInt(SLOT_KEY, slot);
     }
 
     public void setActive(boolean value) {
-        active = value;
+        supplier.get().putBoolean(ACTIVE_KEY, value);
     }
 
     public int getSlot() {
-        return slot;
+        return supplier.get().getInt(SLOT_KEY);
     }
 
     public boolean isActive() {
-        return active;
-    }
-
-    @SuppressWarnings("unused")
-    public boolean actuallyEquals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj instanceof AccessoryItemDataComponent other) {
-            return slot == other.slot && active == other.active;
-        }
-
-        return false;
-    }
-
-    /**
-     * Use {@link #actuallyEquals(Object)} instead, this is only to fix a Minecraft-internal bug
-     */
-    @Override
-    public boolean equals(Object obj) {
-        // Annoyingly, this fixes the drag-click desync but may cause other issues
-        return obj instanceof AccessoryItemDataComponent;
-    }
-
-    @Override
-    public int hashCode() {
-        return 31 * slot + Boolean.hashCode(active);
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName() + "[slot=" + slot + ", active=" + active + ']';
+        return supplier.get().getBoolean(ACTIVE_KEY);
     }
 }

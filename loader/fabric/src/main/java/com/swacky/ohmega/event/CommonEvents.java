@@ -1,17 +1,12 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,7 +24,6 @@ public final class CommonEvents {
             ServerLivingEntityEvents.AFTER_DEATH.register(CommonEvents::onLivingEntityDeath);
             ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(CommonEvents::onPlayerChangeDimension);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
-            ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onServerConfigure);
         } else {
             throw new RuntimeException("Cannot bootstrap " + CommonEvents.class.getName() + " multiple times");
         }
@@ -55,9 +49,5 @@ public final class CommonEvents {
         if (entity instanceof ServerPlayer tracked) {
             CommonCallbacks.onPlayerTrack(tracker, tracked);
         }
-    }
-
-    private static void onServerConfigure(ServerConfigurationPacketListenerImpl handler, MinecraftServer server) {
-        handler.send(new ClientboundCustomPayloadPacket(new SyncAccessoryTypesPacket()));
     }
 }

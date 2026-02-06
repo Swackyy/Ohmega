@@ -6,15 +6,15 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Collections;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = OhmegaCommon.MODID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = OhmegaCommon.MODID)
 public final class CommonGameEvents {
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
@@ -42,8 +42,10 @@ public final class CommonGameEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerPostTick(PlayerTickEvent.Post event) {
-        CommonCallbacks.onPlayerPostTick(event.getEntity());
+    public static void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            CommonCallbacks.onPlayerPostTick(event.player);
+        }
     }
 
     @SubscribeEvent

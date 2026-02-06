@@ -6,8 +6,6 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import com.swacky.ohmega.network.OhmegaNetworkingImpl;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -25,10 +23,8 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.config.SimpleConfigurationTask;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collections;
@@ -89,17 +85,10 @@ public final class CommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onRegisterConfigTasks(GatherLoginConfigurationTasksEvent event) {
-        event.addTask(new SimpleConfigurationTask(TYPE,
-                () -> OhmegaNetworkingImpl.S2C.send(event.getConnection(), new SyncAccessoryTypesPacket())));
-    }
-
-    @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(AccessoryTypeManager.getInstance());
     }
 
-    @SuppressWarnings("deprecation")
     private static class AccessoryContainerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         private AccessoryContainer inner;
         private final LazyOptional<AccessoryContainer> cap;
@@ -124,10 +113,8 @@ public final class CommonForgeEvents {
 
         @Override
         public void deserializeNBT(CompoundTag tag) {
-            AccessoryContainer.CODEC.parse(NbtOps.INSTANCE, tag).resultOrPartial().ifPresent(data -> {
-                inner = data;
-                inner.onAttach(player);
-            });
+            inner = AccessoryContainer.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseGet(AccessoryContainer::new);
+            inner.onAttach(player);
         }
     }
 }

@@ -26,7 +26,7 @@ import java.util.List;
 
 public final class AccessoryContainer {
     public static final Codec<AccessoryContainer> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
+            ItemStack.CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
     ).apply(builder, AccessoryContainer::new));
 
@@ -105,12 +105,12 @@ public final class AccessoryContainer {
         onContentsChanged(index);
     }
 
-    // Try not to use this for deserialising and syncing
+    // Try not to use this for deserialising
     public boolean setStackInSlot(Player player, int index, ItemStack stack, EquipContext context) {
         if (stack.isEmpty() || isItemValid(player, index, stack, context)) {
             ItemStack current = stacks.get(index);
 
-            if (!ItemStack.isSameItemSameComponents(current, stack)) {
+            if (!ItemStack.isSameItemSameTags(current, stack)) {
                 doUnequip(player, current);
                 doSetStackInSlot(index, stack);
                 doEquip(player, stack, index, context);
@@ -156,6 +156,7 @@ public final class AccessoryContainer {
         }
     }
 
+    // Do not use this for generic syncing, only for specific changes that happen only on the server side
     public void syncSlots(Player player, int[] indexes, List<ItemStack> stacks) {
         for (int i = 0; i < indexes.length; i++) {
             ItemStack stack = stacks.get(i);

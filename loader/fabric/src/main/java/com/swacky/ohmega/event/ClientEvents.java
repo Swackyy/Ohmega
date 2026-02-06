@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.fml.config.ModConfig;
@@ -54,7 +53,7 @@ public final class ClientEvents {
         }
     }
 
-    private static void onItemTooltip(ItemStack stack, Item.TooltipContext context, TooltipFlag flag, List<Component> tooltip) {
+    private static void onItemTooltip(ItemStack stack, TooltipFlag flag, List<Component> tooltip) {
         ClientCallbacks.onItemTooltip(stack, tooltip);
     }
 

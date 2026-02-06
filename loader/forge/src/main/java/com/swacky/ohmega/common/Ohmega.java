@@ -1,7 +1,6 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -26,7 +25,6 @@ public final class Ohmega {
 
         IEventBus bus = context.getModEventBus();
 
-        OhmegaDataComponentsImpl.register(bus);
         OhmegaItems.register(bus);
         OhmegaMenusImpl.register(bus);
 

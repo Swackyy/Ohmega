@@ -1,45 +1,47 @@
 package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.OhmegaCommon;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.VarInt;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks) implements CustomPacketPayload {
-    public static final Type<@NonNull SyncAccessorySlotsPacket> TYPE = new Type<>(OhmegaCommon.rl("sync_accessory_slots"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncAccessorySlotsPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, inst -> inst.playerId,
-            new StreamCodec<ByteBuf, int[]>() {
-                public int @NonNull [] decode(@NonNull ByteBuf buf) {
-                    int size = VarInt.read(buf);
-                    int[] values = new int[size];
+    public static final ResourceLocation ID = OhmegaCommon.rl("sync_accessory_slots");
 
-                    for (int i = 0; i < size; i++) {
-                        values[i] = VarInt.read(buf);
-                    }
-                    return values;
-                }
+    public SyncAccessorySlotsPacket(FriendlyByteBuf buf) {
+        this(buf.readInt(), buf.readVarIntArray(), readStacks(buf));
+    }
 
-                public void encode(@NonNull ByteBuf buf, int @NonNull [] values) {
-                    VarInt.write(buf, values.length);
+    private static List<ItemStack> readStacks(FriendlyByteBuf buf) {
+        int size = buf.readVarInt();
+        List<ItemStack> list = new ArrayList<>(size);
 
-                    for (int value : values) {
-                        VarInt.write(buf, value);
-                    }
-                }
-            }, inst -> inst.indexes,
-            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
-            SyncAccessorySlotsPacket::new);
+        for (int i = 0; i < size; i++) {
+            list.add(buf.readItem());
+        }
+
+        return list;
+    }
 
     @Override
-    public @NonNull Type<? extends @NonNull CustomPacketPayload> type() {
-        return TYPE;
+    public void write(@NonNull FriendlyByteBuf buf) {
+        buf.writeInt(playerId);
+        buf.writeVarIntArray(indexes);
+
+        buf.writeVarInt(stacks.size());
+
+        for (ItemStack stack : stacks) {
+            buf.writeItem(stack);
+        }
+    }
+
+    @Override
+    public @NonNull ResourceLocation id() {
+        return ID;
     }
 }

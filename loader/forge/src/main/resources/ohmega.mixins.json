@@ -1,8 +1,9 @@
 {
   "required": true,
   "package": "com.swacky.ohmega.mixin",
-  "compatibilityLevel": "JAVA_18",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ServerLoginPacketListenerImplMixin_Forge"
   ],
   "client": [
     "client.AbstractContainerScreenMixin"

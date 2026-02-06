@@ -2,7 +2,6 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -12,11 +11,10 @@ import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
-import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -40,22 +38,18 @@ public final class Ohmega implements ModInitializer {
         NeoForgeConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         OhmegaDataAttachments.init();
-        OhmegaDataComponentsImpl.init();
         OhmegaItems.init();
         OhmegaMenusImpl.init();
 
-        PayloadTypeRegistry.playC2S().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(OpenInventoryPacket.TYPE, OpenInventoryPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(ResizeContainerPacket.TYPE, ResizeContainerPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
+        ServerLoginNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.ID, (server, handler, understood, buf, synchroniser, sender) -> {});
+        ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.ID, (server, player, listener ,buf, sender) -> server.execute(() -> OhmegaNetworkingImpl.C2S.handleOpenAccessoryInventory(OpenAccessoryInventoryPacket.INSTANCE, player)));
+        ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.ID, (server, player, listener ,buf, sender) -> server.execute(() -> OhmegaNetworkingImpl.C2S.handleOpenInventory(OpenInventoryPacket.INSTANCE, player)));
+        ServerPlayNetworking.registerGlobalReceiver(ResizeContainerPacket.ID, (server, player, listener ,buf, sender) -> server.execute(() -> OhmegaNetworkingImpl.C2S.handleResizeContainer(ResizeContainerPacket.INSTANCE, player)));
+        ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.ID, (server, player, listener ,buf, sender) -> {
+            UseAccessoryPacket packet = new UseAccessoryPacket(buf);
 
-        ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenAccessoryInventory);
-        ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenInventory);
-        ServerPlayNetworking.registerGlobalReceiver(ResizeContainerPacket.TYPE, OhmegaNetworkingImpl.C2S::handleResizeContainer);
-        ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleUseAccessory);
-
-        PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
-        PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
+            server.execute(() -> OhmegaNetworkingImpl.C2S.handleUseAccessory(packet, player));
+        });
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override

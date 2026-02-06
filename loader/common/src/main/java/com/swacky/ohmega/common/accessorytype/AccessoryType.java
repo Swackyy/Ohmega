@@ -1,58 +1,22 @@
 package com.swacky.ohmega.common.accessorytype;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.VarInt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Type;
 import java.util.HexFormat;
 import java.util.function.Supplier;
 
 public final class AccessoryType {
-    public static final StreamCodec<FriendlyByteBuf, AccessoryType> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC, AccessoryType::getId,
-            ByteBufCodecs.BOOL, AccessoryType::displayHoverText,
-            ResourceLocation.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
-            ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
-            ByteBufCodecs.INT, AccessoryType::getPriority,
-            AccessoryType::new);
-
-    public static final StreamCodec<FriendlyByteBuf, ImmutableSet<AccessoryType>> SET_STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public @NonNull ImmutableSet<AccessoryType> decode(@NonNull FriendlyByteBuf buf) {
-            int size = VarInt.read(buf);
-            ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(size);
-
-            for (int i = 0; i < size; i++) {
-                builder.add(AccessoryType.STREAM_CODEC.decode(buf));
-            }
-
-            return builder.build();
-        }
-
-        @Override
-        public void encode(@NonNull FriendlyByteBuf buf, @NonNull ImmutableSet<AccessoryType> values) {
-            VarInt.write(buf, values.size());
-
-            for (AccessoryType value : values) {
-                AccessoryType.STREAM_CODEC.encode(buf, value);
-            }
-        }
-    };
-
     // Json keys
     public static final String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
     public static final String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
@@ -146,6 +110,24 @@ public final class AccessoryType {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    public static AccessoryType read(FriendlyByteBuf buf) {
+        return new AccessoryType(
+                buf.readResourceLocation(),
+                buf.readBoolean(),
+                buf.readResourceLocation(),
+                buf.readInt(),
+                buf.readInt()
+        );
+    }
+
+    public void write(FriendlyByteBuf buf) {
+        buf.writeResourceLocation(id);
+        buf.writeBoolean(displayHoverText);
+        buf.writeResourceLocation(emptySlotLocation);
+        buf.writeInt(hoverTextColour);
+        buf.writeInt(priority);
     }
 
     @SuppressWarnings("UnusedReturnValue")

@@ -94,7 +94,7 @@ public final class AccessorySlot extends Slot {
         int index = getContainerSlot();
         ItemStack stack = ContainerHelper.removeItem(handler.getStacks(), index, amount);
 
-        if (!ItemStack.isSameItemSameComponents(handler.getStackInSlot(index), stack)) {
+        if (!ItemStack.isSameItemSameTags(handler.getStackInSlot(index), stack)) {
             handler.doUnequip(player, stack);
             handler.onContentsChanged(index);
         }

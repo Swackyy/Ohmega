@@ -2,7 +2,7 @@ package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -11,7 +11,6 @@ import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -23,6 +22,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.Optional;
 
 public final class OhmegaNetworkingImpl {
     public static final class C2S implements OhmegaNetworking.C2S.Service {
@@ -39,9 +40,12 @@ public final class OhmegaNetworkingImpl {
 
         @SuppressWarnings("unused")
         public static void handleOpenAccessoryInventory(OpenAccessoryInventoryPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> {
-                if (context.player() instanceof ServerPlayer player) {
+            context.workHandler().submitAsync(() -> {
+                Optional<Player> playerOpt = context.player();
+
+                if (playerOpt.isPresent() && playerOpt.get() instanceof ServerPlayer player) {
                     ItemStack stack = player.containerMenu.getCarried();
+
                     if (!stack.isEmpty()) {
                         if (!player.getInventory().add(stack)) {
                             player.drop(stack, false);
@@ -58,8 +62,10 @@ public final class OhmegaNetworkingImpl {
 
         @SuppressWarnings("unused")
         public static void handleOpenInventory(OpenInventoryPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> {
-                if (context.player() instanceof ServerPlayer player) {
+            context.workHandler().submitAsync(() -> {
+                Optional<Player> playerOpt = context.player();
+
+                if (playerOpt.isPresent() && playerOpt.get() instanceof ServerPlayer player) {
                     player.doCloseContainer();
                 }
             });
@@ -67,24 +73,31 @@ public final class OhmegaNetworkingImpl {
 
         @SuppressWarnings("unused")
         public static void handleResizeContainer(ResizeContainerPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> {
-                if (context.player() instanceof ServerPlayer player) {
+            context.workHandler().submitAsync(() -> {
+                Optional<Player> playerOpt = context.player();
+
+                if (playerOpt.isPresent() && playerOpt.get() instanceof ServerPlayer player) {
                     AccessoryHelper.getContainer(player).reloadCfg(player);
                 }
             });
         }
 
         public static void handleUseAccessory(UseAccessoryPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> {
+            context.workHandler().submitAsync(() -> {
                 if (packet.slot() < AccessoryHelper.getSlotTypes().size()) {
-                    Player player = context.player();
-                    AccessoryContainer container = AccessoryHelper.getContainer(player);
-                    IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.slot()).getItem());
-                    if (accessory != null) {
-                        ItemStack stack = container.getStackInSlot(packet.slot());
+                    Optional<Player> playerOpt = context.player();
 
-                        if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
-                            accessory.onUse(player, stack);
+                    if (playerOpt.isPresent()) {
+                        Player player = playerOpt.get();
+                        AccessoryContainer container = AccessoryHelper.getContainer(player);
+                        IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.slot()).getItem());
+
+                        if (accessory != null) {
+                            ItemStack stack = container.getStackInSlot(packet.slot());
+
+                            if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
+                                accessory.onUse(player, stack);
+                            }
                         }
                     }
                 }
@@ -95,7 +108,7 @@ public final class OhmegaNetworkingImpl {
     public static final class S2C implements OhmegaNetworking.S2C.Service {
         @Override
         public void send(ServerPlayer receiver, CustomPacketPayload packet) {
-            PacketDistributor.sendToPlayer(receiver, packet);
+            PacketDistributor.PLAYER.with(receiver).send(packet);
         }
 
         public static void handleSyncAccessorySlots(SyncAccessorySlotsPacket packet, IPayloadContext context) {
@@ -103,18 +116,22 @@ public final class OhmegaNetworkingImpl {
                 return;
             }
 
-            context.enqueueWork(() -> {
+            context.workHandler().submitAsync(() -> {
                 ClientLevel level = Minecraft.getInstance().level;
+
                 if (level != null) {
                     if (level.getEntity(packet.playerId()) instanceof Player player) {
-                        AccessoryHelper.getContainer(player).syncSlots(player, packet.indexes(), packet.stacks());
+                        AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+                        for (int i = 0; i < packet.indexes().length; i++) {
+                            ItemStack stack = packet.stacks().get(i);
+                            int index = packet.indexes()[i];
+
+                            container.setStackInSlot(player, index, stack, EquipContext.GENERIC);
+                        }
                     }
                 }
             });
-        }
-
-        public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> AccessoryTypeManager.getInstance().apply(packet.types));
         }
     }
 }

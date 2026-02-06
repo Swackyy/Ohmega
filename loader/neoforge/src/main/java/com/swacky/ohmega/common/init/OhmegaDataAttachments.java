@@ -2,10 +2,8 @@ package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -22,25 +20,22 @@ public final class OhmegaDataAttachments {
 
     private static final IAttachmentSerializer<CompoundTag, AccessoryContainer> SERIALIZER = new IAttachmentSerializer<>() {
         @Override
-        public @NonNull AccessoryContainer read(@NonNull IAttachmentHolder holder, @NonNull CompoundTag tag, HolderLookup.@NonNull Provider provider) {
-            AccessoryContainer data = AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, provider), tag).resultOrPartial().orElseThrow();
+        public @NonNull AccessoryContainer read(@NonNull IAttachmentHolder holder, @NonNull CompoundTag tag) {
+            AccessoryContainer data = AccessoryContainer.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseGet(AccessoryContainer::new);
 
             data.onAttach((Player) holder);
             return data;
         }
 
-
         @Override
-        public CompoundTag write(@NonNull AccessoryContainer data, HolderLookup.@NonNull Provider provider) {
-            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, provider), data)
-                    .resultOrPartial().orElse(new CompoundTag());
+        public CompoundTag write(@NonNull AccessoryContainer data) {
+            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(NbtOps.INSTANCE, data).result().orElseGet(CompoundTag::new);
         }
     };
 
     public static final Supplier<AttachmentType<AccessoryContainer>> ACCESSORY_HANDLER = register("accessory_data",
             () -> AttachmentType.builder(AccessoryContainer::new)
                     .serialize(SERIALIZER)
-                    //.sync(AccessoryInvDataAttachment.STREAM_CODEC)
                     .build());
 
     private static <T> Supplier<AttachmentType<T>> register(String id, Supplier<AttachmentType<T>> sup) {

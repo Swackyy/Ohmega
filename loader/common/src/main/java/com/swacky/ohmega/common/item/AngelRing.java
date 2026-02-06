@@ -3,7 +3,6 @@ package com.swacky.ohmega.common.item;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.IAccessory;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // This method uses the utility class to easily add tooltips onto the accessory
     @Override
-    public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull List<Component> tooltip, @NonNull TooltipFlag flag) {
+    public void appendHoverText(@NonNull ItemStack stack, @Nullable Level level, @NonNull List<Component> tooltip, @NonNull TooltipFlag flag) {
         tooltip.add(AccessoryHelper.getBindTooltip(stack));
     }
 
@@ -81,17 +81,17 @@ public class AngelRing extends Item implements IAccessory {
     // Adds modifiers to be applied when the accessory is equipped
     @Override
     public void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {
-        // This modifier is only applied when the accessory is active
-        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("426441fe-997d-4e84-a441-fe997d4e84e4"), "Attack damage", 1, AttributeModifier.Operation.ADD_VALUE));
-
         // This modifier is always applied
-        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString("3bfe251b-ac2b-4409-be25-1bac2bd409c1"), "Health boost", 4, AttributeModifier.Operation.ADD_VALUE));
+        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(UUID.fromString("426441fe-997d-4e84-a441-fe997d4e84e4"), "Attack damage", 1, AttributeModifier.Operation.ADDITION));
+
+        // This modifier is only applied when the accessory is active
+        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString("3bfe251b-ac2b-4409-be25-1bac2bd409c1"), "Health boost", 4, AttributeModifier.Operation.ADDITION));
     }
 
     // The sound to be played when equipped using a right click
     @Nullable
     @Override
-    public Holder<SoundEvent> getEquipSound() {
+    public SoundEvent getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GOLD;
     }
 }

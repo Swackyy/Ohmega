@@ -59,6 +59,11 @@ repositories {
     }
 
     maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz"
+    }
+
+    maven {
         name = "Parchment"
         url = "https://maven.parchmentmc.org"
     }

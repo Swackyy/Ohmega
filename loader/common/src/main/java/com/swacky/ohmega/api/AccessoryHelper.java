@@ -2,6 +2,7 @@ package com.swacky.ohmega.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -9,7 +10,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import com.swacky.ohmega.common.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -18,7 +18,7 @@ import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -27,11 +27,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -49,19 +50,14 @@ public final class AccessoryHelper {
      * @param stack the {@link ItemStack} to retrieve the data from
      * @return the default data component stored on accessory items (when requested)
      */
-    public static @Nullable AccessoryItemDataComponent getItemData(ItemStack stack) {
-        DataComponentType<AccessoryItemDataComponent> type = OhmegaDataComponents.getItemDataComponent();
+    public static AccessoryItemDataComponent getItemData(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTag();
 
-        if (stack.has(type)) {
-            return stack.get(type);
+        if (!tag.contains(OhmegaCommon.STACK_TAG_KEY)) {
+            tag.put(OhmegaCommon.STACK_TAG_KEY, new CompoundTag());
         }
 
-        if (isItemAccessoryBound(stack.getItem())) {
-            stack.set(type, new AccessoryItemDataComponent());
-            return stack.get(type);
-        }
-
-        return null;
+        return new AccessoryItemDataComponent(() -> tag.getCompound(OhmegaCommon.STACK_TAG_KEY));
     }
 
     /**
@@ -176,13 +172,8 @@ public final class AccessoryHelper {
      * @return the slot index when equipped, or {@code -1} when not equipped
      */
     public static int getSlot(ItemStack stack) {
-        AccessoryItemDataComponent data = getItemData(stack);
+        return getItemData(stack).getSlot();
 
-        if (data != null) {
-            return data.getSlot();
-        }
-
-        return -1;
     }
 
     /**
@@ -191,11 +182,7 @@ public final class AccessoryHelper {
      * @param slot the index to set to
      */
     public static void setSlot(ItemStack stack, int slot) {
-        AccessoryItemDataComponent data = getItemData(stack);
-
-        if (data != null) {
-            data.setSlot(slot);
-        }
+        getItemData(stack).setSlot(slot);
     }
 
     /**
@@ -214,13 +201,7 @@ public final class AccessoryHelper {
      * @return {@code true} if active, {@code false} if inactive
      */
     public static boolean isActive(ItemStack stack) {
-        AccessoryItemDataComponent data = getItemData(stack);
-
-        if (data != null) {
-            return data.isActive();
-        }
-
-        return false;
+        return getItemData(stack).isActive();
     }
 
     /**
@@ -230,12 +211,7 @@ public final class AccessoryHelper {
      * @param value {@code true} if active, {@code false} if inactive
      */
     public static void setActive(Player player, ItemStack stack, boolean value) {
-        AccessoryItemDataComponent data = getItemData(stack);
-
-        if (data != null) {
-            data.setActive(value);
-        }
-
+        getItemData(stack).setActive(value);
         changeModifiers(player, getModifiers(stack).getActive(), value);
     }
 
@@ -272,17 +248,17 @@ public final class AccessoryHelper {
      * @param add if {@code true}, will add the attribute modifiers to the {@link Player},
      * if {@code false} existing ones will be removed
      */
-    public static void changeModifiers(Player player, ItemAttributeModifiers modifiers, boolean add) {
-        for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            AttributeInstance attribute = player.getAttribute(entry.attribute());
+    public static void changeModifiers(Player player, Multimap<Attribute, AttributeModifier> modifiers, boolean add) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
+            AttributeInstance attribute = player.getAttribute(entry.getKey());
 
             if (attribute != null) {
                 if (add) {
-                    if (!attribute.hasModifier(entry.modifier())) {
-                        attribute.addTransientModifier(entry.modifier());
+                    if (!attribute.hasModifier(entry.getValue())) {
+                        attribute.addTransientModifier(entry.getValue());
                     }
                 } else {
-                    attribute.removeModifier(entry.modifier());
+                    attribute.removeModifier(entry.getValue().getId());
                 }
             }
         }
@@ -448,7 +424,7 @@ public final class AccessoryHelper {
                     stack.shrink(1);
 
                     if (accessory.getEquipSound() != null) {
-                        player.playSound(accessory.getEquipSound().value(), 1, 1);
+                        player.playSound(accessory.getEquipSound(), 1, 1);
                     }
 
                     return InteractionResultHolder.sidedSuccess(stack, player.level().isClientSide());

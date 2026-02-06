@@ -194,11 +194,13 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                     getSlot(46 + openIndex).set(stack);
                 } else {
                     if (index > 45 && index < 52) {
-                        if (moveItemStackTo(stack0, 9, 45, false)) { // Accessory -> inventory
-                            AccessoryHelper.getContainer(player).doUnequip(player, stack);
+                        ItemStack stack1 = tryMoveItemStackTo(stack0, 9, 45, false);
+
+                        if (!stack1.isEmpty()) { // Accessory -> inventory
+                            AccessoryHelper.getContainer(player).doUnequip(player, stack1);
                             return ItemStack.EMPTY;
                         }
-                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.canUseSlot(equipmentSlot)) {
+                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem()) {
                         int i = 8 - equipmentSlot.getIndex();
 
                         if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
@@ -255,6 +257,76 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         setCarried(carried);
         this.stateId = stateId;
+    }
+
+    // Only difference to vanilla method is that it will the ItemStack it has been moved to, or ItemStack.EMPTY if unsuccessful
+    private ItemStack tryMoveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+        int i = startIndex;
+
+        if (reverseDirection) {
+            i = endIndex - 1;
+        }
+
+        if (stack.isStackable()) {
+            while(!stack.isEmpty() && (reverseDirection ? i >= startIndex : i < endIndex)) {
+                Slot slot = slots.get(i);
+                ItemStack stack0 = slot.getItem();
+
+                if (!stack0.isEmpty() && ItemStack.isSameItemSameTags(stack, stack0)) {
+                    int j = stack0.getCount() + stack.getCount();
+                    if (j <= stack.getMaxStackSize()) {
+                        stack.setCount(0);
+                        stack0.setCount(j);
+                        slot.setChanged();
+                    } else if (stack0.getCount() < stack.getMaxStackSize()) {
+                        stack.shrink(stack.getMaxStackSize() - stack0.getCount());
+                        stack0.setCount(stack.getMaxStackSize());
+                        slot.setChanged();
+                    }
+                }
+
+                if (reverseDirection) {
+                    i--;
+                } else {
+                    i++;
+                }
+            }
+        }
+
+        ItemStack stack0 = ItemStack.EMPTY;
+
+        if (!stack.isEmpty()) {
+            if (reverseDirection) {
+                i = endIndex - 1;
+            } else {
+                i = startIndex;
+            }
+
+            while(reverseDirection ? i >= startIndex : i < endIndex) {
+                Slot slot = slots.get(i);
+                ItemStack stack1 = slot.getItem();
+
+                if (stack1.isEmpty() && slot.mayPlace(stack)) {
+                    if (stack.getCount() > slot.getMaxStackSize()) {
+                        stack0 = stack.split(slot.getMaxStackSize());
+                    } else {
+                        stack0 = stack.split(stack.getCount());
+                    }
+
+                    slot.setByPlayer(stack0);
+                    slot.setChanged();
+                    break;
+                }
+
+                if (reverseDirection) {
+                    --i;
+                } else {
+                    ++i;
+                }
+            }
+        }
+
+        return stack0;
     }
 
     private static class ArmorSlot extends Slot {

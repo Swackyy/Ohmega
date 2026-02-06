@@ -35,7 +35,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
-        return ModLoader.postEventWithReturn(new AccessoryOverrideTypesEvent()).overrideRemaps;
+        return ModLoader.get().postEventWithReturn(new AccessoryOverrideTypesEvent()).overrideRemaps;
     }
 
     @Override

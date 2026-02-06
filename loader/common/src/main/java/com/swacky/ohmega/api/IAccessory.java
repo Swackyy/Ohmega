@@ -1,6 +1,5 @@
 package com.swacky.ohmega.api;
 
-import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -69,7 +68,7 @@ public interface IAccessory {
      // The sound to be played if the accessory is equipped through right clicking the held item
      // A replacement for the vanilla method, Minecraft versions 1.19.4+, to ensure easier compatibility
     @Nullable
-    default Holder<SoundEvent> getEquipSound() {
+    default SoundEvent getEquipSound() {
         return null;
     }
 }
