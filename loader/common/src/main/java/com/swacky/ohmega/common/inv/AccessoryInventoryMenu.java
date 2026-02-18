@@ -259,7 +259,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         this.stateId = stateId;
     }
 
-    // Only difference to vanilla method is that it will the ItemStack it has been moved to, or ItemStack.EMPTY if unsuccessful
+    // Only difference to vanilla method is that it will return the ItemStack it has been moved to, or ItemStack.EMPTY if unsuccessful
     private ItemStack tryMoveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
         int i = startIndex;
 

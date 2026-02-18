@@ -31,6 +31,6 @@ abstract class PlayerMixin extends LivingEntity {
             at = @At(
                     value = "HEAD"))
     public void readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        this.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER).onAttach((Player) (Object) this);
+        getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER).onAttach((Player) (Object) this);
     }
 }

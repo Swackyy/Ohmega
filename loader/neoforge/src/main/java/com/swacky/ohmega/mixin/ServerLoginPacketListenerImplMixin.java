@@ -1,8 +1,10 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundHelloPacket;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.spongepowered.asm.mixin.Final;
@@ -13,8 +15,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLoginPacketListenerImpl.class)
-public class ServerLoginPacketListenerImplMixin_Forge {
-    @Shadow @Final
+abstract class ServerLoginPacketListenerImplMixin {
+    @Shadow
+    @Final
     Connection connection;
 
     @Inject(
@@ -22,6 +25,11 @@ public class ServerLoginPacketListenerImplMixin_Forge {
             at = @At(
                     value = "HEAD"))
     public void startClientVerification(ServerboundHelloPacket packet, CallbackInfo ci) {
-        OhmegaNetworkingImpl.S2C.send(connection, new SyncAccessoryTypesPacket());
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+
+        buf.writeVarInt(SyncAccessoryTypesPacket.ID.hashCode());
+        buf.writeResourceLocation(SyncAccessoryTypesPacket.ID);
+        new SyncAccessoryTypesPacket().write(buf);
+        connection.send(new ClientboundCustomQueryPacket(buf));
     }
 }

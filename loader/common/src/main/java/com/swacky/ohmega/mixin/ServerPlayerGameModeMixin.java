@@ -17,7 +17,8 @@ abstract class ServerPlayerGameModeMixin {
             method = "useItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;"))
+                    target = "Lnet/minecraft/world/item/ItemStack;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;"),
+            remap = false)
     private InteractionResultHolder<ItemStack> useItem(ItemStack stack, Level level, Player player, InteractionHand hand) {
         InteractionResultHolder<ItemStack> original = stack.use(level, player, hand);
 

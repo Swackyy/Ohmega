@@ -1,19 +1,10 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
-    id "fabric-loom"
+    id "net.fabricmc.fabric-loom-remap" version "${pluginLoomV}"
     id "loader"
 }
 
 loom {
     accessWidenerPath.set file("src/main/resources/aw.accesswidener")
-
-    mods {
-        "${modId}" {
-            sourceSet sourceSets.main
-            sourceSet project(":loader:common").sourceSets.main
-        }
-    }
 
     runs {
         configureEach {
@@ -34,14 +25,6 @@ loom {
         }
     }
 }
-
-var namedJar = tasks.register("namedJar", RemapJarTask) {
-    inputFile = jar.archiveFile
-    archiveClassifier = "dev"
-    targetNamespace = "named"
-}
-
-build.dependsOn(namedJar)
 
 remapSourcesJar {
     targetNamespace = "named"
@@ -70,12 +53,9 @@ repositories {
 }
 
 dependencies {
-    commonJava project(path: ":loader:common", configuration: "commonJava")
-    commonResources project(path: ":loader:common", configuration: "commonResources")
-
     minecraft "com.mojang:minecraft:${mcV}"
 
-    mappings loom.layered() {
+    mappings loom.layered {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${mapsMcV}:${mapsV}@zip")
     }

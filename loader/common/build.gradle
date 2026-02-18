@@ -1,25 +1,21 @@
 plugins {
     id "common"
-    id "net.neoforged.moddev"
+    id "org.spongepowered.gradle.vanilla" version "0.2.2"
 }
 
-neoForge {
-    neoFormVersion = "${mcV}-${neoFormV}"
+minecraft {
+    version mcV
+    accessWideners file("src/main/resources/aw.accesswidener")
+}
 
-    parchment {
-        mappingsVersion.set mapsV
-        minecraftVersion.set mapsMcV
-    }
+dependencies {
+    compileOnly "org.spongepowered:mixin:0.8.7"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.2"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
 }
 
 sourceSets.main.resources {
     srcDir "src/generated/resources"
-}
-
-dependencies {
-    implementation "org.spongepowered:mixin:0.8.7"
-    implementation "io.github.llamalad7:mixinextras-common:0.5.2"
-    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
 }
 
 configurations {
@@ -35,6 +31,6 @@ configurations {
 }
 
 artifacts {
-    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonJava sourceSets.main.java.sourceDirectories.files
     commonResources sourceSets.main.resources.sourceDirectories.files
 }

@@ -10,8 +10,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// Unused on Fabric and Forge
-@SuppressWarnings("UnusedMixin")
 @Mixin(ClientHandshakePacketListenerImpl.class)
 abstract class ClientHandshakePacketListenerImplMixin {
     @Inject(

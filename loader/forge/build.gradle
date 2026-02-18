@@ -1,51 +1,52 @@
 plugins {
     id "loader"
     id "net.minecraftforge.gradle"
-    id "org.parchmentmc.librarian.forgegradle" version "1.+"
-    id "org.spongepowered.mixin" version "0.7.+"
-}
-
-mixin {
-    config "${modId}.mixins.json"
-    config "${modId}_common.mixins.json"
 }
 
 minecraft {
     mappings channel: "official", version: mcV
 
-    reobf = false
-    accessTransformer = file "src/main/resources/META-INF/accesstransformer.cfg"
-
-    copyIdeResources.set true
+    accessTransformer = true
 
     runs {
         configureEach {
-            ideaModule = "${rootProject.name}.loader.${project.name}.main"
-
-            workingDirectory file("run")
-            property "forge.enabledGameTestNamespaces", "${modId}"
-            property "eventbus.api.strictRuntimeChecks", "true"
+            workingDir.convention layout.projectDirectory.dir("run")
+            systemProperty "eventbus.api.strictRuntimeChecks", "true"
+            systemProperty "forge.enabledGameTestNamespaces", modId
+            args "-mixin.config", "${modId}.mixins.json"
+            args "-mixin.config", "${modId}_common.mixins.json"
         }
 
-        client {}
+        register("client") {}
 
-        server {}
+        register("server") {}
+    }
+}
+
+repositories {
+    mavenCentral()
+    minecraft.mavenizer it
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+
+    maven {
+        name = "Forge"
+        url = "https://maven.minecraftforge.net"
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mcV}-${loaderForgeV}"
+    implementation minecraft.dependency("net.minecraftforge:forge:${mcV}-${loaderForgeV}")
 
     implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
-
     annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
 
-    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
+/*    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
         version {
             strictly "5.0.4"
         }
-    }
+    }*/
 }
 
 jar {
@@ -54,11 +55,4 @@ jar {
                 "MixinConfigs": "${modId}.mixins.json, ${modId}_common.mixins.json"
         ])
     }
-}
-
-sourceSets.each {
-    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
-    it.output.resourcesDir = dir
-
-    it.java.destinationDirectory.set dir.get()
 }

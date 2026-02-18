@@ -16,7 +16,8 @@ abstract class MultiPlayerGameModeMixin {
             method = "useItem",
             at = @At(
                     value = "RETURN"),
-            cancellable = true)
+            cancellable = true,
+            remap = false)
     private void useItem(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         if (!cir.getReturnValue().consumesAction()) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, hand).getResult();

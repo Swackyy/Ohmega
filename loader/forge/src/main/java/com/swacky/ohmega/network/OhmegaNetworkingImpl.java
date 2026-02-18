@@ -62,7 +62,6 @@ public final class OhmegaNetworkingImpl {
                 .decoder(UseAccessoryPacket::new)
                 .consumerMainThread(C2S::handleUseAccessory)
                 .add();
-
         net.messageBuilder(SyncAccessorySlotsPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(SyncAccessorySlotsPacket::write)
                 .decoder(SyncAccessorySlotsPacket::new)
@@ -159,7 +158,7 @@ public final class OhmegaNetworkingImpl {
             OhmegaNetworkingImpl.channel.send(packet, PacketDistributor.PLAYER.with(receiver));
         }
 
-        public static void send(Connection connection, CustomPacketPayload packet) {
+        public static void send(Connection connection, Object packet) {
             OhmegaNetworkingImpl.channel.send(packet, connection);
         }
 

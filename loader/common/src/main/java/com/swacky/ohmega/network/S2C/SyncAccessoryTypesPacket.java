@@ -5,15 +5,13 @@ import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.login.custom.CustomQueryAnswerPayload;
 import net.minecraft.network.protocol.login.custom.CustomQueryPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.IntSupplier;
 
-public record SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) implements CustomPacketPayload, CustomQueryAnswerPayload, CustomQueryPayload, IntSupplier {
+public record SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) implements CustomQueryPayload, IntSupplier {
     public static final ResourceLocation ID = OhmegaCommon.rl("sync_accessory_types");
 
     public SyncAccessoryTypesPacket() {

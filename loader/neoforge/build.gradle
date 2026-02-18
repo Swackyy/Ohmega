@@ -25,7 +25,7 @@ neoForge {
     runs {
         configureEach {
             ideName.set "NeoForge ${it.name.capitalize()} (${project.path})"
-            systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
+            systemProperty "neoforge.enabledGameTestNamespaces", modId
         }
 
         client {
@@ -40,7 +40,7 @@ neoForge {
             data()
 
             ideName.set "Data Generation"
-            programArguments.addAll "--mod", "${modId}", "--all", "--output", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath() , "--existing", project(":loader:common").getDependencyProject().sourceSets.main.resources.getSourceDirectories().getFiles()[0].getAbsolutePath()
+            programArguments.addAll "--mod", "${modId}", "--all", "--output", project.project(":loader:common").file("src/main/generated").getAbsolutePath() , "--existing", project.project(":loader:common").file("src/main/resources").getAbsolutePath()
         }
     }
 }

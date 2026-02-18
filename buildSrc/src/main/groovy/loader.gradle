@@ -5,12 +5,12 @@ plugins {
 }
 
 configurations {
-    "commonJava" {
-        canBeResolved = true
+    commonJava {
+        canBeResolved true
     }
 
-    "commonResources" {
-        canBeResolved = true
+    commonResources {
+        canBeResolved true
     }
 }
 
@@ -26,6 +26,8 @@ dependencies {
 }
 
 processResources {
+    dependsOn configurations.commonResources
+
     String modDesc =
             "${modSummary}\n" +
             "View the source code here: ${gitUrl}\n" +
@@ -36,7 +38,6 @@ processResources {
 
     if (!modChanges.empty) {
         String changes = "\n\nChanges this version:\n${modChanges}"
-
         modDesc += changes;
         modDescFabric += changes;
     }
@@ -63,29 +64,34 @@ processResources {
             loaderFabricForgeConfigApiPortVRange : loaderFabricForgeConfigApiPortVRange,
             javaV                                : javaV
     ]
-    inputs.properties replaceProperties
 
+    inputs.properties replaceProperties
     filesMatching(["META-INF/mods.toml", "META-INF/neoforge.mods.toml", "fabric.mod.json"]) {
         expand replaceProperties
     }
 
     from configurations.commonResources
+    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
 jar {
     from configurations.commonResources
-
     setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
-tasks.named("sourcesJar") {
-    from project(":loader:common").sourceSets.main.allSource
-
-    exclude "META-INF/accesstransformer.cfg"
+tasks.named("compileJava", JavaCompile) {
+    dependsOn configurations.commonJava
+    source configurations.commonJava
 }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.named("javadoc", Javadoc) {
+    dependsOn configurations.commonJava
     source configurations.commonJava
+}
+
+tasks.named("sourcesJar", Jar) {
+    from project(":loader:common").sourceSets.main.allSource
+    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
 if (rootProject.file("secrets.properties").exists()) {
@@ -95,7 +101,7 @@ if (rootProject.file("secrets.properties").exists()) {
         changelog = modChanges.replace("| ", "+ ")
         displayName = "${modName} ${modV} ${name} ${mcV}"
 
-        if (project.name == "fabric") {
+        if (project.plugins.hasPlugin("fabric-loom-remap")) {
             file = project.tasks.named("remapJar").flatMap {
                 it.archiveFile
             }

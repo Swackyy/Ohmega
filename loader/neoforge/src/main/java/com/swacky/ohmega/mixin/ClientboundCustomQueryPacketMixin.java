@@ -10,8 +10,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-// Unused on Fabric and Forge
-@SuppressWarnings("UnusedMixin")
 @Mixin(ClientboundCustomQueryPacket.class)
 abstract class ClientboundCustomQueryPacketMixin {
     @Inject(

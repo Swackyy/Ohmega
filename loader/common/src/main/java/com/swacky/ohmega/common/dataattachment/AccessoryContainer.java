@@ -174,7 +174,6 @@ public final class AccessoryContainer {
         return stacks;
     }
 
-    @SuppressWarnings("resource")
     public void tick(Player player) {
         for (int i = 0; i < stacks.size(); i++) {
             ItemStack stack = getStackInSlot(i);
