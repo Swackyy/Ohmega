@@ -41,7 +41,7 @@ public class AngelRing extends Item implements IAccessory {
         AccessoryHelper.setActive(player, stack, true);
     }
 
-    // Deactivates when unequipped, also this makes it not force a creative player to stop flying when taking off the accessory
+    // Deactivates when unequipped, also this makes it not forceOnEquip a creative player to stop flying when taking off the accessory
     @Override
     public void onUnequip(@NonNull Player player, @NonNull ItemStack stack) {
         if (!(player.isCreative() || player.isSpectator())) {

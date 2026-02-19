@@ -80,7 +80,7 @@ if (secretsFile.exists()) {
                     groupId = "io.github.swackyy"
                     artifactId = "${modId}-${project.name}"
                     version = "${modV}-mc${mcV}"
-                    
+
                     if (project.name == "fabric") {
                         artifact tasks.named("remapJar")
                     } else {

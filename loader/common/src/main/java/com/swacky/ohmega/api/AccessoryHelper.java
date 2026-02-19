@@ -510,7 +510,7 @@ public final class AccessoryHelper {
      */
     public static void syncSlots(ServerPlayer player, int[] slots, List<ItemStack> stacks, Collection<ServerPlayer> receivers) {
         for (ServerPlayer receiver : receivers) {
-            OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots, stacks));
+            OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots, stacks, false));
         }
     }
 

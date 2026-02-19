@@ -10,6 +10,8 @@ import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.network.OhmegaNetworking;
+import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +34,7 @@ public final class AccessoryContainer {
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
+    private boolean forceOnEquip;
 
     private AccessoryContainer(List<ItemStack> stacks, boolean[] changed) {
         this.stacks = NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0]));
@@ -145,10 +148,11 @@ public final class AccessoryContainer {
         // If the server config gets de-synced, this fixes it instead of throwing
         reloadCfg(player);
 
+        // Force a client sync with every slot after the next tick
+        Arrays.fill(changed, true);
+
         for (int i = 0; i < stacks.size(); i++) {
             ItemStack stack = stacks.get(i);
-
-            doSetStackInSlot(i, stack);
 
             if (AccessoryHelper.isActive(stack)) {
                 doEquip(player, stack, i, EquipContext.GENERIC);
@@ -156,7 +160,7 @@ public final class AccessoryContainer {
         }
     }
 
-    // Do not use this for generic syncing, only for specific changes that happen only on the server side
+    // This is only used in specific situations, name will be refactored later
     public void syncSlots(Player player, int[] indexes, List<ItemStack> stacks) {
         for (int i = 0; i < indexes.length; i++) {
             ItemStack stack = stacks.get(i);
@@ -203,7 +207,11 @@ public final class AccessoryContainer {
             }
 
             if (!slots.isEmpty()) {
-                AccessoryHelper.syncSlots(svr, slots.stream().mapToInt(Integer::intValue).toArray(), stacks, svr.serverLevel().players());
+                for (ServerPlayer receiver : svr.serverLevel().players()) {
+                    OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots.stream().mapToInt(Integer::intValue).toArray(), stacks, forceOnEquip));
+                }
+
+                forceOnEquip = true;
             }
         }
     }

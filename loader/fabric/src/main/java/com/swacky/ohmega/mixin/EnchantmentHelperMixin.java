@@ -1,5 +1,6 @@
 package com.swacky.ohmega.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.AccessoryHelper;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 import java.util.Map;
@@ -22,10 +22,8 @@ abstract class EnchantmentHelperMixin {
     @Inject(
             method = "getRandomItemWith(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Predicate;)Ljava/util/Map$Entry;",
             at = @At(
-                    value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"),
-            locals = LocalCapture.CAPTURE_FAILSOFT,
-            remap = false)
-    private static void getRandomItemWith(Enchantment enchantment, LivingEntity entity, Predicate<ItemStack> filter, CallbackInfoReturnable<Map.Entry<EquipmentSlot, ItemStack>> cir, Map<EquipmentSlot, ItemStack> map, List<Map.Entry<EquipmentSlot, ItemStack>> list) {
+                    value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
+    private static void getRandomItemWith(Enchantment enchantment, LivingEntity entity, Predicate<ItemStack> filter, CallbackInfoReturnable<Map.Entry<EquipmentSlot, ItemStack>> cir, @Local List<Map.Entry<EquipmentSlot, ItemStack>> list) {
         if (entity instanceof Player player) {
             for (ItemStack stack : AccessoryHelper.getStacks(player)) {
                 if (filter.test(stack)) {

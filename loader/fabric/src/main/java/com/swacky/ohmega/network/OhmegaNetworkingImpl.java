@@ -92,11 +92,15 @@ public final class OhmegaNetworkingImpl {
                 if (level.getEntity(packet.playerId()) instanceof Player player) {
                     AccessoryContainer container = AccessoryHelper.getContainer(player);
 
-                    for (int i = 0; i < packet.indexes().length; i++) {
-                        ItemStack stack = packet.stacks().get(i);
-                        int index = packet.indexes()[i];
+                    if (packet.forceOnEquip()) {
+                        for (int i = 0; i < packet.indexes().length; i++) {
+                            ItemStack stack = packet.stacks().get(i);
+                            int index = packet.indexes()[i];
 
-                        container.setStackInSlot(player, index, stack, EquipContext.GENERIC);
+                            container.setStackInSlot(player, index, stack, EquipContext.GENERIC);
+                        }
+                    } else {
+                        container.syncSlots(player, packet.indexes(), packet.stacks());
                     }
                 }
             }

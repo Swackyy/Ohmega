@@ -1,0 +1,26 @@
+{
+  "generic": {
+    "displayHoverText": false,
+    "emptySlotTexture": "accessory_slot_generic",
+    "hoverTextColor": 16777215,
+    "priority": 2147483647
+  },
+  "normal": {
+    "displayHoverText": true,
+    "emptySlotTexture": "accessory_slot_normal",
+    "hoverTextColor": 16777215,
+    "priority": 2147483647
+  },
+  "special": {
+    "displayHoverText": true,
+    "emptySlotTexture": "accessory_slot_special",
+    "hoverTextColor": 16777215,
+    "priority": 2147483645
+  },
+  "utility": {
+    "displayHoverText": true,
+    "emptySlotTexture": "accessory_slot_utility",
+    "hoverTextColor": 16777215,
+    "priority": 2147483646
+  }
+}

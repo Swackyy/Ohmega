@@ -10,11 +10,11 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks) implements CustomPacketPayload {
+public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements CustomPacketPayload {
     public static final ResourceLocation ID = OhmegaCommon.rl("sync_accessory_slots");
 
     public SyncAccessorySlotsPacket(FriendlyByteBuf buf) {
-        this(buf.readInt(), buf.readVarIntArray(), readStacks(buf));
+        this(buf.readInt(), buf.readVarIntArray(), readStacks(buf), buf.readBoolean());
     }
 
     private static List<ItemStack> readStacks(FriendlyByteBuf buf) {
@@ -32,12 +32,13 @@ public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemSta
     public void write(@NonNull FriendlyByteBuf buf) {
         buf.writeInt(playerId);
         buf.writeVarIntArray(indexes);
-
         buf.writeVarInt(stacks.size());
 
         for (ItemStack stack : stacks) {
             buf.writeItem(stack);
         }
+
+        buf.writeBoolean(forceOnEquip);
     }
 
     @Override
