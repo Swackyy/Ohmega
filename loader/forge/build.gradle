@@ -1,6 +1,7 @@
 plugins {
     id "loader"
     id "net.minecraftforge.gradle" version "${pluginForgeV}"
+    id 'net.minecraftforge.renamer' version '1.0.2'
 }
 
 java {
@@ -49,6 +50,14 @@ dependencies {
     runtimeOnly "org.ow2.asm:asm:9.5"
     runtimeOnly "org.ow2.asm:asm-tree:9.5"
     runtimeOnly "org.ow2.asm:asm-commons:9.5"
+}
+
+renamer.classes(tasks.named("jar", Jar)) {
+    map.from minecraft.dependency.toSrgFile
+}
+
+renamer.classes('renameJarToSrg', tasks.named('jar', Jar)) {
+    mappings minecraft.dependency.toSrg.get()
 }
 
 jar {
