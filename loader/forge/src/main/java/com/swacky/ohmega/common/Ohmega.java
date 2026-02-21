@@ -9,6 +9,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -21,7 +22,9 @@ public final class Ohmega {
     public Ohmega(FMLJavaModLoadingContext context) {
         OhmegaCommon.bootstrap();
 
-        context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
+        ModLoadingContext mlContext = ModLoadingContext.get();
+
+        mlContext.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         IEventBus bus = context.getModEventBus();
 
@@ -33,7 +36,7 @@ public final class Ohmega {
         if (FMLEnvironment.dist.isClient()) {
             OhmegaCommon.bootstrapClient();
 
-            context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+            mlContext.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
         }
     }
 }

@@ -46,8 +46,6 @@ processResources {
             license                              : license,
             loaderForgeV                         : loaderForgeV,
             loaderForgeVRange                    : loaderForgeVRange,
-            loaderNeoV                           : loaderNeoV,
-            loaderNeoVRange                      : loaderNeoVRange,
             loaderFabricVRange                   : loaderFabricVRange,
             modId                                : modId,
             modV                                 : modV,
@@ -66,7 +64,7 @@ processResources {
     ]
 
     inputs.properties replaceProperties
-    filesMatching(["META-INF/mods.toml", "META-INF/neoforge.mods.toml", "fabric.mod.json"]) {
+    filesMatching(["META-INF/mods.toml", "fabric.mod.json"]) {
         expand replaceProperties
     }
 
@@ -96,10 +94,8 @@ tasks.named("sourcesJar", Jar) {
 
 if (rootProject.file("secrets.properties").exists()) {
     publishMods {
-        String name = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
-
         changelog = modChanges.replace("| ", "+ ")
-        displayName = "${modName} ${modV} ${name} ${mcV}"
+        displayName = "${modName} ${modV} ${project.name.capitalize()} ${mcV}"
 
         if (project.plugins.hasPlugin("fabric-loom-remap")) {
             file = project.tasks.named("remapJar").flatMap {

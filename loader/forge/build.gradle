@@ -1,6 +1,10 @@
 plugins {
     id "loader"
-    id "net.minecraftforge.gradle"
+    id "net.minecraftforge.gradle" version "${pluginForgeV}"
+}
+
+java {
+    modularity.inferModulePath.set false
 }
 
 minecraft {
@@ -40,13 +44,11 @@ dependencies {
 
     implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
-    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 
-/*    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
-        version {
-            strictly "5.0.4"
-        }
-    }*/
+    runtimeOnly "org.ow2.asm:asm:9.5"
+    runtimeOnly "org.ow2.asm:asm-tree:9.5"
+    runtimeOnly "org.ow2.asm:asm-commons:9.5"
 }
 
 jar {

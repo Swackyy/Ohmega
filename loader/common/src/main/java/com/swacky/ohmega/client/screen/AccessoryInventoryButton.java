@@ -12,8 +12,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
 public final class AccessoryInventoryButton extends AbstractButton {
@@ -21,7 +20,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
     private final OhmegaConfig.Client.Service.ButtonStyle style;
 
     public AccessoryInventoryButton(OhmegaConfig.Client.Service.ButtonStyle style, AbstractContainerScreen<?> screen) {
-        super(AccessoryInventoryButton.getXAdjusted(screen, style), screen.topPos + style.getData().y(), style.getData().width(), style.getData().height(), MutableComponent.create(PlainTextContents.EMPTY));
+        super(AccessoryInventoryButton.getXAdjusted(screen, style), screen.topPos + style.getData().y(), style.getData().width(), style.getData().height(), Component.empty());
         this.screen = screen;
         this.style = style;
     }

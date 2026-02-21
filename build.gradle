@@ -6,8 +6,6 @@ import java.net.http.HttpResponse
 
 plugins {
     id "idea"
-    id "net.minecraftforge.gradle" version "${pluginForgeV}" apply false
-    id "net.neoforged.moddev" version "${pluginNeoV}" apply false
 }
 
 idea {

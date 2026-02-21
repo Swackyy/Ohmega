@@ -1,7 +1,6 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -37,7 +36,6 @@ public final class Ohmega implements ModInitializer {
 
         NeoForgeConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
-        OhmegaDataAttachments.init();
         OhmegaItems.init();
         OhmegaMenusImpl.init();
 

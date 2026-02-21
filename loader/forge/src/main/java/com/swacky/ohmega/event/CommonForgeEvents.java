@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -32,7 +31,6 @@ import java.util.Collections;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = OhmegaCommon.MODID)
 public final class CommonForgeEvents {
     private static final ResourceLocation CAPABILITY_ID = OhmegaCommon.rl("accessory_data");
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.rl("sync_accessory_types").toString());
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
@@ -69,11 +67,13 @@ public final class CommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerPostTick(TickEvent.PlayerTickEvent.Post event) {
-        Player player = event.player;
+    public static void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            Player player = event.player;
 
-        if (AccessoryHelperImpl.isPlayerDataPresent(player)) {
-            CommonCallbacks.onPlayerPostTick(player);
+            if (AccessoryHelperImpl.isPlayerDataPresent(player)) {
+                CommonCallbacks.onPlayerPostTick(player);
+            }
         }
     }
 
