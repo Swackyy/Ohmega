@@ -52,7 +52,8 @@ public interface IAccessory {
         return this != other;
     }
 
-    // Called when a key-bind is pressed for this slot. Will only work for utility and special indexes.
+    // Called when a key-bind is pressed for this slot.
+    // Will only work when equipped in an accessory slot of which is of a key-bound accessory type (server config).
     // It is recommended that when this is overridden and used, that a tooltip will be provided.
     // A component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(@NonNull Player player, @NonNull ItemStack stack) {}
@@ -65,7 +66,7 @@ public interface IAccessory {
     // Attribute modifiers to be applied when the accessory is equipped (or only when active)
     default void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {}
 
-     // The sound to be played if the accessory is equipped through right clicking the held item
+     // The sound to be played if the accessory is equipped through right-clicking the held item
      // A replacement for the vanilla method, Minecraft versions 1.19.4+, to ensure easier compatibility
     @Nullable
     default SoundEvent getEquipSound() {
