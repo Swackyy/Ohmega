@@ -1,6 +1,9 @@
+import net.minecraftforge.renamer.gradle.RenameJar
+
 plugins {
     id "loader"
-    id "net.minecraftforge.gradle"
+    id "net.minecraftforge.gradle" version "${pluginForgeV}"
+    id 'net.minecraftforge.renamer' version '1.0.2'
 }
 
 minecraft {
@@ -41,12 +44,19 @@ dependencies {
     implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+}
 
-/*    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
-        version {
-            strictly "5.0.4"
-        }
-    }*/
+tasks.named("jar", Jar) {
+    archiveClassifier.set "intermediate"
+}
+
+renamer.classes(tasks.named("jar", Jar)) {
+    map.from minecraft.dependency.toSrgFile
+}
+
+tasks.named("renameJar", RenameJar) {
+    output.set project.layout.buildDirectory.file("libs/${base.archivesName.get()}-${project.version}.jar").get()
+    archiveClassifier.set null
 }
 
 jar {
