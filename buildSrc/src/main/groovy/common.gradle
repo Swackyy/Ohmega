@@ -74,17 +74,18 @@ if (secretsFile.exists()) {
         }
     }
 
-    publishing {
+    afterEvaluate {
+        publishing {
             publications {
                 register("mavenJava", MavenPublication) {
                     groupId = "io.github.swackyy"
                     artifactId = "${modId}-${project.name}"
                     version = "${modV}-mc${mcV}"
 
-                    if (project.name == "fabric") {
-                        artifact tasks.named("remapJar")
-                    } else {
-                        artifact tasks.named("jar")
+                    switch (project.name) {
+                        case "fabric": artifact tasks.named("remapJar"); break
+                        case "forge": artifact tasks.named("renameJar"); break
+                        default: artifact tasks.named("jar")
                     }
 
                     artifact tasks.named("javadocJar")
@@ -132,18 +133,19 @@ if (secretsFile.exists()) {
             }
         }
 
-    plugins.withType(MavenPublishPlugin).configureEach {
-        signing {
-            String id = findProperty("secretsSigningId")
-            String key = findProperty("secretsSigningKey")
-            String password = findProperty("secretsSigningPassword")
+        plugins.withType(MavenPublishPlugin).configureEach {
+            signing {
+                String id = findProperty("secretsSigningId")
+                String key = findProperty("secretsSigningKey")
+                String password = findProperty("secretsSigningPassword")
 
-            if (id && key && password) {
-                useInMemoryPgpKeys(id, key, password)
-                sign publishing.publications.mavenJava
-            } else {
-                System.err.println "Could not sign project ${project.name}"
-                required = false
+                if (id && key && password) {
+                    useInMemoryPgpKeys(id, key, password)
+                    sign publishing.publications.mavenJava
+                } else {
+                    System.err.println "Could not sign project ${project.name}"
+                    required = false
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 plugins {
-    id "net.fabricmc.fabric-loom-remap" version "${pluginLoomV}"
+    id "net.fabricmc.fabric-loom-remap" version pluginLoomV
     id "loader"
 }
 

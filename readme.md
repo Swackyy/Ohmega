@@ -17,14 +17,6 @@ If you wish to contribute to the mod, you can do it in multiple ways! Either:
 - Create an issue report, detailing that a bug be fixed, or a desire for a new feature, or to improve on an existing one
 - Submit a pull request to the GitHub repository
 
-### How to generate IDE runs
-1. Clone the repository into a local directory, and open with your IDE.
-2. Load the gradle project (depends on IDE), this will also generate Fabric run configurations.
-3. To generate Forge run configurations run `./gradlew genIntellijRuns --refresh-dependencies -p loader/forge`
-
-### How to build into JAR
-For your desired Mod Loader, run the command `./gradlew build -p loader/<loaderName>`
-
 ---
 ## Other links
 [Report issues here](https://github.com/Swackyy/Ohmega/issues)

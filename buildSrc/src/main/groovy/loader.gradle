@@ -93,48 +93,59 @@ tasks.named("sourcesJar", Jar) {
 }
 
 if (rootProject.file("secrets.properties").exists()) {
-    publishMods {
-        changelog = modChanges.replace("| ", "+ ")
-        displayName = "${modName} ${modV} ${project.name.capitalize()} ${mcV}"
+    afterEvaluate {
+        publishMods {
+            String name = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
 
-        if (project.plugins.hasPlugin("fabric-loom-remap")) {
-            file = project.tasks.named("remapJar").flatMap {
+            changelog = modChanges.replace("| ", "+ ")
+            displayName = "${modName} ${modV} ${name} ${mcV}"
+
+            switch (project.name) {
+                case "fabric": file = tasks.named("remapJar").flatMap {
+                    it.archiveFile
+                }; break
+                case "forge": file = tasks.named("renameJar").flatMap {
+                    it.output
+                }; break
+                default: file = tasks.named("jar").flatMap {
+                    it.archiveFile
+                }
+            }
+
+            type = STABLE
+
+            additionalFiles.from tasks.named("sourcesJar").flatMap {
                 it.archiveFile
             }
-        } else {
-            file = jar.archiveFile
-        }
 
-        type = STABLE
+            modLoaders.add(project.name)
 
-        additionalFiles.from(sourcesJar.archiveFile)
-        modLoaders.add(project.name)
+            curseforge {
+                accessToken = findProperty("secretsCurseForgeToken")
+                clientRequired = true
+                projectId = "889368"
+                serverRequired = true
 
-        curseforge {
-            accessToken = findProperty("secretsCurseForgeToken")
-            clientRequired = true
-            projectId = "889368"
-            serverRequired = true
+                javaVersions.add(JavaVersion.toVersion(javaV))
+                minecraftVersions.add(mcV)
 
-            javaVersions.add(JavaVersion.toVersion(javaV))
-            minecraftVersions.add(mcV)
-
-            if (project.name == "fabric") {
-                requires "fabric-api"
-                requires "forge-config-api-port"
+                if (project.name == "fabric") {
+                    requires "fabric-api"
+                    requires "forge-config-api-port"
+                }
             }
-        }
 
-        modrinth {
-            accessToken = findProperty("secretsModrinthToken")
-            projectId = "scvT0o5w"
-            version = modV
+            modrinth {
+                accessToken = findProperty("secretsModrinthToken")
+                projectId = "scvT0o5w"
+                version = modV
 
-            minecraftVersions.add(mcV)
+                minecraftVersions.add(mcV)
 
-            if (project.name == "fabric") {
-                requires "fabric-api"
-                requires "forge-config-api-port"
+                if (project.name == "fabric") {
+                    requires "fabric-api"
+                    requires "forge-config-api-port"
+                }
             }
         }
     }

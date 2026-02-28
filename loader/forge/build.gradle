@@ -1,11 +1,9 @@
+import net.minecraftforge.renamer.gradle.RenameJar
+
 plugins {
     id "loader"
-    id "net.minecraftforge.gradle" version "${pluginForgeV}"
-    id 'net.minecraftforge.renamer' version '1.0.2'
-}
-
-java {
-    modularity.inferModulePath.set false
+    id "net.minecraftforge.gradle" version pluginForgeV
+    id 'net.minecraftforge.renamer' version "1.0.2"
 }
 
 minecraft {
@@ -45,19 +43,20 @@ dependencies {
 
     implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
-    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+}
 
-    runtimeOnly "org.ow2.asm:asm:9.5"
-    runtimeOnly "org.ow2.asm:asm-tree:9.5"
-    runtimeOnly "org.ow2.asm:asm-commons:9.5"
+tasks.named("jar", Jar) {
+    archiveClassifier.set "intermediate"
 }
 
 renamer.classes(tasks.named("jar", Jar)) {
     map.from minecraft.dependency.toSrgFile
 }
 
-renamer.classes('renameJarToSrg', tasks.named('jar', Jar)) {
-    mappings minecraft.dependency.toSrg.get()
+tasks.named("renameJar", RenameJar) {
+    output.set project.layout.buildDirectory.file("libs/${base.archivesName.get()}-${project.version}.jar").get()
+    archiveClassifier.set null
 }
 
 jar {
