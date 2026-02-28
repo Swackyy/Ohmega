@@ -2,7 +2,7 @@ import net.minecraftforge.renamer.gradle.RenameJar
 
 plugins {
     id "loader"
-    id "net.minecraftforge.gradle" version pluginForgeV
+    id "net.minecraftforge.gradle" version "${pluginForgeV}"
     id 'net.minecraftforge.renamer' version "1.0.2"
 }
 
