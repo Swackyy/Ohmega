@@ -19,14 +19,14 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 public final class Ohmega {
     public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
 
-    public Ohmega(FMLJavaModLoadingContext context) {
+    public Ohmega() {
         OhmegaCommon.bootstrap();
 
-        ModLoadingContext mlContext = ModLoadingContext.get();
+        ModLoadingContext context = ModLoadingContext.get();
 
-        mlContext.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
+        context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
-        IEventBus bus = context.getModEventBus();
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         OhmegaItems.register(bus);
         OhmegaMenusImpl.register(bus);
@@ -36,7 +36,7 @@ public final class Ohmega {
         if (FMLEnvironment.dist.isClient()) {
             OhmegaCommon.bootstrapClient();
 
-            mlContext.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+            context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
         }
     }
 }

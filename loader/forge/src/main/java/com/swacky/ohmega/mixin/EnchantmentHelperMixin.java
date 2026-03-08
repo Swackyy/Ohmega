@@ -23,8 +23,7 @@ abstract class EnchantmentHelperMixin {
             method = "getRandomItemWith(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Predicate;)Ljava/util/Map$Entry;",
             at = @At(
                     value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"),
-            locals = LocalCapture.CAPTURE_FAILSOFT,
-            remap = false)
+            locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void getRandomItemWith(Enchantment enchantment, LivingEntity entity, Predicate<ItemStack> filter, CallbackInfoReturnable<Map.Entry<EquipmentSlot, ItemStack>> cir, Map<EquipmentSlot, ItemStack> map, ArrayList<Map.Entry<EquipmentSlot, ItemStack>> list) {
         if (entity instanceof Player player) {
             for (ItemStack stack : AccessoryHelper.getStacks(player)) {

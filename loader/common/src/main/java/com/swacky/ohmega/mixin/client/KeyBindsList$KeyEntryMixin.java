@@ -13,14 +13,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(KeyBindsList.KeyEntry.class)
 abstract class KeyBindsList$KeyEntryMixin extends KeyBindsList.Entry {
-    @Shadow(remap = false)
+    @Shadow
     private Component name;
 
     @Inject(
             method = "<init>",
             at = @At(
-                    value = "RETURN"),
-            remap = false)
+                    value = "RETURN"))
     private void KeyMapping(KeyBindsList list, KeyMapping mapping, Component name, CallbackInfo ci) {
         if (OhmegaBinds.isInstance(mapping)) {
             String key = mapping.getName();

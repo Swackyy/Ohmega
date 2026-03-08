@@ -14,15 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLoginPacketListenerImpl.class)
 public class ServerLoginPacketListenerImplMixin {
-    @Shadow(remap = false)
+    @Shadow
     @Final
     Connection connection;
 
     @Inject(
             method = "handleHello",
             at = @At(
-                    value = "HEAD"),
-            remap = false)
+                    value = "HEAD"))
     public void startClientVerification(ServerboundHelloPacket packet, CallbackInfo ci) {
         OhmegaNetworkingImpl.S2C.send(connection, new SyncAccessoryTypesPacket());
     }

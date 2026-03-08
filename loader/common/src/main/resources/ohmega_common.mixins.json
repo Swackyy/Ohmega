@@ -2,6 +2,7 @@
   "required": true,
   "package": "com.swacky.ohmega.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "ohmega_common.refmap.json",
   "mixins": [
     "ServerPlayerGameModeMixin"
   ],
