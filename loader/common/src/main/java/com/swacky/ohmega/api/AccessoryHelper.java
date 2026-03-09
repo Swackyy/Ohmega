@@ -305,7 +305,7 @@ public final class AccessoryHelper {
         }
 
         for (String id : OhmegaConfig.Server.slotTypes()) {
-            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(id)));
+            builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
         }
 
         return builder.build();
@@ -319,7 +319,7 @@ public final class AccessoryHelper {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
         for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
-            builder.add(AccessoryTypeManager.getInstance().get(Identifier.parse(id)));
+            builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
         }
 
         return builder.build().asList();

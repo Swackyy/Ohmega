@@ -260,7 +260,7 @@ public final class AccessoryContainer {
     }
 
     public void reloadCfg(Player player) {
-        int oldSize = this.changed.length;
+        int oldSize = Math.min(changed.length, stacks.size());
         int newSize = AccessoryHelper.getSlotTypes().size();
 
         if (newSize > oldSize) {

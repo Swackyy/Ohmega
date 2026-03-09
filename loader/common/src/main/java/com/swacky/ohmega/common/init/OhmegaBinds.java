@@ -29,8 +29,8 @@ public final class OhmegaBinds {
 
     // Inner class to defer loading
     public static class Generated {
-        private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> SLOT_KEYS;
-        private static ArrayList<KeyMapping> ORDERED_SLOT_KEYS;
+        private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> SLOT_KEYS = ImmutableMap.of();
+        private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
 
         private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> createSlotKeys() {
             Generated.ORDERED_SLOT_KEYS = new ArrayList<>();
@@ -42,7 +42,7 @@ public final class OhmegaBinds {
             if (OhmegaConfig.Server.disableAccessoryTypes()) {
                 typeCountMap.put(AccessoryType.GENERIC.get(), 0);
             } else {
-                for (AccessoryType type : AccessoryTypeManager.getInstance().getTypes()) {
+                for (AccessoryType type : AccessoryTypeManager.getTypes()) {
                     typeCountMap.put(type, 0);
                 }
             }

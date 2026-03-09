@@ -22,8 +22,11 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
     private static final int DEFAULT_SIZE = 4;
     public static final String LOCATION = OhmegaCommon.MODID + "/accessory_types.json";
     private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
+    private static final HashSet<AccessoryType> TYPES = new HashSet<>();
 
-    private final HashSet<AccessoryType> types = new HashSet<>();
+    // Both of these are required as the configs are not guaranteed to load before dependent actions have been carried out.
+    private static Runnable DEFERRED_APPLY = null;
+    private static Runnable DEFERRED_CONFIG_LOAD = null;
 
     private AccessoryTypeManager() {}
 
@@ -52,15 +55,16 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         return builder.addAll(OhmegaHooks.registerAccessoryTypesEvent()).build();
     }
 
-    public void apply(ImmutableSet<AccessoryType> types) {
-        this.types.clear();
-        this.types.addAll(types);
+    public static void apply(ImmutableSet<AccessoryType> types) {
+        TYPES.clear();
+        TYPES.addAll(types);
+
+        if (DEFERRED_APPLY != null) {
+            DEFERRED_APPLY.run();
+            DEFERRED_APPLY = null;
+        }
 
         OhmegaTags.refresh();
-    }
-
-    public void clear() {
-        types.clear();
     }
 
     @Override
@@ -68,12 +72,35 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         apply(types);
     }
 
-    public ImmutableSet<AccessoryType> getTypes() {
-        return ImmutableSet.copyOf(types);
+    public static void applyClient(Runnable onConfigLoad, boolean shouldDefer) {
+        if (shouldDefer) {
+            DEFERRED_CONFIG_LOAD = onConfigLoad;
+        } else {
+            onConfigLoad.run();
+        }
     }
 
-    public @NonNull AccessoryType get(Identifier id) {
-        for (AccessoryType type : types) {
+    public static void clear() {
+        TYPES.clear();
+    }
+
+    public static void runDeferredAwaitingConfigLoad() {
+        if (DEFERRED_CONFIG_LOAD != null) {
+            DEFERRED_CONFIG_LOAD.run();
+            DEFERRED_CONFIG_LOAD = null;
+        }
+    }
+
+    public static void deferApply(Runnable runnable) {
+        DEFERRED_APPLY = runnable;
+    }
+
+    public static ImmutableSet<AccessoryType> getTypes() {
+        return ImmutableSet.copyOf(TYPES);
+    }
+
+    public static @NonNull AccessoryType get(Identifier id) {
+        for (AccessoryType type : TYPES) {
             if (type.getId().equals(id)) {
                 return type;
             }
@@ -82,8 +109,8 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         return AccessoryType.NORMAL.get();
     }
 
-    public boolean exists(String id) {
-        for (AccessoryType type : types) {
+    public static boolean exists(String id) {
+        for (AccessoryType type : TYPES) {
             if (type.getId().equals(Identifier.parse(id))) {
                 return true;
             }

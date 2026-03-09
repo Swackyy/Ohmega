@@ -5,6 +5,8 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -15,6 +17,7 @@ import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -89,7 +92,8 @@ public final class OhmegaNetworkingImpl {
 
         @SuppressWarnings("unused")
         public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, ClientConfigurationNetworking.Context context) {
-            AccessoryTypeManager.getInstance().apply(packet.types);
+            AccessoryTypeManager.apply(packet.types);
+            AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfigImpl.Server.getSpec().isLoaded());
         }
     }
 }

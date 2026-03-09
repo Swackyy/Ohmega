@@ -5,6 +5,8 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -112,7 +114,10 @@ public final class OhmegaNetworkingImpl {
         }
 
         public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> AccessoryTypeManager.getInstance().apply(packet.types));
+            context.enqueueWork(() -> {
+                AccessoryTypeManager.apply(packet.types);
+                AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfigImpl.Server.getSpec().isLoaded());
+            });
         }
     }
 }

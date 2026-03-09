@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -11,10 +12,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -27,20 +29,22 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onConfigLoad(ModConfigEvent.Loading event) {
+    private static void onConfigLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigLoad(() -> Minecraft.getInstance().options.load(true));
+            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
         }
     }
 
     @SubscribeEvent
     public static void onConfigReload(ModConfigEvent.Reloading event) {
-        if (OhmegaConfigImpl.Client.getSpec().isLoaded()) {
-            ModConfig config = event.getConfig();
+        IConfigSpec<ForgeConfigSpec> spec = event.getConfig().getSpec();
 
-            if (config.getSpec() == OhmegaConfigImpl.Client.getSpec()) {
-                ClientCallbacks.onClientConfigReload();
-            } else if (config.getSpec() == OhmegaConfigImpl.Server.getSpec() && OhmegaConfigImpl.Server.getSpec().isLoaded()) {
+        if (spec == OhmegaConfigImpl.Client.getSpec()) {
+            ClientCallbacks.onClientConfigReload();
+        } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
+            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
+
+            if (OhmegaConfigImpl.Client.getSpec().isLoaded()) {
                 ClientCallbacks.onServerConfigReload(() -> Minecraft.getInstance().options.load(true));
             }
         }

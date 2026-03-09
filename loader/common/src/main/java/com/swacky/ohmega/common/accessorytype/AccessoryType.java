@@ -65,11 +65,12 @@ public final class AccessoryType {
     public static final Identifier UTILITY_ID = OhmegaCommon.id("utility");
     public static final Identifier SPECIAL_ID = OhmegaCommon.id("special");
 
+    // todo: change this comment when the new strategy is applied
     // Deferred to ensure they are non-null
-    public static final Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.getInstance().get(GENERIC_ID);
-    public static final Supplier<AccessoryType> NORMAL  = () -> AccessoryTypeManager.getInstance().get(NORMAL_ID);
-    public static final Supplier<AccessoryType> UTILITY = () -> AccessoryTypeManager.getInstance().get(UTILITY_ID);
-    public static final Supplier<AccessoryType> SPECIAL = () -> AccessoryTypeManager.getInstance().get(SPECIAL_ID);
+    public static final Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.get(GENERIC_ID);
+    public static final Supplier<AccessoryType> NORMAL  = () -> AccessoryTypeManager.get(NORMAL_ID);
+    public static final Supplier<AccessoryType> UTILITY = () -> AccessoryTypeManager.get(UTILITY_ID);
+    public static final Supplier<AccessoryType> SPECIAL = () -> AccessoryTypeManager.get(SPECIAL_ID);
 
     private final Identifier id;
     private final boolean displayHoverText;

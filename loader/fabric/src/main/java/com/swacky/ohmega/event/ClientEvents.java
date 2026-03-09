@@ -1,6 +1,7 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 
 import java.util.List;
@@ -34,22 +36,26 @@ public final class ClientEvents {
 
     private static void onConfigLoad(ModConfig config) {
         if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigLoad(Minecraft.getInstance().options::load);
+            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
         }
     }
 
     private static void onConfigReload(ModConfig config) {
-        if (OhmegaConfigImpl.Client.getSpec().isLoaded()) {
-            if (config.getSpec() == OhmegaConfigImpl.Client.getSpec()) {
-                ClientCallbacks.onClientConfigReload();
-            } else if (config.getSpec() == OhmegaConfigImpl.Server.getSpec() && OhmegaConfigImpl.Server.getSpec().isLoaded()) {
+        IConfigSpec spec = config.getSpec();
+
+        if (spec == OhmegaConfigImpl.Client.getSpec()) {
+            ClientCallbacks.onClientConfigReload();
+        } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
+            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
+
+            if (OhmegaConfigImpl.Client.getSpec().isLoaded()) {
                 ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
             }
         }
     }
 
     private static void onConfigUnload(ModConfig config) {
-        if (OhmegaConfigImpl.Client.getSpec().isLoaded() && config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
             ClientCallbacks.onServerConfigUnload(Minecraft.getInstance().options::load);
         }
     }

@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-// Contains event and mixin (mostly for Fabric) client-side callbacks
 public final class ClientCallbacks {
     public static void onClientConfigReload() {
         if (!OhmegaConfig.Client.compatibilityMode()) {
@@ -117,21 +116,12 @@ public final class ClientCallbacks {
         }
     }
 
-    public static void onServerConfigLoad(Runnable loadFunction) {
-        ArrayList<KeyMapping> list = new ArrayList<>();
-
-        for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.Generated.getSlotKeys().values()) {
-            list.addAll(immutableList);
-        }
-
-        Options options = Minecraft.getInstance().options;
-        options.keyMappings = ArrayUtils.addAll(Arrays.stream(options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
-
-        loadFunction.run();
-    }
-
     public static void onServerConfigReload(Runnable loadFunction) {
-        ClientCallbacks.onServerConfigLoad(loadFunction);
+        if (AccessoryTypeManager.getTypes().isEmpty()) {
+            AccessoryTypeManager.deferApply(() -> ClientCallbacks.reloadRegisteredKeybinds(loadFunction));
+        } else {
+            reloadRegisteredKeybinds(loadFunction);
+        }
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = Minecraft.getInstance().player;
@@ -150,10 +140,23 @@ public final class ClientCallbacks {
     }
 
     public static void onServerConfigUnload(Runnable loadFunction) {
-        AccessoryTypeManager.getInstance().clear();
+        AccessoryTypeManager.clear();
 
         Minecraft mc = Minecraft.getInstance();
         mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]);
+
+        loadFunction.run();
+    }
+
+    public static void reloadRegisteredKeybinds(Runnable loadFunction) {
+        ArrayList<KeyMapping> list = new ArrayList<>();
+
+        for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.Generated.getSlotKeys().values()) {
+            list.addAll(immutableList);
+        }
+
+        Options options = Minecraft.getInstance().options;
+        options.keyMappings = ArrayUtils.addAll(Arrays.stream(options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
 
         loadFunction.run();
     }

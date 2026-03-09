@@ -22,7 +22,7 @@ public final class SyncAccessoryTypesPacket implements CustomPacketPayload {
     }
 
     public SyncAccessoryTypesPacket() {
-        this(AccessoryTypeManager.getInstance().getTypes());
+        this(AccessoryTypeManager.getTypes());
     }
 
     @Override

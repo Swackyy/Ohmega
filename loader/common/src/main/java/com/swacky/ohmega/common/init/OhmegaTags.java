@@ -16,7 +16,7 @@ public final class OhmegaTags {
     private static ImmutableMap<AccessoryType, TagKey<Item>> TAG_MAP = ImmutableMap.of();
 
     public static void refresh() {
-        ImmutableSet<AccessoryType> types = AccessoryTypeManager.getInstance().getTypes();
+        ImmutableSet<AccessoryType> types = AccessoryTypeManager.getTypes();
         ImmutableMap.Builder<AccessoryType, TagKey<Item>> builder = ImmutableMap.builderWithExpectedSize(types.size());
 
         for (AccessoryType type : types) {
