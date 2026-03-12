@@ -5,7 +5,7 @@ plugins {
 
 minecraft {
     version mcV
-    accessWideners file("src/main/resources/aw.accesswidener")
+    accessWideners file("src/main/resources/common_aw.accesswidener")
 }
 
 dependencies {

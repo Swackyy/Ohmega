@@ -65,3 +65,9 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 }
+
+fabricApi {
+    configureDataGeneration {
+        outputDirectory = file project(":loader:common").sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath()
+    }
+}

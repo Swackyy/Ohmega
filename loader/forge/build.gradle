@@ -3,13 +3,13 @@ import net.minecraftforge.renamer.gradle.RenameJar
 plugins {
     id "loader"
     id "net.minecraftforge.gradle" version "${pluginForgeV}"
-    id 'net.minecraftforge.renamer' version "1.0.2"
+    id 'net.minecraftforge.renamer' version "1.0.6"
 }
 
 minecraft {
     mappings channel: "official", version: mcV
 
-    accessTransformer = true
+    accessTransformer = "META-INF/mapped_at.cfg"
 
     runs {
         configureEach {
@@ -20,9 +20,8 @@ minecraft {
                 }
             }
 
-            args "-mixin.config", "${modId}.mixins.json"
-            args "-mixin.config", "${modId}_common.mixins.json"
             environment "MOD_CLASSES": "{source_roots}"
+            renamer.mixin.run it
             systemProperty "eventbus.api.strictRuntimeChecks", "true"
             systemProperty "forge.enabledGameTestNamespaces", modId
             workingDir.convention layout.projectDirectory.dir("run")
@@ -51,11 +50,7 @@ dependencies {
 
     implementation "io.github.llamalad7:mixinextras-common:0.5.2"
     annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
-    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
-}
-
-tasks.named("jar", Jar) {
-    from project.layout.buildDirectory.file("tmp/${modId}.refmap.json")
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
 }
 
 renamer.classes(tasks.named("jar", Jar)) {
@@ -68,22 +63,17 @@ tasks.named("renameJar", RenameJar) {
     archiveClassifier.set null
 }
 
-tasks.withType(JavaCompile).configureEach {
-    String originalPath = minecraft.dependency.toSrgFile.get().canonicalPath
-    String extractedPath = originalPath.substring(0, originalPath.lastIndexOf('.'))
-    file(extractedPath).text = resources.gzip(originalPath).read().text
-    options.compilerArgs.addAll([
-            "-AmappingTypes=tsrg",
-            "-AdefaultObfuscationEnv=searge",
-            "-AreobfTsrgFile=${extractedPath}",
-            "-AoutRefMapFile=${project.layout.buildDirectory.file("tmp/${modId}.refmap.json").get().getAsFile().getAbsolutePath()}"
-    ])
-}
+renamer.enableMixinRefmaps {
+    config "${modId}.mixins.json"
+    config "${modId}_common.mixins.json"
+    mixinMappings.map files(minecraft.dependency.toSrgFile.get())
 
-jar {
-    manifest {
-        attributes([
-                "MixinConfigs": "${modId}.mixins.json, ${modId}_common.mixins.json"
-        ])
+    defaultObfuscationEnv = "searge"
+
+    source(sourceSets.main) {
+        refMap.set "${modId}.refmap.json"
     }
+
+    jar tasks.named("jar")
+    jar tasks.named("sourcesJar")
 }

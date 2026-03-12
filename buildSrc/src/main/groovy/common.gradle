@@ -36,6 +36,18 @@ processResources {
     }
 }
 
+test {
+    failOnNoDiscoveredTests = false
+}
+
+jar {
+    exclude "**/.cache"
+}
+
+tasks.named("sourcesJar", Jar) {
+    exclude "**/.cache"
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.release.set JavaLanguageVersion.of(javaV).asInt()
