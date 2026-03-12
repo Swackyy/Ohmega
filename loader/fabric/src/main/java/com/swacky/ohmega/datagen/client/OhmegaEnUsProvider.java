@@ -4,40 +4,40 @@ import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
-import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
-public final class OhmegaEnUsProvider extends LanguageProvider {
-    public OhmegaEnUsProvider(PackOutput output) {
-        super(output, OhmegaCommon.MODID, "en_us");
+public class OhmegaEnUsProvider extends FabricLanguageProvider {
+    public OhmegaEnUsProvider(FabricDataOutput output) {
+        super(output, "en_us");
     }
 
     @Override
-    protected void addTranslations() {
-        InternalLangHelper internalHelper = new InternalLangHelper(this);
+    public void generateTranslations(TranslationBuilder builder) {
+        InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Datapack
         internalHelper.addDataPackDescription("Mod resources for Ohmega");
 
-        OhmegaLangHelper helper = new OhmegaLangHelper(this::add, OhmegaCommon.MODID);
+        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, OhmegaCommon.MODID);
 
         // Item
-        helper.addKeyboundItem(OhmegaItems.ANGEL_RING.get(),
+        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
                 "Angel Ring",
                 "Allows the wearer to fly",
                 "Press %s to toggle flight");
 
         // Accessory type
-        add("accessory_type", "Accessory Type: %s");
+        builder.add("accessory_type", "Accessory Type: %s");
         helper.addType("generic", "Generic");
         helper.addType("normal", "Normal");
         helper.addType("utility", "Utility");
         helper.addType("special", "Special");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        add("key.ohmega.accessory_type", "%s %s");
-        add("key.category." + OhmegaCommon.MODID + '.' + OhmegaCommon.MODID, "Ohmega");
-        add("key." + OhmegaCommon.MODID + ".open_acc_inv", "Open/Close Accessories Inventory");
+        builder.add("key.ohmega.accessory_type", "%s %s");
+        builder.add("key.category." + OhmegaCommon.MODID + '.' + OhmegaCommon.MODID, "Ohmega");
+        builder.add("key." + OhmegaCommon.MODID + ".open_acc_inv", "Open/Close Accessories Inventory");
 
         // Config
         internalHelper.addConfig("title", "Ohmega Config");

@@ -52,8 +52,7 @@ public interface IAccessory {
         return this != other;
     }
 
-    // Called when a key-bind is pressed for this slot.
-    // Will only work when equipped in an accessory slot of which is of a key-bound accessory type (server config).
+    // Called when a key-bind is pressed for this slot. Will only work for utility and special indexes.
     // It is recommended that when this is overridden and used, that a tooltip will be provided.
     // A component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(@NonNull Player player, @NonNull ItemStack stack) {}

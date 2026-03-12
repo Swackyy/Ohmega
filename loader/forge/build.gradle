@@ -3,26 +3,33 @@ import net.minecraftforge.renamer.gradle.RenameJar
 plugins {
     id "loader"
     id "net.minecraftforge.gradle" version "${pluginForgeV}"
-    id 'net.minecraftforge.renamer' version '1.0.2'
+    id 'net.minecraftforge.renamer' version "1.0.6"
 }
 
 minecraft {
     mappings channel: "official", version: mcV
 
-    accessTransformer = true
+    accessTransformer = "META-INF/mapped_at.cfg"
 
     runs {
         configureEach {
-            workingDir.convention layout.projectDirectory.dir("run")
+            mods {
+                "${modId}" {
+                    source sourceSets.main
+                    source project(":loader:common").sourceSets.main
+                }
+            }
+
+            environment "MOD_CLASSES": "{source_roots}"
+            renamer.mixin.run it
             systemProperty "eventbus.api.strictRuntimeChecks", "true"
             systemProperty "forge.enabledGameTestNamespaces", modId
-            args "-mixin.config", "${modId}.mixins.json"
-            args "-mixin.config", "${modId}_common.mixins.json"
+            workingDir.convention layout.projectDirectory.dir("run")
         }
 
-        register("client") {}
+        register("client")
 
-        register("server") {}
+        register("server")
     }
 }
 
@@ -46,12 +53,9 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
 }
 
-tasks.named("jar", Jar) {
-    archiveClassifier.set "intermediate"
-}
-
 renamer.classes(tasks.named("jar", Jar)) {
     map.from minecraft.dependency.toSrgFile
+    archiveClassifier.set "intermediate"
 }
 
 tasks.named("renameJar", RenameJar) {
@@ -59,10 +63,17 @@ tasks.named("renameJar", RenameJar) {
     archiveClassifier.set null
 }
 
-jar {
-    manifest {
-        attributes([
-                "MixinConfigs": "${modId}.mixins.json, ${modId}_common.mixins.json"
-        ])
+renamer.enableMixinRefmaps {
+    config "${modId}.mixins.json"
+    config "${modId}_common.mixins.json"
+    mixinMappings.map files(minecraft.dependency.toSrgFile.get())
+
+    defaultObfuscationEnv = "searge"
+
+    source(sourceSets.main) {
+        refMap.set "${modId}.refmap.json"
     }
+
+    jar tasks.named("jar")
+    jar tasks.named("sourcesJar")
 }

@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
 
@@ -11,11 +12,6 @@ pluginManagement {
         maven {
             name = "Forge"
             url = "https://maven.minecraftforge.net"
-        }
-
-        maven {
-            name = "NeoForge"
-            url = "https://maven.neoforged.net/releases"
         }
 
         maven {
@@ -36,4 +32,4 @@ plugins {
 
 rootProject.setName modName
 
-include "loader:common", "loader:fabric", "loader:forge", "loader:neoforge"
+include "loader:common", "loader:fabric", "loader:forge"

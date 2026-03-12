@@ -1,21 +1,21 @@
 package com.swacky.ohmega.datagen.client;
 
 import com.swacky.ohmega.common.OhmegaCommon;
-import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
 final class InternalLangHelper {
-    private final LanguageProvider provider;
+    private final FabricLanguageProvider.TranslationBuilder builder;
 
-    InternalLangHelper(LanguageProvider provider) {
-        this.provider = provider;
+    InternalLangHelper(FabricLanguageProvider.TranslationBuilder builder) {
+        this.builder = builder;
     }
 
     void addDataPackDescription(String translation) {
-        provider.add("dataPack." + OhmegaCommon.MODID + ".description", translation);
+        builder.add("dataPack." + OhmegaCommon.MODID + ".description", translation);
     }
 
     void addConfig(String key, String translation) {
-        provider.add(OhmegaCommon.MODID + ".configuration." + key, translation);
+        builder.add(OhmegaCommon.MODID + ".configuration." + key, translation);
     }
 
     void addConfigSection(String key, String translation, String titleTranslation) {
@@ -31,6 +31,6 @@ final class InternalLangHelper {
     }
 
     void addConfigButton(String key, String translation) {
-        provider.add(key + ".button", translation);
+        addConfig(key + ".button", translation);
     }
 }
