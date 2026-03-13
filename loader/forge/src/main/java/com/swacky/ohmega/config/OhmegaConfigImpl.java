@@ -101,7 +101,7 @@ public final class OhmegaConfigImpl {
                     .defineList(SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
             keyboundSlotTypes = builder
                     .comment(KEYBOUND_SLOT_TYPES_DESCRIPTION)
-                    .defineListAllowEmpty(KEYBOUND_SLOT_TYPES_KEY, KEYBOUND_SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
+                    .defineListAllowEmpty(List.of(KEYBOUND_SLOT_TYPES_KEY), () -> KEYBOUND_SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
             keepAccessoriesBehaviour = builder
                     .comment(KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION)
                     .defineEnum(KEEP_ACCESSORIES_BEHAVIOUR_KEY, KeepAccessoriesBehaviour.DEFAULT);

@@ -78,7 +78,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    protected void renderWidget(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
+    public void renderWidget(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
         if (isVisible()) {
             fixPos();
 
