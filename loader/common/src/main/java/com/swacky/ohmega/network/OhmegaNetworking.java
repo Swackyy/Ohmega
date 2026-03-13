@@ -1,7 +1,6 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.OhmegaCommon;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 public final class OhmegaNetworking {
@@ -15,12 +14,12 @@ public final class OhmegaNetworking {
 
         public static void bootstrap() {}
 
-        public static void send(CustomPacketPayload packet) {
+        public static void send(OhmegaPacket<?> packet) {
             IMPL.send(packet);
         }
 
         public interface Service {
-            void send(CustomPacketPayload packet);
+            void send(OhmegaPacket<?> packet);
         }
     }
 
@@ -29,12 +28,12 @@ public final class OhmegaNetworking {
 
         public static void bootstrap() {}
 
-        public static void send(ServerPlayer receiver, CustomPacketPayload packet) {
+        public static void send(ServerPlayer receiver, OhmegaPacket<?> packet) {
             IMPL.send(receiver, packet);
         }
 
         public interface Service {
-            void send(ServerPlayer receiver, CustomPacketPayload packet);
+            void send(ServerPlayer receiver, OhmegaPacket<?> packet);
         }
     }
 }

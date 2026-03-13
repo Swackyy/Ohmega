@@ -225,7 +225,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
             }
 
             if (stack0.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY, stack);
+                slot.setByPlayer(ItemStack.EMPTY);
             } else {
                 slot.setChanged();
             }
@@ -341,25 +341,30 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
             this.slot = slot;
         }
 
-        public void setByPlayer(@NonNull ItemStack newStack, @NonNull ItemStack oldStack) {
-            InventoryMenu.onEquipItem(player, slot, newStack, oldStack);
-            super.setByPlayer(newStack, oldStack);
+        @Override
+        public void setByPlayer(@NonNull ItemStack stack) {
+            InventoryMenu.onEquipItem(player, slot, stack, getItem());
+            super.setByPlayer(stack);
         }
 
+        @Override
         public int getMaxStackSize() {
             return 1;
         }
 
+        @Override
         public boolean mayPlace(@NonNull ItemStack stack) {
             return slot == Mob.getEquipmentSlotForItem(stack);
         }
 
+        @Override
         public boolean mayPickup(@NonNull Player player) {
             ItemStack stack = this.getItem();
 
             return super.mayPickup(player) && (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(stack));
         }
 
+        @Override
         public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
             return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_LOCATIONS[slot.getIndex()]);
         }

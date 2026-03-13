@@ -16,6 +16,6 @@ public class ServerLoginPacketListenerImplMixin {
             at = @At(
                     value = "HEAD"))
     public void startClientVerification(ServerboundHelloPacket packet, CallbackInfo ci) {
-        OhmegaNetworkingImpl.S2C.send(((ServerLoginPacketListenerImpl) (Object) this).connection, new SyncAccessoryTypesPacket());
+        OhmegaNetworkingImpl.S2C.sendLoginToClient(((ServerLoginPacketListenerImpl) (Object) this).connection, new SyncAccessoryTypesPacket());
     }
 }

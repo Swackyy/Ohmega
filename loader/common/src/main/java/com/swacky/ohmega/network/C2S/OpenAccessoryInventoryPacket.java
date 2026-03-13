@@ -1,12 +1,13 @@
 package com.swacky.ohmega.network.C2S;
 
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.network.OhmegaPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
-public final class OpenAccessoryInventoryPacket implements CustomPacketPayload {
+public final class OpenAccessoryInventoryPacket implements OhmegaPacket<ServerPacketListener> {
     public static final ResourceLocation ID = OhmegaCommon.rl("open_accessory_inventory");
     public static final OpenAccessoryInventoryPacket INSTANCE = new OpenAccessoryInventoryPacket();
 
@@ -18,7 +19,7 @@ public final class OpenAccessoryInventoryPacket implements CustomPacketPayload {
     public void write(@NonNull FriendlyByteBuf buf) {}
 
     @Override
-    public @NonNull ResourceLocation id() {
+    public ResourceLocation id() {
         return ID;
     }
 }

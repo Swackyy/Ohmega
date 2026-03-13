@@ -18,26 +18,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.simple.SimpleChannel;
+
+import java.util.function.Supplier;
 
 public final class OhmegaNetworkingImpl {
     private static SimpleChannel channel;
 
     public static void bootstrap() {
-        SimpleChannel net = ChannelBuilder
+        SimpleChannel net = NetworkRegistry.ChannelBuilder
                 .named(OhmegaCommon.rl("network"))
-                .networkProtocolVersion(1)
-                .clientAcceptedVersions((status, version) -> true)
-                .serverAcceptedVersions((status, version) -> true)
+                .networkProtocolVersion(() -> "1")
+                .clientAcceptedVersions(version -> true)
+                .serverAcceptedVersions(version -> true)
                 .simpleChannel();
 
         int packetId = 0;
@@ -77,12 +78,14 @@ public final class OhmegaNetworkingImpl {
 
     public static final class C2S implements OhmegaNetworking.C2S.Service {
         @Override
-        public void send(CustomPacketPayload packet) {
-            OhmegaNetworkingImpl.channel.send(packet, PacketDistributor.SERVER.noArg());
+        public void send(OhmegaPacket<?> packet) {
+            OhmegaNetworkingImpl.channel.send(PacketDistributor.SERVER.noArg(), packet);
         }
 
         @SuppressWarnings("unused")
-        public static void handleOpenAccessoryInventory(OpenAccessoryInventoryPacket packet, CustomPayloadEvent.Context context) {
+        public static void handleOpenAccessoryInventory(OpenAccessoryInventoryPacket packet, Supplier<NetworkEvent.Context> sup) {
+            NetworkEvent.Context context = sup.get();
+
             context.enqueueWork(() -> {
                 ServerPlayer player = context.getSender();
 
@@ -105,7 +108,9 @@ public final class OhmegaNetworkingImpl {
         }
 
         @SuppressWarnings("unused")
-        public static void handleOpenInventory(OpenInventoryPacket packet, CustomPayloadEvent.Context context) {
+        public static void handleOpenInventory(OpenInventoryPacket packet, Supplier<NetworkEvent.Context> sup) {
+            NetworkEvent.Context context = sup.get();
+
             context.enqueueWork(() -> {
                 ServerPlayer player = context.getSender();
                 if (player != null) {
@@ -116,7 +121,9 @@ public final class OhmegaNetworkingImpl {
         }
 
         @SuppressWarnings("unused")
-        public static void handleResizeContainer(ResizeContainerPacket packet, CustomPayloadEvent.Context context) {
+        public static void handleResizeContainer(ResizeContainerPacket packet, Supplier<NetworkEvent.Context> sup) {
+            NetworkEvent.Context context = sup.get();
+
             context.enqueueWork(() -> {
                 ServerPlayer player = context.getSender();
 
@@ -128,7 +135,9 @@ public final class OhmegaNetworkingImpl {
             context.setPacketHandled(true);
         }
 
-        public static void handleUseAccessory(UseAccessoryPacket packet, CustomPayloadEvent.Context context) {
+        public static void handleUseAccessory(UseAccessoryPacket packet, Supplier<NetworkEvent.Context> sup) {
+            NetworkEvent.Context context = sup.get();
+
             context.enqueueWork(() -> {
                 if (packet.slot() < AccessoryHelper.getSlotTypes().size()) {
                     AccessoryContainer container = AccessoryHelper.getContainer(context.getSender());
@@ -154,18 +163,20 @@ public final class OhmegaNetworkingImpl {
 
     public static final class S2C implements OhmegaNetworking.S2C.Service {
         @Override
-        public void send(ServerPlayer receiver, CustomPacketPayload packet) {
-            OhmegaNetworkingImpl.channel.send(packet, PacketDistributor.PLAYER.with(receiver));
+        public void send(ServerPlayer receiver, OhmegaPacket<?> packet) {
+            OhmegaNetworkingImpl.channel.send(PacketDistributor.PLAYER.with(() -> receiver), packet);
         }
 
-        public static void send(Connection connection, Object packet) {
-            OhmegaNetworkingImpl.channel.send(packet, connection);
+        public static void sendLoginToClient(Connection connection, OhmegaPacket<?> packet) {
+            OhmegaNetworkingImpl.channel.sendTo(packet, connection, NetworkDirection.LOGIN_TO_CLIENT);
         }
 
-        public static void handleSyncAccessorySlots(SyncAccessorySlotsPacket packet, CustomPayloadEvent.Context context) {
+        public static void handleSyncAccessorySlots(SyncAccessorySlotsPacket packet, Supplier<NetworkEvent.Context> sup) {
             if (packet.indexes().length == 0) {
                 return;
             }
+
+            NetworkEvent.Context context = sup.get();
 
             context.enqueueWork(() -> {
                 ClientLevel level = Minecraft.getInstance().level;
@@ -191,7 +202,9 @@ public final class OhmegaNetworkingImpl {
             context.setPacketHandled(true);
         }
 
-        public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, CustomPayloadEvent.Context context) {
+        public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, Supplier<NetworkEvent.Context> sup) {
+            NetworkEvent.Context context = sup.get();
+
             context.enqueueWork(() -> AccessoryTypeManager.getInstance().apply(packet.types()));
             context.setPacketHandled(true);
         }

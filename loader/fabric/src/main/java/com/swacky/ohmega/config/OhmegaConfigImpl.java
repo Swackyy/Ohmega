@@ -1,6 +1,6 @@
 package com.swacky.ohmega.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashSet;
 import java.util.List;
@@ -8,18 +8,18 @@ import java.util.Set;
 
 public final class OhmegaConfigImpl {
     public static final class Client implements OhmegaConfig.Client.Service {
-        private static ModConfigSpec spec;
+        private static ForgeConfigSpec spec;
 
-        public ModConfigSpec.BooleanValue compatibilityMode;
-        public ModConfigSpec.EnumValue<ButtonStyle> buttonStyle;
-        public ModConfigSpec.EnumValue<Side> side;
-        public ModConfigSpec.BooleanValue showHoverTooltip;
-        public ModConfigSpec.IntValue maxColumns;
-        public ModConfigSpec.IntValue maxColumnSlots;
-        public ModConfigSpec.IntValue maxColumnRenderSlots;
+        public ForgeConfigSpec.BooleanValue compatibilityMode;
+        public ForgeConfigSpec.EnumValue<ButtonStyle> buttonStyle;
+        public ForgeConfigSpec.EnumValue<Side> side;
+        public ForgeConfigSpec.BooleanValue showHoverTooltip;
+        public ForgeConfigSpec.IntValue maxColumns;
+        public ForgeConfigSpec.IntValue maxColumnSlots;
+        public ForgeConfigSpec.IntValue maxColumnRenderSlots;
 
         public Client() {
-            ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
             compatibilityMode = builder
                 .comment(COMPATIBILITY_MODE_DESCRIPTION)
@@ -45,7 +45,7 @@ public final class OhmegaConfigImpl {
             Client.spec = builder.build();
         }
 
-        public static ModConfigSpec getSpec() {
+        public static ForgeConfigSpec getSpec() {
             return Client.spec;
         }
 
@@ -86,22 +86,22 @@ public final class OhmegaConfigImpl {
     }
 
     public static final class Server implements OhmegaConfig.Server.Service {
-        private static ModConfigSpec spec;
+        private static ForgeConfigSpec spec;
 
-        public ModConfigSpec.ConfigValue<List<? extends String>> slotTypes;
-        public ModConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
-        public ModConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
-        public ModConfigSpec.BooleanValue disableAccessoryTypes;
+        public ForgeConfigSpec.ConfigValue<List<? extends String>> slotTypes;
+        public ForgeConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
+        public ForgeConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
+        public ForgeConfigSpec.BooleanValue disableAccessoryTypes;
 
         public Server() {
-            ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+            ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
             slotTypes = builder
                 .comment(SLOT_TYPES_DESCRIPTION)
                 .defineList(SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
             keyboundSlotTypes = builder
                 .comment(KEYBOUND_SLOT_TYPES_DESCRIPTION)
-                .defineListAllowEmpty(KEYBOUND_SLOT_TYPES_KEY, KEYBOUND_SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
+                .defineListAllowEmpty(List.of(KEYBOUND_SLOT_TYPES_KEY), () -> KEYBOUND_SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
             keepAccessoriesBehaviour = builder
                 .comment(KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION)
                 .defineEnum(KEEP_ACCESSORIES_BEHAVIOUR_KEY, KeepAccessoriesBehaviour.DEFAULT);
@@ -111,7 +111,7 @@ public final class OhmegaConfigImpl {
             Server.spec = builder.build();
         }
 
-        public static ModConfigSpec getSpec() {
+        public static ForgeConfigSpec getSpec() {
             return Server.spec;
         }
 

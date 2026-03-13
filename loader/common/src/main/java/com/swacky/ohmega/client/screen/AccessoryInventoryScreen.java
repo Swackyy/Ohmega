@@ -51,6 +51,7 @@ public final class AccessoryInventoryScreen extends EffectRenderingInventoryScre
 
     @Override
     public void render(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
+        renderBackground(gui);
         super.render(gui, mx, my, partialTicks);
         renderTooltip(gui, mx, my);
     }
@@ -146,7 +147,7 @@ public final class AccessoryInventoryScreen extends EffectRenderingInventoryScre
                 renderAccInv(gui);
 
                 // Entity rendering
-                InventoryScreen.renderEntityInInventoryFollowsMouse(gui, x + 26, topPos + 8, x + 75, topPos + 78, 30, 0.0625f, mx, my, player);
+                InventoryScreen.renderEntityInInventoryFollowsMouse(gui, x + 51, topPos + 75, 30, x + 51 - mx, topPos + 25 - my, player);
             }
         }
     }

@@ -1,12 +1,13 @@
 package com.swacky.ohmega.network.C2S;
 
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.network.OhmegaPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
-public final class ResizeContainerPacket implements CustomPacketPayload {
+public final class ResizeContainerPacket implements OhmegaPacket<ServerPacketListener> {
     public static final ResourceLocation ID = OhmegaCommon.rl("resize_container");
     public static final ResizeContainerPacket INSTANCE = new ResizeContainerPacket();
 
@@ -18,7 +19,7 @@ public final class ResizeContainerPacket implements CustomPacketPayload {
     public void write(@NonNull FriendlyByteBuf buf) {}
 
     @Override
-    public @NonNull ResourceLocation id() {
+    public ResourceLocation id() {
         return ID;
     }
 }

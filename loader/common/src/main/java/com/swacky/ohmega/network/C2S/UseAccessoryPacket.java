@@ -1,12 +1,13 @@
 package com.swacky.ohmega.network.C2S;
 
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.network.OhmegaPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
-public record UseAccessoryPacket(int slot) implements CustomPacketPayload {
+public record UseAccessoryPacket(int slot) implements OhmegaPacket<ServerPacketListener> {
     public static final ResourceLocation ID = OhmegaCommon.rl("use_accessory");
 
     public UseAccessoryPacket(FriendlyByteBuf buf) {
@@ -19,7 +20,7 @@ public record UseAccessoryPacket(int slot) implements CustomPacketPayload {
     }
 
     @Override
-    public @NonNull ResourceLocation id() {
+    public ResourceLocation id() {
         return ID;
     }
 }

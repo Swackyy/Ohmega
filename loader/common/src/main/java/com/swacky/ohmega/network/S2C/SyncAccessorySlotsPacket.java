@@ -1,8 +1,9 @@
 package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.network.OhmegaPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
@@ -10,7 +11,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements CustomPacketPayload {
+public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements OhmegaPacket<ClientGamePacketListener> {
     public static final ResourceLocation ID = OhmegaCommon.rl("sync_accessory_slots");
 
     public SyncAccessorySlotsPacket(FriendlyByteBuf buf) {
@@ -42,7 +43,7 @@ public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemSta
     }
 
     @Override
-    public @NonNull ResourceLocation id() {
+    public ResourceLocation id() {
         return ID;
     }
 }

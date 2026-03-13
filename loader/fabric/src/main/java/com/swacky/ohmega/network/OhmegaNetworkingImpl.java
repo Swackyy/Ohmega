@@ -19,7 +19,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 public final class OhmegaNetworkingImpl {
     public static final class C2S implements OhmegaNetworking.C2S.Service {
         @Override
-        public void send(CustomPacketPayload packet) {
+        public void send(OhmegaPacket<?> packet) {
             FriendlyByteBuf buf = PacketByteBufs.create();
 
             packet.write(buf);
@@ -80,7 +79,7 @@ public final class OhmegaNetworkingImpl {
 
     public static final class S2C implements OhmegaNetworking.S2C.Service {
         @Override
-        public void send(ServerPlayer receiver, CustomPacketPayload packet) {
+        public void send(ServerPlayer receiver, OhmegaPacket<?> packet) {
             FriendlyByteBuf buf = PacketByteBufs.create();
 
             packet.write(buf);

@@ -4,14 +4,15 @@ import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.network.OhmegaPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.login.custom.CustomQueryPayload;
+import net.minecraft.network.protocol.login.ClientLoginPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.IntSupplier;
 
-public record SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) implements CustomQueryPayload, IntSupplier {
+public record SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) implements OhmegaPacket<ClientLoginPacketListener>, IntSupplier {
     public static final ResourceLocation ID = OhmegaCommon.rl("sync_accessory_types");
 
     public SyncAccessoryTypesPacket() {
@@ -43,7 +44,7 @@ public record SyncAccessoryTypesPacket(ImmutableSet<AccessoryType> types) implem
     }
 
     @Override
-    public @NonNull ResourceLocation id() {
+    public ResourceLocation id() {
         return ID;
     }
 
