@@ -30,9 +30,10 @@ if (secretsFile.exists()) {
     }
 
     tasks.register("publishMavenCentral") {
+        group = "publishing"
+
         doLast {
             println "publishing to maven central!"
-            group = "publishing"
 
             String auth = Base64.getEncoder().encodeToString("${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes())
             HttpClient client = HttpClient.newHttpClient();
