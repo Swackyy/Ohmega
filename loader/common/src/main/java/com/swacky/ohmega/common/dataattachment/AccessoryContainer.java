@@ -9,7 +9,6 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -18,7 +17,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.gamerules.GameRules;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jspecify.annotations.NonNull;
 
@@ -159,22 +157,17 @@ public final class AccessoryContainer {
         return false;
     }
 
-    private void removeStackFromSlot(Player player, int index, boolean fromDeath) {
+    private void removeStackFromSlot(Player player, int index) {
         ItemStack stack = stacks.get(index);
 
         if (!stack.isEmpty()) {
             doUnequip(player, stack);
 
-            if (fromDeath) {
-                player.drop(stack, true, false);
-                doSetStackInSlot(index, ItemStack.EMPTY);
-            } else {
-                if (!player.addItem(stack)) {
-                    player.drop(stack, true);
-                }
-
-                onContentsChanged(index);
+            if (!player.addItem(stack)) {
+                player.drop(stack, true);
             }
+
+            onContentsChanged(index);
         }
     }
 
@@ -245,20 +238,6 @@ public final class AccessoryContainer {
         }
     }
 
-    public void onDeath(ServerPlayer player) {
-        boolean flag = switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) { // Inverse
-            case ALWAYS_ON -> false;
-            case ALWAYS_OFF -> true;
-            case DEFAULT -> !player.level().getGameRules().get(GameRules.KEEP_INVENTORY);
-        };
-
-        if (flag) {
-            for (int i = 0; i < stacks.size(); i++) {
-                removeStackFromSlot(player, i, true);
-            }
-        }
-    }
-
     public void reloadCfg(Player player) {
         int oldSize = Math.min(changed.length, stacks.size());
         int newSize = AccessoryHelper.getSlotTypes().size();
@@ -273,7 +252,7 @@ public final class AccessoryContainer {
         } else if (newSize < oldSize) {
             // Drop stacks outside of range
             for (int i = newSize; i < oldSize; i++) {
-                removeStackFromSlot(player, i, false);
+                removeStackFromSlot(player, i);
             }
 
             // Shrink data
@@ -286,7 +265,7 @@ public final class AccessoryContainer {
 
         for (int i = 0; i < stacks.size(); i++) {
             if (slotTypes.get(i) != AccessoryHelper.getType(stacks.get(i).getItem())) {
-                removeStackFromSlot(player, i, false);
+                removeStackFromSlot(player, i);
             }
         }
     }

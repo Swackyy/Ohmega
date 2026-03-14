@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -61,9 +61,9 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void onLivingEntityDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            AccessoryHelper.getContainer(player).onDeath(player);
+    public static void onLivingDropItems(LivingDropsEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            CommonCallbacks.onPlayerDeath(player, event.getDrops());
         }
     }
 

@@ -45,6 +45,7 @@ public final class OhmegaNetworkingImpl {
             context.enqueueWork(() -> {
                 if (context.player() instanceof ServerPlayer player) {
                     ItemStack stack = player.containerMenu.getCarried();
+
                     if (!stack.isEmpty()) {
                         AbstractContainerMenu.dropOrPlaceInInventory(player, stack);
                         player.containerMenu.setCarried(ItemStack.EMPTY);

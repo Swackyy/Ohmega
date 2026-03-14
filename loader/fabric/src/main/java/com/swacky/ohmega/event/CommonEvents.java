@@ -3,7 +3,6 @@ package com.swacky.ohmega.event;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
@@ -12,9 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collections;
 
@@ -26,7 +23,6 @@ public final class CommonEvents {
             bootstrapped = true;
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
-            ServerLivingEntityEvents.AFTER_DEATH.register(CommonEvents::onLivingEntityDeath);
             ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(CommonEvents::onPlayerChangeDimension);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
             ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onServerConfigure);
@@ -38,12 +34,6 @@ public final class CommonEvents {
     private static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
         if (alive || CommonCallbacks.shouldKeepInventory(oldPlayer)) {
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
-        }
-    }
-
-    private static void onLivingEntityDeath(LivingEntity entity, DamageSource source) {
-        if (entity instanceof ServerPlayer player) {
-            AccessoryHelper.getContainer(player).onDeath(player);
         }
     }
 

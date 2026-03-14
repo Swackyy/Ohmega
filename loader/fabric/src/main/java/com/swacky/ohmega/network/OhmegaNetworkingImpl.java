@@ -38,6 +38,7 @@ public final class OhmegaNetworkingImpl {
         public static void handleOpenAccessoryInventory(OpenAccessoryInventoryPacket packet, ServerPlayNetworking.Context context) {
             ServerPlayer player = context.player();
             ItemStack stack = player.containerMenu.getCarried();
+
             if (!stack.isEmpty()) {
                 AbstractContainerMenu.dropOrPlaceInInventory(player, stack);
                 player.containerMenu.setCarried(ItemStack.EMPTY);
