@@ -44,13 +44,6 @@ public final class ClientModEvents {
     }
 
     @SubscribeEvent
-    public static void onConfigUnload(ModConfigEvent.Unloading event) {
-        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigUnload(() -> Minecraft.getInstance().options.load(true));
-        }
-    }
-
-    @SubscribeEvent
     public static void onKeybindRegistration(RegisterKeyMappingsEvent event) {
         event.register(OhmegaBinds.OPEN_ACC_INV);
     }

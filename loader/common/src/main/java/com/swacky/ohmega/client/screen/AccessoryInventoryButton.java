@@ -78,8 +78,9 @@ public final class AccessoryInventoryButton extends AbstractButton {
         defaultButtonNarrationText(output);
     }
 
+
     @Override
-    public void renderWidget(@NonNull PoseStack stack, int mx, int my, float partialTicks) {
+    public void renderButton(@NonNull PoseStack stack, int mx, int my, float partialTicks) {
         if (isVisible()) {
             fixPos();
 

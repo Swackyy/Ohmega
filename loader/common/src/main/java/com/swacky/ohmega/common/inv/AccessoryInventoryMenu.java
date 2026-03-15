@@ -225,7 +225,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
             }
 
             if (stack0.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
                 slot.setChanged();
             }
@@ -313,7 +313,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                         stack0 = stack.split(stack.getCount());
                     }
 
-                    slot.setByPlayer(stack0);
+                    slot.set(stack0);
                     slot.setChanged();
                     break;
                 }
@@ -342,9 +342,9 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public void setByPlayer(@NonNull ItemStack stack) {
-            InventoryMenu.onEquipItem(player, slot, stack, getItem());
-            super.setByPlayer(stack);
+        public void set(@NonNull ItemStack stack) {
+            player.onEquipItem(slot, stack, getItem());
+            super.set(stack);
         }
 
         @Override
@@ -373,11 +373,6 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     private static class OffhandSlot extends Slot {
         public OffhandSlot(Container container, int index, int x, int y) {
             super(container, index, x, y);
-        }
-
-        @Override
-        public boolean mayPlace(@NonNull ItemStack stack) {
-            return super.mayPlace(stack);
         }
 
         @Override

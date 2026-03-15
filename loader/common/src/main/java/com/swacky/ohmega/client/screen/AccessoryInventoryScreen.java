@@ -151,7 +151,7 @@ public final class AccessoryInventoryScreen extends EffectRenderingInventoryScre
                 renderAccInv(stack);
 
                 // Entity rendering
-                InventoryScreen.renderEntityInInventoryFollowsMouse(stack, x + 51, topPos + 75, 30, x + 51 - mx, topPos + 25 - my, player);
+                InventoryScreen.renderEntityInInventory(x + 51, topPos + 75, 30, x + 51 - mx, topPos + 25 - my, player);
             }
         }
     }

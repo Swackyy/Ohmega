@@ -5,6 +5,7 @@
   "refmap": "ohmega.refmap.json",
   "mixins": [
     "EnchantmentHelperMixin",
+    "ForgeConfigSpecMixin",
     "ServerLoginPacketListenerImplMixin"
   ],
   "client": [
