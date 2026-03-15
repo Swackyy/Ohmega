@@ -427,7 +427,7 @@ public final class AccessoryHelper {
                         player.playSound(accessory.getEquipSound(), 1, 1);
                     }
 
-                    return InteractionResultHolder.sidedSuccess(stack, player.level().isClientSide());
+                    return InteractionResultHolder.sidedSuccess(stack, player.getLevel().isClientSide());
                 }
             }
         }

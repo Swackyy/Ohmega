@@ -1,12 +1,10 @@
 package com.swacky.ohmega.mixin;
 
-import com.mojang.datafixers.util.Pair;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.event.CommonCallbacks;
 import com.swacky.ohmega.extension.AttachmentHolder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -54,12 +52,12 @@ abstract class PlayerMixin extends LivingEntity implements AttachmentHolder {
             at = @At(
                     value = "HEAD"))
     public void readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        ohmega$setContainer(AccessoryContainer.CODEC.decode(NbtOps.INSTANCE, tag.get(OhmegaCommon.CONTAINER_TAG_KEY)).result().map(Pair::getFirst).orElse(null));
+        ohmega$setContainer(AccessoryContainer.deserialise(tag.getCompound(OhmegaCommon.CONTAINER_TAG_KEY)));
         ohmega$getContainer().onAttach((Player) (Object) this);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "RETURN"))
     public void addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        tag.put(OhmegaCommon.CONTAINER_TAG_KEY, AccessoryContainer.CODEC.encodeStart(NbtOps.INSTANCE, container).result().orElseGet(CompoundTag::new));
+        tag.put(OhmegaCommon.CONTAINER_TAG_KEY, container.serialise());
     }
 }

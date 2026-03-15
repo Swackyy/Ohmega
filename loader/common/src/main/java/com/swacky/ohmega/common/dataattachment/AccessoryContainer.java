@@ -1,9 +1,6 @@
 package com.swacky.ohmega.common.dataattachment;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Booleans;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
@@ -13,6 +10,7 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -27,10 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class AccessoryContainer {
-    public static final Codec<AccessoryContainer> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ItemStack.CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
-    ).apply(builder, AccessoryContainer::new));
+    private static final String TAG_KEY_SIZE = "size";
+    private static final String TAG_KEY_STACK = "stack";
+    private static final String TAG_KEY_CHANGED = "changed";
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
@@ -41,14 +38,46 @@ public final class AccessoryContainer {
         this.changed = changed;
     }
 
-    private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed) {
-        this(stacks, Booleans.toArray(changed));
-    }
-
     public AccessoryContainer() {
         int size = AccessoryHelper.getSlotTypes().size();
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
         this.changed = new boolean[size];
+    }
+
+    public CompoundTag serialise() {
+        CompoundTag tag = new CompoundTag();
+        int size = stacks.size();
+
+        tag.putInt(TAG_KEY_SIZE, size);
+
+        for (int i = 0; i < size; i++) {
+            CompoundTag element = new CompoundTag();
+
+            element.put(TAG_KEY_STACK, stacks.get(i).save(new CompoundTag()));
+            element.putByte(TAG_KEY_CHANGED, changed[i] ? (byte) 1 : (byte) 0);
+            tag.put(String.valueOf(i), element);
+        }
+
+        return tag;
+    }
+
+    public static AccessoryContainer deserialise(CompoundTag tag) {
+        if (!tag.isEmpty() && tag.contains(TAG_KEY_SIZE)) {
+            int size = tag.getInt(TAG_KEY_SIZE);
+            NonNullList<ItemStack> stacks = NonNullList.createWithCapacity(size);
+            boolean[] changed = new boolean[size];
+
+            for (int i = 0; i < size; i++) {
+                CompoundTag element = tag.getCompound(String.valueOf(i));
+
+                stacks.add(i, ItemStack.of(element.getCompound(TAG_KEY_STACK)));
+                changed[i] = element.getByte(TAG_KEY_CHANGED) == 1;
+            }
+
+            return new AccessoryContainer(stacks, changed);
+        }
+
+        return new AccessoryContainer();
     }
 
     @SuppressWarnings("deprecation")
@@ -57,7 +86,7 @@ public final class AccessoryContainer {
             Item item = stack.getItem();
             IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
 
-            if (accessory != null && (AccessoryHelper.compatibleWith(player, accessory) || ItemStack.isSameItem(stack, stacks.get(slot)))) {
+            if (accessory != null && (AccessoryHelper.compatibleWith(player, accessory) || ItemStack.isSame(stack, stacks.get(slot)))) {
                 return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(slot);
             }
         }
@@ -207,7 +236,7 @@ public final class AccessoryContainer {
             }
 
             if (!slots.isEmpty()) {
-                for (ServerPlayer receiver : svr.serverLevel().players()) {
+                for (ServerPlayer receiver : svr.getLevel().players()) {
                     OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots.stream().mapToInt(Integer::intValue).toArray(), stacks, forceOnEquip));
                 }
 

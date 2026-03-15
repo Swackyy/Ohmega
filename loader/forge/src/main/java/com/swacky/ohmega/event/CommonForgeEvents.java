@@ -8,7 +8,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -108,12 +107,12 @@ public final class CommonForgeEvents {
 
         @Override
         public CompoundTag serializeNBT() {
-            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(NbtOps.INSTANCE, inner).result().orElseGet(CompoundTag::new);
+            return inner.serialise();
         }
 
         @Override
         public void deserializeNBT(CompoundTag tag) {
-            inner = AccessoryContainer.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseGet(AccessoryContainer::new);
+            inner = AccessoryContainer.deserialise(tag);
             inner.onAttach(player);
         }
     }

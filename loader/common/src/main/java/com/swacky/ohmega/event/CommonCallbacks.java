@@ -26,7 +26,7 @@ public final class CommonCallbacks {
         return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) { // Inverse
             case ALWAYS_ON -> true;
             case ALWAYS_OFF -> false;
-            case DEFAULT -> player.level() instanceof ServerLevel level && level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            case DEFAULT -> player.getLevel() instanceof ServerLevel level && level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
         };
     }
 

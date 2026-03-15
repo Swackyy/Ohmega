@@ -28,7 +28,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     private final Player player;
-    private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
+    private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
     private final ResultContainer craftResult = new ResultContainer();
     public final int renderSlots;
     public final int renderColumns;
@@ -41,7 +41,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
 
-        if (player.level().isClientSide() && OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
+        if (player.getLevel().isClientSide() && OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
             x = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) slotTypes.size() / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
         } else {
             x = 0;
@@ -69,7 +69,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         AccessoryContainer container = AccessoryHelper.getContainer(player);
 
-        if (!player.level().isClientSide()) {
+        if (!player.getLevel().isClientSide()) {
             renderSlots = 0;
             renderColumns = 0;
             slotsAvailable = 0;
@@ -136,7 +136,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(@NonNull Container container) {
-        if (player.level() instanceof ServerLevel level) {
+        if (player.getLevel() instanceof ServerLevel level) {
             CraftingMenu.slotChangedCraftingGrid(this, level, player, craftMatrix, craftResult);
         }
 
@@ -148,7 +148,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         super.removed(player);
         craftResult.clearContent();
 
-        if (!player.level().isClientSide()) {
+        if (!player.getLevel().isClientSide()) {
             clearContainer(player, craftMatrix);
         }
     }

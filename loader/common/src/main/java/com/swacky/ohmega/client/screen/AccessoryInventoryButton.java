@@ -1,12 +1,13 @@
 package com.swacky.ohmega.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -78,7 +79,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
+    public void renderWidget(@NonNull PoseStack stack, int mx, int my, float partialTicks) {
         if (isVisible()) {
             fixPos();
 
@@ -98,7 +99,8 @@ public final class AccessoryInventoryButton extends AbstractButton {
                 hoveredOffsY = 0;
             }
 
-            gui.blit(OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            RenderSystem.setShaderTexture(0, OhmegaCommon.ACCESSORY_LOCATION);
+            blit(stack, getX(), getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
     }
 }
