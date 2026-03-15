@@ -11,7 +11,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.Item;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Reader;
 import java.util.HashSet;
@@ -23,10 +25,12 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
     public static final String LOCATION = OhmegaCommon.MODID + "/accessory_types.json";
     private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
     private static final HashSet<AccessoryType> TYPES = new HashSet<>();
+    private static Map<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
 
     // Both of these are required as the configs are not guaranteed to load before dependent actions have been carried out.
     private static Runnable DEFERRED_APPLY = null;
     private static Runnable DEFERRED_CONFIG_LOAD = null;
+
 
     private AccessoryTypeManager() {}
 
@@ -64,6 +68,8 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
             DEFERRED_APPLY = null;
         }
 
+        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
+
         OhmegaTags.refresh();
     }
 
@@ -82,6 +88,11 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
 
     public static void clear() {
         TYPES.clear();
+        ACCESSORY_TYPE_OVERRIDES.clear();
+    }
+
+    public static void deferApply(Runnable runnable) {
+        DEFERRED_APPLY = runnable;
     }
 
     public static void runDeferredAwaitingConfigLoad() {
@@ -91,8 +102,8 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         }
     }
 
-    public static void deferApply(Runnable runnable) {
-        DEFERRED_APPLY = runnable;
+    public static @Nullable AccessoryType getTypeOverride(Item item) {
+        return ACCESSORY_TYPE_OVERRIDES.get(item);
     }
 
     public static ImmutableSet<AccessoryType> getTypes() {

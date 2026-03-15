@@ -2,7 +2,6 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaMenus;
@@ -14,7 +13,6 @@ import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -31,7 +29,6 @@ public final class OhmegaCommon {
 
     private static int NUM_SERVICES = 0;
     private static int NUM_SERVICES_COMMON = 0;
-    private static Map<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
 
     public static <T> T loadService(Class<T> clazz) {
         String name = clazz.getName();
@@ -53,7 +50,6 @@ public final class OhmegaCommon {
         LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
 
         NUM_SERVICES_COMMON = NUM_SERVICES;
-        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
     }
 
     public static void bootstrapClient() {
@@ -61,10 +57,6 @@ public final class OhmegaCommon {
         OhmegaConfig.Client.bootstrap();
 
         LOGGER.info("Successfully loaded {} client services", NUM_SERVICES - NUM_SERVICES_COMMON);
-    }
-
-    public static @Nullable AccessoryType getTypeOverride(Item item) {
-        return ACCESSORY_TYPE_OVERRIDES.get(item);
     }
 
     public static Identifier id(String path) {

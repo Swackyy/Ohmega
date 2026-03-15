@@ -115,7 +115,7 @@ public final class AccessoryHelper {
             builder.add(AccessoryType.GENERIC.get());
         }
 
-        AccessoryType override = OhmegaCommon.getTypeOverride(item);
+        AccessoryType override = AccessoryTypeManager.getTypeOverride(item);
 
         if (override != null) {
             builder.add(override);
@@ -148,7 +148,7 @@ public final class AccessoryHelper {
             return AccessoryType.GENERIC.get();
         }
 
-        AccessoryType override = OhmegaCommon.getTypeOverride(item);
+        AccessoryType override = AccessoryTypeManager.getTypeOverride(item);
 
         if (override != null) {
             return override;
@@ -459,6 +459,16 @@ public final class AccessoryHelper {
     }
 
     /**
+     * Checks if two accessories are compatible with each other by testing both ways
+     * @param first one accessory {@link ItemStack}
+     * @param second a second accessory {@link ItemStack}
+     * @return {@code true} if both are compatible with each other, {@code false} otherwise
+     */
+    public static boolean compatibleWith(ItemStack first, ItemStack second) {
+        return getBoundAccessory(first.getItem()).compatibleWith(second) && getBoundAccessory(second.getItem()).compatibleWith(first);
+    }
+
+    /**
      * Will be removed by {@code v1.6.0} with a method accepting {@link ItemStack}s
      * <p>
      * Checks if two accessories are compatible with each other by testing both ways
@@ -466,13 +476,30 @@ public final class AccessoryHelper {
      * @param second a second accessory
      * @return {@code true} if both are compatible with each other, {@code false} otherwise
      */
-    @Deprecated(forRemoval = true, since = "1.5.4")
+    @Deprecated(since = "1.5.4")
     public static boolean compatibleWith(IAccessory first, IAccessory second) {
         if (first != null && second != null) {
             return first.compatibleWith(second) && second.compatibleWith(first);
         }
 
         return false;
+    }
+
+    /**
+     * Checks if an accessory is able to be worn, testing the target accessory {@link ItemStack} against every other worn accessory
+     * @param player {@link Player} to get accessory inventory data from
+     * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the player
+     * @return {@code true} if the target accessory is compatible with every other worn accessory, {@code false} otherwise
+     */
+
+    public static boolean compatibleWith(Player player, ItemStack stack) {
+        for (ItemStack other : getAccessoryStacks(player)) {
+            if (!compatibleWith(stack, other))  {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -496,12 +523,31 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory
+     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory.
+     * These stacks may be air, or otherwise not accessory items. Use {@link #getAccessoryStacks(Player)} as a filtered version
      * @param player {@link Player} to get accessory inventory data from
      * @return every {@link ItemStack} in the player's accessory inventory
      */
     public static NonNullList<ItemStack> getStacks(Player player) {
         return getContainer(player).getStacks();
+    }
+
+    /**
+     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory which are accessories.
+     * If you want to get a list including non-accessory items, use {@link #getStacks(Player)}
+     * @param player {@link Player} to get accessory inventory data from
+     * @return every {@link ItemStack} in the player's accessory inventory which are accessories
+     */
+    public static NonNullList<ItemStack> getAccessoryStacks(Player player) {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+
+        for (ItemStack stack : getContainer(player).getStacks()) {
+            if (isItemAccessoryBound(stack.getItem())) {
+                stacks.add(stack);
+            }
+        }
+
+        return stacks;
     }
 
     /**
