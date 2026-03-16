@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -20,7 +20,7 @@ public final class OhmegaTags {
         ImmutableMap.Builder<AccessoryType, TagKey<Item>> builder = ImmutableMap.builderWithExpectedSize(types.size());
 
         for (AccessoryType type : types) {
-            builder.put(type, TagKey.create(Registries.ITEM, type.getId()));
+            builder.put(type, TagKey.create(Registry.ITEM_REGISTRY, type.getId()));
         }
 
         TAG_MAP = builder.build();
@@ -38,9 +38,9 @@ public final class OhmegaTags {
     }
 
     /**
-     * Use this for data generation, it does not do any validation that the tag exists but it is the easiest way
+     * Use this for data generation, it does not do any validation that the tag exists, but it is the easiest way
      */
     public static TagKey<Item> get(ResourceLocation location) {
-        return TagKey.create(Registries.ITEM, location);
+        return TagKey.create(Registry.ITEM_REGISTRY, location);
     }
 }

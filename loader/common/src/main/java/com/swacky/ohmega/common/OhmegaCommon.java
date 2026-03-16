@@ -59,7 +59,6 @@ public final class OhmegaCommon {
     public static void bootstrapClient() {
         OhmegaBinds.bootstrap();
         OhmegaConfig.Client.bootstrap();
-
         LOGGER.info("Successfully loaded {} client services", NUM_SERVICES - NUM_SERVICES_COMMON);
     }
 

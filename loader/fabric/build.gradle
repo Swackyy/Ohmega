@@ -63,7 +63,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     modImplementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+    implementation "com.electronwill.night-config:core:3.6.4"
+    implementation "com.electronwill.night-config:toml:3.6.4"
 }
 
 fabricApi {

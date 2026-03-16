@@ -1,4 +1,4 @@
-package com.swacky.ohmega.mixin;
+package com.swacky.ohmega.mixin.client;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
@@ -26,7 +26,7 @@ abstract class ForgeConfigSpecMixin extends UnmodifiableConfigWrapper<Unmodifiab
                     value = "TAIL"),
             remap = false)
     public void acceptConfig(CommentedConfig data, CallbackInfo ci) {
-        if (data == null && (Object) this == OhmegaConfigImpl.Server.getSpec()) {
+        if ( data == null && (Object) this == OhmegaConfigImpl.Server.getSpec()) {
             ClientCallbacks.onServerConfigUnload(() -> Minecraft.getInstance().options.load(true));
         }
     }

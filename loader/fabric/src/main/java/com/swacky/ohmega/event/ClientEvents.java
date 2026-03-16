@@ -2,7 +2,6 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
-import fuzs.forgeconfigapiport.api.config.v2.ModConfigEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
@@ -10,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraftforge.api.fml.event.config.ModConfigEvents;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.List;

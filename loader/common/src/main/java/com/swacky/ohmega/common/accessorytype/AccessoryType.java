@@ -17,7 +17,7 @@ import java.util.HexFormat;
 import java.util.function.Supplier;
 
 public final class AccessoryType {
-    // Json keys
+    // JSON keys
     public static final String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
     public static final String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
     public static final String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
@@ -132,7 +132,7 @@ public final class AccessoryType {
 
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
-        private static final String LOCATION_PREFIX = "item/"; // Mojang sometimes changes this
+        private static final String LOCATION_PREFIX = "textures/item/"; // Mojang sometimes changes this
 
         private boolean displayHoverText = true;
         private String emptySlotPath = OhmegaCommon.rl("accessory_slot_normal").toString();
@@ -182,12 +182,12 @@ public final class AccessoryType {
                 ResourceLocation location;
 
                 if (emptySlotPath.indexOf(':') == -1){
-                    location = ResourceLocation.tryBuild(namespace, LOCATION_PREFIX + emptySlotPath);
+                    location = ResourceLocation.tryBuild(namespace, LOCATION_PREFIX + emptySlotPath + ".png");
                 } else {
-                    location = ResourceLocation.tryParse(emptySlotPath);
+                    location = ResourceLocation.tryParse(emptySlotPath + ".png");
 
                     if (location != null) {
-                        location = location.withPrefix(LOCATION_PREFIX);
+                        location = ResourceLocation.tryBuild(location.getNamespace(), LOCATION_PREFIX + location.getPath() + ".png");
                     }
                 }
 

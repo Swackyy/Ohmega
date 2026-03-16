@@ -4,14 +4,14 @@ import com.google.gson.JsonObject;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A simple data generator for {@link AccessoryType}s (server data)
@@ -19,29 +19,31 @@ import java.util.concurrent.CompletableFuture;
  * Extend this, override {@link #addTypes()} and use {@link #add(String, AccessoryType.Builder)} or equivalent to add your accessory types
  */
 public abstract class AccessoryTypeProvider implements DataProvider {
-    private final PackOutput output;
+    private final DataGenerator generator;
     private final String namespace;
     private final Map<String, AccessoryType.Builder> data = new TreeMap<>();
 
-    public AccessoryTypeProvider(PackOutput output, String namespace) {
-        this.output = output;
+    public AccessoryTypeProvider(DataGenerator generator, String namespace) {
+        this.generator = generator;
         this.namespace = namespace;
     }
 
     public abstract void addTypes();
 
     @Override
-    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput output) {
+    public void run(@NonNull CachedOutput output) {
         addTypes();
 
         if (!data.isEmpty()) {
             JsonObject json = new JsonObject();
 
             data.forEach((id, type) -> json.add(id, AccessoryType.Serializer.GSON.toJsonTree(type)));
-            return DataProvider.saveStable(output, json, this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
+            try {
+                DataProvider.saveStable(output, json, this.generator.getOutputFolder(DataGenerator.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
+            } catch (IOException e) {
+                throw new RuntimeException("Could not write accessory type data for generator with namespace '" + namespace + '\'', e);
+            }
         }
-
-        return CompletableFuture.allOf();
     }
 
     @Override

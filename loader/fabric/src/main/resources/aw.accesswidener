@@ -7,8 +7,8 @@ accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScr
 accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
 accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraft/client/Minecraft;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+accessible field net/minecraft/client/resources/model/ModelBakery UNREFERENCED_TEXTURES Ljava/util/Set;
 mutable field net/minecraft/client/Options keyMappings [Lnet/minecraft/client/KeyMapping;
 accessible field net/minecraft/world/inventory/AbstractContainerMenu stateId I
 accessible method net/minecraft/world/inventory/CraftingMenu slotChangedCraftingGrid (Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/world/inventory/ResultContainer;)V
 accessible field net/minecraft/world/entity/Entity isInsidePortal Z
-accessible method net/minecraft/world/inventory/InventoryMenu onEquipItem (Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)V

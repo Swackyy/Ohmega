@@ -39,8 +39,8 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     private void fixPos() {
-        setX(getXAdjusted(screen, style));
-        setY(screen.topPos + style.getData().y());
+        x = getXAdjusted(screen, style);
+        y = screen.topPos + style.getData().y();
     }
 
     @Override
@@ -74,10 +74,9 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void updateWidgetNarration(@NonNull NarrationElementOutput output) {
+    public void updateNarration(@NonNull NarrationElementOutput output) {
         defaultButtonNarrationText(output);
     }
-
 
     @Override
     public void renderButton(@NonNull PoseStack stack, int mx, int my, float partialTicks) {
@@ -101,7 +100,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
             }
 
             RenderSystem.setShaderTexture(0, OhmegaCommon.ACCESSORY_LOCATION);
-            blit(stack, getX(), getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            blit(stack, x, y, (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
         }
     }
 }

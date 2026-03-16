@@ -418,7 +418,8 @@ public final class AccessoryHelper {
             int slot = getFirstOpenSlot(player, getType(item));
 
             if (slot >= 0) {
-                ItemStack stack0 = stack.copyWithCount(1);
+                ItemStack stack0 = stack.copy();
+                stack0.setCount(1);
 
                 if (getContainer(player).setStackInSlot(player, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
                     stack.shrink(1);

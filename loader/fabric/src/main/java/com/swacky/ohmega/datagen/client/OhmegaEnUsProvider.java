@@ -4,12 +4,12 @@ import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
 public class OhmegaEnUsProvider extends FabricLanguageProvider {
-    public OhmegaEnUsProvider(FabricDataOutput output) {
-        super(output, "en_us");
+    public OhmegaEnUsProvider(FabricDataGenerator generator) {
+        super(generator, "en_us");
     }
 
     @Override

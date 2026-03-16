@@ -7,17 +7,16 @@ import com.swacky.ohmega.datagen.server.OhmegaTagProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
+@SuppressWarnings("unused")
 public class OhmegaDataGeneration implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator generator) {
-        FabricDataGenerator.Pack pack = generator.createPack();
-
         // Client
-        pack.addProvider(OhmegaEnUsProvider::new);
-        pack.addProvider(OhmegaModelProvider::new);
+        generator.addProvider(OhmegaEnUsProvider::new);
+        generator.addProvider(OhmegaModelProvider::new);
 
         // Server
-        pack.addProvider((FabricDataGenerator.Pack.Factory<OhmegaAccessoryTypeProvider>) OhmegaAccessoryTypeProvider::new);
-        pack.addProvider(OhmegaTagProvider::new);
+        generator.addProvider(OhmegaAccessoryTypeProvider::new);
+        generator.addProvider(OhmegaTagProvider::new);
     }
 }

@@ -43,13 +43,15 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
                     try (Reader reader = resource.openAsReader()) {
                         Map<String, AccessoryType.Builder> map = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
 
-                        for (Map.Entry<String, AccessoryType.Builder> entry : map.entrySet()) {
-                            AccessoryType type = entry.getValue().build(namespace, entry.getKey());
+                        if (map != null) {
+                            for (Map.Entry<String, AccessoryType.Builder> entry : map.entrySet()) {
+                                AccessoryType type = entry.getValue().build(namespace, entry.getKey());
 
-                            if (type != null) {
-                                builder.add(type);
-                            } else {
-                                OhmegaCommon.LOGGER.warn("Skipping malformed accessory type definition with id: '{}' in DataPack '{}'", entry.getKey(), resource.sourcePackId());
+                                if (type != null) {
+                                    builder.add(type);
+                                } else {
+                                    OhmegaCommon.LOGGER.warn("Skipping malformed accessory type definition with id: '{}' in DataPack '{}'", entry.getKey(), resource.sourcePackId());
+                                }
                             }
                         }
                     } catch (Exception e) {
