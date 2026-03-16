@@ -1,21 +1,20 @@
 package com.swacky.ohmega.datagen.client;
 
 import com.swacky.ohmega.common.OhmegaCommon;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
 final class InternalLangHelper {
-    private final FabricLanguageProvider.TranslationBuilder builder;
+    private final LanguageProvider provider;
 
-    InternalLangHelper(FabricLanguageProvider.TranslationBuilder builder) {
-        this.builder = builder;
+    InternalLangHelper(LanguageProvider provider) {
+        this.provider = provider;
     }
 
     void addDataPackDescription(String translation) {
-        builder.add("dataPack." + OhmegaCommon.MODID + ".description", translation);
+        provider.add("dataPack." + OhmegaCommon.MODID + ".description", translation);
     }
 
     void addConfig(String key, String translation) {
-        builder.add(OhmegaCommon.MODID + ".configuration." + key, translation);
+        provider.add(OhmegaCommon.MODID + ".configuration." + key, translation);
     }
 
     void addConfigSection(String key, String translation, String titleTranslation) {
