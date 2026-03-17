@@ -9,6 +9,7 @@
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
+    "client.ModConfigMixin",
     "client.KeyboardHandlerMixin"
   ],
   "minVersion": "0.8.5"

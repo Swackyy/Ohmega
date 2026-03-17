@@ -35,7 +35,7 @@
     "fabricloader": "${loaderFabricVRange}",
     "minecraft": "${mcV}",
     "java": ">=${javaV}",
-    "fabric-api": "*",
+    "fabric": "*",
     "forgeconfigapiport": "${loaderFabricForgeConfigApiPortVRange}"
   },
   "custom": {

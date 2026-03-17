@@ -1,6 +1,5 @@
 package com.swacky.ohmega.event;
 
-import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -9,7 +8,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.api.fml.event.config.ModConfigEvents;
+import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.List;
@@ -21,9 +20,8 @@ public final class ClientEvents {
         if (!bootstrapped) {
             bootstrapped = true;
 
-            ModConfigEvents.loading(OhmegaCommon.MODID).register(ClientEvents::onConfigLoad);
-            ModConfigEvents.reloading(OhmegaCommon.MODID).register(ClientEvents::onConfigReload);
-            ModConfigEvents.unloading(OhmegaCommon.MODID).register(ClientEvents::onConfigUnload);
+            ModConfigEvent.LOADING.register(ClientEvents::onConfigLoad);
+            ModConfigEvent.RELOADING.register(ClientEvents::onConfigReload);
             ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
         } else {
@@ -44,12 +42,6 @@ public final class ClientEvents {
             } else if (config.getSpec() == OhmegaConfigImpl.Server.getSpec() && OhmegaConfigImpl.Server.getSpec().isLoaded()) {
                 ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
             }
-        }
-    }
-
-    private static void onConfigUnload(ModConfig config) {
-        if (OhmegaConfigImpl.Client.getSpec().isLoaded() && config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigUnload(Minecraft.getInstance().options::load);
         }
     }
 

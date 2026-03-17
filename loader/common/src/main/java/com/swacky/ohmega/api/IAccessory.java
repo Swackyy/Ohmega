@@ -66,7 +66,7 @@ public interface IAccessory {
     default void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {}
 
      // The sound to be played if the accessory is equipped through right-clicking the held item
-     // A replacement for the vanilla method, Minecraft versions 1.19.4+, to ensure easier compatibility
+     // A replacement for the vanilla method to ensure easier compatibility
     @Nullable
     default SoundEvent getEquipSound() {
         return null;
