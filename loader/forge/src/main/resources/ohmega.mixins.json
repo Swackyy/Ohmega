@@ -5,11 +5,11 @@
   "refmap": "ohmega.refmap.json",
   "mixins": [
     "EnchantmentHelperMixin",
-    "ForgeConfigSpecMixin",
     "ServerLoginPacketListenerImplMixin"
   ],
   "client": [
-    "client.AbstractContainerScreenMixin"
+    "client.AbstractContainerScreenMixin",
+    "client.ForgeConfigSpecMixin"
   ],
   "minVersion": "0.8.5"
 }

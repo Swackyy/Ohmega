@@ -1,4 +1,4 @@
-package com.swacky.ohmega.mixin;
+package com.swacky.ohmega.mixin.client;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
