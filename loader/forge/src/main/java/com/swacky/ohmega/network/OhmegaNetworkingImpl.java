@@ -17,7 +17,7 @@ import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -46,32 +46,32 @@ public final class OhmegaNetworkingImpl {
         net.messageBuilder(OpenAccessoryInventoryPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(OpenAccessoryInventoryPacket::write)
                 .decoder(OpenAccessoryInventoryPacket::new)
-                .consumerMainThread(C2S::handleOpenAccessoryInventory)
+                .consumer(C2S::handleOpenAccessoryInventory)
                 .add();
         net.messageBuilder(OpenInventoryPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(OpenInventoryPacket::write)
                 .decoder(OpenInventoryPacket::new)
-                .consumerMainThread(C2S::handleOpenInventory)
+                .consumer(C2S::handleOpenInventory)
                 .add();
         net.messageBuilder(ResizeContainerPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(ResizeContainerPacket::write)
                 .decoder(ResizeContainerPacket::new)
-                .consumerMainThread(C2S::handleResizeContainer)
+                .consumer(C2S::handleResizeContainer)
                 .add();
         net.messageBuilder(UseAccessoryPacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(UseAccessoryPacket::write)
                 .decoder(UseAccessoryPacket::new)
-                .consumerMainThread(C2S::handleUseAccessory)
+                .consumer(C2S::handleUseAccessory)
                 .add();
         net.messageBuilder(SyncAccessorySlotsPacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(SyncAccessorySlotsPacket::write)
                 .decoder(SyncAccessorySlotsPacket::new)
-                .consumerMainThread(S2C::handleSyncAccessorySlots)
+                .consumer(S2C::handleSyncAccessorySlots)
                 .add();
         net.messageBuilder(SyncAccessoryTypesPacket.class, packetId, NetworkDirection.LOGIN_TO_CLIENT)
                 .encoder(SyncAccessoryTypesPacket::write)
                 .decoder(SyncAccessoryTypesPacket::new)
-                .consumerMainThread(S2C::handleSyncAccessoryTypes)
+                .consumer(S2C::handleSyncAccessoryTypes)
                 .add();
         OhmegaNetworkingImpl.channel = net;
     }
@@ -100,7 +100,7 @@ public final class OhmegaNetworkingImpl {
                         player.containerMenu.setCarried(ItemStack.EMPTY);
                     }
 
-                    player.openMenu(new SimpleMenuProvider((id, inv, player0) -> new AccessoryInventoryMenu(id, inv), Component.empty()));
+                    player.openMenu(new SimpleMenuProvider((id, inv, player0) -> new AccessoryInventoryMenu(id, inv), TextComponent.EMPTY));
                 }
             });
 

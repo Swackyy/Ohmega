@@ -67,7 +67,7 @@ public final class OhmegaCommon {
     }
 
     public static ResourceLocation rl(String path) {
-        return ResourceLocation.tryBuild(MODID, path);
+        return new ResourceLocation(MODID, path);
     }
 
     /**

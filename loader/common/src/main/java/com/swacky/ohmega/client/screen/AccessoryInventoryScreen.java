@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import org.jspecify.annotations.NonNull;
 
@@ -20,7 +21,7 @@ public final class AccessoryInventoryScreen extends EffectRenderingInventoryScre
 
     @SuppressWarnings("unused")
     public AccessoryInventoryScreen(AccessoryInventoryMenu menu, Inventory inv, Component title) {
-        super(menu, inv, Component.translatable("container.crafting"));
+        super(menu, inv, new TranslatableComponent("container.crafting"));
         this.extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
         this.imageWidth += extraWidth;
 

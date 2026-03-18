@@ -3,15 +3,21 @@ package com.swacky.ohmega.api.datagen.server;
 import com.google.gson.JsonObject;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.NonNull;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
+
+import static com.swacky.ohmega.common.accessorytype.AccessoryType.Deserializer.*;
 
 /**
  * A simple data generator for {@link AccessoryType}s (server data)
@@ -31,15 +37,31 @@ public abstract class AccessoryTypeProvider implements DataProvider {
     public abstract void addTypes();
 
     @Override
-    public void run(@NonNull CachedOutput output) {
+    public void run(@NonNull HashCache cache) {
         addTypes();
 
         if (!data.isEmpty()) {
             JsonObject json = new JsonObject();
 
             data.forEach((id, type) -> json.add(id, AccessoryType.Serializer.GSON.toJsonTree(type)));
+
+            Path path = generator.getOutputFolder()
+                    .resolve("data")
+                    .resolve(namespace)
+                    .resolve(AccessoryTypeManager.LOCATION);
+            String jsonData = GSON.toJson(data);
+            String hash = DataProvider.SHA1.hashUnencodedChars(jsonData).toString();
+
             try {
-                DataProvider.saveStable(output, json, this.generator.getOutputFolder(DataGenerator.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
+                if (!Objects.equals(cache.getHash(path), hash) || !Files.exists(path)) {
+                    Files.createDirectories(path.getParent());
+
+                    try (BufferedWriter bufferedwriter = Files.newBufferedWriter(path)) {
+                        bufferedwriter.write(jsonData);
+                    }
+
+                    cache.putNew(path, hash);
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Could not write accessory type data for generator with namespace '" + namespace + '\'', e);
             }

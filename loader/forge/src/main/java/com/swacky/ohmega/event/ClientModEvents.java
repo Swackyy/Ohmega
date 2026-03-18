@@ -2,13 +2,11 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.OhmegaCommon;
-import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -26,7 +24,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     public static void onConfigLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigLoad(() -> Minecraft.getInstance().options.load(true));
+            ClientCallbacks.onServerConfigLoad();
         }
     }
 
@@ -38,13 +36,8 @@ public final class ClientModEvents {
             if (config.getSpec() == OhmegaConfigImpl.Client.getSpec()) {
                 ClientCallbacks.onClientConfigReload();
             } else if (config.getSpec() == OhmegaConfigImpl.Server.getSpec() && OhmegaConfigImpl.Server.getSpec().isLoaded()) {
-                ClientCallbacks.onServerConfigReload(() -> Minecraft.getInstance().options.load(true));
+                ClientCallbacks.onServerConfigReload();
             }
         }
-    }
-
-    @SubscribeEvent
-    public static void onKeybindRegistration(RegisterKeyMappingsEvent event) {
-        event.register(OhmegaBinds.OPEN_ACC_INV);
     }
 }

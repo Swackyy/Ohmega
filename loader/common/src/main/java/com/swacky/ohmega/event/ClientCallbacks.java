@@ -117,7 +117,7 @@ public final class ClientCallbacks {
         }
     }
 
-    public static void onServerConfigLoad(Runnable loadFunction) {
+    public static void onServerConfigLoad() {
         ArrayList<KeyMapping> list = new ArrayList<>();
 
         for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.Generated.getSlotKeys().values()) {
@@ -127,11 +127,11 @@ public final class ClientCallbacks {
         Options options = Minecraft.getInstance().options;
         options.keyMappings = ArrayUtils.addAll(Arrays.stream(options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]), list.toArray(new KeyMapping[0]));
 
-        loadFunction.run();
+        Minecraft.getInstance().options.load();
     }
 
-    public static void onServerConfigReload(Runnable loadFunction) {
-        ClientCallbacks.onServerConfigLoad(loadFunction);
+    public static void onServerConfigReload() {
+        ClientCallbacks.onServerConfigLoad();
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = Minecraft.getInstance().player;
@@ -149,12 +149,12 @@ public final class ClientCallbacks {
         }
     }
 
-    public static void onServerConfigUnload(Runnable loadFunction) {
+    public static void onServerConfigUnload() {
         AccessoryTypeManager.getInstance().clear();
 
         Minecraft mc = Minecraft.getInstance();
         mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]);
 
-        loadFunction.run();
+        Minecraft.getInstance().options.load();
     }
 }

@@ -31,7 +31,7 @@ public final class ClientEvents {
 
     private static void onConfigLoad(ModConfig config) {
         if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigLoad(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigLoad();
         }
     }
 
@@ -40,7 +40,7 @@ public final class ClientEvents {
             if (config.getSpec() == OhmegaConfigImpl.Client.getSpec()) {
                 ClientCallbacks.onClientConfigReload();
             } else if (config.getSpec() == OhmegaConfigImpl.Server.getSpec() && OhmegaConfigImpl.Server.getSpec().isLoaded()) {
-                ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
+                ClientCallbacks.onServerConfigReload();
             }
         }
     }

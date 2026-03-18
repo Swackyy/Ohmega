@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class ServerLoginPacketListenerImplMixin {
     @Shadow
     @Final
-    Connection connection;
+    public Connection connection;
 
     @Inject(
             method = "handleHello",

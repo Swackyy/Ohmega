@@ -5,6 +5,7 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,7 +18,7 @@ abstract class MultiPlayerGameModeMixin {
             at = @At(
                     value = "RETURN"),
             cancellable = true)
-    private void useItem(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void useItem(Player player, Level level, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         if (!cir.getReturnValue().consumesAction()) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, hand).getResult();
 

@@ -1,5 +1,6 @@
 package com.swacky.ohmega.datagen.server;
 
+import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaTags;
@@ -10,7 +11,7 @@ import net.minecraft.world.item.Item;
 
 public class OhmegaTagProvider extends FabricTagProvider<Item> {
     public OhmegaTagProvider(FabricDataGenerator generator) {
-        super(generator, Registry.ITEM);
+        super(generator, Registry.ITEM, OhmegaCommon.MODID);
     }
 
     @SuppressWarnings("deprecation")

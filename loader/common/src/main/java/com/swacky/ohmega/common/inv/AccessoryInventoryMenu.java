@@ -52,7 +52,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         for (int i = 0; i < 4; i++) { // Armour Slots
             EquipmentSlot equipmentSlotType = VALID_EQUIPMENT_SLOTS[i];
-            addSlot(new ArmorSlot(inv, player, equipmentSlotType, 39 - i, x + 8, 8 + i * 18));
+            addSlot(new ArmorSlot(inv, equipmentSlotType, 39 - i, x + 8, 8 + i * 18));
         }
 
         for (int i = 0; i < 3; ++i) { // Inventory Slots
@@ -332,19 +332,11 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     private static class ArmorSlot extends Slot {
         private static final ResourceLocation[] EMPTY_SLOT_LOCATIONS = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
 
-        private final Player player;
         private final EquipmentSlot slot;
 
-        public ArmorSlot(Container container, Player player, EquipmentSlot slot, int index, int x, int y) {
+        public ArmorSlot(Container container, EquipmentSlot slot, int index, int x, int y) {
             super(container, index, x, y);
-            this.player = player;
             this.slot = slot;
-        }
-
-        @Override
-        public void set(@NonNull ItemStack stack) {
-            player.onEquipItem(slot, stack, getItem());
-            super.set(stack);
         }
 
         @Override

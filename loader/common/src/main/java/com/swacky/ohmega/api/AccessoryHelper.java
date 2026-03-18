@@ -19,8 +19,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -35,7 +35,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
@@ -349,10 +353,10 @@ public final class AccessoryHelper {
         KeyMapping mapping = OhmegaBinds.Generated.getMapping(type, typeIndex);
 
         if (slot < 0 || !flag || mapping == null) {
-            return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);
+            return new TranslatableComponent(nonBindKey).withStyle(ChatFormatting.GRAY);
         }
 
-        return Component.translatable(bindKey, mapping.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY);
+        return new TranslatableComponent(bindKey, mapping.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY);
     }
 
     /**
@@ -376,7 +380,7 @@ public final class AccessoryHelper {
         AccessoryType type = getType(item);
 
         if (type.displayHoverText()) {
-            return Component.translatable("accessory_type", type.getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
+            return new TranslatableComponent("accessory_type", type.getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
         }
 
         return null;

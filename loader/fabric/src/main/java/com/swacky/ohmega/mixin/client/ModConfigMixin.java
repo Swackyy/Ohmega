@@ -3,7 +3,6 @@ package com.swacky.ohmega.mixin.client;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientCallbacks;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +19,7 @@ abstract class ModConfigMixin {
     @Inject(method = "setConfigData", at = @At(value = "TAIL"))
     public void setConfigData(CommentedConfig data, CallbackInfo ci) {
         if (getSpec() == OhmegaConfigImpl.Server.getSpec() && data == null) {
-            ClientCallbacks.onServerConfigUnload(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigUnload();
         }
     }
 }

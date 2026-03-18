@@ -16,12 +16,12 @@ public class ClientForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.Key event) {
+    public static void onKeyInput(InputEvent.KeyInputEvent event) {
         ClientCallbacks.onKeyInput();
     }
 
     @SubscribeEvent
-    public static void onPostScreenInit(ScreenEvent.Init.Post event) {
+    public static void onPostScreenInit(ScreenEvent.InitScreenEvent.Post event) {
         ClientCallbacks.onPostScreenInit(event.getScreen(), event::addListener);
     }
 }

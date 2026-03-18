@@ -4,15 +4,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.common.OhmegaCommon;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class OhmegaBinds {
     private static final Service INST = OhmegaCommon.loadService(Service.class);

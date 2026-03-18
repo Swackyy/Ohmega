@@ -5,6 +5,7 @@ import com.swacky.ohmega.common.init.OhmegaBinds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.controls.KeyBindsList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,9 +21,9 @@ abstract class KeyBindsList$KeyEntryMixin extends KeyBindsList.Entry {
         if (OhmegaBinds.isInstance(mapping)) {
             String key = mapping.getName();
             int index = key.lastIndexOf('_');
-            ((KeyBindsList.KeyEntry) (Object) this).name = Component.translatable(
+            ((KeyBindsList.KeyEntry) (Object) this).name = new TranslatableComponent(
                     "key." + OhmegaCommon.MODID + ".accessory_type",
-                    Component.translatable(key.substring(0, index).replace("key", "accessory_type")),
+                    new TranslatableComponent(key.substring(0, index).replace("key", "accessory_type")),
                     Integer.parseInt(key.substring(index + 1)) + 1);
         }
     }

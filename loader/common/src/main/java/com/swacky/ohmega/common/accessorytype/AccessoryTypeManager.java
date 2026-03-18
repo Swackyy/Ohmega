@@ -13,6 +13,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jspecify.annotations.NonNull;
 
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,11 +37,11 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(DEFAULT_SIZE);
 
         for (String namespace : manager.getNamespaces()) {
-            ResourceLocation location = ResourceLocation.tryBuild(namespace, LOCATION);
+            ResourceLocation location = new ResourceLocation(namespace, LOCATION);
 
-            if (location != null) {
-                for (Resource resource : manager.getResourceStack(location)) {
-                    try (Reader reader = resource.openAsReader()) {
+            try {
+                for (Resource resource : manager.getResources(location)) {
+                    try (Reader reader = new InputStreamReader(resource.getInputStream())) {
                         Map<String, AccessoryType.Builder> map = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
 
                         if (map != null) {
@@ -50,15 +51,15 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
                                 if (type != null) {
                                     builder.add(type);
                                 } else {
-                                    OhmegaCommon.LOGGER.warn("Skipping malformed accessory type definition with id: '{}' in DataPack '{}'", entry.getKey(), resource.sourcePackId());
+                                    OhmegaCommon.LOGGER.warn("Skipping malformed accessory type definition with id: '{}' in DataPack '{}'", entry.getKey(), resource.getSourceName());
                                 }
                             }
                         }
                     } catch (Exception e) {
-                        OhmegaCommon.LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
+                        OhmegaCommon.LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.getSourceName(), e);
                     }
                 }
-            }
+            } catch (Exception ignored) {}
         }
 
         return builder.addAll(OhmegaHooks.registerAccessoryTypesEvent()).build();

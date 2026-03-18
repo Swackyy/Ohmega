@@ -13,7 +13,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.function.Supplier;
 
 public final class OhmegaMenusImpl implements OhmegaMenus.Service {
-    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, OhmegaCommon.MODID);
+    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, OhmegaCommon.MODID);
 
     public static final RegistryObject<MenuType<@NonNull AccessoryInventoryMenu>> ACCESSORY_INVENTORY = register("accessory_menu",
             () -> new MenuType<>(AccessoryInventoryMenu::new));

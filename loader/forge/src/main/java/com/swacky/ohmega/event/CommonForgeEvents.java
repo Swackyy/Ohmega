@@ -43,7 +43,7 @@ public final class CommonForgeEvents {
         Player oldPlayer = event.getOriginal();
 
         if (!event.isWasDeath() || CommonCallbacks.shouldKeepInventory(oldPlayer)) {
-            Player newPlayer = event.getEntity();
+            Player newPlayer = event.getPlayer();
 
             oldPlayer.reviveCaps();
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);

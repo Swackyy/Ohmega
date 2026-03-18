@@ -1,12 +1,21 @@
 package com.swacky.ohmega.common.accessorytype;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -78,7 +87,7 @@ public final class AccessoryType {
     }
 
     public MutableComponent getTranslation() {
-        return Component.translatable(getTranslationKey()).withStyle(Style.EMPTY.withColor(getHoverTextColour()));
+        return new TranslatableComponent(getTranslationKey()).withStyle(Style.EMPTY.withColor(getHoverTextColour()));
     }
 
     @Override
@@ -176,29 +185,30 @@ public final class AccessoryType {
         }
 
         public AccessoryType build(String namespace, String path) {
-            ResourceLocation id = ResourceLocation.tryBuild(namespace, path);
+            ResourceLocation id = new ResourceLocation(namespace, path);
+            ResourceLocation location;
 
-            if (id != null) {
-                ResourceLocation location;
-
-                if (emptySlotPath.indexOf(':') == -1){
-                    location = ResourceLocation.tryBuild(namespace, LOCATION_PREFIX + emptySlotPath + ".png");
-                } else {
-                    location = ResourceLocation.tryParse(emptySlotPath + ".png");
-
-                    if (location != null) {
-                        location = ResourceLocation.tryBuild(location.getNamespace(), LOCATION_PREFIX + location.getPath() + ".png");
-                    }
-                }
+            if (emptySlotPath.indexOf(':') == -1){
+                location = new ResourceLocation(namespace, LOCATION_PREFIX + emptySlotPath);
+            } else {
+                location = ResourceLocation.tryParse(emptySlotPath);
 
                 if (location != null) {
-                    return new AccessoryType(
-                            id,
-                            displayHoverText,
-                            location,
-                            hoverTextColour,
-                            priority);
+                    location = new ResourceLocation(location.getNamespace(), LOCATION_PREFIX + location.getPath());
                 }
+            }
+
+            if (location != null) {
+                if (!location.getPath().endsWith(".png")) {
+                    location = new ResourceLocation(location.getNamespace(), location.getPath() + ".png");
+                }
+
+                return new AccessoryType(
+                        id,
+                        displayHoverText,
+                        location,
+                        hoverTextColour,
+                        priority);
             }
 
             return null;
