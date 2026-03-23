@@ -176,29 +176,30 @@ public final class AccessoryType {
         }
 
         public AccessoryType build(String namespace, String path) {
-            ResourceLocation id = ResourceLocation.tryBuild(namespace, path);
+            ResourceLocation id = new ResourceLocation(namespace, path);
+            ResourceLocation location;
 
-            if (id != null) {
-                ResourceLocation location;
-
-                if (emptySlotPath.indexOf(':') == -1){
-                    location = ResourceLocation.tryBuild(namespace, LOCATION_PREFIX + emptySlotPath + ".png");
-                } else {
-                    location = ResourceLocation.tryParse(emptySlotPath + ".png");
-
-                    if (location != null) {
-                        location = ResourceLocation.tryBuild(location.getNamespace(), LOCATION_PREFIX + location.getPath() + ".png");
-                    }
-                }
+            if (emptySlotPath.indexOf(':') == -1){
+                location = new ResourceLocation(namespace, LOCATION_PREFIX + emptySlotPath);
+            } else {
+                location = ResourceLocation.tryParse(emptySlotPath);
 
                 if (location != null) {
-                    return new AccessoryType(
-                            id,
-                            displayHoverText,
-                            location,
-                            hoverTextColour,
-                            priority);
+                    location = new ResourceLocation(location.getNamespace(), LOCATION_PREFIX + location.getPath());
                 }
+            }
+
+            if (location != null) {
+                if (!location.getPath().endsWith(".png")) {
+                    location = new ResourceLocation(location.getNamespace(), location.getPath() + ".png");
+                }
+
+                return new AccessoryType(
+                        id,
+                        displayHoverText,
+                        location,
+                        hoverTextColour,
+                        priority);
             }
 
             return null;
