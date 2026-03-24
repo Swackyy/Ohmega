@@ -36,19 +36,19 @@ public final class Ohmega implements ModInitializer {
         OhmegaItems.init();
         OhmegaMenusImpl.init();
 
-        PayloadTypeRegistry.playC2S().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(OpenInventoryPacket.TYPE, OpenInventoryPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(ResizeContainerPacket.TYPE, ResizeContainerPacket.CODEC);
-        PayloadTypeRegistry.playC2S().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(OpenInventoryPacket.TYPE, OpenInventoryPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ResizeContainerPacket.TYPE, ResizeContainerPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenAccessoryInventory);
         ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenInventory);
         ServerPlayNetworking.registerGlobalReceiver(ResizeContainerPacket.TYPE, OhmegaNetworkingImpl.C2S::handleResizeContainer);
         ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleUseAccessory);
 
-        PayloadTypeRegistry.playS2C().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
-        PayloadTypeRegistry.configurationS2C().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
+        PayloadTypeRegistry.clientboundConfiguration().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
 
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(OhmegaCommon.id(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(OhmegaCommon.id(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
     }
 }

@@ -101,16 +101,8 @@ if (rootProject.file("secrets.properties").exists()) {
             changelog = modChanges.replace("| ", "+ ")
             displayName = "${modName} ${modV} ${name} ${mcV}"
 
-            switch (project.name) {
-                case "fabric": file = tasks.named("remapJar").flatMap {
-                    it.archiveFile
-                }; break
-                case "forge": file = tasks.named("jar").flatMap {
-                    it.archiveFile
-                }; break
-                case "neoforge": file = tasks.named("jar").flatMap {
-                    it.archiveFile
-                }
+            tasks.named("jar").flatMap {
+                it.archiveFile
             }
 
             type = STABLE

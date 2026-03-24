@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
@@ -23,7 +23,7 @@ public final class CommonEvents {
             bootstrapped = true;
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
-            ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(CommonEvents::onPlayerChangeDimension);
+            ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
             ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onServerConfigure);
         } else {

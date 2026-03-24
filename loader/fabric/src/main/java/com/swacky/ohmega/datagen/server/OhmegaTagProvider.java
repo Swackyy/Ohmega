@@ -3,8 +3,8 @@ package com.swacky.ohmega.datagen.server;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaTags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
@@ -12,8 +12,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class OhmegaTagProvider extends FabricTagProvider<Item> {
-    public OhmegaTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public class OhmegaTagProvider extends FabricTagsProvider<Item> {
+    public OhmegaTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, Registries.ITEM, lookup);
     }
 

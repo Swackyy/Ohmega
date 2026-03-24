@@ -13,7 +13,10 @@ base {
 }
 
 java {
-    toolchain.languageVersion.set JavaLanguageVersion.of(javaV)
+    JavaLanguageVersion javaVersion = JavaLanguageVersion.of(javaV);
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    toolchain.languageVersion = javaVersion
 
     withJavadocJar()
     withSourcesJar()
@@ -91,13 +94,7 @@ if (secretsFile.exists()) {
                     artifactId = "${modId}-${project.name}"
                     version = "${modV}-mc${mcV}"
 
-                    switch (project.name) {
-                        case "common":   artifact tasks.named("jar");      break
-                        case "fabric":   artifact tasks.named("remapJar"); break
-                        case "forge":    artifact tasks.named("jar");      break
-                        case "neoforge": artifact tasks.named("jar")
-                    }
-
+                    artifact tasks.named("jar")
                     artifact tasks.named("javadocJar")
                     artifact tasks.named("sourcesJar")
 

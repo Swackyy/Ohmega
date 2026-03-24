@@ -6,7 +6,7 @@ import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -78,8 +78,9 @@ public final class AccessoryInventoryButton extends AbstractButton {
         defaultButtonNarrationText(output);
     }
 
+
     @Override
-    protected void renderContents(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
+    protected void extractContents(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         if (isVisible()) {
             fixPos();
 

@@ -1,6 +1,6 @@
 plugins {
     id "loader"
-    id "net.fabricmc.fabric-loom-remap" version "${pluginLoomV}"
+    id "net.fabricmc.fabric-loom" version "${pluginLoomV}"
 }
 
 loom {
@@ -26,10 +26,6 @@ loom {
     }
 }
 
-remapSourcesJar {
-    targetNamespace = "named"
-}
-
 repositories {
     maven {
         name = "Config API"
@@ -50,15 +46,10 @@ repositories {
 dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
 
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${mapsMcV}:${mapsV}@zip")
-    }
-
-    modImplementation "net.fabricmc:fabric-loader:${loaderFabricV}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
-    modImplementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+    implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+    //implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
 }
 
 fabricApi {

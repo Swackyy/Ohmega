@@ -5,7 +5,7 @@ import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.common.inv.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -22,10 +22,12 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
 
     @SuppressWarnings("unused")
     public AccessoryInventoryScreen(AccessoryInventoryMenu menu, Inventory inv, Component title) {
-        super(menu, inv, Component.translatable("container.crafting"));
+        int extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
+
+        super(menu, inv, Component.translatable("container.crafting"), 176 + extraWidth, 166);
+
+        this.extraWidth = extraWidth;
         this.effects = new EffectsInInventory(this);
-        this.extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
-        this.imageWidth += extraWidth;
 
         if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
             this.titleLabelX = 97 + extraWidth;
@@ -53,11 +55,11 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         topPos = (height - imageHeight) / 2;
     }
 
+
     @Override
-    public void render(@NonNull GuiGraphics gui, int mx, int my, float partialTicks) {
-        super.render(gui, mx, my, partialTicks);
-        effects.render(gui, mx, my);
-        renderTooltip(gui, mx, my);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
+        super.extractRenderState(gui, mx, my, partialTicks);
+        effects.extractRenderState(gui, mx, my);
     }
 
     @Override
@@ -65,7 +67,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         return effects.canSeeEffects();
     }
 
-    private void renderAccInv(GuiGraphics gui) {
+    private void renderAccInv(GuiGraphicsExtractor gui) {
         int x;
 
         if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
@@ -135,8 +137,11 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         }
     }
 
+
     @Override
-    protected void renderBg(@NonNull GuiGraphics gui, float partialTicks, int mx, int my) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
+        super.extractBackground(gui, mx, my, partialTicks);
+
         LocalPlayer player = minecraft.player;
 
         if (player != null) {
@@ -155,21 +160,21 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             renderAccInv(gui);
 
             // Entity rendering
-            InventoryScreen.renderEntityInInventoryFollowsMouse(gui, x + 26, topPos + 8, x + 75, topPos + 78, 30, 0.0625f, mx, my, player);
+            InventoryScreen.extractEntityInInventoryFollowsMouse(gui, x + 26, topPos + 8, x + 75, topPos + 78, 30, 0.0625f, mx, my, player);
         }
     }
 
     @Override
-    protected void renderLabels(@NonNull GuiGraphics gui, int mx, int my) {
-        gui.drawString(font, title, titleLabelX, titleLabelY, -12566464, false);
+    protected void extractLabels(@NonNull GuiGraphicsExtractor gui, int mx, int my) {
+        gui.text(font, title, titleLabelX, titleLabelY, -12566464, false);
     }
 
     @Override
-    protected void renderTooltip(@NonNull GuiGraphics gui, int mx, int my) {
+    protected void extractTooltip(@NonNull GuiGraphicsExtractor gui, int mx, int my) {
         if (menu.getCarried().isEmpty() && hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.Client.showHoverTooltip() && !hoveredSlot.hasItem()) {
             gui.setTooltipForNextFrame(accSlot.getType().getTranslation(), mx, my);
         } else {
-            super.renderTooltip(gui, mx, my);
+            super.extractTooltip(gui, mx, my);
         }
     }
 

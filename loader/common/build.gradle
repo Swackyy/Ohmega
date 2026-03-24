@@ -1,6 +1,6 @@
 plugins {
     id "common"
-    id "org.spongepowered.gradle.vanilla" version "0.2.2"
+    id "org.spongepowered.gradle.vanilla" version "0.3.2"
 }
 
 minecraft {

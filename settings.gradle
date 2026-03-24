@@ -36,8 +36,16 @@ plugins {
 
 rootProject.setName modName
 
-include(
-        "loader:common",
-        "loader:fabric",
-        "loader:forge",
-        "loader:neoforge")
+include "loader:common"
+
+if (moduleEnabledFabric.toBoolean()) {
+    include "loader:fabric"
+}
+
+if (moduleEnabledForge.toBoolean()) {
+    include "loader:forge"
+}
+
+if (moduleEnabledFabric.toBoolean()) {
+    include "loader:neoforge"
+}

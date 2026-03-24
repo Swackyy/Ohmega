@@ -17,11 +17,6 @@ neoForge {
         }
     }
 
-    parchment {
-        mappingsVersion.set mapsV
-        minecraftVersion.set mapsMcV
-    }
-
     runs {
         configureEach {
             ideName.set "NeoForge ${it.name.capitalize()} (${project.path})"
