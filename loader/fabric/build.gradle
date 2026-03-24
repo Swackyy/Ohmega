@@ -1,17 +1,10 @@
 plugins {
-    id "fabric-loom"
     id "loader"
+    id "net.fabricmc.fabric-loom-remap" version "${pluginLoomV}"
 }
 
 loom {
     accessWidenerPath.set file("src/main/resources/aw.accesswidener")
-
-    mods {
-        "${modId}" {
-            sourceSet sourceSets.main
-            sourceSet project(":loader:common").sourceSets.main
-        }
-    }
 
     runs {
         configureEach {
@@ -55,9 +48,6 @@ repositories {
 }
 
 dependencies {
-    commonJava project(path: ":loader:common", configuration: "commonJava")
-    commonResources project(path: ":loader:common", configuration: "commonResources")
-
     minecraft "com.mojang:minecraft:${mcV}"
 
     mappings loom.layered() {
@@ -69,4 +59,11 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     modImplementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
+        outputDirectory = file project(":loader:common").sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath()
+    }
 }

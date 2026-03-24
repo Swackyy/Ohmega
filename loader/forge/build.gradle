@@ -1,49 +1,56 @@
 plugins {
     id "loader"
-    id "net.minecraftforge.gradle"
-    id "org.parchmentmc.librarian.forgegradle" version "1.+"
-    id "org.spongepowered.mixin" version "0.7.+"
-}
-
-mixin {
-    config "${modId}.mixins.json"
-    config "${modId}_common.mixins.json"
+    id "net.minecraftforge.gradle" version "${pluginForgeV}"
 }
 
 minecraft {
     mappings channel: "official", version: mcV
 
-    reobf = false
-    accessTransformer = file "src/main/resources/META-INF/accesstransformer.cfg"
-
-    copyIdeResources.set true
+    accessTransformer = "META-INF/mapped_at.cfg"
 
     runs {
         configureEach {
-            ideaModule = "${rootProject.name}.loader.${project.name}.main"
+            mods {
+                "${modId}" {
+                    source sourceSets.main
+                    source project(":loader:common").sourceSets.main
+                }
+            }
 
-            workingDirectory file("run")
-            property "forge.enabledGameTestNamespaces", "${modId}"
-            property "eventbus.api.strictRuntimeChecks", "true"
+            environment "MOD_CLASSES": "{source_roots}"
+            args "--mixin.config", "${modId}.mixins.json"
+            args "--mixin.config", "${modId}_common.mixins.json"
+            systemProperty "eventbus.api.strictRuntimeChecks", "true"
+            systemProperty "forge.enabledGameTestNamespaces", modId
+            workingDir.convention layout.projectDirectory.dir("run")
         }
 
-        client {}
+        register("client")
 
-        server {}
+        register("server")
+    }
+}
+
+repositories {
+    mavenCentral()
+    minecraft.mavenizer it
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+
+    maven {
+        name = "Forge"
+        url = "https://maven.minecraftforge.net"
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mcV}-${loaderForgeV}"
+    implementation minecraft.dependency("net.minecraftforge:forge:${mcV}-${loaderForgeV}")
 
-    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
     annotationProcessor "net.minecraftforge:eventbus-validator:7.0-beta.7"
+}
 
-    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
-        version {
-            strictly "5.0.4"
-        }
-    }
+processResources {
+    exclude "META-INF/mapped_at.cfg"
 }
 
 jar {
@@ -52,11 +59,4 @@ jar {
                 "MixinConfigs": "${modId}.mixins.json, ${modId}_common.mixins.json"
         ])
     }
-}
-
-sourceSets.each {
-    def dir = layout.buildDirectory.dir "sourcesSets/$it.name"
-    it.output.resourcesDir = dir
-
-    it.java.destinationDirectory.set dir.get()
 }

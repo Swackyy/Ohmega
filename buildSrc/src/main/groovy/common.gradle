@@ -31,8 +31,6 @@ processResources {
     filesMatching("pack.mcmeta") {
         expand replaceProperties
     }
-
-    exclude "META-INF/accesstransformer.cfg"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -44,23 +42,38 @@ tasks.withType(Javadoc).configureEach {
     options.quiet()
 }
 
+jar {
+    exclude "**/.cache"
+}
+
+tasks.named("sourcesJar", Jar) {
+    exclude "**/.cache"
+}
+
+tasks.named("compileTestJava") {
+    enabled = false
+}
+
+tasks.named("processTestResources") {
+    enabled = false
+}
+
 tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
 }
 
-["apiElements", "runtimeElements"].each { variant ->
+["apiElements", "runtimeElements", "sourcesElements", "javadocElements"].each { variant ->
     configurations."${variant}".outgoing {
-        capability("${group}:${base.archivesName.get()}:${version}")
-        capability("${group}:${modId}-${project.name}-${mcV}:${version}")
-        capability("${group}:${modId}:$version")
+        capability "${group}:${base.archivesName.get()}:${version}"
+        capability "${group}:${modId}-${project.name}-${mcV}:${version}"
+        capability "${group}:${modId}:$version"
     }
 }
 
 File secretsFile = rootProject.file("secrets.properties")
 
 if (secretsFile.exists()) {
-    secretsFile.withInputStream { stream ->
-        {
+    secretsFile.withInputStream { stream -> {
             Properties secrets = new Properties()
 
             secrets.load(stream)
@@ -70,86 +83,83 @@ if (secretsFile.exists()) {
         }
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                groupId = "io.github.swackyy"
-                artifactId = "${modId}-${project.name}"
-                version = "${modV}-mc${mcV}"
+    afterEvaluate {
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    groupId = "io.github.swackyy"
+                    artifactId = "${modId}-${project.name}"
+                    version = "${modV}-mc${mcV}"
 
-                if (project.name == "fabric") {
-                    artifact(remapJar) {
-                        builtBy remapJar
+                    switch (project.name) {
+                        case "common":   artifact tasks.named("jar");      break
+                        case "fabric":   artifact tasks.named("remapJar"); break
+                        case "forge":    artifact tasks.named("jar");      break
+                        case "neoforge": artifact tasks.named("jar")
                     }
 
-                    artifact(remapSourcesJar) {
-                        builtBy remapSourcesJar
+                    artifact tasks.named("javadocJar")
+                    artifact tasks.named("sourcesJar")
+
+                    pom {
+                        name = "${modName} ${project.name}"
+                        description = modSummary
+                        url = gitUrl
+
+                        licenses {
+                            //noinspection GroovyAssignabilityCheck
+                            license {
+                                name = license
+                            }
+                        }
+
+                        scm {
+                            url = "github.com"
+                            connection = "scm:git:git:github.com"
+                            developerConnection = "scm:git:ssh://github.com"
+                        }
+
+                        developers {
+                            developer {
+                                id = "swackyy"
+                                name = modAuthorsDisplay
+                                // todo: check if a-ok
+                                //email = "68652827+Swackyy@users.noreply.github.com"
+                            }
+                        }
                     }
 
-                    artifact(javadocJar) {
-                        builtBy javadocJar
+                    suppressPomMetadataWarningsFor("apiElements")
+                    suppressPomMetadataWarningsFor("runtimeElements")
+                }
+            }
+
+            repositories {
+                maven {
+                    name = "Maven"
+                    url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+
+                    credentials {
+                        username = getProperty("secretsMavenCentralUsername")
+                        password = getProperty("secretsMavenCentralPassword")
                     }
+                }
+            }
+        }
+
+        plugins.withType(MavenPublishPlugin).configureEach {
+            signing {
+                String id = findProperty("secretsSigningId")
+                String key = findProperty("secretsSigningKey")
+                String password = findProperty("secretsSigningPassword")
+
+                if (id && key && password) {
+                    useInMemoryPgpKeys(id, key, password)
+                    sign publishing.publications.mavenJava
                 } else {
-                    from components.java
+                    System.err.println "Could not sign project ${project.name}"
+                    required = false
                 }
-
-                pom {
-                    name = "${modName} ${project.name}"
-                    description = modSummary
-                    url = gitUrl
-
-                    licenses {
-                        //noinspection GroovyAssignabilityCheck
-                        license {
-                            name = license
-                        }
-                    }
-
-                    scm {
-                        url = "github.com"
-                        connection = "scm:git:git:github.com"
-                        developerConnection = "scm:git:ssh://github.com"
-                    }
-
-                    developers {
-                        developer {
-                            id = "swackyy"
-                            name = modAuthorsDisplay
-                            email = "68652827+Swackyy@users.noreply.github.com"
-                        }
-                    }
-                }
-
-                suppressPomMetadataWarningsFor("apiElements")
-                suppressPomMetadataWarningsFor("runtimeElements")
-            }
-        }
-
-        repositories {
-            maven {
-                name = "Maven"
-                url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-
-                credentials {
-                    username = getProperty("secretsMavenCentralUsername")
-                    password = getProperty("secretsMavenCentralPassword")
-                }
-            }
-        }
-    }
-
-    plugins.withType(MavenPublishPlugin).configureEach {
-        signing {
-            String id = findProperty("secretsSigningId")
-            String key = findProperty("secretsSigningKey")
-            String password = findProperty("secretsSigningPassword")
-
-            if (id && key && password) {
-                useInMemoryPgpKeys(id, key, password)
-                sign publishing.publications.mavenJava
-            } else {
-                System.err.println "Could not sign project ${project.name}"
-                required = false
             }
         }
     }

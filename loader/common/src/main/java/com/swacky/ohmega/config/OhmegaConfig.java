@@ -43,6 +43,10 @@ public final class OhmegaConfig {
             return IMPL.maxColumnRenderSlots();
         }
 
+        public static boolean isLoaded() {
+            return IMPL.isLoaded();
+        }
+
         public interface Service {
             String COMPATIBILITY_MODE_KEY = "compatibilityMode";
             String COMPATIBILITY_MODE_DESCRIPTION = """
@@ -96,6 +100,8 @@ public final class OhmegaConfig {
             int maxColumnSlots();
 
             int maxColumnRenderSlots();
+
+            boolean isLoaded();
 
             enum ButtonStyle {
                 DEFAULT(new Builder()
@@ -211,6 +217,10 @@ public final class OhmegaConfig {
             return IMPL.disableAccessoryTypes();
         }
 
+        public static boolean isLoaded() {
+            return IMPL.isLoaded();
+        }
+
         public interface Service {
             String GENERIC  = AccessoryType.GENERIC_ID.toString();
             String NORMAL  = AccessoryType.NORMAL_ID.toString();
@@ -255,6 +265,8 @@ public final class OhmegaConfig {
             KeepAccessoriesBehaviour keepAccessoriesBehaviour();
 
             boolean disableAccessoryTypes();
+
+            boolean isLoaded();
 
             enum KeepAccessoriesBehaviour {
                 DEFAULT,

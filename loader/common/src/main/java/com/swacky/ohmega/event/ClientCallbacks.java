@@ -142,8 +142,8 @@ public final class ClientCallbacks {
     public static void onServerConfigUnload(Runnable loadFunction) {
         AccessoryTypeManager.clear();
 
-        Minecraft mc = Minecraft.getInstance();
-        mc.options.keyMappings = Arrays.stream(mc.options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]);
+        Options options = Minecraft.getInstance().options;
+        options.keyMappings = Arrays.stream(options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]);
 
         loadFunction.run();
     }

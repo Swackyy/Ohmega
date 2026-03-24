@@ -3,7 +3,7 @@
   "id": "${modId}",
   "version": "${modV}",
   "name": "${modName}",
-  "description": "${modDescFabric}",
+  "description": "${modDesc}",
   "authors": [
     "${modAuthors}"
   ],
@@ -21,6 +21,9 @@
     ],
     "client": [
       "com.swacky.${modId}.client.OhmegaClient"
+    ],
+    "fabric-datagen": [
+      "com.swacky.${modId}.datagen.OhmegaDataGeneration"
     ]
   },
   "mixins": [

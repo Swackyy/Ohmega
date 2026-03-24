@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -48,7 +49,7 @@ public final class ClientEvents {
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
             AccessoryTypeManager.runDeferredAwaitingConfigLoad();
 
-            if (OhmegaConfigImpl.Client.getSpec().isLoaded()) {
+            if (OhmegaConfig.Client.isLoaded()) {
                 ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
             }
         }

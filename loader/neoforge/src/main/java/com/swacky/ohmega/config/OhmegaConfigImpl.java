@@ -84,6 +84,11 @@ public final class OhmegaConfigImpl {
         public int maxColumnRenderSlots() {
             return maxColumnRenderSlots.get();
         }
+
+        @Override
+        public boolean isLoaded() {
+            return spec.isLoaded();
+        }
     }
 
     public static final class Server implements OhmegaConfig.Server.Service {
@@ -134,6 +139,11 @@ public final class OhmegaConfigImpl {
         @Override
         public boolean disableAccessoryTypes() {
             return disableAccessoryTypes.get();
+        }
+
+        @Override
+        public boolean isLoaded() {
+            return spec.isLoaded();
         }
     }
 }

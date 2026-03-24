@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.reflect.TypeToken;
 import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -64,7 +65,12 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         TYPES.addAll(types);
 
         if (DEFERRED_APPLY != null) {
-            DEFERRED_APPLY.run();
+            if (OhmegaConfig.Server.isLoaded()) {
+                DEFERRED_APPLY.run();
+            } else {
+                DEFERRED_CONFIG_LOAD = DEFERRED_APPLY;
+            }
+
             DEFERRED_APPLY = null;
         }
 

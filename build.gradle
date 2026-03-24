@@ -5,9 +5,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 plugins {
-    id "fabric-loom" version "${pluginLoomV}" apply false
     id "idea"
-    id "net.minecraftforge.gradle" version "${pluginForgeV}" apply false
     id "net.neoforged.moddev" version "${pluginNeoV}" apply false
 }
 
@@ -21,8 +19,7 @@ idea {
 File secretsFile = file("secrets.properties")
 
 if (secretsFile.exists()) {
-    secretsFile.withInputStream { stream ->
-        {
+    secretsFile.withInputStream { stream -> {
             Properties secrets = new Properties()
 
             secrets.load(stream)
@@ -33,10 +30,9 @@ if (secretsFile.exists()) {
     }
 
     tasks.register("publishMavenCentral") {
-        doLast {
-            println "publishing to maven central!"
-            group = "publishing"
+        group = "publishing"
 
+        doLast {
             String auth = Base64.getEncoder().encodeToString("${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes())
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> getResponse = client.send(HttpRequest.newBuilder()
