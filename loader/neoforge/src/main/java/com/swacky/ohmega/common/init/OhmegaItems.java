@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
@@ -11,7 +11,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.function.Function;
 
 public final class OhmegaItems {
-    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(OhmegaCommon.MODID);
+    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Ohmega.MODID);
 
     public static final DeferredItem<@NonNull Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 

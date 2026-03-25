@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -14,7 +14,7 @@ public final class OhmegaDataAttachments {
             .persistent(AccessoryContainer.CODEC));
 
     private static <T> AttachmentType<T> register(String id, Consumer<AttachmentRegistry.Builder<T>> consumer) {
-        return AttachmentRegistry.create(OhmegaCommon.id(id), consumer);
+        return AttachmentRegistry.create(Ohmega.id(id), consumer);
     }
 
     public static void init() {}

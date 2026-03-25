@@ -2,12 +2,11 @@ package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
@@ -36,10 +35,10 @@ public final class OhmegaNetworkingImpl {
 
     public static void bootstrap() {
         SimpleChannel net = ChannelBuilder
-                .named(OhmegaCommon.id("network"))
+                .named(Ohmega.id("network"))
                 .networkProtocolVersion(1)
-                .clientAcceptedVersions((status, version) -> true)
-                .serverAcceptedVersions((status, version) -> true)
+                .clientAcceptedVersions((_, _) -> true)
+                .serverAcceptedVersions((_, _) -> true)
                 .simpleChannel();
 
         net.play().serverbound().addMain(OpenAccessoryInventoryPacket.class, OpenAccessoryInventoryPacket.CODEC, C2S::handleOpenAccessoryInventory);

@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.EquipContext;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class OhmegaHooks {
-    private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+    private static final Service IMPL = Ohmega.loadService(Service.class);
 
     public static void bootstrap() {}
 

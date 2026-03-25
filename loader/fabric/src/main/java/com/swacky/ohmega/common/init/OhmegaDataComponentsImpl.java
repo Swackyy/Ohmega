@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -15,7 +15,7 @@ public final class OhmegaDataComponentsImpl implements  OhmegaDataComponents.Ser
                     .build());
 
     private static <T> DataComponentType<T> register(String id, DataComponentType<T> object) {
-        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, OhmegaCommon.id(id), object);
+        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Ohmega.id(id), object);
     }
 
     public static void init() {}

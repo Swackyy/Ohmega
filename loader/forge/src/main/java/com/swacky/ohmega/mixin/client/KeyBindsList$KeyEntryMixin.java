@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin.client;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
@@ -29,7 +29,7 @@ abstract class KeyBindsList$KeyEntryMixin extends KeyBindsList.Entry {
             String key = mapping.getName();
             int index = key.lastIndexOf('_');
             this.name = Component.translatable(
-                    "key." + OhmegaCommon.MODID + ".accessory_type",
+                    "key." + Ohmega.MODID + ".accessory_type",
                     Component.translatable(key.substring(0, index).replace("key", "accessory_type")),
                     Integer.parseInt(key.substring(index + 1)) + 1);
         }

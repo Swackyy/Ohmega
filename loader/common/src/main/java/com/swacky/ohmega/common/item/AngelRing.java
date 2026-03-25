@@ -3,7 +3,7 @@ package com.swacky.ohmega.common.item;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -85,10 +85,10 @@ public class AngelRing extends Item implements IAccessory {
     @Override
     public void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {
         // This modifier is only applied when the accessory is active
-        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(OhmegaCommon.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
+        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
 
         // This modifier is always applied
-        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(OhmegaCommon.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
+        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
     }
 
     // The sound to be played when equipped using a right click

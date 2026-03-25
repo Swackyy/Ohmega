@@ -1,7 +1,7 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -29,9 +29,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-@EventBusSubscriber(modid = OhmegaCommon.MODID)
+@EventBusSubscriber(modid = Ohmega.MODID)
 public final class CommonEvents {
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types"));
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(Ohmega.id("sync_accessory_types"));
 
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
@@ -117,6 +117,6 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddServerReloadListenersEvent event) {
-        event.addListener(OhmegaCommon.RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
+        event.addListener(Ohmega.RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
     }
 }

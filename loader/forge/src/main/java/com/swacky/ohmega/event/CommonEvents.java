@@ -3,7 +3,7 @@ package com.swacky.ohmega.event;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryHelperImpl;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
@@ -34,11 +34,10 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Collections;
 
-@SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = OhmegaCommon.MODID)
+@Mod.EventBusSubscriber(modid = Ohmega.MODID)
 public final class CommonEvents {
-    private static final Identifier CAPABILITY_ID = OhmegaCommon.id("accessory_data");
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(OhmegaCommon.id("sync_accessory_types").toString());
+    private static final Identifier CAPABILITY_ID = Ohmega.id("accessory_data");
+    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(Ohmega.id("sync_accessory_types").toString());
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent.Entities event) {
@@ -116,7 +115,7 @@ public final class CommonEvents {
         @NonNull
         @Override
         public <T> LazyOptional<T> getCapability(@NonNull Capability<T> cap, Direction side) {
-            return Ohmega.ACCESSORIES.orEmpty(cap, this.cap);
+            return OhmegaMain.ACCESSORIES.orEmpty(cap, this.cap);
         }
 
         @Override

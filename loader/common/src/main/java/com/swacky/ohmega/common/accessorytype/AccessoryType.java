@@ -2,7 +2,7 @@ package com.swacky.ohmega.common.accessorytype;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.VarInt;
@@ -60,10 +60,10 @@ public final class AccessoryType {
     public static final String PRIORITY_KEY = "priority";
 
     // Use these for data generation
-    public static final Identifier GENERIC_ID = OhmegaCommon.id("generic");
-    public static final Identifier NORMAL_ID  = OhmegaCommon.id("normal");
-    public static final Identifier UTILITY_ID = OhmegaCommon.id("utility");
-    public static final Identifier SPECIAL_ID = OhmegaCommon.id("special");
+    public static final Identifier GENERIC_ID = Ohmega.id("generic");
+    public static final Identifier NORMAL_ID  = Ohmega.id("normal");
+    public static final Identifier UTILITY_ID = Ohmega.id("utility");
+    public static final Identifier SPECIAL_ID = Ohmega.id("special");
 
     // todo: change this comment when the new strategy is applied
     // Deferred to ensure they are non-null
@@ -154,7 +154,7 @@ public final class AccessoryType {
         private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
 
         private boolean displayHoverText = true;
-        private String emptySlotPath = OhmegaCommon.id("accessory_slot_normal").toString();
+        private String emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
         private int hoverTextColour = 0xffffff;
         private int priority = 0;
 

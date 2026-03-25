@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common.init;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
@@ -29,7 +29,7 @@ public final class OhmegaBindsImpl implements OhmegaBinds.Service {
             int index = key.lastIndexOf('_');
 
             return Component.translatable(
-                    "key." + OhmegaCommon.MODID + ".accessory_type",
+                    "key." + Ohmega.MODID + ".accessory_type",
                     Component.translatable(key.substring(0, index).replace("key", "accessory_type")),
                     Integer.parseInt(key.substring(index + 1)) + 1);
         }

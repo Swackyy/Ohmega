@@ -2,7 +2,6 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -18,17 +17,13 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
 
-public final class OhmegaCommon {
+public final class Ohmega {
     public static final String MODID = "ohmega";
-    public static final Logger LOGGER = LogManager.getLogger("Ohmega");
-    public static final Identifier RELOAD_LISTENER_ID = OhmegaCommon.id("accessory_type_manager");
-    public static final Identifier ACCESSORY_LOCATION = OhmegaCommon.id("textures/gui/container/accessory_addon.png");
-    public static final int ACCESSORY_ADDON_WIDTH = 26;
-    public static final int ACCESSORY_ADDON_HEIGHT = 103;
+    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Identifier RELOAD_LISTENER_ID = Ohmega.id("accessory_type_manager");
     private static final Map<Item, IAccessory> BOUND_ACCESSORIES = new WeakHashMap<>();
 
     private static int NUM_SERVICES = 0;
-    private static int NUM_SERVICES_COMMON = 0;
 
     public static <T> T loadService(Class<T> clazz) {
         String name = clazz.getName();
@@ -48,15 +43,6 @@ public final class OhmegaCommon {
         OhmegaHooks.bootstrap();
         OhmegaNetworking.bootstrap();
         LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
-
-        NUM_SERVICES_COMMON = NUM_SERVICES;
-    }
-
-    public static void bootstrapClient() {
-        OhmegaBinds.bootstrap();
-        OhmegaConfig.Client.bootstrap();
-
-        LOGGER.info("Successfully loaded {} client services", NUM_SERVICES - NUM_SERVICES_COMMON);
     }
 
     public static Identifier id(String path) {

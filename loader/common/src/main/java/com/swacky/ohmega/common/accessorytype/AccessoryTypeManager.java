@@ -2,7 +2,7 @@ package com.swacky.ohmega.common.accessorytype;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.reflect.TypeToken;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -13,6 +13,8 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -22,8 +24,9 @@ import java.util.Map;
 
 public final class AccessoryTypeManager extends SimplePreparableReloadListener<ImmutableSet<AccessoryType>> {
     private static final AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final int DEFAULT_SIZE = 4;
-    public static final String LOCATION = OhmegaCommon.MODID + "/accessory_types.json";
+    public static final String LOCATION = Ohmega.MODID + "/accessory_types.json";
     private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
     private static final HashSet<AccessoryType> TYPES = new HashSet<>();
     private static Map<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
@@ -52,7 +55,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
                         builder.add(entry.getValue().build(namespace, entry.getKey()));
                     }
                 } catch (Exception e) {
-                    OhmegaCommon.LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
+                    LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -20,13 +20,13 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
 @SuppressWarnings("unused")
-public final class OhmegaClient implements ClientModInitializer {
+public final class OhmegaClientMain implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        OhmegaCommon.bootstrapClient();
+        OhmegaClient.bootstrap();
         ClientEvents.bootstrap();
 
-        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+        ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
 
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);
         MenuScreens.register(OhmegaMenusImpl.ACCESSORY_INVENTORY, AccessoryInventoryScreen::new);
@@ -34,6 +34,6 @@ public final class OhmegaClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(SyncAccessorySlotsPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessorySlots);
         ClientConfigurationNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessoryTypes);
 
-        ConfigScreenFactoryRegistry.INSTANCE.register(OhmegaCommon.MODID, ConfigurationScreen::new);
+        ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, ConfigurationScreen::new);
     }
 }

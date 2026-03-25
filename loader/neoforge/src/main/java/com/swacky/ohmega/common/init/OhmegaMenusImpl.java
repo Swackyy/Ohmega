@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -13,7 +13,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.function.Supplier;
 
 public final class OhmegaMenusImpl implements OhmegaMenus.Service {
-    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, OhmegaCommon.MODID);
+    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Ohmega.MODID);
 
     public static final Supplier<MenuType<@NonNull AccessoryInventoryMenu>> ACCESSORY_INVENTORY = register("accessory_menu",
             () -> new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));

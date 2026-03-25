@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public final class OhmegaDataComponentsImpl implements OhmegaDataComponents.Service {
-    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, OhmegaCommon.MODID);
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Ohmega.MODID);
 
     public static final Supplier<DataComponentType<AccessoryItemDataComponent>> ACCESSORY_ITEM = register("accessory",
             () -> DataComponentType.<AccessoryItemDataComponent>builder()

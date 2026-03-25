@@ -23,13 +23,13 @@ import net.minecraft.server.packs.PackType;
 import net.neoforged.fml.config.ModConfig;
 
 @SuppressWarnings("unused")
-public final class Ohmega implements ModInitializer {
+public final class OhmegaMain implements ModInitializer {
     @Override
     public void onInitialize() {
-        OhmegaCommon.bootstrap();
+        Ohmega.bootstrap();
         CommonEvents.bootstrap();
 
-        ConfigRegistry.INSTANCE.register(OhmegaCommon.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
+        ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         OhmegaDataAttachments.init();
         OhmegaDataComponentsImpl.init();
@@ -49,6 +49,6 @@ public final class Ohmega implements ModInitializer {
         PayloadTypeRegistry.clientboundPlay().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.clientboundConfiguration().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
 
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(OhmegaCommon.id(OhmegaCommon.MODID), AccessoryTypeManager.getInstance());
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ohmega.id(Ohmega.MODID), AccessoryTypeManager.getInstance());
     }
 }

@@ -1,13 +1,14 @@
 package com.swacky.ohmega.datagen.server;
 
 import com.swacky.ohmega.api.datagen.server.AccessoryTypeProvider;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.data.PackOutput;
 
 public class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
     public OhmegaAccessoryTypeProvider(PackOutput output) {
-        super(output, OhmegaCommon.MODID);
+        super(output, Ohmega.MODID);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.swacky.ohmega.client.screen;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -100,7 +100,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
                 hoveredOffsY = 0;
             }
 
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
         }
     }
 }

@@ -3,7 +3,7 @@ package com.swacky.ohmega.api;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.api.event.EquipContext;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
@@ -33,11 +33,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
-    private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+    private static final Service IMPL = Ohmega.loadService(Service.class);
 
     public static void bootstrap() {}
 
@@ -80,7 +84,7 @@ public final class AccessoryHelper {
      * @return {@code true} if it worked, false if the item is already bound or is air
      */
     public static boolean bindAccessory(Item item, IAccessory binding) {
-        return OhmegaCommon.bindAccessory(item, binding);
+        return Ohmega.bindAccessory(item, binding);
     }
 
     /**
@@ -90,7 +94,7 @@ public final class AccessoryHelper {
      * @return {@code true} if the {@link Item} class implements {@link IAccessory} or is accessory bound by code ({@link #bindAccessory(Item, IAccessory)}
      */
     public static boolean isItemAccessoryBound(Item item) {
-        return OhmegaCommon.isItemAccessoryBound(item);
+        return Ohmega.isItemAccessoryBound(item);
     }
 
     /**
@@ -98,7 +102,7 @@ public final class AccessoryHelper {
      * @return the {@link IAccessory} binding
      */
     public static IAccessory getBoundAccessory(Item item) {
-        return OhmegaCommon.getBoundAccessory(item);
+        return Ohmega.getBoundAccessory(item);
     }
 
     /**

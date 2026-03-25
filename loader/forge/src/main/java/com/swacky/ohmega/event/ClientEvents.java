@@ -1,7 +1,7 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaMenus;
@@ -21,8 +21,7 @@ import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = OhmegaCommon.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {

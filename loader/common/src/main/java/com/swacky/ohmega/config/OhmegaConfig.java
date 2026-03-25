@@ -1,6 +1,7 @@
 package com.swacky.ohmega.config;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.client.OhmegaClient;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 
@@ -11,7 +12,7 @@ import java.util.function.Predicate;
 // Descriptions written in the config file are all in English
 public final class OhmegaConfig {
     public static final class Client {
-        private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+        private static final Service IMPL = OhmegaClient.loadService(Service.class);
 
         public static void bootstrap() {}
 
@@ -195,7 +196,7 @@ public final class OhmegaConfig {
     }
 
     public static final class Server {
-        private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+        private static final Service IMPL = Ohmega.loadService(Service.class);
 
         public static void bootstrap() {}
 

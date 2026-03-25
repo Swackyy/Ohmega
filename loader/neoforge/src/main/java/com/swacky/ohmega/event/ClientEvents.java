@@ -1,7 +1,7 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaMenus;
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-@EventBusSubscriber(modid = OhmegaCommon.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
     @SubscribeEvent
     private static void onConfigLoad(ModConfigEvent.Loading event) {

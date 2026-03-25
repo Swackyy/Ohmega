@@ -1,5 +1,6 @@
 package com.swacky.ohmega.common;
 
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -13,10 +14,10 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-@Mod(OhmegaCommon.MODID)
-public final class Ohmega {
-    public Ohmega(IEventBus bus, Dist distro, ModContainer container) {
-        OhmegaCommon.bootstrap();
+@Mod(Ohmega.MODID)
+public final class OhmegaMain {
+    public OhmegaMain(IEventBus bus, Dist distro, ModContainer container) {
+        Ohmega.bootstrap();
 
         container.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
@@ -26,7 +27,7 @@ public final class Ohmega {
         OhmegaDataAttachments.register(bus);
 
         if (distro.isClient()) {
-            OhmegaCommon.bootstrapClient();
+            OhmegaClient.bootstrap();
 
             container.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
             container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);

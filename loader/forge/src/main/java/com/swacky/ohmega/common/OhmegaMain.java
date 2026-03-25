@@ -1,5 +1,6 @@
 package com.swacky.ohmega.common;
 
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -15,12 +16,12 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
-@Mod(OhmegaCommon.MODID)
-public final class Ohmega {
+@Mod(Ohmega.MODID)
+public final class OhmegaMain {
     public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
 
-    public Ohmega(FMLJavaModLoadingContext context) {
-        OhmegaCommon.bootstrap();
+    public OhmegaMain(FMLJavaModLoadingContext context) {
+        Ohmega.bootstrap();
 
         context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
@@ -33,7 +34,7 @@ public final class Ohmega {
         OhmegaNetworkingImpl.bootstrap();
 
         if (FMLEnvironment.dist.isClient()) {
-            OhmegaCommon.bootstrapClient();
+            OhmegaClient.bootstrap();
 
             context.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
         }

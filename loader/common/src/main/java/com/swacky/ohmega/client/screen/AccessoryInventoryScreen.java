@@ -1,7 +1,7 @@
 package com.swacky.ohmega.client.screen;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.common.inv.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -84,7 +84,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             // Slots
             int slotsCreatedCurrentColumn = 0;
             for (int j = 0; true; j++) {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + j * 18, 4, 4, 18, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + j * 18, 4, 4, 18, 18, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
                 index++;
 
                 if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= menu.slotsAvailable) {
@@ -93,47 +93,47 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             }
 
             // Top border
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 20, 4, 0, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 20, 4, 0, 18, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
 
             // Bottom border
             if (i >= menu.renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * lastColumnSlots, 4, 22, 18, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
             } else {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * i, topPos + 24 + 18 * mostSlotsPerColumn, 4, 22, 18, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
             }
         }
 
         // Side borders
         for (int i = 0; i < mostSlotsPerColumn; i++) {
             // Left
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * i, 0, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x, topPos + 24 + 18 * i, 0, 4, 4, 18, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
 
             // Right
             if (i >= lastColumnSlots) {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
             } else {
-                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+                gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 24 + 18 * i, 22, 4, 4, 18, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
             }
         }
 
         // Top left corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 20, 0, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x, topPos + 20, 0, 0, 4, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
 
         // Top right corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 20, 22, 0, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 20, 22, 0, 4, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
 
         // Bottom left corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x, topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x, topPos + 24 + 18 * mostSlotsPerColumn, 0, 22, 4, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
 
         // Bottom right corner
-        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+        gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * menu.renderColumns, topPos + 24 + 18 * lastColumnSlots, 22, 22, 4, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 4 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 4 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * mostSlotsPerColumn, 22, 22, 4, 4, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
         }
 
         // Intersecting corner
         if (lastColumnSlots != mostSlotsPerColumn) {
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaCommon.ACCESSORY_LOCATION, x + 5 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, OhmegaCommon.ACCESSORY_ADDON_WIDTH, OhmegaCommon.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, x + 5 + 18 * (menu.renderColumns - 1), topPos + 24 + 18 * lastColumnSlots, 20, 26, 3, 3, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
         }
     }
 

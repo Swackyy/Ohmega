@@ -1,7 +1,7 @@
 package com.swacky.ohmega.datagen.client;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -22,7 +22,7 @@ public class OhmegaRuRuProvider extends OhmegaLangProvider {
         // Datapack
         internalHelper.addDataPackDescription("Ресурсы мода Ohmega");
 
-        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, OhmegaCommon.MODID);
+        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
         helper.addKeyboundItem(OhmegaItems.ANGEL_RING,

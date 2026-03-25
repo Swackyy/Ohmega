@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.ValueInput;
@@ -16,7 +16,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.function.Supplier;
 
 public final class OhmegaDataAttachments {
-    private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, OhmegaCommon.MODID);
+    private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Ohmega.MODID);
 
     private static final IAttachmentSerializer<AccessoryContainer> SERIALIZER = new IAttachmentSerializer<>() {
         @SuppressWarnings("deprecation")

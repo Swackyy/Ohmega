@@ -1,6 +1,7 @@
 package com.swacky.ohmega.network;
 
-import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -11,7 +12,7 @@ public final class OhmegaNetworking {
     }
 
     public static final class C2S {
-        private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+        private static final Service IMPL = Ohmega.loadService(Service.class);
 
         public static void bootstrap() {}
 
@@ -25,7 +26,7 @@ public final class OhmegaNetworking {
     }
 
     public static final class S2C {
-        private static final Service IMPL = OhmegaCommon.loadService(Service.class);
+        private static final Service IMPL = Ohmega.loadService(Service.class);
 
         public static void bootstrap() {}
 

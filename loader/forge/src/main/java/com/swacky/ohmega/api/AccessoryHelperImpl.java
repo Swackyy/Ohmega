@@ -1,17 +1,17 @@
 package com.swacky.ohmega.api;
 
-import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import net.minecraft.world.entity.player.Player;
 
 public final class AccessoryHelperImpl implements AccessoryHelper.Service {
     @Override
     public AccessoryContainer getContainer(Player player) {
-        return player.getCapability(Ohmega.ACCESSORIES).orElseThrow(() ->
+        return player.getCapability(OhmegaMain.ACCESSORIES).orElseThrow(() ->
                 new NullPointerException("Accessory data fetched on player '" + player.nameAndId() + "' is not present"));
     }
 
     public static boolean isPlayerDataPresent(Player player) {
-        return player.getCapability(Ohmega.ACCESSORIES).isPresent();
+        return player.getCapability(OhmegaMain.ACCESSORIES).isPresent();
     }
 }
