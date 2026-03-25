@@ -39,30 +39,10 @@ public interface IAccessory {
         return true;
     }
 
-    // Called when the user chooses, not internally
-    // Simply a common method that is not intended to behave in a specific way
-    @Deprecated(since = "1.5.16")
-    default void update(@NonNull Player player, @NonNull ItemStack stack) {}
-
     // Override this to make accessories only equipable when certain other accessories are not equipped
     // Default behaviour prevents players from equipping two of the same accessory at once
-    /**
-     * This method takes priority over {@link #compatibleWith(IAccessory)} when overridden, which is deprecated
-     */
     default boolean compatibleWith(@NonNull ItemStack other) {
         return AccessoryHelper.getBoundAccessory(other.getItem()) != this;
-    }
-
-    // Override this to make accessories only equipable when certain other accessories are not equipped
-    // Default behaviour prevents players from equipping two of the same accessory at once
-    /**
-     * Still works, but {@link #compatibleWith(ItemStack)} will take priority if overridden
-     * <p>
-     * Will be removed by {@code v1.6.0}
-     */
-    @Deprecated(since = "1.5.4")
-    default boolean compatibleWith(@NonNull IAccessory other) {
-        return this != other;
     }
 
     // Called when a key-bind is pressed for this slot. Will only work for accessories of key-bound types.

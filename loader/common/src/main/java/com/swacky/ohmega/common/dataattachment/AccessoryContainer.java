@@ -81,27 +81,13 @@ public final class AccessoryContainer {
         this.changed = new boolean[size];
     }
 
-    @SuppressWarnings("deprecation")
     public boolean isItemValid(Player player, int slot, @NonNull ItemStack stack, EquipContext context) {
         if (slot >= 0 && slot < stacks.size()) {
             Item item = stack.getItem();
             IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
 
-            if (accessory != null) {
-                boolean flag;
-
-                // todo: remove checking in v1.6 in favour of compatibleWith(ItemStack)
-                try {
-                    accessory.getClass().getDeclaredMethod("compatibleWith", ItemStack.class);
-
-                    flag = AccessoryHelper.compatibleWith(player, stack);
-                } catch (NoSuchMethodException e) {
-                    flag = AccessoryHelper.compatibleWith(player, accessory);
-                }
-
-                if (flag || ItemStack.isSameItem(stack, stacks.get(slot))) {
-                    return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(slot);
-                }
+            if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, stacks.get(slot)))) {
+                return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(slot);
             }
         }
 

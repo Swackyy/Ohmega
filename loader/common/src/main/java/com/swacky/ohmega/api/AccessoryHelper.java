@@ -469,23 +469,6 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Will be removed by {@code v1.6.0} with a method accepting {@link ItemStack}s
-     * <p>
-     * Checks if two accessories are compatible with each other by testing both ways
-     * @param first one accessory
-     * @param second a second accessory
-     * @return {@code true} if both are compatible with each other, {@code false} otherwise
-     */
-    @Deprecated(since = "1.5.4")
-    public static boolean compatibleWith(IAccessory first, IAccessory second) {
-        if (first != null && second != null) {
-            return first.compatibleWith(second) && second.compatibleWith(first);
-        }
-
-        return false;
-    }
-
-    /**
      * Checks if an accessory is able to be worn, testing the target accessory {@link ItemStack} against every other worn accessory
      * @param player {@link Player} to get accessory inventory data from
      * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the player
@@ -495,26 +478,6 @@ public final class AccessoryHelper {
     public static boolean compatibleWith(Player player, ItemStack stack) {
         for (ItemStack other : getAccessoryStacks(player)) {
             if (!compatibleWith(stack, other))  {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Will be removed by {@code v1.6.0} with a method accepting an {@link ItemStack}
-     * <p>
-     * Checks if an accessory is able to be worn, testing the target {@link IAccessory} against every other worn accessory
-     * @param player {@link Player} to get accessory inventory data from
-     * @param accessory {@link IAccessory} to test against every other accessory currently worn by the player
-     * @return {@code true} if the target accessory is compatible with every other worn accessory, {@code false} otherwise
-     */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated(since = "1.5.4")
-    public static boolean compatibleWith(Player player, IAccessory accessory) {
-        for (IAccessory other : getAccessories(player)) {
-            if (!compatibleWith(accessory, other))  {
                 return false;
             }
         }
