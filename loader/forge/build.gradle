@@ -6,7 +6,7 @@ plugins {
 minecraft {
     mappings channel: "official", version: mcV
 
-    accessTransformer = "META-INF/mapped_at.cfg"
+    accessTransformer = true
 
     runs {
         configureEach {
@@ -47,10 +47,6 @@ dependencies {
     implementation minecraft.dependency("net.minecraftforge:forge:${mcV}-${loaderForgeV}")
 
     annotationProcessor "net.minecraftforge:eventbus-validator:7.0-beta.7"
-}
-
-processResources {
-    exclude "META-INF/mapped_at.cfg"
 }
 
 jar {

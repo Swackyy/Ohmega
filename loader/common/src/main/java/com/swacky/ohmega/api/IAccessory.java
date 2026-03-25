@@ -47,7 +47,7 @@ public interface IAccessory {
     // Override this to make accessories only equipable when certain other accessories are not equipped
     // Default behaviour prevents players from equipping two of the same accessory at once
     /**
-     * This method takes priority over {@link #compatibleWith(IAccessory)} which is deprecated
+     * This method takes priority over {@link #compatibleWith(IAccessory)} when overridden, which is deprecated
      */
     default boolean compatibleWith(@NonNull ItemStack other) {
         return AccessoryHelper.getBoundAccessory(other.getItem()) != this;
@@ -65,9 +65,9 @@ public interface IAccessory {
         return this != other;
     }
 
-    // Called when a key-bind is pressed for this slot. Will only work for utility and special indexes.
-    // It is recommended that when this is overridden and used, that a tooltip will be provided.
-    // A component for the tooltip can be acquired from the AccessoryHelper utility class.
+    // Called when a key-bind is pressed for this slot. Will only work for accessories of key-bound types.
+    // It is recommended that when this is overridden and used, that a tooltip will be provided,
+    // a component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(@NonNull Player player, @NonNull ItemStack stack) {}
 
     // If true, will automatically synchronise with the client every tick when worn
@@ -79,7 +79,7 @@ public interface IAccessory {
     default void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {}
 
      // The sound to be played if the accessory is equipped through right-clicking the held item
-     // A replacement for the vanilla method, Minecraft versions 1.19.4+, to ensure easier compatibility
+     // A replacement for the vanilla method to ensure easier compatibility
     @Nullable
     default Holder<SoundEvent> getEquipSound() {
         return null;
