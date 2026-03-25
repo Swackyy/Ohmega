@@ -101,7 +101,7 @@ if (rootProject.file("secrets.properties").exists()) {
             changelog = modChanges.replace("| ", "+ ")
             displayName = "${modName} ${modV} ${name} ${mcV}"
 
-            tasks.named("jar").flatMap {
+            file = tasks.named("jar").flatMap {
                 it.archiveFile
             }
 
