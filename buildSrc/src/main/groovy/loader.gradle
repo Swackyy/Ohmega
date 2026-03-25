@@ -111,7 +111,7 @@ if (rootProject.file("secrets.properties").exists()) {
                 it.archiveFile
             }
 
-            modLoaders.add(project.name)
+            modLoaders.add project.name
 
             curseforge {
                 accessToken = findProperty("secretsCurseForgeToken")
@@ -119,8 +119,8 @@ if (rootProject.file("secrets.properties").exists()) {
                 projectId = "889368"
                 serverRequired = true
 
-                javaVersions.add(JavaVersion.toVersion(javaV))
-                minecraftVersions.add(mcV)
+                javaVersions.add JavaVersion.toVersion(javaV)
+                minecraftVersions.add mcV
 
                 if (project.name == "fabric") {
                     requires "fabric-api"
@@ -133,7 +133,7 @@ if (rootProject.file("secrets.properties").exists()) {
                 projectId = "scvT0o5w"
                 version = modV
 
-                minecraftVersions.add(mcV)
+                minecraftVersions.add mcV
 
                 if (project.name == "fabric") {
                     requires "fabric-api"
