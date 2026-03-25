@@ -20,15 +20,18 @@ neoForge {
     runs {
         configureEach {
             ideName.set "NeoForge ${it.name.capitalize()} (${project.path})"
+            it.client()
             systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
         }
 
-        client {
+        register("client") {
             client()
         }
 
-        server {
+        register("server") {
             server()
+
+            programArgument "--nogui"
         }
     }
 }

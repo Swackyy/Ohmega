@@ -27,7 +27,9 @@ minecraft {
 
         register("client")
 
-        register("server")
+        register("server") {
+            args "--nogui"
+        }
     }
 }
 
