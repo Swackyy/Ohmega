@@ -18,6 +18,10 @@ final class InternalLangHelper {
         builder.add(OhmegaCommon.MODID + ".configuration." + key, translation);
     }
 
+    void addConfigTitle(String translation) {
+        addConfig("title", translation);
+    }
+
     void addConfigSection(String key, String translation, String titleTranslation) {
         String string = "section." + OhmegaCommon.MODID + '.' + key;
 

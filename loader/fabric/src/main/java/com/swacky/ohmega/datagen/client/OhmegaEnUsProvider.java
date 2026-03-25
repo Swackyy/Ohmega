@@ -5,13 +5,12 @@ import com.swacky.ohmega.common.OhmegaCommon;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class OhmegaEnUsProvider extends FabricLanguageProvider {
+public final class OhmegaEnUsProvider extends OhmegaLangProvider {
     public OhmegaEnUsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "en_us", lookup);
     }
@@ -32,22 +31,23 @@ public class OhmegaEnUsProvider extends FabricLanguageProvider {
                 "Press %s to toggle flight");
 
         // Accessory type
-        builder.add("accessory_type", "Accessory Type: %s");
-        helper.addType("generic", "Generic");
-        helper.addType("normal", "Normal");
-        helper.addType("utility", "Utility");
-        helper.addType("special", "Special");
+        builder.add(KEY_ACCESSORY_TYPE, "Accessory Type: %s");
+        //helper.addType(KEY_ACCESSORY_TYPE_UNKNOWN, "Unknown");
+        helper.addType(KEY_ACCESSORY_TYPE_GENERIC, "Generic");
+        helper.addType(KEY_ACCESSORY_TYPE_NORMAL, "Normal");
+        helper.addType(KEY_ACCESSORY_TYPE_UTILITY, "Utility");
+        helper.addType(KEY_ACCESSORY_TYPE_SPECIAL, "Special");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add("key.ohmega.accessory_type", "%s %s");
-        builder.add("key.category." + OhmegaCommon.MODID + '.' + OhmegaCommon.MODID, "Ohmega");
-        builder.add("key." + OhmegaCommon.MODID + ".open_acc_inv", "Open/Close Accessories Inventory");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
+        builder.add(KEY_BIND_CATEGORY, "Ohmega");
+        builder.add(KEY_BIND_OPEN_ACC_INV, "Open/Close Accessories Inventory");
 
         // Config
-        internalHelper.addConfig("title", "Ohmega Config");
+        internalHelper.addConfigTitle("Ohmega Config");
 
         // Client config
-        internalHelper.addConfigSection("client.toml", "Ohmega Client", "Ohmega Client Config");
+        internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Ohmega Client", "Ohmega Client Config");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
                 "Compatibility Mode",
@@ -78,7 +78,7 @@ public class OhmegaEnUsProvider extends FabricLanguageProvider {
                 OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_DESCRIPTION);
 
         // Server config
-        internalHelper.addConfigSection("server.toml", "Ohmega Server", "Ohmega Server Config");
+        internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Config");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
                 "Slot Types",

@@ -1,0 +1,112 @@
+package com.swacky.ohmega.datagen.client;
+
+import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
+import com.swacky.ohmega.common.OhmegaCommon;
+import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.config.OhmegaConfig;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.minecraft.core.HolderLookup;
+import org.jspecify.annotations.NonNull;
+
+import java.util.concurrent.CompletableFuture;
+
+public class OhmegaRuRuProvider extends OhmegaLangProvider {
+    public OhmegaRuRuProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+        super(output, "ru_ru", lookup);
+    }
+
+    @Override
+    public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
+        InternalLangHelper internalHelper = new InternalLangHelper(builder);
+
+        // Datapack
+        internalHelper.addDataPackDescription("Ресурсы мода Ohmega");
+
+        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, OhmegaCommon.MODID);
+
+        // Item
+        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
+                "Кольцо Ангела",
+                "Позволяет носителю летать",
+                "Нажмите %s для переключения полета");
+
+        // Accessory type
+        builder.add(KEY_ACCESSORY_TYPE, "Тип Аксессуара: %s");
+        //helper.addType(KEY_ACCESSORY_TYPE_UNKNOWN, "");
+        helper.addType(KEY_ACCESSORY_TYPE_GENERIC, "Общий");
+        helper.addType(KEY_ACCESSORY_TYPE_NORMAL, "Обычный");
+        helper.addType(KEY_ACCESSORY_TYPE_UTILITY, "Инструмент");
+        helper.addType(KEY_ACCESSORY_TYPE_SPECIAL, "Особый");
+
+        // Key-binds (type binds handled in OhmegaLangHelper)
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
+        builder.add(KEY_BIND_CATEGORY, "Ohmega");
+        builder.add(KEY_BIND_OPEN_ACC_INV, "Открыть/Закрыть Панель Аксессуаров");
+
+        // Config
+        internalHelper.addConfigTitle("Конфигурация Ohmega");
+
+        // Client config
+        internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Ohmega Клиент", "Конфигурация Ohmega Клиент");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
+                "Режим Совместимости",
+                "Отключает некоторые полезные, но малозаметные функции, которые могут улучшить совместимость с другими модами в редких случаях");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.BUTTON_STYLE_KEY,
+                "Стиль Кнопки",
+                """
+                        Стиль кнопки, открывающей панель аксессуаров
+                        DEFAULT: Обычная кнопка Ohmega
+                        LEGACY: Кнопка, вдохновленная Curios/Baubles, которая отображается рядом с моделью инвентаря
+                        TAG: Маленькая кнопка-ярлык, выступающая за верхний угол инвентаря
+                        HIDDEN: Не отображать. Вместо кнопки использовать горячую клавишу для открытия панели аксессуаров""");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.INVENTORY_SIDE_KEY,
+                "Сторона Панели",
+                "Сторона, с которой панель аксессуаров будет отображаться");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
+                "Отображать Подсказку При Наведении",
+                "Если включено, при наведении на аксессуар будет отображаться подсказка с его типом");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
+                "Максимум Столбцов",
+                "Максимальное количество отображаемых столбцов");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
+                "Максимум Ячеек в Столбце",
+                """
+                        Максимальное количество ячеек в одном столбце
+                        Если превышено, будет создана новая колонка, если не превышено максимальное количество столбцов""");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
+                "Максимум Видимых Ячеек в Столбце",
+                "Максимальное количество отображаемых ячеек в одном столбце");
+
+        // Server config
+        internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Сервер", "Конфигурация Ohmega Сервер");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
+                "Типы Ячеек",
+                "Определяет типы и количество ячеек для аксессуаров");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Изменить");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
+                "Типы Слотов с Горячей Клавишей",
+                "Определяет типы аксессуаров, которые могут быть использованы с помощью горячей клавиши");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Изменить");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
+                "Поведение Аксессуаров При Смерти",
+                """
+                        Определяет поведение аксессуаров в случае смерти игрока
+                        DEFAULT: Использовать стандартное игровое правило "keepInventory"
+                        ALWAYS_ON: Никогда не выпадать при смерти
+                        ALWAYS_OFF: Всегда выпадать при смерти""");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
+                "Не Использовать Типы Аксессуаров",
+                "Если включено, типы аксессуаров не будут использоваться, и все они будут перезаписаны с заменой на \"ohmega:generic\"");
+    }
+}
