@@ -10,6 +10,7 @@ import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -70,6 +71,11 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
         ClientCallbacks.onKeyInput();
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientCallbacks.onJoinWorld(Minecraft.getInstance());
     }
 
     @SubscribeEvent

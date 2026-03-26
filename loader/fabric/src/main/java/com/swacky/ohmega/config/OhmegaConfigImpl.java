@@ -17,31 +17,35 @@ public final class OhmegaConfigImpl {
         public ModConfigSpec.IntValue maxColumns;
         public ModConfigSpec.IntValue maxColumnSlots;
         public ModConfigSpec.IntValue maxColumnRenderSlots;
+        public ModConfigSpec.BooleanValue showTranslationToast;
 
         public Client() {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
             compatibilityMode = builder
-                .comment(COMPATIBILITY_MODE_DESCRIPTION)
-                .define(COMPATIBILITY_MODE_KEY, COMPATIBILITY_MODE_DEFAULT);
+                    .comment(COMPATIBILITY_MODE_DESCRIPTION)
+                    .define(COMPATIBILITY_MODE_KEY, COMPATIBILITY_MODE_DEFAULT);
             buttonStyle = builder
-                .comment(BUTTON_STYLE_DESCRIPTION)
-                .defineEnum(BUTTON_STYLE_KEY, ButtonStyle.DEFAULT);
+                    .comment(BUTTON_STYLE_DESCRIPTION)
+                    .defineEnum(BUTTON_STYLE_KEY, ButtonStyle.DEFAULT);
             side = builder
-                .comment(INVENTORY_SIDE_DESCRIPTION)
-                .defineEnum(INVENTORY_SIDE_KEY, INVENTORY_SIDE_DEFAULT);
+                    .comment(INVENTORY_SIDE_DESCRIPTION)
+                    .defineEnum(INVENTORY_SIDE_KEY, INVENTORY_SIDE_DEFAULT);
             showHoverTooltip = builder
-                .comment(SHOW_HOVER_TOOLTIP_DESCRIPTION)
-                .define(SHOW_HOVER_TOOLTIP_KEY, SHOW_HOVER_TOOLTIP_DEFAULT);
+                    .comment(SHOW_HOVER_TOOLTIP_DESCRIPTION)
+                    .define(SHOW_HOVER_TOOLTIP_KEY, SHOW_HOVER_TOOLTIP_DEFAULT);
             maxColumns = builder
-                .comment(MAX_COLUMNS_DESCRIPTION)
-                .defineInRange(MAX_COLUMNS_KEY, MAX_COLUMNS_DEFAULT, MAX_COLUMNS_MIN, MAX_COLUMNS_MAX);
+                    .comment(MAX_COLUMNS_DESCRIPTION)
+                    .defineInRange(MAX_COLUMNS_KEY, MAX_COLUMNS_DEFAULT, MAX_COLUMNS_MIN, MAX_COLUMNS_MAX);
             maxColumnSlots = builder
-                .comment(MAX_COLUMN_SLOTS_DESCRIPTION)
-                .defineInRange(MAX_COLUMN_SLOTS_KEY, MAX_COLUMN_SLOTS_DEFAULT, MAX_COLUMN_SLOTS_MIN, MAX_COLUMN_SLOTS_MAX);
+                    .comment(MAX_COLUMN_SLOTS_DESCRIPTION)
+                    .defineInRange(MAX_COLUMN_SLOTS_KEY, MAX_COLUMN_SLOTS_DEFAULT, MAX_COLUMN_SLOTS_MIN, MAX_COLUMN_SLOTS_MAX);
             maxColumnRenderSlots = builder
-                .comment(MAX_COLUMN_RENDER_SLOTS_DESCRIPTION)
-                .defineInRange(MAX_COLUMN_RENDER_SLOTS_KEY, MAX_COLUMN_RENDER_SLOTS_DEFAULT, MAX_COLUMN_RENDER_SLOTS_MIN, MAX_COLUMN_RENDER_SLOTS_MAX);
+                    .comment(MAX_COLUMN_RENDER_SLOTS_DESCRIPTION)
+                    .defineInRange(MAX_COLUMN_RENDER_SLOTS_KEY, MAX_COLUMN_RENDER_SLOTS_DEFAULT, MAX_COLUMN_RENDER_SLOTS_MIN, MAX_COLUMN_RENDER_SLOTS_MAX);
+            showTranslationToast = builder
+                    .comment(SHOW_TRANSLATION_TOAST_DESCRIPTION)
+                    .define(SHOW_TRANSLATION_TOAST_KEY, SHOW_TRANSLATION_TOAST_DEFAULT);
             Client.spec = builder.build();
         }
 
@@ -82,6 +86,17 @@ public final class OhmegaConfigImpl {
         @Override
         public int maxColumnRenderSlots() {
             return maxColumnRenderSlots.get();
+        }
+
+        @Override
+        public boolean showTranslationToast() {
+            return showTranslationToast.get();
+        }
+
+        @Override
+        public void setShowTranslationToast(boolean value) {
+            showTranslationToast.set(value);
+            spec.save();
         }
 
         @Override

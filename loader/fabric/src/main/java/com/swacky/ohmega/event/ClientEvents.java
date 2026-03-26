@@ -6,9 +6,12 @@ import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +33,7 @@ public final class ClientEvents {
             ModConfigEvents.unloading(Ohmega.MODID).register(ClientEvents::onConfigUnload);
             ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
+            ClientPlayConnectionEvents.JOIN.register(ClientEvents::onJoinWorld);
         } else {
             throw new RuntimeException("Cannot bootstrap " + ClientEvents.class.getName() + " multiple times");
         }
@@ -63,6 +67,10 @@ public final class ClientEvents {
 
     private static void onItemTooltip(ItemStack stack, Item.TooltipContext context, TooltipFlag flag, List<Component> tooltip) {
         ClientCallbacks.onItemTooltip(stack, tooltip);
+    }
+
+    private static void onJoinWorld(ClientPacketListener listener, PacketSender sender, Minecraft mc) {
+        ClientCallbacks.onJoinWorld(mc);
     }
 
     private static void onPostScreenInit(Minecraft mc, Screen screen, int width, int height) {

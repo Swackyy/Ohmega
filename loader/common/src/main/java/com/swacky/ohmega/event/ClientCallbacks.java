@@ -18,6 +18,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -50,6 +51,19 @@ public final class ClientCallbacks {
             if (component != null) {
                 tooltip.add(component);
             }
+        }
+    }
+
+    public static void onJoinWorld(Minecraft mc) {
+        if (OhmegaConfig.Client.showTranslationToast()) {
+            mc.getToastManager().addToast(SystemToast.multiline(
+                    mc,
+                    new SystemToast.SystemToastId(7500),
+                    Component.translatable("toast.ohmega.translation.title"),
+                    Component.translatable("toast.ohmega.translation.message")
+            ));
+
+            OhmegaConfig.Client.setShowTranslationToast(false);
         }
     }
 

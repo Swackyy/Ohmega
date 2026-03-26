@@ -17,6 +17,7 @@ public final class OhmegaConfigImpl {
         public ForgeConfigSpec.IntValue maxColumns;
         public ForgeConfigSpec.IntValue maxColumnSlots;
         public ForgeConfigSpec.IntValue maxColumnRenderSlots;
+        public ForgeConfigSpec.BooleanValue showTranslationToast;
 
         public Client() {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -42,6 +43,9 @@ public final class OhmegaConfigImpl {
             maxColumnRenderSlots = builder
                     .comment(MAX_COLUMN_RENDER_SLOTS_DESCRIPTION)
                     .defineInRange(MAX_COLUMN_RENDER_SLOTS_KEY, MAX_COLUMN_RENDER_SLOTS_DEFAULT, MAX_COLUMN_RENDER_SLOTS_MIN, MAX_COLUMN_RENDER_SLOTS_MAX);
+            showTranslationToast = builder
+                    .comment(SHOW_TRANSLATION_TOAST_DESCRIPTION)
+                    .define(SHOW_TRANSLATION_TOAST_KEY, SHOW_TRANSLATION_TOAST_DEFAULT);
             Client.spec = builder.build();
         }
 
@@ -82,6 +86,17 @@ public final class OhmegaConfigImpl {
         @Override
         public int maxColumnRenderSlots() {
             return maxColumnRenderSlots.get();
+        }
+
+        @Override
+        public boolean showTranslationToast() {
+            return showTranslationToast.get();
+        }
+
+        @Override
+        public void setShowTranslationToast(boolean value) {
+            showTranslationToast.set(value);
+            spec.save();
         }
 
         @Override

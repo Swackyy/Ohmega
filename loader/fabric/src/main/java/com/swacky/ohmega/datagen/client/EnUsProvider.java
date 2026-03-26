@@ -22,6 +22,11 @@ public final class EnUsProvider extends OhmegaLangProvider {
         // Datapack
         internalHelper.addDataPackDescription("Mod resources for Ohmega");
 
+        // Toast
+        // todo: these toast translations are subject to change
+        builder.add("toast." + Ohmega.MODID + ".translation.title", "Ohmega translations");
+        builder.add("toast." + Ohmega.MODID + ".translation.message", "Consider translating Ohmega on Crowdin through the config menu");
+
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
@@ -76,6 +81,10 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Max Column Render Slots",
                 OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_KEY,
+                "Show Translation Toast",
+                OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_DESCRIPTION);
 
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Config");

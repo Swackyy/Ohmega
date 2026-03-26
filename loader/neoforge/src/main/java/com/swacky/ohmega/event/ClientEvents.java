@@ -13,6 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -69,6 +70,11 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onMenuRegistration(RegisterMenuScreensEvent event) {
         event.register(OhmegaMenus.getAccessoryMenu(), AccessoryInventoryScreen::new);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientCallbacks.onJoinWorld(Minecraft.getInstance());
     }
 
     @SubscribeEvent
