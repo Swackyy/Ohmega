@@ -40,7 +40,9 @@ processResources {
         modDesc += "\n\nChanges this version:\n${modChanges}";
     }
 
-    modDesc = modDesc.replace('\n', "\\n").replace('"', "\\\"")
+    if (project.name == "fabric") {
+        modDesc = modDesc.replace('\n', "\\n").replace('"', "\\\"")
+    }
 
     var replaceProperties = [
             license                              : license,
