@@ -62,4 +62,9 @@ public final class AccessoryItemDataComponent {
     public int hashCode() {
         return 31 * slot + Boolean.hashCode(active);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "[slot=" + slot + ", active=" + active + ']';
+    }
 }

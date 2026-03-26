@@ -78,7 +78,6 @@ public final class AccessoryInventoryButton extends AbstractButton {
         defaultButtonNarrationText(output);
     }
 
-
     @Override
     protected void extractContents(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         if (isVisible()) {
@@ -100,7 +99,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
                 hoveredOffsY = 0;
             }
 
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, this.getX(), this.getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
+            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, getX(), getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
         }
     }
 }
