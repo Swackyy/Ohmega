@@ -39,7 +39,6 @@ public final class OhmegaDataAttachments {
     public static final Supplier<AttachmentType<AccessoryContainer>> ACCESSORY_HANDLER = register("accessory_data",
             () -> AttachmentType.builder(AccessoryContainer::new)
                     .serialize(SERIALIZER)
-                    //.sync(AccessoryInvDataAttachment.STREAM_CODEC)
                     .build());
 
     private static <T> Supplier<AttachmentType<T>> register(String id, Supplier<AttachmentType<T>> sup) {

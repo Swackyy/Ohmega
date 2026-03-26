@@ -46,8 +46,8 @@
         "modmenu.modrinth": "${modrinthUrl}",
         "modmenu.wiki": "${gitUrl}/wiki"
       },
-      "badges": ["library"]
-    },
-    "update_checker": true
+      "badges": ["library"],
+      "update_checker": true
+    }
   }
 }

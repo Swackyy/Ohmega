@@ -84,10 +84,10 @@ public class AngelRing extends Item implements IAccessory {
     // Adds modifiers to be applied when the accessory is equipped
     @Override
     public void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {
-        // This modifier is only applied when the accessory is active
+        // This modifier is always applied
         builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
 
-        // This modifier is always applied
+        // This modifier is only applied when the accessory is active
         builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
     }
 

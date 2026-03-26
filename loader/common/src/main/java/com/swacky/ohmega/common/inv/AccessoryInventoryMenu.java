@@ -174,10 +174,9 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 AccessoryType type = AccessoryHelper.getType(item);
                 int openIndex = AccessoryHelper.getFirstOpenSlot(player, type);
                 IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
-                EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(stack);
 
                 if (accessory != null && index > 8 && index < 45 && openIndex != -1 && getSlot(46 + openIndex).mayPlace(stack)) { // Inventory -> accessory
-                    stack0.shrink(1);
+                    stack0.consume(1, player);
                     stack.setCount(1);
                     getSlot(46 + openIndex).set(stack);
                 } else {
@@ -186,26 +185,30 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                             AccessoryHelper.getContainer(player).doUnequip(player, stack);
                             return ItemStack.EMPTY;
                         }
-                    } else if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
-                        int i = 8 - equipmentSlot.getIndex();
+                    } else {
+                        EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(stack);
 
-                        if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
+                        if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
+                            int i = 8 - equipmentSlot.getIndex();
+
+                            if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
+                                return ItemStack.EMPTY;
+                            }
+                        } else if (equipmentSlot == EquipmentSlot.OFFHAND && !slots.get(45).hasItem()) {
+                            if (!moveItemStackTo(stack0, 45, 46, false)) { // Item -> offhand
+                                return ItemStack.EMPTY;
+                            }
+                        } else if (index >= 9 && index < 36) {
+                            if (!moveItemStackTo(stack0, 36, 45, false)) { // Extended inventory -> higher extended inventory
+                                return ItemStack.EMPTY;
+                            }
+                        } else if (index > 35 && index < 45) {
+                            if (!moveItemStackTo(stack0, 9, 36, false)) { // Hotbar -> extended inventory
+                                return ItemStack.EMPTY;
+                            }
+                        } else if (!moveItemStackTo(stack0, 9, 45, false)) { // Etc -> inventory
                             return ItemStack.EMPTY;
                         }
-                    } else if (equipmentSlot == EquipmentSlot.OFFHAND && !slots.get(45).hasItem()) {
-                        if (!moveItemStackTo(stack0, 45, 46, false)) { // Item -> offhand
-                            return ItemStack.EMPTY;
-                        }
-                    } else if (index >= 9 && index < 36) {
-                        if (!moveItemStackTo(stack0, 36, 45, false)) { // Extended inventory -> higher extended inventory
-                            return ItemStack.EMPTY;
-                        }
-                    } else if (index > 35 && index < 45) {
-                        if (!moveItemStackTo(stack0, 9, 36, false)) { // Hotbar -> extended inventory
-                            return ItemStack.EMPTY;
-                        }
-                    } else if (!moveItemStackTo(stack0, 9, 45, false)) { // Etc -> inventory
-                        return ItemStack.EMPTY;
                     }
                 }
             }
@@ -248,11 +251,6 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
     private static class OffhandSlot extends Slot {
         public OffhandSlot(Container container, int index, int x, int y) {
             super(container, index, x, y);
-        }
-
-        @Override
-        public boolean mayPlace(@NonNull ItemStack stack) {
-            return super.mayPlace(stack);
         }
 
         @Override

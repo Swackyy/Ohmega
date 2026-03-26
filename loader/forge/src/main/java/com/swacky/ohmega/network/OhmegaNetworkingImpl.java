@@ -82,10 +82,12 @@ public final class OhmegaNetworkingImpl {
         public static void handleOpenInventory(OpenInventoryPacket packet, CustomPayloadEvent.Context context) {
             context.enqueueWork(() -> {
                 ServerPlayer player = context.getSender();
+
                 if (player != null) {
                     player.doCloseContainer();
                 }
             });
+
             context.setPacketHandled(true);
         }
 
@@ -143,6 +145,7 @@ public final class OhmegaNetworkingImpl {
 
             context.enqueueWork(() -> {
                 ClientLevel level = Minecraft.getInstance().level;
+
                 if (level != null) {
                     if (level.getEntity(packet.playerId()) instanceof Player player) {
                         AccessoryHelper.getContainer(player).syncSlots(player, packet.indexes(), packet.stacks());
@@ -158,6 +161,7 @@ public final class OhmegaNetworkingImpl {
                 AccessoryTypeManager.apply(packet.types);
                 AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(() -> Minecraft.getInstance().options.load(true)), !OhmegaConfig.Server.isLoaded());
             });
+
             context.setPacketHandled(true);
         }
     }

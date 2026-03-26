@@ -6,7 +6,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
@@ -45,7 +44,7 @@ public final class OhmegaNetworkingImpl {
                 player.containerMenu.setCarried(ItemStack.EMPTY);
             }
 
-            context.player().openMenu(new SimpleMenuProvider((id, inv, player0) -> new AccessoryInventoryMenu(id, inv), Component.empty()));
+            player.openMenu(new SimpleMenuProvider((id, inv, _) -> new AccessoryInventoryMenu(id, inv), Component.empty()));
         }
 
         @SuppressWarnings("unused")

@@ -1,7 +1,5 @@
 package com.swacky.ohmega.api;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -15,11 +13,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * Supports attributes added when equipped, and when equipped but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
 public final class AccessoryModifiers {
-    public static final Codec<AccessoryModifiers> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            ItemAttributeModifiers.CODEC.fieldOf("passiveModifiers").forGetter(AccessoryModifiers::getPassive),
-            ItemAttributeModifiers.CODEC.fieldOf("activeModifiers").forGetter(AccessoryModifiers::getActive)
-    ).apply(inst, AccessoryModifiers::new));
-
     private final ItemAttributeModifiers passiveModifiers;
     private final ItemAttributeModifiers activeModifiers;
 
@@ -40,13 +33,7 @@ public final class AccessoryModifiers {
         private ItemAttributeModifiers.Builder passiveModifiers = ItemAttributeModifiers.builder();
         private ItemAttributeModifiers.Builder activeModifiers = ItemAttributeModifiers.builder();
 
-        /**
-         * Add a modifier to the accessory to be applied when equipped
-         * @param attribute the attribute to modify
-         * @param modifier defines how the attribute supplied will be modified
-         * @param active if true, the modifier will only be applied when the accessory is active
-         */
-        public void add(Holder<Attribute> attribute, AttributeModifier modifier, boolean active) {
+        private void add(Holder<Attribute> attribute, AttributeModifier modifier, boolean active) {
             if (active) {
                 activeModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
             } else {
@@ -55,7 +42,7 @@ public final class AccessoryModifiers {
         }
 
         /**
-         * A shortcut method to add a modifier to the accessory applied when the item is equipped
+         * Add a modifier to the accessory applied when the item is equipped
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
@@ -64,7 +51,7 @@ public final class AccessoryModifiers {
         }
 
         /**
-         * A shortcut method to add a modifier to the accessory applied when the item is equipped and active
+         * Add a modifier to the accessory applied when the item is equipped and active
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */

@@ -6,7 +6,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
@@ -82,6 +81,7 @@ public final class OhmegaNetworkingImpl {
                     Player player = context.player();
                     AccessoryContainer container = AccessoryHelper.getContainer(player);
                     IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.slot()).getItem());
+
                     if (accessory != null) {
                         ItemStack stack = container.getStackInSlot(packet.slot());
 
@@ -107,6 +107,7 @@ public final class OhmegaNetworkingImpl {
 
             context.enqueueWork(() -> {
                 ClientLevel level = Minecraft.getInstance().level;
+
                 if (level != null) {
                     if (level.getEntity(packet.playerId()) instanceof Player player) {
                         AccessoryHelper.getContainer(player).syncSlots(player, packet.indexes(), packet.stacks());

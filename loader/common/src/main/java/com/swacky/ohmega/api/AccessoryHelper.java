@@ -449,12 +449,7 @@ public final class AccessoryHelper {
                 ItemStack stack0 = stack.copyWithCount(1);
 
                 if (getContainer(player).setStackInSlot(player, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
-                    stack.shrink(1);
-
-                    if (accessory.getEquipSound() != null) {
-                        player.playSound(accessory.getEquipSound().value(), 1, 1);
-                    }
-
+                    stack.consume(1, player);
                     return InteractionResult.SUCCESS;
                 }
             }

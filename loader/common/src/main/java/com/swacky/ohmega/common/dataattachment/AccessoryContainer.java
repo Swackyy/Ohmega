@@ -10,10 +10,12 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.event.OhmegaHooks;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -128,6 +130,14 @@ public final class AccessoryContainer {
 
             if (!OhmegaHooks.accessoryEquipEvent(player, stack, context)) {
                 accessory.onEquip(player, stack);
+            }
+
+            if (context == EquipContext.RIGHT_CLICK_HELD_ITEM) {
+                Holder<SoundEvent> equipSound = accessory.getEquipSound();
+
+                if (equipSound != null) {
+                    player.playSound(equipSound.value(), 1, 1);
+                }
             }
         }
     }

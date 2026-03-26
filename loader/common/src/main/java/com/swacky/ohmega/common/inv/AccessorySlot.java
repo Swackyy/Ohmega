@@ -107,6 +107,11 @@ public final class AccessorySlot extends Slot {
     }
 
     @Override
+    public boolean allowModification(@NonNull Player player) {
+        return true;
+    }
+
+    @Override
     public Identifier getNoItemIcon() {
         return type.getEmptySlotLocation();
     }
