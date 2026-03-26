@@ -2,7 +2,6 @@ package com.swacky.ohmega.datagen.client;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -11,8 +10,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class OhmegaEnUsProvider extends OhmegaLangProvider {
-    public OhmegaEnUsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public final class EnUsProvider extends OhmegaLangProvider {
+    public EnUsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "en_us", lookup);
     }
 

@@ -11,8 +11,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class OhmegaItItProvider extends OhmegaLangProvider {
-    public OhmegaItItProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public class ItItProvider extends OhmegaLangProvider {
+    public ItItProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "it_it", lookup);
     }
 
