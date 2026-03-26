@@ -28,7 +28,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
         this.namespace = namespace;
     }
 
-    public abstract void addTypes();
+    protected abstract void addTypes();
 
     @Override
     public @NonNull CompletableFuture<?> run(@NonNull CachedOutput output) {
@@ -54,7 +54,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
      * @param name name of this type, e.g: "normal", "utility"
      * @param builder contains the data pertaining to the accessory type
      */
-    public void add(String name, AccessoryType.Builder builder) {
+    protected void add(String name, AccessoryType.Builder builder) {
         data.put(name, builder);
     }
 
@@ -62,7 +62,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
      * Same as the above method, does not differentiate by namespace. If you wish to add accessory types for another namespace,
      * use another instance of {@link AccessoryTypeProvider} passing in a different namespace to the {@code super}
      */
-    public void add(Identifier id, AccessoryType.Builder builder) {
+    protected void add(Identifier id, AccessoryType.Builder builder) {
         add(id.getPath(), builder);
     }
 }
