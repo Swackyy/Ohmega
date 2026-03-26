@@ -40,6 +40,8 @@ processResources {
         modDesc += "\n\nChanges this version:\n${modChanges}";
     }
 
+    modDesc = modDesc.replace('\n', "\\n").replace('"', "\\\"")
+
     var replaceProperties = [
             license                              : license,
             loaderForgeV                         : loaderForgeV,
