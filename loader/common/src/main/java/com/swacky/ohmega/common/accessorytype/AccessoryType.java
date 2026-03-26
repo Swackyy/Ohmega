@@ -53,20 +53,24 @@ public final class AccessoryType {
         }
     };
 
-    // Json keys
+    // JSON keys
     public static final String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
     public static final String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
     public static final String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
     public static final String PRIORITY_KEY = "priority";
 
     // Use these for data generation
+    public static final Identifier NONE_ID    = Ohmega.id("none");
     public static final Identifier GENERIC_ID = Ohmega.id("generic");
     public static final Identifier NORMAL_ID  = Ohmega.id("normal");
     public static final Identifier UTILITY_ID = Ohmega.id("utility");
     public static final Identifier SPECIAL_ID = Ohmega.id("special");
 
-    // todo: change this comment when the new strategy is applied
-    // Deferred to ensure they are non-null
+    // A placeholder or "unknown" accessory type. Do not use this
+    public static final AccessoryType NONE = new AccessoryType.Builder()
+            .priority(Integer.MAX_VALUE)
+            .build(NONE_ID);
+    // Deferred to ensure they are correct
     public static final Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.get(GENERIC_ID);
     public static final Supplier<AccessoryType> NORMAL  = () -> AccessoryTypeManager.get(NORMAL_ID);
     public static final Supplier<AccessoryType> UTILITY = () -> AccessoryTypeManager.get(UTILITY_ID);
@@ -203,6 +207,10 @@ public final class AccessoryType {
                             Identifier.parse(emptySlotPath).withPrefix(LOCATION_PREFIX),
                     hoverTextColour,
                     priority);
+        }
+
+        public AccessoryType build(Identifier id) {
+            return build(id.getNamespace(), id.getPath());
         }
     }
 

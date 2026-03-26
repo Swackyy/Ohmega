@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 abstract class OhmegaLangProvider extends FabricLanguageProvider {
     protected static final String KEY_ACCESSORY_TYPE = "accessory_type";
-    //protected static final String KEY_ACCESSORY_TYPE_UNKNOWN = AccessoryType.UNKNOWN_ID.getPath();
+    protected static final String KEY_ACCESSORY_TYPE_NONE = AccessoryType.NONE_ID.getPath();
     protected static final String KEY_ACCESSORY_TYPE_GENERIC = AccessoryType.GENERIC_ID.getPath();
     protected static final String KEY_ACCESSORY_TYPE_NORMAL = AccessoryType.NORMAL_ID.getPath();
     protected static final String KEY_ACCESSORY_TYPE_UTILITY = AccessoryType.UTILITY_ID.getPath();

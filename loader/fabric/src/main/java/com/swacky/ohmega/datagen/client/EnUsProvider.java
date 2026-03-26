@@ -32,7 +32,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Accessory Type: %s");
-        //helper.addType(KEY_ACCESSORY_TYPE_UNKNOWN, "Unknown");
+        helper.addType(KEY_ACCESSORY_TYPE_NONE, "None");
         helper.addType(KEY_ACCESSORY_TYPE_GENERIC, "Generic");
         helper.addType(KEY_ACCESSORY_TYPE_NORMAL, "Normal");
         helper.addType(KEY_ACCESSORY_TYPE_UTILITY, "Utility");

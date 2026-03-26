@@ -4,6 +4,7 @@ import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Set;
@@ -227,7 +228,7 @@ public final class OhmegaConfig {
             String NORMAL  = AccessoryType.NORMAL_ID.toString();
             String UTILITY = AccessoryType.UTILITY_ID.toString();
             String SPECIAL = AccessoryType.SPECIAL_ID.toString();
-            Predicate<Object> ACCESSORY_TYPE_VALIDATOR = v -> v instanceof String str && AccessoryTypeManager.exists(str);
+            Predicate<Object> ACCESSORY_TYPE_VALIDATOR = v -> v instanceof String str && AccessoryTypeManager.exists(Identifier.parse(str));
 
             String SLOT_TYPES_KEY = "slotTypes";
             String SLOT_TYPES_DESCRIPTION = """

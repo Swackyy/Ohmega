@@ -33,7 +33,7 @@ public class EsEsProvider extends OhmegaLangProvider {
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Tipo de Accesorio: %s");
-        //helper.addType(KEY_ACCESSORY_TYPE_UNKNOWN, "");
+        //helper.addType(KEY_ACCESSORY_TYPE_NONE, "");
         helper.addType(KEY_ACCESSORY_TYPE_GENERIC, "Genérico");
         helper.addType(KEY_ACCESSORY_TYPE_NORMAL, "Normal");
         helper.addType(KEY_ACCESSORY_TYPE_UTILITY, "Útiles");

@@ -144,7 +144,8 @@ public final class AccessoryHelper {
      * Retrieves the accessory's effective {@link AccessoryType} (lowest priority index),
      * or the type returned by the AccessoryOverrideTypes(event/callback) if overridden
      * @param item the item to find the effective {@link AccessoryType} of
-     * @return the {@link AccessoryType} of lowest priority index bound to the given accessory
+     * @return the {@link AccessoryType} of lowest priority index bound to the given accessory, or,
+     * if no type can be found (including such a case where the item is not an accessory), then {@link AccessoryType#NONE}
      */
     @SuppressWarnings("deprecation")
     public static AccessoryType getType(Item item) {
@@ -158,13 +159,13 @@ public final class AccessoryHelper {
             return override;
         }
 
-        AccessoryType type = null;
+        AccessoryType type = AccessoryType.NONE;
 
         for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
             if (item.builtInRegistryHolder().is(entry.getValue())) {
                 AccessoryType candidate = entry.getKey();
 
-                if (type == null || candidate.getPriority() < type.getPriority()) {
+                if (type == AccessoryType.NONE || candidate.getPriority() < type.getPriority()) {
                     type = candidate;
                 }
             }
