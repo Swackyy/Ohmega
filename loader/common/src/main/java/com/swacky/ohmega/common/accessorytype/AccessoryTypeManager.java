@@ -130,6 +130,10 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         return ImmutableSet.copyOf(TYPES.values());
     }
 
+    public static ImmutableSet<Identifier> getTypeIdentifiers() {
+        return ImmutableSet.copyOf(TYPES.keySet());
+    }
+
     public static @NonNull AccessoryType get(Identifier id) {
         AccessoryType candidate = TYPES.get(id);
 

@@ -2,6 +2,13 @@ package com.swacky.ohmega.datagen.client;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.command.ClearCommand;
+import com.swacky.ohmega.common.command.InfoCommand;
+import com.swacky.ohmega.common.command.ItemCommand;
+import com.swacky.ohmega.common.command.ItemsCommand;
+import com.swacky.ohmega.common.command.MessageHelper;
+import com.swacky.ohmega.common.command.TypeCommand;
+import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -47,6 +54,29 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
         builder.add(KEY_BIND_CATEGORY, "Ohmega");
         builder.add(KEY_BIND_OPEN_ACC_INV, "Open/Close Accessories Inventory");
+
+        // Commands
+        // General context
+        builder.add(MessageHelper.CONTEXT_HOVER_KEY, "(hover)");
+        // Exceptions
+        builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown accessory type: %s");
+        // Clear
+        builder.add(ClearCommand.ROOT_EXCEPTION_MULTIPLE, "No matching items were found in %s entities' accessory inventories");
+        builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching items were found in entity %s's accessory inventory");
+        builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Removed %s item(s) from %s entities' accessory inventories");
+        builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Removed %s item(s) from entity %s's accessory inventory");
+        // Info
+        builder.add(InfoCommand.DISCORD_FEEDBACK, "If you need help with the API or want to send feedback, click this message to join Ohmega's Discord server");
+        builder.add(InfoCommand.REPORT_FEEDBACK, "Thanks for using Ohmega! If you want to report a bug, click this message to open our issue tracker");
+        // Item
+        builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s %s in index %s of their accessory inventory");
+        builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s of %s entities' accessory inventories to %s %s");
+        builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
+        // Items
+        builder.add(ItemsCommand.ROOT_FEEDBACK, "Entity %s has the following items in their accessory inventory: %s");
+        // Type
+        builder.add(TypeCommand.LIST_FEEDBACK, "There are %s accessory type(s) recognised on this world: %s");
+        builder.add(TypeCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties: %s");
 
         // Config
         internalHelper.addConfigTitle("Ohmega Config");

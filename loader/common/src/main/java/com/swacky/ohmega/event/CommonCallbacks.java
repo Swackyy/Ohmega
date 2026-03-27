@@ -1,9 +1,13 @@
 package com.swacky.ohmega.event;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.config.OhmegaConfig;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,7 +43,7 @@ public final class CommonCallbacks {
         AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
 
         for (int i = 0; i < Math.min(oldA.getSlots(), newA.getSlots()); i++) {
-            newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC);
+            newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
         }
     }
 
@@ -64,5 +68,9 @@ public final class CommonCallbacks {
                 }
             }
         }
+    }
+
+    public static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
+        OhmegaRootCommand.register(dispatcher, context);
     }
 }

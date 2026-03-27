@@ -1,7 +1,6 @@
 package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.Ohmega;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
@@ -13,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks) implements CustomPacketPayload {
+public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements CustomPacketPayload {
     public static final Type<@NonNull SyncAccessorySlotsPacket> TYPE = new Type<>(Ohmega.id("sync_accessory_slots"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncAccessorySlotsPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.INT, inst -> inst.playerId,
@@ -37,6 +36,7 @@ public record SyncAccessorySlotsPacket(int playerId, int[] indexes, List<ItemSta
                 }
             }, inst -> inst.indexes,
             ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
+            ByteBufCodecs.BOOL, inst -> inst.forceOnEquip,
             SyncAccessorySlotsPacket::new);
 
     @Override

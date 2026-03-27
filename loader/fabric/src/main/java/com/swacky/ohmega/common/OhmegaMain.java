@@ -1,6 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -16,9 +17,11 @@ import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.server.packs.PackType;
 import net.neoforged.fml.config.ModConfig;
 
@@ -35,6 +38,8 @@ public final class OhmegaMain implements ModInitializer {
         OhmegaDataComponentsImpl.init();
         OhmegaItems.init();
         OhmegaMenusImpl.init();
+
+        ArgumentTypeRegistry.registerArgumentType(AccessoryTypeArgument.ID, AccessoryTypeArgument.class, SingletonArgumentInfo.contextFree(AccessoryTypeArgument::new));
 
         PayloadTypeRegistry.serverboundPlay().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(OpenInventoryPacket.TYPE, OpenInventoryPacket.CODEC);

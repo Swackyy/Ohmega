@@ -2,6 +2,7 @@ package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
@@ -86,7 +87,14 @@ public final class OhmegaNetworkingImpl {
 
             if (level != null) {
                 if (level.getEntity(packet.playerId()) instanceof Player player) {
-                    AccessoryHelper.getContainer(player).syncSlots(player, packet.indexes(), packet.stacks());
+                    AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+                    for (int i = 0; i < packet.indexes().length; i++) {
+                        ItemStack stack = packet.stacks().get(i);
+                        int index = packet.indexes()[i];
+
+                        container.setStackInSlot(player, index, stack, EquipContext.GENERIC, true, packet.forceOnEquip());
+                    }
                 }
             }
         }

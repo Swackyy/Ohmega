@@ -156,6 +156,7 @@ public final class AccessoryType {
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
         private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
+        public static final String LOCATION_PREFIX_FULL = "gui/sprites/" + LOCATION_PREFIX;
 
         private boolean displayHoverText = true;
         private String emptySlotPath = Ohmega.id("accessory_slot_normal").toString();

@@ -1,11 +1,16 @@
 package com.swacky.ohmega.event;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +30,7 @@ public final class CommonEvents {
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
+            CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
             ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onServerConfigure);
         } else {
             throw new RuntimeException("Cannot bootstrap " + CommonEvents.class.getName() + " multiple times");
@@ -45,6 +51,10 @@ public final class CommonEvents {
         if (entity instanceof ServerPlayer tracked) {
             CommonCallbacks.onPlayerTrack(tracker, tracked);
         }
+    }
+
+    private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {
+        CommonCallbacks.onRegisterCommands(dispatcher, context);
     }
 
     private static void onServerConfigure(ServerConfigurationPacketListenerImpl handler, MinecraftServer server) {

@@ -10,6 +10,8 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.network.OhmegaNetworking;
+import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -25,6 +27,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class AccessoryContainer {
     public static final Codec<AccessoryContainer> CODEC = RecordCodecBuilder.create(builder -> builder.group(
@@ -67,6 +70,7 @@ public final class AccessoryContainer {
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
+    private boolean forceOnEquip = false;
 
     private AccessoryContainer(List<ItemStack> stacks, boolean[] changed) {
         this.stacks = NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0]));
@@ -84,6 +88,10 @@ public final class AccessoryContainer {
     }
 
     public boolean isItemValid(Player player, int slot, @NonNull ItemStack stack, EquipContext context) {
+        if (stack.isEmpty()) {
+            return true;
+        }
+
         if (slot >= 0 && slot < stacks.size()) {
             Item item = stack.getItem();
             IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
@@ -147,15 +155,17 @@ public final class AccessoryContainer {
         onContentsChanged(index);
     }
 
-    // Try not to use this for deserialising and syncing
-    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
-        if (stack.isEmpty() || isItemValid(player, index, stack, context) && AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
+    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
+        if (bypassValidation || isItemValid(player, index, stack, context)) {
             ItemStack current = stacks.get(index);
 
-            if (!ItemStack.isSameItemSameComponents(current, stack)) {
+            if (!ItemStack.matches(current, stack)) {
                 doUnequip(player, current);
                 doSetStackInSlot(index, stack);
-                doEquip(player, stack, index, context);
+
+                if (forceOnEquip || AccessoryHelper.isActive(stack)) {
+                    doEquip(player, stack, index, context);
+                }
             } else if (changed[index]) {
                 changed[index] = false;
             }
@@ -164,6 +174,15 @@ public final class AccessoryContainer {
         }
 
         return false;
+    }
+
+    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation) {
+        return setStackInSlot(player, index, stack, context, bypassValidation, true);
+    }
+
+    // Use this for most general usage
+    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
+        return setStackInSlot(player, index, stack, context, false);
     }
 
     private void removeStackFromSlot(Player player, int index) {
@@ -178,6 +197,36 @@ public final class AccessoryContainer {
 
             onContentsChanged(index);
         }
+    }
+
+    public int clearMatchingItems(Player player, Predicate<ItemStack> filter, int max) {
+        int removed = 0;
+
+        for (int i = 0; i < stacks.size() && (max < 0 || removed < max); i++) {
+            ItemStack stack = getStackInSlot(i);
+
+            if (filter.test(stack)) {
+                int count = stack.count();
+                int toRemoveCurrentStack;
+
+                if (max < 0) {
+                    toRemoveCurrentStack = count;
+                } else {
+                    toRemoveCurrentStack = Math.min(count, Math.max(0, max - removed));
+                }
+
+                if (max < 0 || removed + count <= max) {
+                    doUnequip(player, stack);
+                }
+
+                stack.shrink(toRemoveCurrentStack);
+                onContentsChanged(i);
+
+                removed += toRemoveCurrentStack;
+            }
+        }
+
+        return removed;
     }
 
     public void onAttach(Player player) {
@@ -197,8 +246,13 @@ public final class AccessoryContainer {
 
     public void syncSlots(Player player, int[] indexes, List<ItemStack> stacks) {
         for (int i = 0; i < indexes.length; i++) {
-            ItemStack stack = stacks.get(i);
             int index = indexes[i];
+            ItemStack current = getStackInSlot(index);
+            ItemStack stack = stacks.get(i);
+
+            if (!ItemStack.isSameItemSameComponents(current, stack)) {
+                doUnequip(player, current);
+            }
 
             doSetStackInSlot(index, stack);
 
@@ -241,8 +295,11 @@ public final class AccessoryContainer {
             }
 
             if (!slots.isEmpty()) {
-                AccessoryHelper.syncSlots(svr, slots.stream().mapToInt(Integer::intValue).toArray(),
-                        stacks, svr.level().getPlayers(svr0 -> true));
+                for (ServerPlayer receiver : svr.level().getPlayers(_ -> true)) {
+                    OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(receiver.getId(), slots.stream().mapToInt(Integer::intValue).toArray(), stacks, forceOnEquip));
+                }
+
+                forceOnEquip = true;
             }
         }
     }

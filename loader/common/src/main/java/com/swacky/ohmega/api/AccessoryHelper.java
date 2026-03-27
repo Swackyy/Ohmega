@@ -487,7 +487,9 @@ public final class AccessoryHelper {
 
     /**
      * Retrieve all of the {@link ItemStack}s in a player's accessory inventory.
-     * These stacks may be air, or otherwise not accessory items. Use {@link #getAccessoryStacks(Player)} as a filtered version
+     * These stacks may be air, or otherwise not accessory items.
+     * Use {@link #getAccessoryStacks(Player)} as a filtered version guaranteeing accessory items
+     * Use {@link #getStacksFiltered(Player)} as a filtered version guaranteeing non-empty item stacks
      * @param player {@link Player} to get accessory inventory data from
      * @return every {@link ItemStack} in the player's accessory inventory
      */
@@ -496,21 +498,60 @@ public final class AccessoryHelper {
     }
 
     /**
+     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that are not empty
+     * These stacks may be air, or otherwise not accessory items. Use {@link #getAccessoryStacks(Player)} as a filtered version
+     * @param player {@link Player} to get accessory inventory data from
+     * @return every {@link ItemStack} in the player's accessory inventory
+     */
+    public static NonNullList<ItemStack> getStacksFiltered(Player player) {
+        NonNullList<ItemStack> stacks = getStacks(player);
+        NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
+
+        for (ItemStack stack : stacks) {
+            if (!stack.isEmpty()) {
+                filteredStacks.add(stack);
+            }
+        }
+
+        return filteredStacks;
+    }
+
+    /**
      * Retrieve all of the {@link ItemStack}s in a player's accessory inventory which are accessories.
-     * If you want to get a list including non-accessory items, use {@link #getStacks(Player)}
+     * If you want to get a list including non-accessory items, use {@link #getStacks(Player)} or {@link #getStacksFiltered(Player)}
      * @param player {@link Player} to get accessory inventory data from
      * @return every {@link ItemStack} in the player's accessory inventory which are accessories
      */
     public static NonNullList<ItemStack> getAccessoryStacks(Player player) {
-        NonNullList<ItemStack> stacks = NonNullList.create();
+        NonNullList<ItemStack> stacks = getStacks(player);
+        NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
 
-        for (ItemStack stack : getContainer(player).getStacks()) {
+        for (ItemStack stack : stacks) {
             if (isItemAccessoryBound(stack.getItem())) {
-                stacks.add(stack);
+                filteredStacks.add(stack);
             }
         }
 
-        return stacks;
+        return filteredStacks;
+    }
+
+    /**
+     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory which are accessories and not empty.
+     * If you want to get a list including non-accessory items, use {@link #getStacks(Player)} or {@link #getStacksFiltered(Player)}
+     * @param player {@link Player} to get accessory inventory data from
+     * @return every {@link ItemStack} in the player's accessory inventory which are accessories
+     */
+    public static NonNullList<ItemStack> getAccessoryStacksFiltered(Player player) {
+        NonNullList<ItemStack> stacks = getStacks(player);
+        NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
+
+        for (ItemStack stack : stacks) {
+            if (!stack.isEmpty() && isItemAccessoryBound(stack.getItem())) {
+                filteredStacks.add(stack);
+            }
+        }
+
+        return filteredStacks;
     }
 
     /**
@@ -542,7 +583,7 @@ public final class AccessoryHelper {
      */
     public static void syncSlots(ServerPlayer player, int[] slots, List<ItemStack> stacks, Collection<ServerPlayer> receivers) {
         for (ServerPlayer receiver : receivers) {
-            OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots, stacks));
+            OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots, stacks, false));
         }
     }
 
