@@ -575,6 +575,38 @@ public final class AccessoryHelper {
     }
 
     /**
+     * Check if a player is wearing a certain accessory
+     * @param player {@link Player} to get accessory inventory data from
+     * @param accessory to find
+     * @return {@code true} if found, {@code false} otherwise
+     */
+    public static boolean hasAccessory(Player player, IAccessory accessory) {
+        for (ItemStack stack : getStacks(player)) {
+            if (getBoundAccessory(stack.getItem()) == accessory) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the first {@link ItemStack} of a certain accessory type
+     * @param player {@link Player} to get accessory inventory data from
+     * @param accessory to find
+     * @return the found accessory {@link ItemStack}, or {@link ItemStack#EMPTY} if none is found
+     */
+    public static ItemStack getAccessoryStack(Player player, IAccessory accessory) {
+        for (ItemStack stack : getStacks(player)) {
+            if (getBoundAccessory(stack.getItem()) == accessory) {
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    /**
      * Synchronises the given indexes' held items to the given {@link Player}s
      * @param player {@link Player} who owns the accessory inventory to synchronise
      * @param slots an array of indexes to synchronise
