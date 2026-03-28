@@ -15,7 +15,15 @@ public record AccessoryRenderStateData(NonNullList<ItemStack> stacks, LivingEnti
         return IMPL.getData(state);
     }
 
+    public static void setData(LivingEntityRenderState state, AccessoryRenderStateData data) {
+        IMPL.setData(state, data);
+    }
+
     public interface Service {
+        String ID = "accessory_data";
+
         AccessoryRenderStateData getData(LivingEntityRenderState state);
+
+        void setData(LivingEntityRenderState state, AccessoryRenderStateData data);
     }
 }

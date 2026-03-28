@@ -14,6 +14,8 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
+import java.util.function.Function;
+
 public class AccessoryRenderLayer<T extends LivingEntityRenderState, U extends EntityModel<? super T>> extends RenderLayer<T, U> {
     private final EntityRendererProvider.Context context;
 
@@ -28,10 +30,10 @@ public class AccessoryRenderLayer<T extends LivingEntityRenderState, U extends E
 
         if (data != null) {
             for (ItemStack stack : data.stacks()) {
-                IAccessoryRenderer renderer = AccessoryRenderers.getRendererFor(stack.getItem(), context);
+                Function<EntityRendererProvider.Context, IAccessoryRenderer> factory = AccessoryRenderers.getFactoryFor(stack.getItem());
 
-                if (renderer != null) {
-                    renderer.submit(new AccessoryRenderContext(
+                if (factory != null) {
+                    factory.apply(context).submit(new AccessoryRenderContext(
                             poseStack,
                             collector,
                             stack,

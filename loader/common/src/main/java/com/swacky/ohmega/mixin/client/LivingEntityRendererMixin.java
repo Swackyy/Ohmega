@@ -1,7 +1,10 @@
 package com.swacky.ohmega.mixin.client;
 
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.client.renderer.AccessoryRenderLayer;
+import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -26,6 +29,14 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
 
     protected LivingEntityRendererMixin(EntityRendererProvider.Context context) {
         super(context);
+    }
+
+    @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At(value = "TAIL"))
+    public void extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTicks, CallbackInfo ci) {
+        // todo:
+        if (entity instanceof AbstractClientPlayer player) {
+            AccessoryRenderStateData.setData(state, new AccessoryRenderStateData(AccessoryHelper.getStacksFiltered(player), entity));
+        }
     }
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))

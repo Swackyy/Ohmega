@@ -25,11 +25,11 @@ public final class AccessoryRenderers {
         return register(AccessoryHelper.getBoundAccessory(item), factory);
     }
 
-    public static IAccessoryRenderer getRendererFor(IAccessory accessory, EntityRendererProvider.Context context) {
-        return RENDERERS.get(accessory).apply(context);
+    public static Function<EntityRendererProvider.Context, IAccessoryRenderer> getFactoryFor(IAccessory accessory) {
+        return RENDERERS.get(accessory);
     }
 
-    public static IAccessoryRenderer getRendererFor(Item item, EntityRendererProvider.Context context) {
-        return getRendererFor(AccessoryHelper.getBoundAccessory(item), context);
+    public static Function<EntityRendererProvider.Context, IAccessoryRenderer> getFactoryFor(Item item) {
+        return getFactoryFor(AccessoryHelper.getBoundAccessory(item));
     }
 }

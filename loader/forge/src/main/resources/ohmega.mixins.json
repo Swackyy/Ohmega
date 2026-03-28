@@ -6,7 +6,10 @@
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
-    "client.KeyBindsList$KeyEntryMixin"
+    "client.KeyBindsList$KeyEntryMixin",
+    "client.LayerDefinitionsMixin",
+    "client.LivingEntityRenderStateMixin",
+    "client.ModelLayersMixin"
   ],
   "minVersion": "0.8.5"
 }
