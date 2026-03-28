@@ -3,7 +3,7 @@ package com.swacky.ohmega.common;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
-import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.neoforged.api.distmarker.Dist;
@@ -21,7 +21,7 @@ public final class OhmegaMain {
 
         container.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
-        OhmegaItems.register(bus);
+        OhmegaItemsImpl.register(bus);
         OhmegaMenusImpl.register(bus);
         OhmegaDataComponentsImpl.register(bus);
         OhmegaDataAttachments.register(bus);

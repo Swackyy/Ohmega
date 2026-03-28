@@ -10,7 +10,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
-public final class OhmegaItems {
+public final class OhmegaItemsImpl implements OhmegaItems.Service {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Ohmega.MODID);
 
     public static final DeferredItem<@NonNull Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
@@ -21,5 +21,10 @@ public final class OhmegaItems {
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
+    }
+
+    @Override
+    public Item getAngelRing() {
+        return ANGEL_RING.value();
     }
 }

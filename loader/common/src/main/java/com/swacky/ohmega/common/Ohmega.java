@@ -3,6 +3,7 @@ package com.swacky.ohmega.common;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -38,6 +39,7 @@ public final class Ohmega {
     public static void bootstrap() {
         AccessoryHelper.bootstrap();
         OhmegaDataComponents.bootstrap();
+        OhmegaItems.bootstrap();
         OhmegaMenus.bootstrap();
         OhmegaConfig.Server.bootstrap();
         OhmegaHooks.bootstrap();

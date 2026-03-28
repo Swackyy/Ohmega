@@ -37,7 +37,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
-        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
+        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
                 "Angel Ring",
                 "Allows the wearer to fly",
                 "Press %s to toggle flight");

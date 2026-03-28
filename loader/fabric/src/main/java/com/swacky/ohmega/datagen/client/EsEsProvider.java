@@ -26,7 +26,7 @@ public class EsEsProvider extends OhmegaLangProvider {
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
-        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
+        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
                 "Anillo de Ángel",
                 "Permite volar al portador",
                 "Presiona %s para alternar el vuelo");

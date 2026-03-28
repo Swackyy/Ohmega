@@ -25,7 +25,7 @@ public class RuRuProvider extends OhmegaLangProvider {
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
-        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
+        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
                 "Кольцо Ангела",
                 "Позволяет носителю летать",
                 "Нажмите %s для переключения полета");

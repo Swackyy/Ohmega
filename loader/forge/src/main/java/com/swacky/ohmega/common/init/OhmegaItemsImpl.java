@@ -13,7 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public final class OhmegaItems {
+public final class OhmegaItemsImpl implements OhmegaItems.Service {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Ohmega.MODID);
 
     public static final RegistryObject<Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
@@ -24,5 +24,10 @@ public final class OhmegaItems {
 
     public static void register(BusGroup group) {
         ITEMS.register(group);
+    }
+
+    @Override
+    public Item getAngelRing() {
+        return ANGEL_RING.get();
     }
 }

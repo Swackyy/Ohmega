@@ -4,7 +4,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
-import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.CommonEvents;
@@ -36,7 +36,7 @@ public final class OhmegaMain implements ModInitializer {
 
         OhmegaDataAttachments.init();
         OhmegaDataComponentsImpl.init();
-        OhmegaItems.init();
+        OhmegaItemsImpl.init();
         OhmegaMenusImpl.init();
 
         ArgumentTypeRegistry.registerArgumentType(AccessoryTypeArgument.ID, AccessoryTypeArgument.class, SingletonArgumentInfo.contextFree(AccessoryTypeArgument::new));

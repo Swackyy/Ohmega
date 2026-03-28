@@ -26,7 +26,7 @@ public class ItItProvider extends OhmegaLangProvider {
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
-        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
+        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
                 "Anello Dell'Angelo",
                 "Consente a chi lo indossa di volare",
                 "Premi %s per attivare o disattivare il volo");

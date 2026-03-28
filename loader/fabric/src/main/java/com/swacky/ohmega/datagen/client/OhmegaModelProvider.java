@@ -18,6 +18,6 @@ public class OhmegaModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(@NonNull ItemModelGenerators generator) {
-        generator.generateFlatItem(OhmegaItems.ANGEL_RING, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(OhmegaItems.getAngelRing(), ModelTemplates.FLAT_ITEM);
     }
 }

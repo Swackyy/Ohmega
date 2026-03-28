@@ -20,6 +20,6 @@ public class OhmegaTagProvider extends FabricTagsProvider<Item> {
     @SuppressWarnings("deprecation")
     @Override
     protected void addTags(HolderLookup.@NonNull Provider lookup) {
-        builder(OhmegaTags.get(AccessoryType.UTILITY_ID)).add(OhmegaItems.ANGEL_RING.builtInRegistryHolder().key());
+        builder(OhmegaTags.get(AccessoryType.UTILITY_ID)).add(OhmegaItems.getAngelRing().builtInRegistryHolder().key());
     }
 }

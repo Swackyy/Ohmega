@@ -26,7 +26,7 @@ public class NlNlProvider extends OhmegaLangProvider {
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
 
         // Item
-        helper.addKeyboundItem(OhmegaItems.ANGEL_RING,
+        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
                 "Engelenring",
                 "Staat de drager toe om te vliegen",
                 "Druk op %s om vlucht aan of uit te zetten");
