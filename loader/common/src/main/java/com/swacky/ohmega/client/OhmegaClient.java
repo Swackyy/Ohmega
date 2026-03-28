@@ -1,5 +1,6 @@
 package com.swacky.ohmega.client;
 
+import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -28,6 +29,7 @@ public final class OhmegaClient {
     }
 
     public static void bootstrap() {
+        AccessoryRenderStateData.bootstrap();
         OhmegaBinds.bootstrap();
         OhmegaConfig.Client.bootstrap();
 

@@ -1,8 +1,12 @@
 package com.swacky.ohmega.client;
 
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
+import com.swacky.ohmega.client.model.HaloModel;
+import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientEvents;
@@ -15,6 +19,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -35,5 +40,9 @@ public final class OhmegaClientMain implements ClientModInitializer {
         ClientConfigurationNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessoryTypes);
 
         ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, ConfigurationScreen::new);
+
+        //
+        ModelLayerRegistry.registerModelLayer(HaloModel.LOCATION, HaloModel::createDefinition);
+        AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new);
     }
 }

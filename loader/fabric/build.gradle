@@ -20,6 +20,12 @@ loom {
             programArgs "--username", "Dev"
         }
 
+        client2 {
+            client()
+
+            programArgs "--username", "AlsoDev"
+        }
+
         server {
             server()
         }

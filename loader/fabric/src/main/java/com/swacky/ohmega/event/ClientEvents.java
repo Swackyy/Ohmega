@@ -32,8 +32,8 @@ public final class ClientEvents {
             ModConfigEvents.reloading(Ohmega.MODID).register(ClientEvents::onConfigReload);
             ModConfigEvents.unloading(Ohmega.MODID).register(ClientEvents::onConfigUnload);
             ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
-            ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
             ClientPlayConnectionEvents.JOIN.register(ClientEvents::onJoinWorld);
+            ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
         } else {
             throw new RuntimeException("Cannot bootstrap " + ClientEvents.class.getName() + " multiple times");
         }
