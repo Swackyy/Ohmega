@@ -374,7 +374,7 @@ public final class AccessoryHelper {
             }
         }
 
-        KeyMapping mapping = OhmegaBinds.Generated.getMapping(type, typeIndex);
+        KeyMapping mapping = OhmegaBinds.getMapping(type, typeIndex);
 
         if (slot < 0 || !flag || mapping == null) {
             return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);

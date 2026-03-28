@@ -38,7 +38,7 @@ public final class OhmegaTags {
     }
 
     /**
-     * Use this for data generation, it does not do any validation that the tag exists but it is the easiest way
+     * Use this for data generation, it does not do any validation that the tag exists, but it is the easiest way
      */
     public static TagKey<Item> get(Identifier identifier) {
         return TagKey.create(Registries.ITEM, identifier);

@@ -81,7 +81,7 @@ public final class ClientCallbacks {
                 }
             }
 
-            ImmutableList<KeyMapping> mappings = OhmegaBinds.Generated.getMappings();
+            ImmutableList<KeyMapping> mappings = OhmegaBinds.getMappings();
             ImmutableList<AccessoryType> keyboundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
             ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
 
@@ -92,7 +92,7 @@ public final class ClientCallbacks {
             AccessoryContainer container = AccessoryHelper.getContainer(mc.player);
 
             // Never ever touch this again; wrote 2 months ago, I now consider it dark magic.
-            for (int i = 0; i < OhmegaBinds.Generated.size(); i++) {
+            for (int i = 0; i < OhmegaBinds.size(); i++) {
                 KeyMapping mapping = mappings.get(i);
                 int j = 0;
 
@@ -165,7 +165,7 @@ public final class ClientCallbacks {
     public static void reloadRegisteredKeybinds(Runnable loadFunction) {
         ArrayList<KeyMapping> list = new ArrayList<>();
 
-        for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.Generated.getSlotKeys().values()) {
+        for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.getSlotKeys().values()) {
             list.addAll(immutableList);
         }
 

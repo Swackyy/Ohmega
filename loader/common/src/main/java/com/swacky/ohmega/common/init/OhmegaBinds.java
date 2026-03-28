@@ -23,100 +23,97 @@ public final class OhmegaBinds {
 
     public static void bootstrap() {}
 
-    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Ohmega.id(Ohmega.MODID));
-
-    public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + Ohmega.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
-
     public static boolean isInstance(KeyMapping other) {
         return INST.isInstance(other);
     }
 
-    // Inner class to defer loading
-    public static class Generated {
-        private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> SLOT_KEYS = ImmutableMap.of();
-        private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Ohmega.id(Ohmega.MODID));
 
-        private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> createSlotKeys() {
-            Generated.ORDERED_SLOT_KEYS = new ArrayList<>();
+    public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + Ohmega.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
 
-            ImmutableList<AccessoryType> keyBoundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
-            WeakHashMap<AccessoryType, ImmutableList.Builder<KeyMapping>> builder = new WeakHashMap<>(keyBoundSlotTypes.size());
-            Map<AccessoryType, Integer> typeCountMap = new WeakHashMap<>();
+    private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> SLOT_KEYS = ImmutableMap.of();
+    private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
 
-            if (OhmegaConfig.Server.disableAccessoryTypes()) {
-                typeCountMap.put(AccessoryType.GENERIC.get(), 0);
-            } else {
-                for (AccessoryType type : AccessoryTypeManager.getTypes()) {
-                    typeCountMap.put(type, 0);
+    private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> createSlotKeys() {
+        ORDERED_SLOT_KEYS = new ArrayList<>();
+
+        ImmutableList<AccessoryType> keyBoundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
+        WeakHashMap<AccessoryType, ImmutableList.Builder<KeyMapping>> builder = new WeakHashMap<>(keyBoundSlotTypes.size());
+        Map<AccessoryType, Integer> typeCountMap = new WeakHashMap<>();
+
+        if (OhmegaConfig.Server.disableAccessoryTypes()) {
+            typeCountMap.put(AccessoryType.GENERIC.get(), 0);
+        } else {
+            for (AccessoryType type : AccessoryTypeManager.getTypes()) {
+                typeCountMap.put(type, 0);
+            }
+        }
+
+        for (AccessoryType slotType : AccessoryHelper.getSlotTypes()) {
+            for (AccessoryType keyboundType : keyBoundSlotTypes) {
+                if (keyboundType == slotType) {
+                    int count = typeCountMap.get(keyboundType);
+                    // Default bindings in ternary:
+                    // Utility 1: G
+                    // Utility 2: V
+                    // Special 1: B
+                    int key =
+                            keyboundType == AccessoryType.UTILITY.get() ?
+                                    count == 0 ? GLFW.GLFW_KEY_G :
+                                            count == 1 ? GLFW.GLFW_KEY_V :
+                                                    GLFW.GLFW_KEY_UNKNOWN :
+                                    keyboundType == AccessoryType.SPECIAL.get() &&
+                                            count == 0 ? GLFW.GLFW_KEY_B :
+                                            GLFW.GLFW_KEY_UNKNOWN;
+
+                    builder.computeIfAbsent(keyboundType, _ -> new ImmutableList.Builder<>());
+
+                    Identifier id = keyboundType.getId();
+                    KeyMapping mapping = INST.createMapping("key." + id.getNamespace() + "." + id.getPath() + "_" + count, key);
+
+                    builder.get(keyboundType).add(mapping);
+                    ORDERED_SLOT_KEYS.add(mapping);
+                    typeCountMap.put(keyboundType, count + 1);
+                    break;
                 }
             }
-
-            for (AccessoryType slotType : AccessoryHelper.getSlotTypes()) {
-                for (AccessoryType keyboundType : keyBoundSlotTypes) {
-                    if (keyboundType == slotType) {
-                        int count = typeCountMap.get(keyboundType);
-                        // Default bindings in ternary:
-                        // Utility 1: G
-                        // Utility 2: V
-                        // Special 1: B
-                        int key =
-                                keyboundType == AccessoryType.UTILITY.get() ?
-                                        count == 0 ? GLFW.GLFW_KEY_G :
-                                        count == 1 ? GLFW.GLFW_KEY_V :
-                                        GLFW.GLFW_KEY_UNKNOWN :
-                                keyboundType == AccessoryType.SPECIAL.get() &&
-                                        count == 0 ? GLFW.GLFW_KEY_B :
-                                        GLFW.GLFW_KEY_UNKNOWN;
-
-                        builder.computeIfAbsent(keyboundType, k -> new ImmutableList.Builder<>());
-
-                        Identifier id = keyboundType.getId();
-                        KeyMapping mapping = INST.createMapping("key." + id.getNamespace() + "." + id.getPath() + "_" + count, key);
-
-                        builder.get(keyboundType).add(mapping);
-                        Generated.ORDERED_SLOT_KEYS.add(mapping);
-                        typeCountMap.put(keyboundType, count + 1);
-                        break;
-                    }
-                }
-            }
-
-            ImmutableMap.Builder<AccessoryType, ImmutableList<KeyMapping>> map = ImmutableMap.builderWithExpectedSize(builder.size());
-
-            for (AccessoryType key : builder.keySet()) {
-                map.put(key, builder.get(key).build());
-            }
-
-            return map.build();
         }
 
-        public static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> getSlotKeys() {
-            return Generated.SLOT_KEYS = createSlotKeys();
+        ImmutableMap.Builder<AccessoryType, ImmutableList<KeyMapping>> map = ImmutableMap.builderWithExpectedSize(builder.size());
+
+        for (AccessoryType key : builder.keySet()) {
+            map.put(key, builder.get(key).build());
         }
 
-        public static KeyMapping getMapping(AccessoryType type, int index) {
-            ImmutableList<KeyMapping> list = Generated.SLOT_KEYS.get(type);
+        return map.build();
+    }
 
-            if (list != null) {
-                return list.get(index);
-            }
+    public static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> getSlotKeys() {
+        return SLOT_KEYS = createSlotKeys();
+    }
 
-            return null;
+    public static KeyMapping getMapping(AccessoryType type, int index) {
+        ImmutableList<KeyMapping> list = SLOT_KEYS.get(type);
+
+        if (list != null) {
+            return list.get(index);
         }
 
-        public static ImmutableList<KeyMapping> getMappings() {
-            return ImmutableList.copyOf(Generated.ORDERED_SLOT_KEYS);
+        return null;
+    }
+
+    public static ImmutableList<KeyMapping> getMappings() {
+        return ImmutableList.copyOf(ORDERED_SLOT_KEYS);
+    }
+
+    public static int size() {
+        int size = 0;
+
+        for (ImmutableList<KeyMapping> list : SLOT_KEYS.values()) {
+            size += list.size();
         }
 
-        public static int size() {
-            int size = 0;
-
-            for (ImmutableList<KeyMapping> list : Generated.SLOT_KEYS.values()) {
-                size += list.size();
-            }
-
-            return size;
-        }
+        return size;
     }
 
     public interface Service {
