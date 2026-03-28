@@ -29,10 +29,10 @@ public final class OhmegaClient {
     }
 
     public static void bootstrap() {
+        // Bootstrap
         AccessoryRenderStateData.bootstrap();
         OhmegaBinds.bootstrap();
         OhmegaConfig.Client.bootstrap();
-
         LOGGER.info("Successfully loaded {} client services", NUM_SERVICES);
     }
 }

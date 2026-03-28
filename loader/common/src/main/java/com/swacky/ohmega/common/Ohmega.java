@@ -37,6 +37,7 @@ public final class Ohmega {
     }
 
     public static void bootstrap() {
+        // Bootstrap
         AccessoryHelper.bootstrap();
         OhmegaDataComponents.bootstrap();
         OhmegaItems.bootstrap();
