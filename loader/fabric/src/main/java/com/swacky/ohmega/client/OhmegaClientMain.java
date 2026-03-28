@@ -28,21 +28,25 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 public final class OhmegaClientMain implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        // Bootstrap
         OhmegaClient.bootstrap();
         ClientEvents.bootstrap();
 
+        // Config
         ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+        ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, ConfigurationScreen::new);
 
-        KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);
-        MenuScreens.register(OhmegaMenusImpl.ACCESSORY_INVENTORY, AccessoryInventoryScreen::new);
-
+        // Networking
+        // S2C Receive
         ClientPlayNetworking.registerGlobalReceiver(SyncAccessorySlotsPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessorySlots);
         ClientConfigurationNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessoryTypes);
 
-        ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, ConfigurationScreen::new);
+        // Registration
+        KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);
+        MenuScreens.register(OhmegaMenusImpl.ACCESSORY_INVENTORY, AccessoryInventoryScreen::new);
 
-        //
-        ModelLayerRegistry.registerModelLayer(HaloModel.LOCATION, HaloModel::createDefinition);
+        // Rendering
         AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new);
+        ModelLayerRegistry.registerModelLayer(HaloModel.LOCATION, HaloModel::createDefinition);
     }
 }
