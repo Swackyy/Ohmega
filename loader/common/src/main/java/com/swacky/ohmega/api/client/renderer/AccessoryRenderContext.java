@@ -33,8 +33,4 @@ public record AccessoryRenderContext(
                 state.outlineColor,
                 null);
     }
-
-    public void submitModel(Model<LivingEntityRenderState> model, Identifier textureLocation) {
-        submitModel(model, textureLocation, 1);
-    }
 }
