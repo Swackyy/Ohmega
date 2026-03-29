@@ -1,12 +1,13 @@
 package com.swacky.ohmega.client.renderer;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.util.context.ContextKey;
 
 public class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
-    public static final RenderStateDataKey<AccessoryRenderStateData> KEY = new RenderStateDataKey<>(ID);
+    public static final ContextKey<AccessoryRenderStateData> KEY = new ContextKey<>(ID);
 
     @Override
     public AccessoryRenderStateData getData(LivingEntityRenderState state) {
-        return ((LivingEntityRenderStateExtension) state).ohmega$getData(KEY);
+        return state.getRenderData(KEY);
     }
 }

@@ -6,6 +6,7 @@
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
+    "client.Forge_LivingEntityRendererMixin",
     "client.KeyBindsList$KeyEntryMixin",
     "client.LayerDefinitionsMixin",
     "client.LivingEntityRenderStateMixin",

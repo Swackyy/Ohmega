@@ -4,15 +4,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 public class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
-    public static final RenderStateDataKey<AccessoryRenderStateData> KEY = RenderStateDataKey.create(() -> ID);
+    public static final RenderStateDataKey<AccessoryRenderStateData> KEY = RenderStateDataKey.create(ID::toString);
 
     @Override
     public AccessoryRenderStateData getData(LivingEntityRenderState state) {
         return state.getData(KEY);
-    }
-
-    @Override
-    public void setData(LivingEntityRenderState state, AccessoryRenderStateData data) {
-        state.setData(KEY, data);
     }
 }
