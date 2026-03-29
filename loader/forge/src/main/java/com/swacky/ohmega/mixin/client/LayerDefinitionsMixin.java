@@ -15,7 +15,11 @@ import java.util.Map;
 
 @Mixin(LayerDefinitions.class)
 abstract class LayerDefinitionsMixin {
-    @Inject(method = "createRoots", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
+    @Inject(
+            method = "createRoots",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
     private static void createRoots(CallbackInfoReturnable<Map<ModelLayerLocation, LayerDefinition>> cir, @Local ImmutableMap.Builder<ModelLayerLocation, LayerDefinition> builder) {
         builder.putAll(ModelLayerRegistry.getProviders());
     }

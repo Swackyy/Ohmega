@@ -31,15 +31,21 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
         super(context);
     }
 
-    @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At(value = "TAIL"))
+    @Inject(
+            method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
+            at = @At(
+                    value = "TAIL"))
     public void extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTicks, CallbackInfo ci) {
         // todo:
         if (entity instanceof AbstractClientPlayer player) {
-            AccessoryRenderStateData.setData(state, new AccessoryRenderStateData(AccessoryHelper.getStacksFiltered(player), entity));
+            AccessoryRenderStateData.setData(state, new AccessoryRenderStateData(AccessoryHelper.getStacksFiltered(player)));
         }
     }
 
-    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    @Inject(
+            method = "<init>",
+            at = @At(
+                    value = "TAIL"))
     public void init(EntityRendererProvider.Context context, V model, float shadow, CallbackInfo ci) {
         layers.add(new AccessoryRenderLayer<>(context, this));
     }
