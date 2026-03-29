@@ -1,7 +1,6 @@
 package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -12,12 +11,8 @@ import java.util.function.Supplier;
 public final class OhmegaDataComponentsImpl implements OhmegaDataComponents.Service {
     private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Ohmega.MODID);
 
-    public static final Supplier<DataComponentType<AccessoryItemDataComponent>> ACCESSORY_ITEM = register("accessory",
-            () -> DataComponentType.<AccessoryItemDataComponent>builder()
-                    .persistent(AccessoryItemDataComponent.CODEC)
-                    .networkSynchronized(AccessoryItemDataComponent.STREAM_CODEC)
-                    .cacheEncoding()
-                    .build());
+    public static final Supplier<DataComponentType<Boolean>> ACTIVE = register(ACTIVE_KEY, OhmegaDataComponents::createActive);
+    public static final Supplier<DataComponentType<Integer>> SLOT_INDEX = register(SLOT_INDEX_KEY, OhmegaDataComponents::createSlotIndex);
 
     private static <T> Supplier<DataComponentType<T>> register(String id, Supplier<DataComponentType<T>> sup) {
         return DATA_COMPONENTS.register(id, sup);
@@ -28,7 +23,12 @@ public final class OhmegaDataComponentsImpl implements OhmegaDataComponents.Serv
     }
 
     @Override
-    public DataComponentType<AccessoryItemDataComponent> getItemDataComponent() {
-        return ACCESSORY_ITEM.get();
+    public DataComponentType<Boolean> getActive() {
+        return ACTIVE.get();
+    }
+
+    @Override
+    public DataComponentType<Integer> getSlotIndex() {
+        return SLOT_INDEX.get();
     }
 }

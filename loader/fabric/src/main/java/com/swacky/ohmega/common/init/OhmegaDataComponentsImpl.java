@@ -1,18 +1,16 @@
 package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 public final class OhmegaDataComponentsImpl implements  OhmegaDataComponents.Service {
-    public static final DataComponentType<AccessoryItemDataComponent> ACCESSORY_ITEM = register(
-            "accessory", DataComponentType.<AccessoryItemDataComponent>builder()
-                    .persistent(AccessoryItemDataComponent.CODEC)
-                    .networkSynchronized(AccessoryItemDataComponent.STREAM_CODEC)
-                    .cacheEncoding()
-                    .build());
+    public static final DataComponentType<Boolean> ACTIVE = register(
+            ACTIVE_KEY, OhmegaDataComponents.createActive());
+
+    public static final DataComponentType<Integer> SLOT_INDEX = register(
+            SLOT_INDEX_KEY, OhmegaDataComponents.createSlotIndex());
 
     private static <T> DataComponentType<T> register(String id, DataComponentType<T> object) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Ohmega.id(id), object);
@@ -21,7 +19,12 @@ public final class OhmegaDataComponentsImpl implements  OhmegaDataComponents.Ser
     public static void init() {}
 
     @Override
-    public DataComponentType<AccessoryItemDataComponent> getItemDataComponent() {
-        return ACCESSORY_ITEM;
+    public DataComponentType<Boolean> getActive() {
+        return ACTIVE;
+    }
+
+    @Override
+    public DataComponentType<Integer> getSlotIndex() {
+        return SLOT_INDEX;
     }
 }

@@ -7,7 +7,6 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import com.swacky.ohmega.common.datacomponent.AccessoryItemDataComponent;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
@@ -18,7 +17,6 @@ import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -44,28 +42,6 @@ public final class AccessoryHelper {
     private static final Service IMPL = Ohmega.loadService(Service.class);
 
     public static void bootstrap() {}
-
-    /**
-     * Retrieves the built-in data stored on each accessory type,
-     * you should most likely use wrappers here such as {@link #isActive(ItemStack)} and {@link #setActive(Player, ItemStack, boolean)}
-     * instead of accessing and modifying the data here directly
-     * @param stack the {@link ItemStack} to retrieve the data from
-     * @return the default data component stored on accessory items (when requested)
-     */
-    public static @Nullable AccessoryItemDataComponent getItemData(ItemStack stack) {
-        DataComponentType<AccessoryItemDataComponent> type = OhmegaDataComponents.getItemDataComponent();
-
-        if (stack.has(type)) {
-            return stack.get(type);
-        }
-
-        if (isItemAccessoryBound(stack.getItem())) {
-            stack.set(type, new AccessoryItemDataComponent());
-            return stack.get(type);
-        }
-
-        return null;
-    }
 
     /**
      * Retrieves the data on the {@link Player} pertaining to worn accessories
@@ -175,53 +151,15 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the known slot index of an accessory
-     * @param stack {@link ItemStack} to seek data from
-     * @return the slot index when equipped, or {@code -1} when not equipped
-     */
-    public static int getSlot(ItemStack stack) {
-        AccessoryItemDataComponent data = getItemData(stack);
-
-        if (data != null) {
-            return data.getSlot();
-        }
-
-        return -1;
-    }
-
-    /**
-     * This is handled internally, you most likely won't have to use this
-     * @param stack {@link ItemStack} to set slot index of
-     * @param slot the index to set to
-     */
-    public static void setSlot(ItemStack stack, int slot) {
-        AccessoryItemDataComponent data = getItemData(stack);
-
-        if (data != null) {
-            data.setSlot(slot);
-        }
-    }
-
-    /**
-     * This is handled internally, you most likely won't have to use this
-     * <p>
-     * Sets the index of the slot to {@code -1}
-     * @param stack {@link ItemStack} to set slot index of
-     */
-    public static void setNoSlot(ItemStack stack) {
-        setSlot(stack, -1);
-    }
-
-    /**
      * Checks the active state of an accessory item
      * @param stack {@link ItemStack} to seek active state from
      * @return {@code true} if active, {@code false} if inactive
      */
     public static boolean isActive(ItemStack stack) {
-        AccessoryItemDataComponent data = getItemData(stack);
+        Boolean active = stack.get(OhmegaDataComponents.getActive());
 
-        if (data != null) {
-            return data.isActive();
+        if (active != null) {
+            return active;
         }
 
         return false;
@@ -234,12 +172,7 @@ public final class AccessoryHelper {
      * @param value {@code true} if active, {@code false} if inactive
      */
     public static void setActive(Player player, ItemStack stack, boolean value) {
-        AccessoryItemDataComponent data = getItemData(stack);
-
-        if (data != null) {
-            data.setActive(value);
-        }
-
+        stack.set(OhmegaDataComponents.getActive(), value);
         changeModifiers(player, getModifiers(stack).getActive(), value);
     }
 
@@ -250,6 +183,40 @@ public final class AccessoryHelper {
      */
     public static void toggleActive(Player player, ItemStack stack) {
         setActive(player, stack, !isActive(stack));
+    }
+
+    /**
+     * Retrieves the known slot index of an accessory
+     * @param stack {@link ItemStack} to seek data from
+     * @return the slot index when equipped, or {@code -1} when not equipped
+     */
+    public static int getSlot(ItemStack stack) {
+        Integer slot = stack.get(OhmegaDataComponents.getSlotIndex());
+
+        if (slot != null) {
+            return slot;
+        }
+
+        return -1;
+    }
+
+    /**
+     * This is handled internally, you most likely won't have to use this
+     * @param stack {@link ItemStack} to set slot index of
+     * @param slot the index to set to
+     */
+    public static void setSlot(ItemStack stack, int slot) {
+        stack.set(OhmegaDataComponents.getSlotIndex(), slot);
+    }
+
+    /**
+     * This is handled internally, you most likely won't have to use this
+     * <p>
+     * Sets the index of the slot to {@code -1}
+     * @param stack {@link ItemStack} to set slot index of
+     */
+    public static void setNoSlot(ItemStack stack) {
+        setSlot(stack, -1);
     }
 
     /**
