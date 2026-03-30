@@ -14,6 +14,7 @@ import net.minecraft.resources.Identifier;
 
 public class HaloRenderer implements IAccessoryRenderer {
     private static final Identifier HALO_LOCATION = Ohmega.id("textures/accessory/halo.png");
+
     private final HaloModel model;
 
     public HaloRenderer(EntityRendererProvider.Context context) {

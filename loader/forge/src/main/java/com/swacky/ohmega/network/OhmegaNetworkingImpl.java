@@ -6,7 +6,7 @@ import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -107,15 +107,15 @@ public final class OhmegaNetworkingImpl {
 
         public static void handleUseAccessory(UseAccessoryPacket packet, CustomPayloadEvent.Context context) {
             context.enqueueWork(() -> {
-                if (packet.slot() < AccessoryHelper.getSlotTypes().size()) {
+                if (packet.index() < AccessoryHelper.getSlotTypes().size()) {
                     AccessoryContainer container = AccessoryHelper.getContainer(context.getSender());
-                    IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.slot()).getItem());
+                    IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.index()).getItem());
 
                     if (accessory != null) {
                         Player player = context.getSender();
 
                         if (player != null) {
-                            ItemStack stack = container.getStackInSlot(packet.slot());
+                            ItemStack stack = container.getStackInSlot(packet.index());
 
                             if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
                                 accessory.onUse(player, stack);

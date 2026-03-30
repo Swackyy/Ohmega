@@ -132,20 +132,22 @@ public final class OhmegaConfig {
 
             enum ButtonStyle {
                 DEFAULT(new Builder()
-                        .both(new Data(132, 61, 20, 18, 0, 26))),
+                        .texture("default")
+                        .both(new Data(132, 61, 20, 18))),
                 LEGACY(new Builder()
-                        .both(new Data(27, 9, 9, 9, 0, 62))
-                        .offsetWidthHighlighted()),
+                        .texture("legacy")
+                        .both(new Data(27, 9, 9, 9))),
                 TAG(new Builder()
-                        .left(new Data(-11, 8, 14, 8, 0, 87))
-                        .right(new Data(173, 8, 14, 8, 0, 71))
+                        .texture("tag")
+                        .left(new Data(-11, 8, 14, 8))
+                        .right(new Data(173, 8, 14, 8))
                         .noHoverHighlight()),
                 HIDDEN(new Builder()
-                        .both(new Data(0, 0, 0, 0, 0, 0)));
+                        .both(new Data(0, 0, 0, 0)));
 
+                private final Identifier textureLocation;
                 private final Data left;
                 private final Data right;
-                private final boolean offsetWidthHighlighted;
                 private final boolean highlightWhenHovered;
 
                 ButtonStyle(Builder builder) {
@@ -153,33 +155,39 @@ public final class OhmegaConfig {
                         throw new NullPointerException("ButtonStyle builder has not been properly configured. Ensure both left and right data are set");
                     }
 
+                    this.textureLocation = builder.textureLocation;
                     this.left = builder.left;
                     this.right = builder.right;
-                    this.offsetWidthHighlighted = builder.offsetWidthHighlighted;
                     this.highlightWhenHovered = builder.highlightWhenHovered;
+                }
+
+                public Identifier getTextureLocation() {
+                    return textureLocation;
                 }
 
                 public Data getData() {
                     return Client.side() == Side.LEFT ? left : right;
                 }
 
-                public boolean offsetWidthHighlighted() {
-                    return offsetWidthHighlighted;
-                }
-
                 public boolean highlightWhenHovered() {
                     return highlightWhenHovered;
                 }
 
-                public record Data(int x, int y, int width, int height, int u, int v) {}
+                public record Data(int x, int y, int width, int height) {}
 
                 private static final class Builder {
+                    private Identifier textureLocation;
                     private Data left;
                     private Data right;
-                    private boolean offsetWidthHighlighted;
                     private boolean highlightWhenHovered = true;
 
                     private Builder() {}
+
+                    private Builder texture(String name) {
+                        this.textureLocation = Ohmega.id("textures/gui/container/accessory_inventory/inventory_buttons/" + name + ".png");
+
+                        return this;
+                    }
 
                     private Builder left(Data left) {
                         this.left = left;
@@ -196,12 +204,6 @@ public final class OhmegaConfig {
                     private Builder both(Data data) {
                         left = data;
                         right = data;
-
-                        return this;
-                    }
-
-                    private Builder offsetWidthHighlighted() {
-                        offsetWidthHighlighted = true;
 
                         return this;
                     }
@@ -242,6 +244,10 @@ public final class OhmegaConfig {
 
         public static boolean disableAccessoryTypes() {
             return IMPL.disableAccessoryTypes();
+        }
+
+        public static boolean allowHideAccessories() {
+            return IMPL.allowHideAccessories();
         }
 
         public static boolean isLoaded() {
@@ -289,6 +295,11 @@ public final class OhmegaConfig {
                     If true, effectively no accessory types will be used, and they will all be overridden, changing them all to "ohmega:generic\"""";
             boolean DISABLE_ACCESSORY_TYPES_DEFAULT = false;
             // - - -
+            String ALLOW_HIDE_ACCESSORIES_KEY = "allowHideAccessories";
+            String ALLOW_HIDE_ACCESSORIES_DESCRIPTION = """
+                    Will prevent players from toggling visibility on their accessories if false, so that they always render""";
+            boolean ALLOW_HIDE_ACCESSORIES_DEFAULT = true;
+            // - - -
 
             List<? extends String> slotTypes();
 
@@ -297,6 +308,8 @@ public final class OhmegaConfig {
             KeepAccessoriesBehaviour keepAccessoriesBehaviour();
 
             boolean disableAccessoryTypes();
+
+            boolean allowHideAccessories();
 
             boolean isLoaded();
 

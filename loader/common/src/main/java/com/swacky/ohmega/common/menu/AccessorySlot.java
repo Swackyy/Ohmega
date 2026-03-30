@@ -1,4 +1,4 @@
-package com.swacky.ohmega.common.inv;
+package com.swacky.ohmega.common.menu;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
@@ -95,7 +95,7 @@ public final class AccessorySlot extends Slot {
 
         if (!ItemStack.isSameItemSameComponents(handler.getStackInSlot(index), stack)) {
             handler.doUnequip(player, stack);
-            handler.onContentsChanged(index);
+            handler.setChanged(index);
         }
 
         return stack;

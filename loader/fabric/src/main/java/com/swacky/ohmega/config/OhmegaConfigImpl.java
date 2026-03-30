@@ -112,22 +112,26 @@ public final class OhmegaConfigImpl {
         public ModConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
         public ModConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
         public ModConfigSpec.BooleanValue disableAccessoryTypes;
+        public ModConfigSpec.BooleanValue allowHideAccessories;
 
         public Server() {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
             slotTypes = builder
-                .comment(SLOT_TYPES_DESCRIPTION)
-                .defineList(SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, () -> SLOT_TYPES_NEW_VALUE_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
+                    .comment(SLOT_TYPES_DESCRIPTION)
+                    .defineList(SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, () -> SLOT_TYPES_NEW_VALUE_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
             keyboundSlotTypes = builder
-                .comment(KEYBOUND_SLOT_TYPES_DESCRIPTION)
-                .defineListAllowEmpty(KEYBOUND_SLOT_TYPES_KEY, KEYBOUND_SLOT_TYPES_DEFAULT, () -> KEYBOUND_SLOT_TYPES_NEW_VALUE_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
+                    .comment(KEYBOUND_SLOT_TYPES_DESCRIPTION)
+                    .defineListAllowEmpty(KEYBOUND_SLOT_TYPES_KEY, KEYBOUND_SLOT_TYPES_DEFAULT, () -> KEYBOUND_SLOT_TYPES_NEW_VALUE_DEFAULT, ACCESSORY_TYPE_VALIDATOR);
             keepAccessoriesBehaviour = builder
-                .comment(KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION)
-                .defineEnum(KEEP_ACCESSORIES_BEHAVIOUR_KEY, KeepAccessoriesBehaviour.DEFAULT);
+                    .comment(KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION)
+                    .defineEnum(KEEP_ACCESSORIES_BEHAVIOUR_KEY, KeepAccessoriesBehaviour.DEFAULT);
             disableAccessoryTypes = builder
-                .comment(DISABLE_ACCESSORY_TYPES_DESCRIPTION)
-                .define(DISABLE_ACCESSORY_TYPES_KEY, DISABLE_ACCESSORY_TYPES_DEFAULT);
+                    .comment(DISABLE_ACCESSORY_TYPES_DESCRIPTION)
+                    .define(DISABLE_ACCESSORY_TYPES_KEY, DISABLE_ACCESSORY_TYPES_DEFAULT);
+            allowHideAccessories = builder
+                    .comment(ALLOW_HIDE_ACCESSORIES_DESCRIPTION)
+                    .define(ALLOW_HIDE_ACCESSORIES_KEY, ALLOW_HIDE_ACCESSORIES_DEFAULT);
             Server.spec = builder.build();
         }
 
@@ -153,6 +157,11 @@ public final class OhmegaConfigImpl {
         @Override
         public boolean disableAccessoryTypes() {
             return disableAccessoryTypes.get();
+        }
+
+        @Override
+        public boolean allowHideAccessories() {
+            return allowHideAccessories.get();
         }
 
         @Override

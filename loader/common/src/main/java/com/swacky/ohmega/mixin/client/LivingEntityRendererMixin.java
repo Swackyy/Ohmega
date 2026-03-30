@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+// todo: Add this to other loaders to avoid using <loaderName>_LivingEntityRendererMixin
 @Mixin(LivingEntityRenderer.class)
 abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends LivingEntityRenderState, V extends EntityModel<? super U>> extends EntityRenderer<T, U> implements RenderLayerParent<U, V> {
     @Shadow

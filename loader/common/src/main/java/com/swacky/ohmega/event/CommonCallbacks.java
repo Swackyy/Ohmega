@@ -42,7 +42,7 @@ public final class CommonCallbacks {
         AccessoryContainer oldA = AccessoryHelper.getContainer(oldPlayer);
         AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
 
-        for (int i = 0; i < Math.min(oldA.getSlots(), newA.getSlots()); i++) {
+        for (int i = 0; i < Math.min(oldA.getSize(), newA.getSize()); i++) {
             newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
         }
     }
@@ -64,7 +64,7 @@ public final class CommonCallbacks {
                         itemDrops.add(entity);
                     }
 
-                    container.onContentsChanged(i);
+                    container.setChanged(i);
                 }
             }
         }

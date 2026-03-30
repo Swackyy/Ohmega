@@ -45,7 +45,7 @@ public interface IAccessory {
         return AccessoryHelper.getBoundAccessory(other.getItem()) != this;
     }
 
-    // Called when a key-bind is pressed for this slot. Will only work for accessories of key-bound types.
+    // Called when a key-bind is pressed for this index. Will only work for accessories of key-bound types.
     // It is recommended that when this is overridden and used, that a tooltip will be provided,
     // a component for the tooltip can be acquired from the AccessoryHelper utility class.
     default void onUse(@NonNull Player player, @NonNull ItemStack stack) {}

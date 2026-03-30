@@ -10,12 +10,11 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.network.common.SetVisibilityPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
@@ -32,83 +31,62 @@ import java.util.function.Predicate;
 public final class AccessoryContainer {
     public static final Codec<AccessoryContainer> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
+            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
+            Codec.BOOL.listOf().fieldOf("visibility").forGetter(inst -> Booleans.asList(inst.visibility))
     ).apply(builder, AccessoryContainer::new));
 
+    // todo: check if can be removed
     public static final MapCodec<AccessoryContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed))
+            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
+            Codec.BOOL.listOf().fieldOf("visibility").forGetter(inst -> Booleans.asList(inst.visibility))
     ).apply(builder, AccessoryContainer::new));
-
-    // Currently unused, but will be when tested further and forge supports this natively
-    @SuppressWarnings("unused")
-    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryContainer> STREAM_CODEC = StreamCodec.composite(
-            ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
-            new StreamCodec<>() {
-                @Override
-                public void encode(@NonNull RegistryFriendlyByteBuf buf, boolean @NonNull [] values) {
-                    buf.writeVarInt(values.length);
-
-                    for (boolean value : values) {
-                        buf.writeBoolean(value);
-                    }
-                }
-
-                @Override
-                public boolean @NonNull [] decode(@NonNull RegistryFriendlyByteBuf buf) {
-                    int size = buf.readVarInt();
-                    boolean[] values = new boolean[size];
-
-                    for (int i = 0; i < size; i++) {
-                        values[i] = buf.readBoolean();
-                    }
-
-                    return values;
-                }
-            }, inst -> inst.changed,
-            AccessoryContainer::new);
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
+    private boolean[] visibility;
     private boolean forceOnEquip = false;
 
-    private AccessoryContainer(List<ItemStack> stacks, boolean[] changed) {
+    private AccessoryContainer(List<ItemStack> stacks, boolean[] changed, boolean[] visibility) {
         this.stacks = NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0]));
         this.changed = changed;
+        this.visibility = visibility;
     }
 
-    private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed) {
-        this(stacks, Booleans.toArray(changed));
+    private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> visibility) {
+        this(stacks, Booleans.toArray(changed), Booleans.toArray(visibility));
     }
 
     public AccessoryContainer() {
         int size = AccessoryHelper.getSlotTypes().size();
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
         this.changed = new boolean[size];
+        this.visibility = new boolean[size];
+        Arrays.fill(visibility, true);
     }
 
-    public boolean isItemValid(Player player, int slot, @NonNull ItemStack stack, EquipContext context) {
+    public boolean isItemValid(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
         if (stack.isEmpty()) {
             return true;
         }
 
-        if (slot >= 0 && slot < stacks.size()) {
+        if (index >= 0 && index < stacks.size()) {
             Item item = stack.getItem();
             IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
 
-            if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, stacks.get(slot)))) {
-                return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(slot);
+            if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, stacks.get(index)))) {
+                return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index);
             }
         }
 
         return false;
     }
 
-    public int getSlots() {
+    public int getSize() {
         return stacks.size();
     }
 
-    public void onContentsChanged(int index) {
+    public void setChanged(int index) {
         changed[index] = true;
     }
 
@@ -152,7 +130,7 @@ public final class AccessoryContainer {
 
     private void doSetStackInSlot(int index, ItemStack stack) {
         stacks.set(index, stack);
-        onContentsChanged(index);
+        setChanged(index);
     }
 
     public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
@@ -195,7 +173,7 @@ public final class AccessoryContainer {
                 player.drop(stack, true);
             }
 
-            onContentsChanged(index);
+            setChanged(index);
         }
     }
 
@@ -220,13 +198,30 @@ public final class AccessoryContainer {
                 }
 
                 stack.shrink(toRemoveCurrentStack);
-                onContentsChanged(i);
+                setChanged(i);
 
                 removed += toRemoveCurrentStack;
             }
         }
 
         return removed;
+    }
+
+    public boolean isVisible(int index) {
+        return visibility[index];
+    }
+
+    public void setVisibility(Player player, int index, boolean value) {
+        visibility[index] = value;
+        SetVisibilityPacket packet = new SetVisibilityPacket(index, value);
+
+        if (player.level().isClientSide()) {
+            // Sync with server
+            OhmegaNetworking.C2S.send(packet);
+        } else for (ServerPlayer receiver : ((ServerPlayer) player).level().getPlayers(_ -> true)) {
+            // Sync with clients
+            OhmegaNetworking.S2C.send(receiver, packet);
+        }
     }
 
     public void onAttach(Player player) {
@@ -278,6 +273,7 @@ public final class AccessoryContainer {
         }
 
         // Syncing
+        // todo: see if it is a good idea to split this into just autoSync in tick and on demand for changing
         if (player instanceof ServerPlayer svr) {
             List<Integer> slots = new ArrayList<>();
             List<ItemStack> stacks = new ArrayList<>();
@@ -310,11 +306,12 @@ public final class AccessoryContainer {
 
         if (newSize > oldSize) {
             // Grow data
-            ItemStack[] newStacks = new ItemStack[newSize - oldSize];
+            ItemStack[] newStacks = new ItemStack[newSize];
             Arrays.fill(newStacks, ItemStack.EMPTY);
 
             stacks = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(stacks.toArray(new ItemStack[0]), newStacks));
-            changed = ArrayUtils.addAll(changed, new boolean[newSize - oldSize]);
+            changed = ArrayUtils.addAll(changed, new boolean[newSize]);
+            visibility = ArrayUtils.addAll(visibility, new boolean[newSize]);
         } else if (newSize < oldSize) {
             // Drop stacks outside of range
             for (int i = newSize; i < oldSize; i++) {
@@ -322,8 +319,9 @@ public final class AccessoryContainer {
             }
 
             // Shrink data
-            stacks = NonNullList.of(ItemStack.EMPTY, Arrays.copyOfRange(this.stacks.toArray(new ItemStack[0]), 0, newSize));
-            changed = Arrays.copyOfRange(this.changed, 0, newSize);
+            stacks = NonNullList.of(ItemStack.EMPTY, Arrays.copyOfRange(stacks.toArray(new ItemStack[0]), 0, newSize));
+            changed = Arrays.copyOfRange(changed, 0, newSize);
+            visibility = Arrays.copyOfRange(visibility, 0, newSize);
         }
 
         // Drop invalid stacks (mismatched accessory types and non-accessory items)

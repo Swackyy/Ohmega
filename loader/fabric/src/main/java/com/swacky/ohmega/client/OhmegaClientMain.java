@@ -13,6 +13,7 @@ import com.swacky.ohmega.event.ClientEvents;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import com.swacky.ohmega.network.common.SetVisibilityPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -37,7 +38,8 @@ public final class OhmegaClientMain implements ClientModInitializer {
         ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, ConfigurationScreen::new);
 
         // Networking
-        // S2C Receive
+        // Receive
+        ClientPlayNetworking.registerGlobalReceiver(SetVisibilityPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSetVisibility);
         ClientPlayNetworking.registerGlobalReceiver(SyncAccessorySlotsPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessorySlots);
         ClientConfigurationNetworking.registerGlobalReceiver(SyncAccessoryTypesPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncAccessoryTypes);
 

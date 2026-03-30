@@ -186,9 +186,9 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the known slot index of an accessory
+     * Retrieves the known index index of an accessory
      * @param stack {@link ItemStack} to seek data from
-     * @return the slot index when equipped, or {@code -1} when not equipped
+     * @return the index index when equipped, or {@code -1} when not equipped
      */
     public static int getSlot(ItemStack stack) {
         Integer slot = stack.get(OhmegaDataComponents.getSlotIndex());
@@ -202,18 +202,18 @@ public final class AccessoryHelper {
 
     /**
      * This is handled internally, you most likely won't have to use this
-     * @param stack {@link ItemStack} to set slot index of
-     * @param slot the index to set to
+     * @param stack {@link ItemStack} to set index index of
+     * @param index the index to set to
      */
-    public static void setSlot(ItemStack stack, int slot) {
-        stack.set(OhmegaDataComponents.getSlotIndex(), slot);
+    public static void setSlot(ItemStack stack, int index) {
+        stack.set(OhmegaDataComponents.getSlotIndex(), index);
     }
 
     /**
      * This is handled internally, you most likely won't have to use this
      * <p>
-     * Sets the index of the slot to {@code -1}
-     * @param stack {@link ItemStack} to set slot index of
+     * Sets the index of the index to {@code -1}
+     * @param stack {@link ItemStack} to set index index of
      */
     public static void setNoSlot(ItemStack stack) {
         setSlot(stack, -1);
@@ -260,7 +260,7 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the slot types of each accessory slot in players' accessory inventories (determined by the server config)
+     * Retrieves the index types of each accessory index in players' accessory inventories (determined by the server config)
      * @return a list of {@link AccessoryType}s matching indexes of accessory indexes
      */
     public static ImmutableList<AccessoryType> getSlotTypes() {
@@ -268,7 +268,6 @@ public final class AccessoryHelper {
         ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
 
         if (OhmegaConfig.Server.disableAccessoryTypes()) {
-
             for (int i = 0; i < size; i++) {
                 builder.add(AccessoryType.GENERIC.get());
             }
@@ -321,6 +320,7 @@ public final class AccessoryHelper {
 
         // Starts at -1 to align properly
         int typeIndex = 0;
+
         if (type != null) {
             for (int i = 0; i < slot; i++) {
                 if (slotTypes.get(i) == type) {
@@ -378,16 +378,16 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Finds the first open slot of
+     * Finds the first open index of
      * @param player {@link Player} to search the accessory inventory of
-     * @param type {@link AccessoryType} of slot to find
-     * @return index of the first open slot matching the type, or {@code -1} if none is found
+     * @param type {@link AccessoryType} of index to find
+     * @return index of the first open index matching the type, or {@code -1} if none is found
      */
     public static int getFirstOpenSlot(Player player, AccessoryType type) {
         AccessoryContainer container = getContainer(player);
         ImmutableList<AccessoryType> slotTypes = getSlotTypes();
 
-        for (int i = 0; i < container.getSlots(); i++) {
+        for (int i = 0; i < container.getSize(); i++) {
             if (slotTypes.get(i) == type && container.getStackInSlot(i).isEmpty()) {
                 return i;
             }

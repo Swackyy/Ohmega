@@ -11,6 +11,7 @@ import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
+import com.swacky.ohmega.network.common.SetVisibilityPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
@@ -37,22 +38,23 @@ public final class OhmegaMain implements ModInitializer {
         ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         // Networking
-        // C2S
         // Send
+        // C2S
         PayloadTypeRegistry.serverboundPlay().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(OpenInventoryPacket.TYPE, OpenInventoryPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(ResizeContainerPacket.TYPE, ResizeContainerPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SetVisibilityPacket.TYPE, SetVisibilityPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
-        // Receive
-        ServerPlayNetworking.registerGlobalReceiver(ResizeContainerPacket.TYPE, OhmegaNetworkingImpl.C2S::handleResizeContainer);
-        ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleUseAccessory);
         // S2C
-        // Send
+        PayloadTypeRegistry.clientboundPlay().register(SetVisibilityPacket.TYPE, SetVisibilityPacket.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncAccessorySlotsPacket.TYPE, SyncAccessorySlotsPacket.CODEC);
         PayloadTypeRegistry.clientboundConfiguration().register(SyncAccessoryTypesPacket.TYPE, SyncAccessoryTypesPacket.CODEC);
         // Receive
         ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenAccessoryInventory);
         ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleOpenInventory);
+        ServerPlayNetworking.registerGlobalReceiver(ResizeContainerPacket.TYPE, OhmegaNetworkingImpl.C2S::handleResizeContainer);
+        ServerPlayNetworking.registerGlobalReceiver(SetVisibilityPacket.TYPE, OhmegaNetworkingImpl.C2S::handleSetVisibility);
+        ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.TYPE, OhmegaNetworkingImpl.C2S::handleUseAccessory);
 
         // Registration
         ArgumentTypeRegistry.registerArgumentType(AccessoryTypeArgument.ID, AccessoryTypeArgument.class, SingletonArgumentInfo.contextFree(AccessoryTypeArgument::new));

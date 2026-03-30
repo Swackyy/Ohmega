@@ -1,6 +1,5 @@
 package com.swacky.ohmega.client.screen;
 
-import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
@@ -23,7 +22,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
     private final AbstractContainerScreen<?> screen;
     private final OhmegaConfig.Client.Service.ButtonStyle style;
 
-    public AccessoryInventoryButton(OhmegaConfig.Client.Service.ButtonStyle style, AbstractContainerScreen<?> screen) {
+    public AccessoryInventoryButton(AbstractContainerScreen<?> screen, OhmegaConfig.Client.Service.ButtonStyle style) {
         super(AccessoryInventoryButton.getXAdjusted(screen, style), screen.topPos + style.getData().y(), style.getData().width(), style.getData().height(), MutableComponent.create(PlainTextContents.EMPTY));
         this.screen = screen;
         this.style = style;
@@ -37,6 +36,7 @@ public final class AccessoryInventoryButton extends AbstractButton {
         return screen.leftPos + style.getData().x();
     }
 
+    // todo: see if this can be changed
     private boolean isVisible() {
         return visible && (screen instanceof AccessoryInventoryScreen || (screen instanceof InventoryScreen inventoryScreen && !inventoryScreen.recipeBookComponent.isVisible()));
     }
@@ -74,32 +74,27 @@ public final class AccessoryInventoryButton extends AbstractButton {
     }
 
     @Override
-    public void updateWidgetNarration(@NonNull NarrationElementOutput output) {
-        defaultButtonNarrationText(output);
-    }
-
-    @Override
     protected void extractContents(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         if (isVisible()) {
             fixPos();
 
-            int hoveredOffsX;
             int hoveredOffsY;
 
             if ((style.highlightWhenHovered() && isHoveredOrFocused()) || screen instanceof AccessoryInventoryScreen) {
-                if (style.offsetWidthHighlighted()) {
-                    hoveredOffsX = width;
-                    hoveredOffsY = 0;
-                } else {
-                    hoveredOffsX = 0;
-                    hoveredOffsY = height;
-                }
+                hoveredOffsY = height;
             } else {
-                hoveredOffsX = 0;
                 hoveredOffsY = 0;
             }
 
-            gui.blit(RenderPipelines.GUI_TEXTURED, OhmegaClient.ACCESSORY_LOCATION, getX(), getY(), (float) style.getData().u() + hoveredOffsX, (float) style.getData().v() + hoveredOffsY, width, height, OhmegaClient.ACCESSORY_ADDON_WIDTH, OhmegaClient.ACCESSORY_ADDON_HEIGHT);
+            OhmegaConfig.Client.Service.ButtonStyle.Data data = style.getData();
+
+            gui.blit(RenderPipelines.GUI_TEXTURED, style.getTextureLocation(), getX(), getY(), 0, hoveredOffsY, width, height, data.width(), data.height() * 2);
         }
+    }
+
+    // todo: change later
+    @Override
+    public void updateWidgetNarration(@NonNull NarrationElementOutput output) {
+        defaultButtonNarrationText(output);
     }
 }

@@ -7,10 +7,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
-public record UseAccessoryPacket(int slot) implements CustomPacketPayload {
+public record UseAccessoryPacket(int index) implements CustomPacketPayload {
     public static final Type<@NonNull UseAccessoryPacket> TYPE = new Type<>(Ohmega.id("use_accessory"));
     public static final StreamCodec<RegistryFriendlyByteBuf, UseAccessoryPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, inst -> inst.slot,
+            ByteBufCodecs.VAR_INT, inst -> inst.index,
             UseAccessoryPacket::new);
 
     @Override

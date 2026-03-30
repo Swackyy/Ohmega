@@ -1,8 +1,7 @@
 package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import net.minecraft.world.inventory.MenuType;
 import org.jspecify.annotations.NonNull;
 

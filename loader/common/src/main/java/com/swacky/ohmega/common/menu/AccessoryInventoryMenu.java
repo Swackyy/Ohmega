@@ -1,4 +1,4 @@
-package com.swacky.ohmega.common.inv;
+package com.swacky.ohmega.common.menu;
 
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;

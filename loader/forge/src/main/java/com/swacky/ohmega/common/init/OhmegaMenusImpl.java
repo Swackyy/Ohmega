@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;

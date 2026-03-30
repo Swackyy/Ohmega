@@ -8,7 +8,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.common.init.OhmegaBinds;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
@@ -125,7 +125,7 @@ public final class ClientCallbacks {
             Minecraft mc = screen.minecraft;
 
             if (mc.player != null && !mc.player.isCreative() && !mc.player.isSpectator()) {
-                widgetConsumer.accept(new AccessoryInventoryButton(OhmegaConfig.Client.buttonStyle(), (AbstractContainerScreen<?>) screen));
+                widgetConsumer.accept(new AccessoryInventoryButton((AbstractContainerScreen<?>) screen, OhmegaConfig.Client.buttonStyle()));
             }
         }
     }

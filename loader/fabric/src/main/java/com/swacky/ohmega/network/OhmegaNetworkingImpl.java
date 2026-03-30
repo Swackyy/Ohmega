@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import com.swacky.ohmega.common.inv.AccessoryInventoryMenu;
+import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.OhmegaHooks;
@@ -15,11 +15,13 @@ import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import com.swacky.ohmega.network.common.SetVisibilityPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,14 +61,20 @@ public final class OhmegaNetworkingImpl {
             AccessoryHelper.getContainer(player).reloadCfg(player);
         }
 
+        public static void handleSetVisibility(SetVisibilityPacket packet, ServerPlayNetworking.Context context) {
+            ServerPlayer player = context.player();
+
+            AccessoryHelper.getContainer(player).setVisibility(player, packet.index(), packet.value());
+        }
+
         public static void handleUseAccessory(UseAccessoryPacket packet, ServerPlayNetworking.Context context) {
-            if (packet.slot() < AccessoryHelper.getSlotTypes().size()) {
+            if (packet.index() < AccessoryHelper.getSlotTypes().size()) {
                 ServerPlayer player = context.player();
                 AccessoryContainer container = AccessoryHelper.getContainer(player);
-                IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.slot()).getItem());
+                IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.index()).getItem());
 
                 if (accessory != null) {
-                    ItemStack stack = container.getStackInSlot(packet.slot());
+                    ItemStack stack = container.getStackInSlot(packet.index());
 
                     if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
                         accessory.onUse(player, stack);
@@ -80,6 +88,12 @@ public final class OhmegaNetworkingImpl {
         @Override
         public void send(ServerPlayer receiver, CustomPacketPayload packet) {
             ServerPlayNetworking.send(receiver, packet);
+        }
+
+        public static void handleSetVisibility(SetVisibilityPacket packet, ClientPlayNetworking.Context context) {
+            LocalPlayer player = context.player();
+
+            AccessoryHelper.getContainer(player).setVisibility(player, packet.index(), packet.value());
         }
 
         public static void handleSyncAccessorySlots(SyncAccessorySlotsPacket packet, ClientPlayNetworking.Context context) {

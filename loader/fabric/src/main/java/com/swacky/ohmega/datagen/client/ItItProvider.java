@@ -69,7 +69,7 @@ public class ItItProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Mostra suggerimento quando passa il cursore del mouse",
-                "Se vero, verrà visualizzato un suggerimento del tipo di slot di accessori quando si passa sopra col mouse");
+                "Se vero, verrà visualizzato un suggerimento del tipo di index di accessori quando si passa sopra col mouse");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
                 "Numero Di Colonne Massime",
@@ -78,19 +78,19 @@ public class ItItProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
                 "Slot Massimi Per Colonna",
                 """
-                        La quantità massima di slot per colonna
+                        La quantità massima di index per colonna
                         Se superata, verrà creata una nuova colonna se non supera "maxColumns\"""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Slot Massimi Renderizzabili Per Colonna",
-                "La quantità massima di slot da renderizzare per colonna");
+                "La quantità massima di index da renderizzare per colonna");
 
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Server Ohmega", "Configurazione Server Ohmega");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
                 "Tipi Di Slot",
-                "Definisce i tipi e il numero di slot nell'inventario accessori");
+                "Definisce i tipi e il numero di index nell'inventario accessori");
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Modifica");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
