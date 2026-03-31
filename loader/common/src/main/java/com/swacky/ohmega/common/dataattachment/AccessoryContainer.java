@@ -76,7 +76,7 @@ public final class AccessoryContainer {
 
         if (index >= 0 && index < size()) {
             Item item = stack.getItem();
-            IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
+            IAccessory accessory = AccessoryHelper.getAccessory(item);
 
             if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
                 return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index);
@@ -95,7 +95,7 @@ public final class AccessoryContainer {
     }
 
     public void doUnequip(Player player, ItemStack stack) {
-        IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+        IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
             if (!OhmegaHooks.accessoryUnequipEvent(player, stack)) {
@@ -108,7 +108,7 @@ public final class AccessoryContainer {
     }
 
     private void doEquip(Player player, ItemStack stack, int index, EquipContext context) {
-        IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+        IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
@@ -271,7 +271,7 @@ public final class AccessoryContainer {
     public void tick(Player player) {
         for (int i = 0; i < size(); i++) {
             ItemStack stack = getStackInSlot(i);
-            IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+            IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
             if (accessory != null && !OhmegaHooks.accessoryTickEventPre(player, stack)) {
                 accessory.tick(player, stack);
@@ -287,7 +287,7 @@ public final class AccessoryContainer {
 
             for (int i = 0; i < size(); i++) {
                 ItemStack stack = getStackInSlot(i);
-                IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+                IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                 if (changed[i] || (accessory != null && accessory.autoSync(player, stack))) {
                     indexes.add(i);

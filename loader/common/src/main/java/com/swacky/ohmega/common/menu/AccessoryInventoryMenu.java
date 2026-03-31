@@ -241,7 +241,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 Item item = stack.getItem();
                 AccessoryType type = AccessoryHelper.getType(item);
                 int openIndex = AccessoryHelper.getFirstOpenSlot(player, type);
-                IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
+                IAccessory accessory = AccessoryHelper.getAccessory(item);
                 Slot slot0 = getSlot(46 + openIndex);
 
                 if (accessory != null && index > 8 && index < 45 && openIndex != -1 && slot0.mayPlace(stack0)) { // Inventory -> accessory

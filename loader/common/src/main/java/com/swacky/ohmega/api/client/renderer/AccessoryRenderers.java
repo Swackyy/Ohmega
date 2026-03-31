@@ -22,7 +22,7 @@ public final class AccessoryRenderers {
     }
 
     public static boolean register(Item item, Function<EntityRendererProvider.Context, IAccessoryRenderer> factory) {
-        return register(AccessoryHelper.getBoundAccessory(item), factory);
+        return register(AccessoryHelper.getAccessory(item), factory);
     }
 
     public static Function<EntityRendererProvider.Context, IAccessoryRenderer> getFactoryFor(IAccessory accessory) {
@@ -30,6 +30,6 @@ public final class AccessoryRenderers {
     }
 
     public static Function<EntityRendererProvider.Context, IAccessoryRenderer> getFactoryFor(Item item) {
-        return getFactoryFor(AccessoryHelper.getBoundAccessory(item));
+        return getFactoryFor(AccessoryHelper.getAccessory(item));
     }
 }

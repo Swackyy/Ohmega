@@ -42,7 +42,7 @@ public interface IAccessory {
     // Override this to make accessories only equipable when certain other accessories are not equipped
     // Default behaviour prevents players from equipping two of the same accessory at once
     default boolean compatibleWith(@NonNull ItemStack other) {
-        return AccessoryHelper.getBoundAccessory(other.getItem()) != this;
+        return AccessoryHelper.getAccessory(other.getItem()) != this;
     }
 
     // Called when a key-bind is pressed for this index. Will only work for accessories of key-bound types.

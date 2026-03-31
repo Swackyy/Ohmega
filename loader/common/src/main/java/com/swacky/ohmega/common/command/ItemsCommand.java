@@ -43,7 +43,7 @@ public class ItemsCommand {
         // todo
         if (target instanceof Player player) {
             if (includeAir) {
-                stacks = AccessoryHelper.getStacks(player);
+                stacks = AccessoryHelper.getContainer(player).getStacks();
             } else {
                 stacks = AccessoryHelper.getStacksNoEmpty(player);
             }

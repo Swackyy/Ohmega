@@ -83,7 +83,7 @@ public final class OhmegaNetworkingImpl {
                 ServerPlayer player = context.player();
                 AccessoryContainer container = AccessoryHelper.getContainer(player);
                 ItemStack stack = container.getStackInSlot(index);
-                IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+                IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                 if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
                     accessory.onUse(player, stack);

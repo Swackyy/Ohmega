@@ -43,7 +43,7 @@ public final class AccessorySlot extends Slot {
         }
 
         Item item = stack.getItem();
-        IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
+        IAccessory accessory = AccessoryHelper.getAccessory(item);
 
         if (accessory != null) {
             return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE) && AccessoryHelper.getType(item) == type;
@@ -60,7 +60,7 @@ public final class AccessorySlot extends Slot {
             return false;
         }
 
-        IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+        IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
         boolean original = !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE);
 
         if (accessory != null) {

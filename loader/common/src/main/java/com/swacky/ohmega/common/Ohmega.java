@@ -59,24 +59,24 @@ public final class Ohmega {
     }
 
     /**
-     * Use {@link AccessoryHelper#getBoundAccessory}
+     * Use {@link AccessoryHelper#getAccessory}
      */
-    public static IAccessory getBoundAccessory(Item item) {
+    public static IAccessory getAccessory(Item item) {
         return item instanceof IAccessory accessory ? accessory : BOUND_ACCESSORIES.get(item);
     }
 
     /**
-     * Use {@link AccessoryHelper#isItemAccessoryBound}
+     * Use {@link AccessoryHelper#isItemAccessory}
      */
-    public static boolean isItemAccessoryBound(Item item) {
-        return getBoundAccessory(item) != null;
+    public static boolean isItemAccessory(Item item) {
+        return getAccessory(item) != null;
     }
 
     /**
      * Use {@link AccessoryHelper#bindAccessory}
      */
     public static boolean bindAccessory(Item item, IAccessory binding) {
-        if (isItemAccessoryBound(item) || item instanceof AirItem) {
+        if (isItemAccessory(item) || item instanceof AirItem) {
             return false;
         }
 

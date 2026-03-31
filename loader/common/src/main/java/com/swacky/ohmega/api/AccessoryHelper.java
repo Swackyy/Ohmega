@@ -65,23 +65,22 @@ public final class AccessoryHelper {
      * @param item the item to check if it is bound
      * @return {@code true} if the {@link Item} class implements {@link IAccessory} or is accessory bound by code ({@link #bindAccessory(Item, IAccessory)}
      */
-    public static boolean isItemAccessoryBound(Item item) {
-        return Ohmega.isItemAccessoryBound(item);
+    public static boolean isItemAccessory(Item item) {
+        return Ohmega.isItemAccessory(item);
     }
 
     /**
      * @param item the item to get the binding of
      * @return the {@link IAccessory} binding
      */
-    public static IAccessory getBoundAccessory(Item item) {
-        return Ohmega.getBoundAccessory(item);
+    public static IAccessory getAccessory(Item item) {
+        return Ohmega.getAccessory(item);
     }
 
     /**
      * You most likely want to use {@link #getType(Item)} instead
      * @param item the item to find the {@link AccessoryType}s of
-     * @return all of the {@link AccessoryType}s that the {@link Item} is a part of,
-     * ignoring the priority index of each type
+     * @return all of the {@link AccessoryType}s that the {@link Item} is a part of, ignoring the priority index of each type
      */
     @SuppressWarnings("deprecation")
     public static ImmutableList<AccessoryType> getTypes(Item item) {
@@ -221,7 +220,7 @@ public final class AccessoryHelper {
      * @return the {@link AccessoryModifiers} to apply when accessory equipped
      */
     public static AccessoryModifiers getModifiers(ItemStack stack) {
-        IAccessory accessory = getBoundAccessory(stack.getItem());
+        IAccessory accessory = getAccessory(stack.getItem());
         AccessoryModifiers.Builder builder = new AccessoryModifiers.Builder();
 
         if (accessory != null) {
@@ -326,7 +325,7 @@ public final class AccessoryHelper {
             }
         }
 
-        IAccessory accessory = getBoundAccessory(stack.getItem());
+        IAccessory accessory = getAccessory(stack.getItem());
         boolean flag = false;
 
         if (accessory != null) {
@@ -404,7 +403,7 @@ public final class AccessoryHelper {
     public static InteractionResult tryEquip(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
-        IAccessory accessory = getBoundAccessory(item);
+        IAccessory accessory = getAccessory(item);
 
         if (accessory != null) {
             int slot = getFirstOpenSlot(player, getType(item));
@@ -429,7 +428,7 @@ public final class AccessoryHelper {
      * @return {@code true} if both are compatible with each other, {@code false} otherwise
      */
     public static boolean compatibleWith(ItemStack first, ItemStack second) {
-        return getBoundAccessory(first.getItem()).compatibleWith(second) && getBoundAccessory(second.getItem()).compatibleWith(first);
+        return getAccessory(first.getItem()).compatibleWith(second) && getAccessory(second.getItem()).compatibleWith(first);
     }
 
     /**
@@ -450,25 +449,13 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory.
-     * These stacks may be air, or otherwise not accessory items.
-     * Use {@link #getAccessoryStacks(Player)} as to guarantee accessory items
-     * Use {@link #getStacksFiltered(Player, Predicate)} as a generic filtered version
-     * @param player {@link Player} to get accessory inventory data from
-     * @return every {@link ItemStack} in the player's accessory inventory
-     */
-    public static NonNullList<ItemStack> getStacks(Player player) {
-        return getContainer(player).getStacks();
-    }
-
-    /**
      * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that match a given filter
      * @param player {@link Player} to get accessory inventory data from
      * @param filter A predicate filter to allow or deny elements from the returned list
      * @return every matching {@link ItemStack} in the player's accessory inventory
      */
     public static NonNullList<ItemStack> getStacksFiltered(Player player, Predicate<ItemStack> filter) {
-        NonNullList<ItemStack> stacks = getStacks(player);
+        NonNullList<ItemStack> stacks = getContainer(player).getStacks();
         NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
 
         for (ItemStack stack : stacks) {
@@ -495,7 +482,7 @@ public final class AccessoryHelper {
      * @return every {@link ItemStack} in the player's accessory inventory which are accessories
      */
     public static NonNullList<ItemStack> getAccessoryStacks(Player player) {
-        return getStacksFiltered(player, stack -> isItemAccessoryBound(stack.getItem()));
+        return getStacksFiltered(player, stack -> isItemAccessory(stack.getItem()));
     }
 
     /**
@@ -504,11 +491,11 @@ public final class AccessoryHelper {
      * @return a nullable list of {@link IAccessory} instances equipped
      */
     public static ArrayList<@Nullable IAccessory> getAccessories(Player player) {
-        NonNullList<ItemStack> stacks = getStacks(player);
+        NonNullList<ItemStack> stacks = getContainer(player).getStacks();
         ArrayList<IAccessory> accessories = new ArrayList<>(stacks.size());
 
         for (ItemStack stack : stacks) {
-            IAccessory accessory = getBoundAccessory(stack.getItem());
+            IAccessory accessory = getAccessory(stack.getItem());
 
             if (accessory != null) {
                 accessories.add(accessory);
@@ -525,8 +512,8 @@ public final class AccessoryHelper {
      * @return {@code true} if found, {@code false} otherwise
      */
     public static boolean hasAccessory(Player player, IAccessory accessory) {
-        for (ItemStack stack : getStacks(player)) {
-            if (getBoundAccessory(stack.getItem()) == accessory) {
+        for (ItemStack stack : getContainer(player).getStacks()) {
+            if (getAccessory(stack.getItem()) == accessory) {
                 return true;
             }
         }
@@ -541,7 +528,7 @@ public final class AccessoryHelper {
      * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
      */
     public static ItemStack getStack(Player player, Item item) {
-        for (ItemStack stack : getStacks(player)) {
+        for (ItemStack stack : getContainer(player).getStacks()) {
             if (stack.getItem() == item) {
                 return stack;
             }

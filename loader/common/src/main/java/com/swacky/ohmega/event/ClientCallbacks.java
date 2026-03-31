@@ -69,7 +69,7 @@ public final class ClientCallbacks {
     }
 
     public static void onItemTooltip(ItemStack stack, List<Component> tooltip) {
-        if (AccessoryHelper.isItemAccessoryBound(stack.getItem())) {
+        if (AccessoryHelper.isItemAccessory(stack.getItem())) {
             Component component = AccessoryHelper.getTypeTooltip(stack.getItem());
 
             if (component != null) {
@@ -128,7 +128,7 @@ public final class ClientCallbacks {
                     }
 
                     ItemStack stack = container.getStackInSlot(j);
-                    IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+                    IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                     if (accessory != null) {
                         // Client handling

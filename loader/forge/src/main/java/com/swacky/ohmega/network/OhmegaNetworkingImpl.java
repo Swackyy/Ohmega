@@ -137,7 +137,7 @@ public final class OhmegaNetworkingImpl {
                 if (index < AccessoryHelper.getSlotTypes().size()) {
                     AccessoryContainer container = AccessoryHelper.getContainer(context.getSender());
                     ItemStack stack = container.getStackInSlot(index);
-                    IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
+                    IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                     if (accessory != null) {
                         Player player = context.getSender();
