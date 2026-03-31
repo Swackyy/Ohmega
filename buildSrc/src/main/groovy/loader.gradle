@@ -109,7 +109,7 @@ if (rootProject.file("secrets.properties").exists()) {
                 it.archiveFile
             }
 
-            type = STABLE
+            type = modV.contains("beta") ? BETA : modV.contains("alpha") ? ALPHA : STABLE
 
             additionalFiles.from tasks.named("sourcesJar").flatMap {
                 it.archiveFile
