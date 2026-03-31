@@ -154,7 +154,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         }
 
         if (stack.isStackable()) {
-            while(!stack.isEmpty() && (reverseDirection ? i >= startIndex : i < endIndex)) {
+            while (!stack.isEmpty() && (reverseDirection ? i >= startIndex : i < endIndex)) {
                 Slot slot = slots.get(i);
                 ItemStack stack0 = slot.getItem();
 
@@ -188,7 +188,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 i = startIndex;
             }
 
-            while(reverseDirection ? i >= startIndex : i < endIndex) {
+            while (reverseDirection ? i >= startIndex : i < endIndex) {
                 Slot slot = slots.get(i);
                 ItemStack stack1 = slot.getItem();
 
