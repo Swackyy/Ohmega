@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.renderer.IAccessoryRenderer;
+import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -29,13 +30,15 @@ public class AccessoryRenderLayer<T extends LivingEntityRenderState, U extends E
         AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
         if (data != null) {
+            SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
+
             for (ItemStack stack : data.stacks()) {
                 Function<EntityRendererProvider.Context, IAccessoryRenderer> factory = AccessoryRenderers.getFactoryFor(stack.getItem());
 
                 if (factory != null) {
                     factory.apply(context).submit(new AccessoryRenderContext(
                             poseStack,
-                            collector,
+                            wrapper,
                             stack,
                             state,
                             Minecraft.getInstance().getModelManager(),

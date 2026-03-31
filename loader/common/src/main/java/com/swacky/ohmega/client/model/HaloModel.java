@@ -1,6 +1,5 @@
 package com.swacky.ohmega.client.model;
 
-import com.swacky.ohmega.api.client.model.ModelHelper;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -16,7 +15,7 @@ import net.minecraft.resources.Identifier;
 import java.util.function.Function;
 
 public class HaloModel extends Model<LivingEntityRenderState> {
-    public static final ModelLayerLocation LOCATION = ModelHelper.createLocation(Ohmega.id("halo"));
+    public static final ModelLayerLocation LOCATION = new ModelLayerLocation(Ohmega.id("halo"), "main");
 
     public HaloModel(ModelPart root, Function<Identifier, RenderType> renderType) {
         super(root, renderType);
