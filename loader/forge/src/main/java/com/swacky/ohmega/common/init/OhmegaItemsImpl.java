@@ -16,7 +16,7 @@ import java.util.function.Function;
 public final class OhmegaItemsImpl implements OhmegaItems.Service {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Ohmega.MODID);
 
-    public static final RegistryObject<Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
+    private static final RegistryObject<Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 
     private static <T extends Item> RegistryObject<T> register(String id, Function<Item.Properties, T> function, Item.Properties props) {
         return ITEMS.register(id, () -> function.apply(props.setId(ResourceKey.create(Registries.ITEM, Ohmega.id(id)))));

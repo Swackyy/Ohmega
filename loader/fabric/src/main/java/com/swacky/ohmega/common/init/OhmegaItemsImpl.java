@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public final class OhmegaItemsImpl implements OhmegaItems.Service {
-    public static final Item ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
+    private static final Item ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 
     private static <T extends Item> T register(String id, Function<Item.Properties, T> function, Item.Properties props) {
         return Registry.register(BuiltInRegistries.ITEM, Ohmega.id(id), function.apply(props.setId(ResourceKey.create(Registries.ITEM, Ohmega.id(id)))));

@@ -12,9 +12,11 @@ import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
+import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
-import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -76,19 +78,33 @@ public final class OhmegaNetworkingImpl {
             });
         }
 
-        public static void handleUseAccessory(UseAccessoryPacket packet, IPayloadContext context) {
+        public static void handleSetHidden(SetHiddenPacket packet, IPayloadContext context) {
             context.enqueueWork(() -> {
-                if (packet.index() < AccessoryHelper.getSlotTypes().size()) {
+                if (OhmegaConfig.Server.allowHideAccessories() && context.player() instanceof ServerPlayer player) {
+                    int index = packet.index();
+                    boolean value = packet.value();
+
+                    AccessoryHelper.getContainer(player).setHidden(index, value);
+
+                    for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
+                        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
+                    }
+                }
+            });
+        }
+
+        public static void handleUseAccessory(UseAccessoryPacket packet, IPayloadContext context) {
+            int index = packet.index();
+
+            context.enqueueWork(() -> {
+                if (index < AccessoryHelper.getSlotTypes().size()) {
                     Player player = context.player();
                     AccessoryContainer container = AccessoryHelper.getContainer(player);
-                    IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.index()).getItem());
+                    ItemStack stack = container.getStackInSlot(index);
+                    IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
 
-                    if (accessory != null) {
-                        ItemStack stack = container.getStackInSlot(packet.index());
-
-                        if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
-                            accessory.onUse(player, stack);
-                        }
+                    if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
+                        accessory.onUse(player, stack);
                     }
                 }
             });
@@ -101,34 +117,47 @@ public final class OhmegaNetworkingImpl {
             PacketDistributor.sendToPlayer(receiver, packet);
         }
 
-        public static void handleSyncAccessorySlots(SyncAccessorySlotsPacket packet, IPayloadContext context) {
-            if (packet.indexes().length == 0) {
+        public static void handleSyncHidden(SyncHiddenPacket packet, IPayloadContext context) {
+            int[] indexes = packet.indexes();
+
+            if (indexes.length == 0) {
                 return;
             }
 
             context.enqueueWork(() -> {
                 ClientLevel level = Minecraft.getInstance().level;
 
-                if (level != null) {
-                    if (level.getEntity(packet.playerId()) instanceof Player player) {
-                        AccessoryContainer container = AccessoryHelper.getContainer(player);
+                if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
+                    AccessoryContainer container = AccessoryHelper.getContainer(player);
 
-                        if (packet.forceOnEquip()) {
-                            for (int i = 0; i < packet.indexes().length; i++) {
-                                ItemStack stack = packet.stacks().get(i);
-                                int index = packet.indexes()[i];
-
-                                container.setStackInSlot(player, index, stack, EquipContext.GENERIC, true);
-                            }
-                        } else {
-                            container.syncSlots(player, packet.indexes(), packet.stacks());
-                        }
+                    for (int i = 0; i < indexes.length; i++) {
+                        container.setHidden(indexes[i], packet.values()[i]);
                     }
                 }
             });
         }
 
-        public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, IPayloadContext context) {
+        public static void handleSyncStacks(SyncStacksPacket packet, IPayloadContext context) {
+            int[] indexes = packet.indexes();
+
+            if (indexes.length == 0) {
+                return;
+            }
+
+            context.enqueueWork(() -> {
+                ClientLevel level = Minecraft.getInstance().level;
+
+                if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
+                    AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+                    for (int i = 0; i < indexes.length; i++) {
+                        container.setStackInSlot(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, packet.forceOnEquip());
+                    }
+                }
+            });
+        }
+
+        public static void handleSyncTypes(SyncTypesPacket packet, IPayloadContext context) {
             context.enqueueWork(() -> {
                 AccessoryTypeManager.apply(packet.types);
                 AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfig.Server.isLoaded());

@@ -8,7 +8,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenus;
-import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -49,11 +48,7 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
-
-            if (OhmegaConfig.Client.isLoaded()) {
-                ClientCallbacks.onServerConfigReload(() -> Minecraft.getInstance().options.load(true));
-            }
+            ClientCallbacks.onConfigReload(() -> Minecraft.getInstance().options.load(true));
         }
     }
 

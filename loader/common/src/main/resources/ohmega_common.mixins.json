@@ -7,7 +7,6 @@
     "ServerPlayerGameModeMixin"
   ],
   "client": [
-    "client.LivingEntityRendererMixin",
     "client.MultiPlayerGameModeMixin"
   ],
   "minVersion": "0.8.5"

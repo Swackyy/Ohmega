@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.MenuType;
 import org.jspecify.annotations.NonNull;
 
 public final class OhmegaMenusImpl implements OhmegaMenus.Service {
-    public static final MenuType<@NonNull AccessoryInventoryMenu> ACCESSORY_INVENTORY = register("accessory_menu",
+    private static final MenuType<@NonNull AccessoryInventoryMenu> ACCESSORY_INVENTORY = register("accessory_menu",
             new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));
 
     private static <T extends AbstractContainerMenu> MenuType<@NonNull T> register(String id, MenuType<@NonNull T> object) {

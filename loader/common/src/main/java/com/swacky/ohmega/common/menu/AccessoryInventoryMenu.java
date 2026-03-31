@@ -146,91 +146,163 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         return slot.container != craftResult && super.canTakeItemForPickAll(stack, slot);
     }
 
+    private ItemStack tryMoveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+        int i = startIndex;
+
+        if (reverseDirection) {
+            i = endIndex - 1;
+        }
+
+        if (stack.isStackable()) {
+            while(!stack.isEmpty() && (reverseDirection ? i >= startIndex : i < endIndex)) {
+                Slot slot = slots.get(i);
+                ItemStack stack0 = slot.getItem();
+
+                if (!stack0.isEmpty() && ItemStack.isSameItemSameComponents(stack, stack0)) {
+                    int j = stack0.getCount() + stack.getCount();
+                    if (j <= stack.getMaxStackSize()) {
+                        stack.setCount(0);
+                        stack0.setCount(j);
+                        slot.setChanged();
+                    } else if (stack0.getCount() < stack.getMaxStackSize()) {
+                        stack.shrink(stack.getMaxStackSize() - stack0.getCount());
+                        stack0.setCount(stack.getMaxStackSize());
+                        slot.setChanged();
+                    }
+                }
+
+                if (reverseDirection) {
+                    i--;
+                } else {
+                    i++;
+                }
+            }
+        }
+
+        ItemStack stack0 = ItemStack.EMPTY;
+
+        if (!stack.isEmpty()) {
+            if (reverseDirection) {
+                i = endIndex - 1;
+            } else {
+                i = startIndex;
+            }
+
+            while(reverseDirection ? i >= startIndex : i < endIndex) {
+                Slot slot = slots.get(i);
+                ItemStack stack1 = slot.getItem();
+
+                if (stack1.isEmpty() && slot.mayPlace(stack)) {
+                    if (stack.getCount() > slot.getMaxStackSize()) {
+                        stack0 = stack.split(slot.getMaxStackSize());
+                    } else {
+                        stack0 = stack.split(stack.getCount());
+                    }
+
+                    slot.set(stack0);
+                    slot.setChanged();
+                    break;
+                }
+
+                if (reverseDirection) {
+                    i--;
+                } else {
+                    i++;
+                }
+            }
+        }
+
+        return stack0;
+    }
+
     @Override
     public @NonNull ItemStack quickMoveStack(@NonNull Player player, int index) {
         Slot slot = slots.get(index);
-        ItemStack stack = ItemStack.EMPTY;
 
         if (slot.hasItem()) {
-            ItemStack stack0 = slot.getItem();
-            stack = stack0.copy();
+            ItemStack stack = slot.getItem();
+            ItemStack stack0 = stack.copy();
 
             if (index == 0) {
-                if (!moveItemStackTo(stack0, 9, 45, true)) { // Crafting result -> inventory
+                if (!moveItemStackTo(stack, 9, 45, true)) { // Crafting result -> inventory
                     return ItemStack.EMPTY;
                 }
 
-                slot.onQuickCraft(stack0, stack);
+                slot.onQuickCraft(stack, stack0);
             } else if (index >= 1 && index < 5) {
-                if (!moveItemStackTo(stack0, 9, 45, false)) { // Crafting grid -> inventory
+                if (!moveItemStackTo(stack, 9, 45, false)) { // Crafting grid -> inventory
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 5 && index < 9) {
-                if (!moveItemStackTo(stack0, 9, 45, false)) { // Armour -> inventory
+                if (!moveItemStackTo(stack, 9, 45, false)) { // Armour -> inventory
                     return ItemStack.EMPTY;
                 }
             } else {
-                Item item = stack0.getItem();
+                Item item = stack.getItem();
                 AccessoryType type = AccessoryHelper.getType(item);
                 int openIndex = AccessoryHelper.getFirstOpenSlot(player, type);
                 IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
+                Slot slot0 = getSlot(46 + openIndex);
 
-                if (accessory != null && index > 8 && index < 45 && openIndex != -1 && getSlot(46 + openIndex).mayPlace(stack)) { // Inventory -> accessory
-                    stack0.consume(1, player);
-                    stack.setCount(1);
-                    getSlot(46 + openIndex).set(stack);
+                if (accessory != null && index > 8 && index < 45 && openIndex != -1 && slot0.mayPlace(stack0)) { // Inventory -> accessory
+                    stack.consume(1, player);
+                    stack0.setCount(1);
+                    slot0.set(stack0);
                 } else {
                     if (index > 45 && index < 52) {
-                        if (moveItemStackTo(stack0, 9, 45, false)) { // Accessory -> inventory
-                            AccessoryHelper.getContainer(player).doUnequip(player, stack);
+                        ItemStack stack1 = tryMoveItemStackTo(stack, 9, 45, false);
+
+                        if (!stack1.isEmpty()) { // Accessory -> inventory
+                            AccessoryHelper.getContainer(player).doUnequip(player, stack1);
+                            slot.setChanged();
                             return ItemStack.EMPTY;
                         }
                     } else {
-                        EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(stack);
+                        EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(stack0);
 
-                        if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.isEquippableInSlot(stack0, equipmentSlot)) {
+                        if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !this.slots.get(8 - equipmentSlot.getIndex()).hasItem() && player.isEquippableInSlot(stack, equipmentSlot)) {
                             int i = 8 - equipmentSlot.getIndex();
 
-                            if (!moveItemStackTo(stack0, i, i + 1, false)) { // Item -> armour
+                            if (!moveItemStackTo(stack, i, i + 1, false)) { // Item -> armour
                                 return ItemStack.EMPTY;
                             }
                         } else if (equipmentSlot == EquipmentSlot.OFFHAND && !slots.get(45).hasItem()) {
-                            if (!moveItemStackTo(stack0, 45, 46, false)) { // Item -> offhand
+                            if (!moveItemStackTo(stack, 45, 46, false)) { // Item -> offhand
                                 return ItemStack.EMPTY;
                             }
                         } else if (index >= 9 && index < 36) {
-                            if (!moveItemStackTo(stack0, 36, 45, false)) { // Extended inventory -> higher extended inventory
+                            if (!moveItemStackTo(stack, 36, 45, false)) { // Extended inventory -> higher extended inventory
                                 return ItemStack.EMPTY;
                             }
                         } else if (index > 35 && index < 45) {
-                            if (!moveItemStackTo(stack0, 9, 36, false)) { // Hotbar -> extended inventory
+                            if (!moveItemStackTo(stack, 9, 36, false)) { // Hotbar -> extended inventory
                                 return ItemStack.EMPTY;
                             }
-                        } else if (!moveItemStackTo(stack0, 9, 45, false)) { // Etc -> inventory
+                        } else if (!moveItemStackTo(stack, 9, 45, false)) { // Etc -> inventory
                             return ItemStack.EMPTY;
                         }
                     }
                 }
             }
 
-            if (stack0.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY, stack);
+            if (stack.isEmpty()) {
+                slot.setByPlayer(ItemStack.EMPTY, stack0);
             } else {
                 slot.setChanged();
             }
 
-            if (stack0.getCount() == stack.getCount()) {
+            if (stack.getCount() == stack0.getCount()) {
                 return ItemStack.EMPTY;
             }
 
-            slot.onTake(player, stack0);
+            slot.onTake(player, stack);
 
             if (index == 0) {
-                player.drop(stack0, false);
+                player.drop(stack, false);
             }
         }
 
-        return stack;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -246,6 +318,10 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
         setCarried(carried);
         this.stateId = stateId;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     private static class OffhandSlot extends Slot {

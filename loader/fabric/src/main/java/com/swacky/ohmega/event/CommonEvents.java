@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -18,10 +18,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 
-import java.util.Collections;
-
 public final class CommonEvents {
-    private static boolean bootstrapped;
+    private static boolean bootstrapped = false;
 
     public static void bootstrap() {
         if (!bootstrapped) {
@@ -29,11 +27,12 @@ public final class CommonEvents {
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
+            ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
             ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onServerConfigure);
         } else {
-            throw new RuntimeException("Cannot bootstrap " + CommonEvents.class.getName() + " multiple times");
+            throw new IllegalStateException("Attempted to bootstrap " + CommonEvents.class.getName() + " multiple times");
         }
     }
 
@@ -43,8 +42,12 @@ public final class CommonEvents {
         }
     }
 
-    public static void onPlayerChangeDimension(ServerPlayer player, ServerLevel from, ServerLevel to) {
-        AccessoryHelper.syncAllSlots(player, Collections.singleton(player));
+    private static void onPlayerChangeDimension(ServerPlayer player, ServerLevel from, ServerLevel to) {
+        CommonCallbacks.onPlayerChangeDimension(player);
+    }
+
+    private static void onPlayerJoin(ServerPlayer player) {
+        AccessoryHelper.getContainer(player).onAttach(player);
     }
 
     private static void onPlayerTrack(Entity entity, ServerPlayer tracker) {
@@ -58,6 +61,6 @@ public final class CommonEvents {
     }
 
     private static void onServerConfigure(ServerConfigurationPacketListenerImpl handler, MinecraftServer server) {
-        handler.send(new ClientboundCustomPayloadPacket(new SyncAccessoryTypesPacket()));
+        handler.send(new ClientboundCustomPayloadPacket(new SyncTypesPacket()));
     }
 }

@@ -8,9 +8,9 @@
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
-    "client.Fabric_LivingEntityRendererMixin",
     "client.KeyBindsList$KeyEntryMixin",
-    "client.KeyboardHandlerMixin"
+    "client.KeyboardHandlerMixin",
+    "client.LivingEntityRendererMixin"
   ],
   "minVersion": "0.8.5"
 }

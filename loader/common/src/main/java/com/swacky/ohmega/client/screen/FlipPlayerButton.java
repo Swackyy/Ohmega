@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
-public class FlipPlayerButton extends AbstractButton {
+public final class FlipPlayerButton extends AbstractButton {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/flip_player_button.png");
 
     private final AccessoryInventoryScreen screen;

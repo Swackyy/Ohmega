@@ -1,10 +1,12 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
+// todo: move handlers to here
+// todo: will probably need to add entityIds to a lot of packets for allowing entities to have accessory inventories
+// todo: reorder packet registration on forge and neoforge to be alphabetical
 public final class OhmegaNetworking {
     public static void bootstrap() {
         C2S.bootstrap();

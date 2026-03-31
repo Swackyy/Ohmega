@@ -12,15 +12,12 @@ import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
-import com.swacky.ohmega.network.OhmegaNetworking;
-import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,10 +29,9 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
@@ -186,9 +182,9 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the known index index of an accessory
+     * Retrieves the known index of an accessory
      * @param stack {@link ItemStack} to seek data from
-     * @return the index index when equipped, or {@code -1} when not equipped
+     * @return the index when equipped, or {@code -1} when not equipped
      */
     public static int getSlot(ItemStack stack) {
         Integer slot = stack.get(OhmegaDataComponents.getSlotIndex());
@@ -202,7 +198,7 @@ public final class AccessoryHelper {
 
     /**
      * This is handled internally, you most likely won't have to use this
-     * @param stack {@link ItemStack} to set index index of
+     * @param stack {@link ItemStack} to set index of
      * @param index the index to set to
      */
     public static void setSlot(ItemStack stack, int index) {
@@ -213,7 +209,7 @@ public final class AccessoryHelper {
      * This is handled internally, you most likely won't have to use this
      * <p>
      * Sets the index of the index to {@code -1}
-     * @param stack {@link ItemStack} to set index index of
+     * @param stack {@link ItemStack} to set index of
      */
     public static void setNoSlot(ItemStack stack) {
         setSlot(stack, -1);
@@ -264,7 +260,8 @@ public final class AccessoryHelper {
      * @return a list of {@link AccessoryType}s matching indexes of accessory indexes
      */
     public static ImmutableList<AccessoryType> getSlotTypes() {
-        int size = OhmegaConfig.Server.slotTypes().size();
+        List<String> slotTypes = OhmegaConfig.Server.slotTypes();
+        int size = slotTypes.size();
         ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
 
         if (OhmegaConfig.Server.disableAccessoryTypes()) {
@@ -275,7 +272,7 @@ public final class AccessoryHelper {
             return builder.build();
         }
 
-        for (String id : OhmegaConfig.Server.slotTypes()) {
+        for (String id : slotTypes) {
             builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
         }
 
@@ -387,7 +384,7 @@ public final class AccessoryHelper {
         AccessoryContainer container = getContainer(player);
         ImmutableList<AccessoryType> slotTypes = getSlotTypes();
 
-        for (int i = 0; i < container.getSize(); i++) {
+        for (int i = 0; i < container.size(); i++) {
             if (slotTypes.get(i) == type && container.getStackInSlot(i).isEmpty()) {
                 return i;
             }
@@ -455,8 +452,8 @@ public final class AccessoryHelper {
     /**
      * Retrieve all of the {@link ItemStack}s in a player's accessory inventory.
      * These stacks may be air, or otherwise not accessory items.
-     * Use {@link #getAccessoryStacks(Player)} as a filtered version guaranteeing accessory items
-     * Use {@link #getStacksFiltered(Player)} as a filtered version guaranteeing non-empty item stacks
+     * Use {@link #getAccessoryStacks(Player)} as to guarantee accessory items
+     * Use {@link #getStacksFiltered(Player, Predicate)} as a generic filtered version
      * @param player {@link Player} to get accessory inventory data from
      * @return every {@link ItemStack} in the player's accessory inventory
      */
@@ -465,64 +462,44 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that are not empty
-     * These stacks may be air, or otherwise not accessory items. Use {@link #getAccessoryStacks(Player)} as a filtered version
+     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that match a given filter
      * @param player {@link Player} to get accessory inventory data from
-     * @return every {@link ItemStack} in the player's accessory inventory
+     * @param filter A predicate filter to allow or deny elements from the returned list
+     * @return every matching {@link ItemStack} in the player's accessory inventory
      */
-    public static NonNullList<ItemStack> getStacksFiltered(Player player) {
+    public static NonNullList<ItemStack> getStacksFiltered(Player player, Predicate<ItemStack> filter) {
         NonNullList<ItemStack> stacks = getStacks(player);
         NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
 
         for (ItemStack stack : stacks) {
-            if (!stack.isEmpty()) {
+            if (filter.test(stack)) {
                 filteredStacks.add(stack);
             }
         }
 
         return filteredStacks;
+    }
+
+    /**
+     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that are not empty.
+     * @param player {@link Player} to get accessory inventory data from
+     * @return every non-empty {@link ItemStack} in the player's accessory inventory
+     */
+    public static NonNullList<ItemStack> getStacksNoEmpty(Player player) {
+        return getStacksFiltered(player, stack -> !stack.isEmpty());
     }
 
     /**
      * Retrieve all of the {@link ItemStack}s in a player's accessory inventory which are accessories.
-     * If you want to get a list including non-accessory items, use {@link #getStacks(Player)} or {@link #getStacksFiltered(Player)}
      * @param player {@link Player} to get accessory inventory data from
      * @return every {@link ItemStack} in the player's accessory inventory which are accessories
      */
     public static NonNullList<ItemStack> getAccessoryStacks(Player player) {
-        NonNullList<ItemStack> stacks = getStacks(player);
-        NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
-
-        for (ItemStack stack : stacks) {
-            if (isItemAccessoryBound(stack.getItem())) {
-                filteredStacks.add(stack);
-            }
-        }
-
-        return filteredStacks;
+        return getStacksFiltered(player, stack -> isItemAccessoryBound(stack.getItem()));
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory which are accessories and not empty.
-     * If you want to get a list including non-accessory items, use {@link #getStacks(Player)} or {@link #getStacksFiltered(Player)}
-     * @param player {@link Player} to get accessory inventory data from
-     * @return every {@link ItemStack} in the player's accessory inventory which are accessories
-     */
-    public static NonNullList<ItemStack> getAccessoryStacksFiltered(Player player) {
-        NonNullList<ItemStack> stacks = getStacks(player);
-        NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
-
-        for (ItemStack stack : stacks) {
-            if (!stack.isEmpty() && isItemAccessoryBound(stack.getItem())) {
-                filteredStacks.add(stack);
-            }
-        }
-
-        return filteredStacks;
-    }
-
-    /**
-     * Retrieves all accessories worn by a player
+     * Retrieves all accessories worn by a player in {@link IAccessory} form
      * @param player {@link Player} to get accessory inventory data from
      * @return a nullable list of {@link IAccessory} instances equipped
      */
@@ -558,49 +535,19 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Find the first {@link ItemStack} of a certain accessory type
+     * Find the first {@link ItemStack} of a certain item
      * @param player {@link Player} to get accessory inventory data from
-     * @param accessory to find
-     * @return the found accessory {@link ItemStack}, or {@link ItemStack#EMPTY} if none is found
+     * @param item the item to find
+     * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
      */
-    public static ItemStack getAccessoryStack(Player player, IAccessory accessory) {
+    public static ItemStack getStack(Player player, Item item) {
         for (ItemStack stack : getStacks(player)) {
-            if (getBoundAccessory(stack.getItem()) == accessory) {
+            if (stack.getItem() == item) {
                 return stack;
             }
         }
 
         return ItemStack.EMPTY;
-    }
-
-    /**
-     * Synchronises the given indexes' held items to the given {@link Player}s
-     * @param player {@link Player} who owns the accessory inventory to synchronise
-     * @param slots an array of indexes to synchronise
-     * @param stacks a list of {@link ItemStack}s to set the indexes to, matches the indexes provided by the 'indexes' parameter
-     * @param receivers {@link Player}s to send the synchronisation packets to
-     */
-    public static void syncSlots(ServerPlayer player, int[] slots, List<ItemStack> stacks, Collection<ServerPlayer> receivers) {
-        for (ServerPlayer receiver : receivers) {
-            OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(player.getId(), slots, stacks, false));
-        }
-    }
-
-    /**
-     * Synchronises all indexes' held items to the given {@link Player}s
-     * @param player {@link Player} who owns the accessory inventory to synchronise
-     * @param receivers {@link Player}s to send the synchronisation packets to
-     */
-    public static void syncAllSlots(ServerPlayer player, Set<ServerPlayer> receivers) {
-        NonNullList<ItemStack> stacks = getStacks(player);
-        int size = stacks.size();
-        int[] slots = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            slots[i] = i;
-        }
-
-        syncSlots(player, slots, stacks, receivers);
     }
 
     public interface Service {

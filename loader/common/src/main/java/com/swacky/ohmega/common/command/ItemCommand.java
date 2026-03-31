@@ -56,8 +56,8 @@ public class ItemCommand {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
         int index = IntegerArgumentType.getInteger(context, ARGUMENT_INDEX);
 
-        // todo:
         ItemStack stack;
+        // todo
         if (target instanceof Player player) {
             stack = AccessoryHelper.getContainer(player).getStackInSlot(index);
         } else return 0;

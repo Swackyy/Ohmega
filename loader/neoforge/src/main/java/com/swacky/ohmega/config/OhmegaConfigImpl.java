@@ -11,14 +11,14 @@ public final class OhmegaConfigImpl {
     public static final class Client implements OhmegaConfig.Client.Service {
         private static ModConfigSpec spec;
 
-        public ModConfigSpec.BooleanValue compatibilityMode;
-        public ModConfigSpec.EnumValue<@NonNull ButtonStyle> buttonStyle;
-        public ModConfigSpec.EnumValue<@NonNull Side> side;
-        public ModConfigSpec.BooleanValue showHoverTooltip;
-        public ModConfigSpec.IntValue maxColumns;
-        public ModConfigSpec.IntValue maxColumnSlots;
-        public ModConfigSpec.IntValue maxColumnRenderSlots;
-        public ModConfigSpec.BooleanValue showTranslationToast;
+        private final ModConfigSpec.BooleanValue compatibilityMode;
+        private final ModConfigSpec.EnumValue<@NonNull ButtonStyle> buttonStyle;
+        private final ModConfigSpec.EnumValue<@NonNull Side> side;
+        private final ModConfigSpec.BooleanValue showHoverTooltip;
+        private final ModConfigSpec.IntValue maxColumns;
+        private final ModConfigSpec.IntValue maxColumnSlots;
+        private final ModConfigSpec.IntValue maxColumnRenderSlots;
+        private final ModConfigSpec.BooleanValue showTranslationToast;
 
         public Client() {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -109,10 +109,11 @@ public final class OhmegaConfigImpl {
     public static final class Server implements OhmegaConfig.Server.Service {
         private static ModConfigSpec spec;
 
-        public ModConfigSpec.ConfigValue<List<? extends String>> slotTypes;
-        public ModConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
-        public ModConfigSpec.EnumValue<@NonNull KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
-        public ModConfigSpec.BooleanValue disableAccessoryTypes;
+        private final ModConfigSpec.ConfigValue<List<? extends String>> slotTypes;
+        private final ModConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
+        private final ModConfigSpec.EnumValue<@NonNull KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
+        private final ModConfigSpec.BooleanValue disableAccessoryTypes;
+        private final ModConfigSpec.BooleanValue allowHideAccessories;
 
         public Server() {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -129,6 +130,9 @@ public final class OhmegaConfigImpl {
             disableAccessoryTypes = builder
                     .comment(DISABLE_ACCESSORY_TYPES_DESCRIPTION)
                     .define(DISABLE_ACCESSORY_TYPES_KEY, DISABLE_ACCESSORY_TYPES_DEFAULT);
+            allowHideAccessories = builder
+                    .comment(ALLOW_HIDE_ACCESSORIES_DESCRIPTION)
+                    .define(ALLOW_HIDE_ACCESSORIES_KEY, ALLOW_HIDE_ACCESSORIES_DEFAULT);
             Server.spec = builder.build();
         }
 
@@ -154,6 +158,11 @@ public final class OhmegaConfigImpl {
         @Override
         public boolean disableAccessoryTypes() {
             return disableAccessoryTypes.get();
+        }
+
+        @Override
+        public boolean allowHideAccessories() {
+            return allowHideAccessories.get();
         }
 
         @Override

@@ -11,6 +11,7 @@ import java.util.ServiceLoader;
 public final class OhmegaClient {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static boolean bootstrapped = false;
     private static int NUM_SERVICES = 0;
 
     public static <T> T loadService(Class<T> clazz) {
@@ -24,10 +25,15 @@ public final class OhmegaClient {
     }
 
     public static void bootstrap() {
-        // Bootstrap
-        AccessoryRenderStateData.bootstrap();
-        OhmegaBinds.bootstrap();
-        OhmegaConfig.Client.bootstrap();
-        LOGGER.info("Successfully loaded {} client services", NUM_SERVICES);
+        if (!bootstrapped) {
+            AccessoryRenderStateData.bootstrap();
+            OhmegaBinds.bootstrap();
+            OhmegaConfig.Client.bootstrap();
+            LOGGER.info("Successfully loaded {} client services", NUM_SERVICES);
+
+            bootstrapped = true;
+        } else {
+            throw new IllegalStateException("Attempted to bootstrap " + OhmegaClient.class.getName() + " multiple times");
+        }
     }
 }

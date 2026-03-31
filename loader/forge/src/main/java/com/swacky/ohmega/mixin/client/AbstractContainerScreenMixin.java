@@ -23,7 +23,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/KeyMapping;isActiveAndMatches(Lcom/mojang/blaze3d/platform/InputConstants$Key;)Z"))
-    public boolean keyPressed(KeyMapping instance, InputConstants.Key key) {
+    private boolean keyPressed(KeyMapping instance, InputConstants.Key key) {
         return minecraft.options.keyInventory.isActiveAndMatches(key) || OhmegaBinds.OPEN_ACC_INV.isActiveAndMatches(key);
     }
 }

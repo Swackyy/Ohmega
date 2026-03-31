@@ -18,14 +18,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-// todo: Add this to other loaders to avoid using <loaderName>_LivingEntityRendererMixin
 @Mixin(LivingEntityRenderer.class)
 abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends LivingEntityRenderState, V extends EntityModel<? super U>> extends EntityRenderer<T, U> implements RenderLayerParent<U, V> {
     @Shadow
     @Final
     protected List<RenderLayer<U, V>> layers;
 
-    protected LivingEntityRendererMixin(EntityRendererProvider.Context context) {
+    private LivingEntityRendererMixin(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -33,7 +32,7 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
             method = "<init>",
             at = @At(
                     value = "TAIL"))
-    public void init(EntityRendererProvider.Context context, V model, float shadow, CallbackInfo ci) {
+    private void init(EntityRendererProvider.Context context, V model, float shadow, CallbackInfo ci) {
         layers.add(new AccessoryRenderLayer<>(context, this));
     }
 }

@@ -40,12 +40,12 @@ public class ItemsCommand {
     private static int doPrint(CommandContext<CommandSourceStack> context, Entity target, boolean includeAir) {
         NonNullList<ItemStack> stacks;
 
-        // todo:
+        // todo
         if (target instanceof Player player) {
             if (includeAir) {
                 stacks = AccessoryHelper.getStacks(player);
             } else {
-                stacks = AccessoryHelper.getStacksFiltered(player);
+                stacks = AccessoryHelper.getStacksNoEmpty(player);
             }
         } else return 0;
 

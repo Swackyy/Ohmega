@@ -2,7 +2,6 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -22,7 +21,7 @@ import net.neoforged.fml.config.ModConfig;
 import java.util.List;
 
 public final class ClientEvents {
-    private static boolean bootstrapped;
+    private static boolean bootstrapped = false;
 
     public static void bootstrap() {
         if (!bootstrapped) {
@@ -35,7 +34,7 @@ public final class ClientEvents {
             ClientPlayConnectionEvents.JOIN.register(ClientEvents::onJoinWorld);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
         } else {
-            throw new RuntimeException("Cannot bootstrap " + ClientEvents.class.getName() + " multiple times");
+            throw new IllegalStateException("Attempted to bootstrap " + ClientEvents.class.getName() + " multiple times");
         }
     }
 
@@ -51,11 +50,7 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
-
-            if (OhmegaConfig.Client.isLoaded()) {
-                ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
-            }
+            ClientCallbacks.onConfigReload(Minecraft.getInstance().options::load);
         }
     }
 

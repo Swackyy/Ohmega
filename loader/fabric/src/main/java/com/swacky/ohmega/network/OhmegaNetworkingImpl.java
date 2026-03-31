@@ -13,15 +13,15 @@ import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
-import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
-import com.swacky.ohmega.network.common.SetVisibilityPacket;
+import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.C2S.SetHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -58,27 +58,35 @@ public final class OhmegaNetworkingImpl {
         @SuppressWarnings("unused")
         public static void handleResizeContainer(ResizeContainerPacket packet, ServerPlayNetworking.Context context) {
             ServerPlayer player = context.player();
+
             AccessoryHelper.getContainer(player).reloadCfg(player);
         }
 
-        public static void handleSetVisibility(SetVisibilityPacket packet, ServerPlayNetworking.Context context) {
-            ServerPlayer player = context.player();
+        public static void handleSetHidden(SetHiddenPacket packet, ServerPlayNetworking.Context context) {
+            if (OhmegaConfig.Server.allowHideAccessories()) {
+                ServerPlayer player = context.player();
+                int index = packet.index();
+                boolean value = packet.value();
 
-            AccessoryHelper.getContainer(player).setVisibility(player, packet.index(), packet.value());
+                AccessoryHelper.getContainer(player).setHidden(index, value);
+
+                for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
+                    OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
+                }
+            }
         }
 
         public static void handleUseAccessory(UseAccessoryPacket packet, ServerPlayNetworking.Context context) {
-            if (packet.index() < AccessoryHelper.getSlotTypes().size()) {
+            int index = packet.index();
+
+            if (index < AccessoryHelper.getSlotTypes().size()) {
                 ServerPlayer player = context.player();
                 AccessoryContainer container = AccessoryHelper.getContainer(player);
-                IAccessory accessory = AccessoryHelper.getBoundAccessory(container.getStackInSlot(packet.index()).getItem());
+                ItemStack stack = container.getStackInSlot(index);
+                IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
 
-                if (accessory != null) {
-                    ItemStack stack = container.getStackInSlot(packet.index());
-
-                    if (!OhmegaHooks.accessoryUseEvent(player, stack)) {
-                        accessory.onUse(player, stack);
-                    }
+                if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
+                    accessory.onUse(player, stack);
                 }
             }
         }
@@ -90,31 +98,44 @@ public final class OhmegaNetworkingImpl {
             ServerPlayNetworking.send(receiver, packet);
         }
 
-        public static void handleSetVisibility(SetVisibilityPacket packet, ClientPlayNetworking.Context context) {
-            LocalPlayer player = context.player();
+        public static void handleSyncHidden(SyncHiddenPacket packet, ClientPlayNetworking.Context context) {
+            int[] indexes = packet.indexes();
 
-            AccessoryHelper.getContainer(player).setVisibility(player, packet.index(), packet.value());
-        }
+            if (indexes.length == 0) {
+                return;
+            }
 
-        public static void handleSyncAccessorySlots(SyncAccessorySlotsPacket packet, ClientPlayNetworking.Context context) {
             ClientLevel level = context.client().level;
 
-            if (level != null) {
-                if (level.getEntity(packet.playerId()) instanceof Player player) {
-                    AccessoryContainer container = AccessoryHelper.getContainer(player);
+            if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
+                AccessoryContainer container = AccessoryHelper.getContainer(player);
 
-                    for (int i = 0; i < packet.indexes().length; i++) {
-                        ItemStack stack = packet.stacks().get(i);
-                        int index = packet.indexes()[i];
+                for (int i = 0; i < indexes.length; i++) {
+                    container.setHidden(indexes[i], packet.values()[i]);
+                }
+            }
+        }
 
-                        container.setStackInSlot(player, index, stack, EquipContext.GENERIC, true, packet.forceOnEquip());
-                    }
+        public static void handleSyncStacks(SyncStacksPacket packet, ClientPlayNetworking.Context context) {
+            int[] indexes = packet.indexes();
+
+            if (indexes.length == 0) {
+                return;
+            }
+
+            ClientLevel level = context.client().level;
+
+            if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
+                AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+                for (int i = 0; i < indexes.length; i++) {
+                    container.setStackInSlot(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
                 }
             }
         }
 
         @SuppressWarnings("unused")
-        public static void handleSyncAccessoryTypes(SyncAccessoryTypesPacket packet, ClientConfigurationNetworking.Context context) {
+        public static void handleSyncTypes(SyncTypesPacket packet, ClientConfigurationNetworking.Context context) {
             AccessoryTypeManager.apply(packet.types);
             AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfig.Server.isLoaded());
         }

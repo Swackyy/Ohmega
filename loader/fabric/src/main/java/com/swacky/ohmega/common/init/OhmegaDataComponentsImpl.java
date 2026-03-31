@@ -6,11 +6,8 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 public final class OhmegaDataComponentsImpl implements  OhmegaDataComponents.Service {
-    public static final DataComponentType<Boolean> ACTIVE = register(
-            ACTIVE_KEY, OhmegaDataComponents.createActive());
-
-    public static final DataComponentType<Integer> SLOT_INDEX = register(
-            SLOT_INDEX_KEY, OhmegaDataComponents.createSlotIndex());
+    private static final DataComponentType<Boolean> ACTIVE = register(ACTIVE_KEY, OhmegaDataComponents.createActive());
+    private static final DataComponentType<Integer> SLOT_INDEX = register(SLOT_INDEX_KEY, OhmegaDataComponents.createSlotIndex());
 
     private static <T> DataComponentType<T> register(String id, DataComponentType<T> object) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Ohmega.id(id), object);

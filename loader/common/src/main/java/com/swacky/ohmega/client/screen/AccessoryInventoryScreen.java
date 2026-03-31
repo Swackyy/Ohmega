@@ -59,7 +59,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             int slotsCreatedCurrentColumn = 0;
 
             for (int j = 0; true; j++) {
-                addRenderableWidget(new VisibilityButton(xOffsSlots + 1 + 18 * (i + 1), topPos + 19 + j * 18));
+                addRenderableWidget(new VisibilityButton(menu.getPlayer(), j + i * mostSlotsPerColumn, xOffsSlots + 18 * (i + 1) + 1, topPos + 24 + j * 18 - 2));
 
                 index++;
 

@@ -13,7 +13,6 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenus;
-import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -54,11 +53,7 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
-
-            if (OhmegaConfig.Client.isLoaded()) {
-                ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
-            }
+            ClientCallbacks.onConfigReload(Minecraft.getInstance().options::load);
         }
     }
 
@@ -108,9 +103,9 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onRegisterRenderStateModifiers(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<LivingEntityRenderer<?, ?, ?>>() {}, (entity, state) -> {
-            // todo:
+            // todo
             if (entity instanceof AbstractClientPlayer player) {
-                state.setRenderData(AccessoryRenderStateDataImpl.KEY, new AccessoryRenderStateData(AccessoryHelper.getStacksFiltered(player)));
+                state.setRenderData(AccessoryRenderStateDataImpl.KEY, new AccessoryRenderStateData(AccessoryHelper.getStacksNoEmpty(player)));
             }
         });
     }

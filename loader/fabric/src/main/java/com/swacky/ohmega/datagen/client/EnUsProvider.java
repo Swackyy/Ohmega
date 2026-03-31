@@ -137,5 +137,9 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Disable Accessory Types",
                 OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
+                "Allow Hide Accessories",
+                OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_DESCRIPTION);
     }
 }

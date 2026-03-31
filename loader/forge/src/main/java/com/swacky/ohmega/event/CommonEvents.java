@@ -7,7 +7,7 @@ import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -32,8 +32,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.config.SimpleConfigurationTask;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collections;
-
 @Mod.EventBusSubscriber(modid = Ohmega.MODID)
 public final class CommonEvents {
     private static final Identifier CAPABILITY_ID = Ohmega.id("accessory_data");
@@ -41,8 +39,8 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent.Entities event) {
-        if (event.getObject() instanceof Player player) {
-            event.addCapability(CAPABILITY_ID, new AccessoryContainerProvider(player));
+        if (event.getObject() instanceof Player) {
+            event.addCapability(CAPABILITY_ID, new AccessoryContainerProvider());
         }
     }
 
@@ -69,7 +67,14 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AccessoryHelper.syncAllSlots(player, Collections.singleton(player));
+            CommonCallbacks.onPlayerChangeDimension(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            AccessoryHelper.getContainer(player).onAttach(player);
         }
     }
 
@@ -91,8 +96,7 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onRegisterConfigTasks(GatherLoginConfigurationTasksEvent event) {
-        event.addTask(new SimpleConfigurationTask(TYPE,
-                () -> OhmegaNetworkingImpl.S2C.send(event.getConnection(), new SyncAccessoryTypesPacket())));
+        event.addTask(new SimpleConfigurationTask(TYPE, () -> OhmegaNetworkingImpl.S2C.send(event.getConnection(), new SyncTypesPacket())));
     }
 
     @SubscribeEvent
@@ -104,12 +108,10 @@ public final class CommonEvents {
     private static class AccessoryContainerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         private AccessoryContainer inner;
         private final LazyOptional<AccessoryContainer> cap;
-        private final Player player;
 
-        public AccessoryContainerProvider(Player player) {
+        public AccessoryContainerProvider() {
             this.inner = new AccessoryContainer();
             this.cap = LazyOptional.of(() -> this.inner);
-            this.player = player;
         }
 
         @NonNull
@@ -120,15 +122,14 @@ public final class CommonEvents {
 
         @Override
         public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner).result().orElseGet(CompoundTag::new);
+            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner)
+                    .result().orElseGet(CompoundTag::new);
         }
 
         @Override
         public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag).resultOrPartial().ifPresent(data -> {
-                inner = data;
-                inner.onAttach(player);
-            });
+            AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
+                    .resultOrPartial().ifPresent(data -> inner = data);
         }
     }
 }

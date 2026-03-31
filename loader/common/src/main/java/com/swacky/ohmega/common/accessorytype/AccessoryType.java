@@ -1,11 +1,18 @@
 package com.swacky.ohmega.common.accessorytype;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.VarInt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -15,7 +22,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Type;
 import java.util.HexFormat;
@@ -29,29 +35,6 @@ public final class AccessoryType {
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
             ByteBufCodecs.INT, AccessoryType::getPriority,
             AccessoryType::new);
-
-    public static final StreamCodec<FriendlyByteBuf, ImmutableSet<AccessoryType>> SET_STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public @NonNull ImmutableSet<AccessoryType> decode(@NonNull FriendlyByteBuf buf) {
-            int size = VarInt.read(buf);
-            ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(size);
-
-            for (int i = 0; i < size; i++) {
-                builder.add(AccessoryType.STREAM_CODEC.decode(buf));
-            }
-
-            return builder.build();
-        }
-
-        @Override
-        public void encode(@NonNull FriendlyByteBuf buf, @NonNull ImmutableSet<AccessoryType> values) {
-            VarInt.write(buf, values.size());
-
-            for (AccessoryType value : values) {
-                AccessoryType.STREAM_CODEC.encode(buf, value);
-            }
-        }
-    };
 
     // JSON keys
     public static final String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";

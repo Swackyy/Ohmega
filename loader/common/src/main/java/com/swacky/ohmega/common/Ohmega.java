@@ -24,6 +24,7 @@ public final class Ohmega {
     public static final Identifier RELOAD_LISTENER_ID = Ohmega.id("accessory_type_manager");
     private static final Map<Item, IAccessory> BOUND_ACCESSORIES = new WeakHashMap<>();
 
+    private static boolean bootstrapped = false;
     private static int NUM_SERVICES = 0;
 
     public static <T> T loadService(Class<T> clazz) {
@@ -37,15 +38,20 @@ public final class Ohmega {
     }
 
     public static void bootstrap() {
-        // Bootstrap
-        AccessoryHelper.bootstrap();
-        OhmegaDataComponents.bootstrap();
-        OhmegaItems.bootstrap();
-        OhmegaMenus.bootstrap();
-        OhmegaConfig.Server.bootstrap();
-        OhmegaHooks.bootstrap();
-        OhmegaNetworking.bootstrap();
-        LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
+        if (!bootstrapped) {
+            AccessoryHelper.bootstrap();
+            OhmegaDataComponents.bootstrap();
+            OhmegaItems.bootstrap();
+            OhmegaMenus.bootstrap();
+            OhmegaConfig.Server.bootstrap();
+            OhmegaHooks.bootstrap();
+            OhmegaNetworking.bootstrap();
+            LOGGER.info("Successfully loaded {} services", NUM_SERVICES);
+
+            bootstrapped = true;
+        } else {
+            throw new IllegalStateException("Attempted to bootstrap " + Ohmega.class.getName() + " multiple times");
+        }
     }
 
     public static Identifier id(String path) {

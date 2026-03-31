@@ -23,6 +23,7 @@ public final class OhmegaMain {
     public OhmegaMain(FMLJavaModLoadingContext context) {
         // Bootstrap
         Ohmega.bootstrap();
+        OhmegaNetworkingImpl.bootstrap();
 
         // Config
         context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
@@ -33,8 +34,6 @@ public final class OhmegaMain {
         OhmegaDataComponentsImpl.register(group);
         OhmegaItemsImpl.register(group);
         OhmegaMenusImpl.register(group);
-
-        OhmegaNetworkingImpl.bootstrap();
 
         // Client entry
         if (FMLEnvironment.dist.isClient()) {

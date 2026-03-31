@@ -3,6 +3,7 @@ package com.swacky.ohmega.event;
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.AccessoryInventoryButton;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
@@ -23,8 +24,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -34,6 +37,27 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class ClientCallbacks {
+    // todo
+    public static AccessoryRenderStateData createRenderStateData(Player player) {
+        if (OhmegaConfig.Server.allowHideAccessories()) {
+            AccessoryContainer container = AccessoryHelper.getContainer(player);
+            NonNullList<ItemStack> stacks = container.getStacks();
+            NonNullList<ItemStack> stacksFiltered = NonNullList.createWithCapacity(stacks.size());
+
+            for (int i = 0; i < stacks.size(); i++) {
+                ItemStack stack = container.getStackInSlot(i);
+
+                if (!stack.isEmpty() && !container.isHidden(i)) {
+                    stacksFiltered.add(stack);
+                }
+            }
+
+            return new AccessoryRenderStateData(stacksFiltered);
+        }
+
+        return new AccessoryRenderStateData(AccessoryHelper.getStacksNoEmpty(player));
+    }
+
     public static void onClientConfigReload() {
         if (!OhmegaConfig.Client.compatibilityMode()) {
             LocalPlayer player = Minecraft.getInstance().player;
@@ -130,25 +154,29 @@ public final class ClientCallbacks {
         }
     }
 
-    public static void onServerConfigReload(Runnable loadFunction) {
-        if (AccessoryTypeManager.getTypes().isEmpty()) {
-            AccessoryTypeManager.deferApply(() -> ClientCallbacks.reloadRegisteredKeybinds(loadFunction));
-        } else {
-            reloadRegisteredKeybinds(loadFunction);
-        }
+    public static void onConfigReload(Runnable loadFunction) {
+        AccessoryTypeManager.runDeferredAwaitingConfigLoad();
 
-        Minecraft mc = Minecraft.getInstance();
-        LocalPlayer player = Minecraft.getInstance().player;
+        if (OhmegaConfig.Client.isLoaded()) {
+            if (AccessoryTypeManager.getTypes().isEmpty()) {
+                AccessoryTypeManager.deferApply(() -> ClientCallbacks.reloadRegisteredKeybinds(loadFunction));
+            } else {
+                reloadRegisteredKeybinds(loadFunction);
+            }
 
-        if (player != null) {
-            AccessoryHelper.getContainer(player).reloadCfg(player);
-            OhmegaNetworking.C2S.send(ResizeContainerPacket.INSTANCE);
+            Minecraft mc = Minecraft.getInstance();
+            LocalPlayer player = Minecraft.getInstance().player;
 
-            if (!OhmegaConfig.Client.compatibilityMode() && player.containerMenu instanceof AccessoryInventoryMenu) {
-                mc.screen = null;
+            if (player != null) {
+                AccessoryHelper.getContainer(player).reloadCfg(player);
+                OhmegaNetworking.C2S.send(ResizeContainerPacket.INSTANCE);
 
-                player.connection.send(new ServerboundContainerClosePacket(player.containerMenu.containerId));
-                OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
+                if (!OhmegaConfig.Client.compatibilityMode() && player.containerMenu instanceof AccessoryInventoryMenu) {
+                    mc.screen = null;
+
+                    player.connection.send(new ServerboundContainerClosePacket(player.containerMenu.containerId));
+                    OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
+                }
             }
         }
     }

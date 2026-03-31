@@ -22,7 +22,7 @@ abstract class AbstractContainerScreenMixin extends Screen {
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/KeyMapping;matches(Lnet/minecraft/client/input/KeyEvent;)Z",
                     ordinal = 0))
-    public boolean keyPressed(KeyMapping instance, KeyEvent event) {
+    private boolean keyPressed(KeyMapping instance, KeyEvent event) {
         return minecraft.options.keyInventory.matches(event) || OhmegaBinds.OPEN_ACC_INV.matches(event);
     }
 }

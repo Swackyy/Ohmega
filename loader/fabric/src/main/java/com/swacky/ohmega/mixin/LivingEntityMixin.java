@@ -28,7 +28,7 @@ abstract class LivingEntityMixin extends Entity implements Attackable, WaypointT
             method = "dropAllDeathLoot",
             at = @At(
                     value = "TAIL"))
-    public void dropAllDeathLoot(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
+    private void dropAllDeathLoot(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
         if (((LivingEntity) (Object) this) instanceof Player player) {
             ArrayList<ItemEntity> drops = new ArrayList<>();
 

@@ -17,15 +17,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public final class CommonCallbacks {
-    public static void onPlayerTrack(ServerPlayer tracker, ServerPlayer tracked) {
-        AccessoryHelper.syncAllSlots(tracked, Collections.singleton(tracker));
-    }
+    // Ensure alive or 'shouldKeepInventory' returns true before this
+    public static void onClonePlayer(Player oldPlayer, Player newPlayer) {
+        AccessoryContainer oldA = AccessoryHelper.getContainer(oldPlayer);
+        AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
 
-    public static void onPlayerPostTick(Player player) {
-        AccessoryHelper.getContainer(player).tick(player);
+        for (int i = 0; i < Math.min(oldA.size(), newA.size()); i++) {
+            newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
+        }
     }
 
     // Not an event callback in itself
@@ -37,14 +38,8 @@ public final class CommonCallbacks {
         };
     }
 
-    // Ensure alive or 'shouldKeepInventory' returns true before this
-    public static void onClonePlayer(Player oldPlayer, Player newPlayer) {
-        AccessoryContainer oldA = AccessoryHelper.getContainer(oldPlayer);
-        AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
-
-        for (int i = 0; i < Math.min(oldA.getSize(), newA.getSize()); i++) {
-            newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
-        }
+    public static void onPlayerChangeDimension(ServerPlayer player) {
+        AccessoryHelper.getContainer(player).syncAllData(player, player.getId());
     }
 
     public static void onPlayerDeath(Player player, Collection<ItemEntity> itemDrops) {
@@ -68,6 +63,14 @@ public final class CommonCallbacks {
                 }
             }
         }
+    }
+
+    public static void onPlayerPostTick(Player player) {
+        AccessoryHelper.getContainer(player).tick(player);
+    }
+
+    public static void onPlayerTrack(ServerPlayer tracker, ServerPlayer tracked) {
+        AccessoryHelper.getContainer(tracked).syncAllData(tracker, tracked.getId());
     }
 
     public static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {

@@ -107,6 +107,11 @@ public final class AccessorySlot extends Slot {
     }
 
     @Override
+    public void setChanged() {
+        handler.setChanged(getContainerSlot());
+    }
+
+    @Override
     public boolean allowModification(@NonNull Player player) {
         return true;
     }

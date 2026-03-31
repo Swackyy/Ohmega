@@ -6,10 +6,12 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
+import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
-import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
-import com.swacky.ohmega.network.S2C.SyncAccessoryTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
@@ -26,7 +28,6 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collections;
 import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = Ohmega.MODID)
@@ -54,7 +55,14 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AccessoryHelper.syncAllSlots(player, Collections.singleton(player));
+            CommonCallbacks.onPlayerChangeDimension(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            AccessoryHelper.getContainer(player).onAttach(player);
         }
     }
 
@@ -75,7 +83,7 @@ public final class CommonEvents {
         event.register(new ICustomConfigurationTask() {
             @Override
             public void run(@NonNull Consumer<CustomPacketPayload> consumer) {
-                consumer.accept(new SyncAccessoryTypesPacket());
+                consumer.accept(new SyncTypesPacket());
                 event.getListener().finishCurrentTask(TYPE);
             }
 
@@ -102,17 +110,25 @@ public final class CommonEvents {
                         ResizeContainerPacket.CODEC,
                         new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleResizeContainer))
                 .playToServer(
+                        SetHiddenPacket.TYPE,
+                        SetHiddenPacket.CODEC,
+                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleSetHidden))
+                .playToServer(
                         UseAccessoryPacket.TYPE,
                         UseAccessoryPacket.CODEC,
                         new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleUseAccessory))
                 .playToClient(
-                        SyncAccessorySlotsPacket.TYPE,
-                        SyncAccessorySlotsPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncAccessorySlots))
+                        SyncHiddenPacket.TYPE,
+                        SyncHiddenPacket.CODEC,
+                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncHidden))
+                .playToClient(
+                        SyncStacksPacket.TYPE,
+                        SyncStacksPacket.CODEC,
+                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncStacks))
                 .configurationToClient(
-                        SyncAccessoryTypesPacket.TYPE,
-                        SyncAccessoryTypesPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncAccessoryTypes));
+                        SyncTypesPacket.TYPE,
+                        SyncTypesPacket.CODEC,
+                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncTypes));
     }
 
     @SubscribeEvent

@@ -19,7 +19,7 @@ abstract class KeyboardHandlerMixin {
             method = "keyPress",
             at = @At(
                     value = "TAIL"))
-    public void keyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
+    private void keyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
         if (window == minecraft.getWindow().handle()) {
             ClientCallbacks.onKeyInput();
         }

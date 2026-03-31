@@ -9,10 +9,12 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
-import com.swacky.ohmega.network.common.SetVisibilityPacket;
+import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
-import com.swacky.ohmega.network.S2C.SyncAccessorySlotsPacket;
+import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,37 +34,39 @@ public final class AccessoryContainer {
     public static final Codec<AccessoryContainer> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
-            Codec.BOOL.listOf().fieldOf("visibility").forGetter(inst -> Booleans.asList(inst.visibility))
+            Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
     ).apply(builder, AccessoryContainer::new));
 
     // todo: check if can be removed
     public static final MapCodec<AccessoryContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
-            Codec.BOOL.listOf().fieldOf("visibility").forGetter(inst -> Booleans.asList(inst.visibility))
+            Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
     ).apply(builder, AccessoryContainer::new));
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
-    private boolean[] visibility;
-    private boolean forceOnEquip = false;
+    private boolean[] hidden;
 
-    private AccessoryContainer(List<ItemStack> stacks, boolean[] changed, boolean[] visibility) {
+    private AccessoryContainer(List<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
         this.stacks = NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0]));
         this.changed = changed;
-        this.visibility = visibility;
+        this.hidden = hidden;
     }
 
-    private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> visibility) {
-        this(stacks, Booleans.toArray(changed), Booleans.toArray(visibility));
+    private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> hidden) {
+        this(stacks, Booleans.toArray(changed), Booleans.toArray(hidden));
     }
 
     public AccessoryContainer() {
         int size = AccessoryHelper.getSlotTypes().size();
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
         this.changed = new boolean[size];
-        this.visibility = new boolean[size];
-        Arrays.fill(visibility, true);
+        this.hidden = new boolean[size];
+    }
+
+    public int size() {
+        return stacks.size();
     }
 
     public boolean isItemValid(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
@@ -70,20 +74,16 @@ public final class AccessoryContainer {
             return true;
         }
 
-        if (index >= 0 && index < stacks.size()) {
+        if (index >= 0 && index < size()) {
             Item item = stack.getItem();
             IAccessory accessory = AccessoryHelper.getBoundAccessory(item);
 
-            if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, stacks.get(index)))) {
+            if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
                 return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index);
             }
         }
 
         return false;
-    }
-
-    public int getSize() {
-        return stacks.size();
     }
 
     public void setChanged(int index) {
@@ -135,7 +135,7 @@ public final class AccessoryContainer {
 
     public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(player, index, stack, context)) {
-            ItemStack current = stacks.get(index);
+            ItemStack current = getStackInSlot(index);
 
             if (!ItemStack.matches(current, stack)) {
                 doUnequip(player, current);
@@ -144,8 +144,6 @@ public final class AccessoryContainer {
                 if (forceOnEquip || AccessoryHelper.isActive(stack)) {
                     doEquip(player, stack, index, context);
                 }
-            } else if (changed[index]) {
-                changed[index] = false;
             }
 
             return true;
@@ -164,7 +162,7 @@ public final class AccessoryContainer {
     }
 
     private void removeStackFromSlot(Player player, int index) {
-        ItemStack stack = stacks.get(index);
+        ItemStack stack = getStackInSlot(index);
 
         if (!stack.isEmpty()) {
             doUnequip(player, stack);
@@ -207,62 +205,71 @@ public final class AccessoryContainer {
         return removed;
     }
 
-    public boolean isVisible(int index) {
-        return visibility[index];
-    }
-
-    public void setVisibility(Player player, int index, boolean value) {
-        visibility[index] = value;
-        SetVisibilityPacket packet = new SetVisibilityPacket(index, value);
-
-        if (player.level().isClientSide()) {
-            // Sync with server
-            OhmegaNetworking.C2S.send(packet);
-        } else for (ServerPlayer receiver : ((ServerPlayer) player).level().getPlayers(_ -> true)) {
-            // Sync with clients
-            OhmegaNetworking.S2C.send(receiver, packet);
-        }
-    }
-
-    public void onAttach(Player player) {
-        // If the server config gets de-synced, this fixes it instead of throwing
-        reloadCfg(player);
-
-        for (int i = 0; i < stacks.size(); i++) {
-            ItemStack stack = stacks.get(i);
-
-            doSetStackInSlot(i, stack);
-
-            if (AccessoryHelper.isActive(stack)) {
-                doEquip(player, stack, i, EquipContext.GENERIC);
-            }
-        }
-    }
-
-    public void syncSlots(Player player, int[] indexes, List<ItemStack> stacks) {
-        for (int i = 0; i < indexes.length; i++) {
-            int index = indexes[i];
-            ItemStack current = getStackInSlot(index);
-            ItemStack stack = stacks.get(i);
-
-            if (!ItemStack.isSameItemSameComponents(current, stack)) {
-                doUnequip(player, current);
-            }
-
-            doSetStackInSlot(index, stack);
-
-            if (AccessoryHelper.isActive(stack)) {
-                doEquip(player, stack, index, EquipContext.GENERIC);
-            }
-        }
-    }
-
     public NonNullList<ItemStack> getStacks() {
         return stacks;
     }
 
+    public boolean isHidden(int index) {
+        return hidden[index];
+    }
+
+    // Used in sync
+    public void setHidden(int index, boolean value) {
+        hidden[index] = value;
+    }
+
+    // Use in client toggling
+    public void toggleHidden(Player player, int index) {
+        if (OhmegaConfig.Server.allowHideAccessories()) {
+            boolean value = !isHidden(index);
+
+            setHidden(index, value);
+
+            if (player.level().isClientSide()) {
+                OhmegaNetworking.C2S.send(new SetHiddenPacket(index, value));
+            }
+        }
+    }
+
+    private void syncAllData(ServerPlayer receiver, int senderId, int[] allIndexes) {
+        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(senderId, allIndexes, hidden));
+        OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(senderId, allIndexes, stacks, false));
+    }
+
+    public void syncAllData(ServerPlayer receiver, int playerId) {
+        int size = size();
+        int[] allIndexes = new int[size];
+
+        for (int i = 0; i < size; i++) {
+            allIndexes[i] = i;
+        }
+
+        syncAllData(receiver, playerId, allIndexes);
+    }
+
+    public void onAttach(ServerPlayer player) {
+        // If the server config gets de-synced, this fixes it instead of throwing
+        reloadCfg(player);
+
+        int size = size();
+        int[] allIndexes = new int[size];
+
+        for (int i = 0; i < size; i++) {
+            ItemStack stack = getStackInSlot(i);
+
+            if (AccessoryHelper.isActive(stack)) {
+                doEquip(player, stack, i, EquipContext.GENERIC);
+            }
+
+            allIndexes[i] = i;
+        }
+
+        // Initial load syncing
+        syncAllData(player, player.getId(), allIndexes);
+    }
+
     public void tick(Player player) {
-        for (int i = 0; i < stacks.size(); i++) {
+        for (int i = 0; i < size(); i++) {
             ItemStack stack = getStackInSlot(i);
             IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
 
@@ -273,45 +280,43 @@ public final class AccessoryContainer {
         }
 
         // Syncing
-        // todo: see if it is a good idea to split this into just autoSync in tick and on demand for changing
+        // todo: move this to an on demand approach and add initial sync to onAttach
         if (player instanceof ServerPlayer svr) {
-            List<Integer> slots = new ArrayList<>();
+            List<Integer> indexes = new ArrayList<>();
             List<ItemStack> stacks = new ArrayList<>();
 
-            for (int i = 0; i < this.stacks.size(); i++) {
+            for (int i = 0; i < size(); i++) {
                 ItemStack stack = getStackInSlot(i);
                 IAccessory accessory = AccessoryHelper.getBoundAccessory(stack.getItem());
 
                 if (changed[i] || (accessory != null && accessory.autoSync(player, stack))) {
-                    slots.add(i);
+                    indexes.add(i);
                     stacks.add(stack);
 
                     changed[i] = false;
                 }
             }
 
-            if (!slots.isEmpty()) {
+            if (!indexes.isEmpty()) {
                 for (ServerPlayer receiver : svr.level().getPlayers(_ -> true)) {
-                    OhmegaNetworking.S2C.send(receiver, new SyncAccessorySlotsPacket(receiver.getId(), slots.stream().mapToInt(Integer::intValue).toArray(), stacks, forceOnEquip));
+                    OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(svr.getId(), indexes.stream().mapToInt(Integer::intValue).toArray(), stacks, true));
                 }
-
-                forceOnEquip = true;
             }
         }
     }
 
     public void reloadCfg(Player player) {
-        int oldSize = Math.min(changed.length, stacks.size());
+        int oldSize = Math.min(changed.length, size());
         int newSize = AccessoryHelper.getSlotTypes().size();
 
         if (newSize > oldSize) {
             // Grow data
-            ItemStack[] newStacks = new ItemStack[newSize];
+            ItemStack[] newStacks = new ItemStack[newSize - oldSize];
             Arrays.fill(newStacks, ItemStack.EMPTY);
 
             stacks = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(stacks.toArray(new ItemStack[0]), newStacks));
-            changed = ArrayUtils.addAll(changed, new boolean[newSize]);
-            visibility = ArrayUtils.addAll(visibility, new boolean[newSize]);
+            changed = ArrayUtils.addAll(changed, new boolean[newSize - oldSize]);
+            hidden = ArrayUtils.addAll(hidden, new boolean[newSize - oldSize]);
         } else if (newSize < oldSize) {
             // Drop stacks outside of range
             for (int i = newSize; i < oldSize; i++) {
@@ -321,14 +326,14 @@ public final class AccessoryContainer {
             // Shrink data
             stacks = NonNullList.of(ItemStack.EMPTY, Arrays.copyOfRange(stacks.toArray(new ItemStack[0]), 0, newSize));
             changed = Arrays.copyOfRange(changed, 0, newSize);
-            visibility = Arrays.copyOfRange(visibility, 0, newSize);
+            hidden = Arrays.copyOfRange(hidden, 0, newSize);
         }
 
         // Drop invalid stacks (mismatched accessory types and non-accessory items)
         ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
 
-        for (int i = 0; i < stacks.size(); i++) {
-            if (slotTypes.get(i) != AccessoryHelper.getType(stacks.get(i).getItem())) {
+        for (int i = 0; i < size(); i++) {
+            if (slotTypes.get(i) != AccessoryHelper.getType(getStackInSlot(i).getItem())) {
                 removeStackFromSlot(player, i);
             }
         }

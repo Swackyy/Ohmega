@@ -10,14 +10,14 @@ public final class OhmegaConfigImpl {
     public static final class Client implements OhmegaConfig.Client.Service {
         private static ForgeConfigSpec spec;
 
-        public ForgeConfigSpec.BooleanValue compatibilityMode;
-        public ForgeConfigSpec.EnumValue<ButtonStyle> buttonStyle;
-        public ForgeConfigSpec.EnumValue<Side> side;
-        public ForgeConfigSpec.BooleanValue showHoverTooltip;
-        public ForgeConfigSpec.IntValue maxColumns;
-        public ForgeConfigSpec.IntValue maxColumnSlots;
-        public ForgeConfigSpec.IntValue maxColumnRenderSlots;
-        public ForgeConfigSpec.BooleanValue showTranslationToast;
+        private final ForgeConfigSpec.BooleanValue compatibilityMode;
+        private final ForgeConfigSpec.EnumValue<ButtonStyle> buttonStyle;
+        private final ForgeConfigSpec.EnumValue<Side> side;
+        private final ForgeConfigSpec.BooleanValue showHoverTooltip;
+        private final ForgeConfigSpec.IntValue maxColumns;
+        private final ForgeConfigSpec.IntValue maxColumnSlots;
+        private final ForgeConfigSpec.IntValue maxColumnRenderSlots;
+        private final ForgeConfigSpec.BooleanValue showTranslationToast;
 
         public Client() {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -108,10 +108,11 @@ public final class OhmegaConfigImpl {
     public static final class Server implements OhmegaConfig.Server.Service {
         private static ForgeConfigSpec spec;
 
-        public ForgeConfigSpec.ConfigValue<List<? extends String>> slotTypes;
-        public ForgeConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
-        public ForgeConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
-        public ForgeConfigSpec.BooleanValue disableAccessoryTypes;
+        private final ForgeConfigSpec.ConfigValue<List<? extends String>> slotTypes;
+        private final ForgeConfigSpec.ConfigValue<List<? extends String>> keyboundSlotTypes;
+        private final ForgeConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
+        private final ForgeConfigSpec.BooleanValue disableAccessoryTypes;
+        private final ForgeConfigSpec.BooleanValue allowHideAccessories;
 
         public Server() {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -128,6 +129,9 @@ public final class OhmegaConfigImpl {
             disableAccessoryTypes = builder
                     .comment(DISABLE_ACCESSORY_TYPES_DESCRIPTION)
                     .define(DISABLE_ACCESSORY_TYPES_KEY, DISABLE_ACCESSORY_TYPES_DEFAULT);
+            allowHideAccessories = builder
+                    .comment(ALLOW_HIDE_ACCESSORIES_DESCRIPTION)
+                    .define(ALLOW_HIDE_ACCESSORIES_KEY, ALLOW_HIDE_ACCESSORIES_DEFAULT);
             Server.spec = builder.build();
         }
 
@@ -153,6 +157,11 @@ public final class OhmegaConfigImpl {
         @Override
         public boolean disableAccessoryTypes() {
             return disableAccessoryTypes.get();
+        }
+
+        @Override
+        public boolean allowHideAccessories() {
+            return allowHideAccessories.get();
         }
 
         @Override

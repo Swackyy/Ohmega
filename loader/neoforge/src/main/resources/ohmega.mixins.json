@@ -5,7 +5,8 @@
   "mixins": [
   ],
   "client": [
-    "client.AbstractContainerScreenMixin"
+    "client.AbstractContainerScreenMixin",
+    "client.LivingEntityRendererMixin"
   ],
   "minVersion": "0.8.5"
 }

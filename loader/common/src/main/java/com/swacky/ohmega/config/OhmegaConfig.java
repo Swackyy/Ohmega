@@ -84,7 +84,7 @@ public final class OhmegaConfig {
             String MAX_COLUMNS_KEY = "maxColumns";
             String MAX_COLUMNS_DESCRIPTION = """
                     The maximum columns to render""";
-            int MAX_COLUMNS_DEFAULT = 1;
+            int MAX_COLUMNS_DEFAULT = 4;
             int MAX_COLUMNS_MIN = 1;
             int MAX_COLUMNS_MAX = 4;
             // - - -

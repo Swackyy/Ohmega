@@ -13,7 +13,7 @@ import java.util.function.Function;
 public final class OhmegaItemsImpl implements OhmegaItems.Service {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Ohmega.MODID);
 
-    public static final DeferredItem<@NonNull Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
+    private static final DeferredItem<@NonNull Item> ANGEL_RING = register("angel_ring", AngelRing::new, new Item.Properties().stacksTo(1));
 
     private static <T extends Item> DeferredItem<T> register(String id, Function<Item.Properties, T> function, Item.Properties props) {
         return ITEMS.registerItem(id, function, () -> props);
