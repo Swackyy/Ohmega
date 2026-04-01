@@ -2,6 +2,7 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.client.OhmegaClientMain;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.common.init.OhmegaMenusImpl;
@@ -31,6 +32,7 @@ public final class OhmegaMain {
         // Registration
         BusGroup group = context.getModBusGroup();
 
+        OhmegaArgumentTypes.register(group);
         OhmegaDataComponentsImpl.register(group);
         OhmegaItemsImpl.register(group);
         OhmegaMenusImpl.register(group);

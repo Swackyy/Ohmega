@@ -2,7 +2,6 @@ package com.swacky.ohmega.client.screen;
 
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -16,6 +15,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
 public final class AccessoryInventoryButton extends AbstractButton {
@@ -61,14 +63,22 @@ public final class AccessoryInventoryButton extends AbstractButton {
                 if (screen instanceof AccessoryInventoryScreen) {
                     player.containerMenu = player.inventoryMenu;
                     mc.setScreen(new InventoryScreen(player));
-                    OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
+                    OhmegaNetworking.C2S.send(player, new ServerboundContainerClosePacket(player.containerMenu.containerId));
                 } else {
+                    ItemStack stack = player.containerMenu.getCarried();
+
+                    // todo: see if we can carry the stack to the accessory inventory instead of this
+                    if (!stack.isEmpty()) {
+                        AbstractContainerMenu.dropOrPlaceInInventory(player, stack);
+                        player.containerMenu.setCarried(ItemStack.EMPTY);
+                    }
+
                     OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
                 }
             } else {
                 player.containerMenu = player.inventoryMenu;
                 mc.setScreen(new InventoryScreen(player));
-                OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
+                OhmegaNetworking.C2S.send(player, new ServerboundContainerClosePacket(player.containerMenu.containerId));
             }
         }
     }

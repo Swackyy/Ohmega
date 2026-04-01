@@ -12,7 +12,7 @@ import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
+import com.swacky.ohmega.network.C2S.ReloadContainerPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.KeyMapping;
@@ -168,8 +168,8 @@ public final class ClientCallbacks {
             LocalPlayer player = Minecraft.getInstance().player;
 
             if (player != null) {
-                AccessoryHelper.getContainer(player).reloadCfg(player);
-                OhmegaNetworking.C2S.send(ResizeContainerPacket.INSTANCE);
+                AccessoryHelper.getContainer(player).reload(player);
+                OhmegaNetworking.C2S.send(ReloadContainerPacket.INSTANCE);
 
                 if (!OhmegaConfig.Client.compatibilityMode() && player.containerMenu instanceof AccessoryInventoryMenu) {
                     mc.screen = null;

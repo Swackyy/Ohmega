@@ -10,7 +10,7 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientEvents;
-import com.swacky.ohmega.network.OhmegaNetworkingImpl;
+import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
@@ -39,9 +39,12 @@ public final class OhmegaClientMain implements ClientModInitializer {
 
         // Networking
         // Receive
-        ClientPlayNetworking.registerGlobalReceiver(SyncHiddenPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncHidden);
-        ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncStacks);
-        ClientConfigurationNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, OhmegaNetworkingImpl.S2C::handleSyncTypes);
+        ClientPlayNetworking.registerGlobalReceiver(SyncHiddenPacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncHidden(packet));
+        ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncStacks(packet));
+        ClientConfigurationNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncTypes(packet));
 
         // Registration
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);

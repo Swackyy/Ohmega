@@ -3,12 +3,12 @@ package com.swacky.ohmega.event;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
-import com.swacky.ohmega.network.C2S.ResizeContainerPacket;
+import com.swacky.ohmega.network.C2S.ReloadContainerPacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
-import com.swacky.ohmega.network.OhmegaNetworkingImpl;
+import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -79,6 +80,11 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void onRegisterCommands(RegisterCommandsEvent event) {
+        OhmegaRootCommand.register(event.getDispatcher(), event.getBuildContext());
+    }
+
+    @SubscribeEvent
     public static void onRegisterConfigTasks(RegisterConfigurationTasksEvent event) {
         event.register(new ICustomConfigurationTask() {
             @Override
@@ -100,35 +106,38 @@ public final class CommonEvents {
                 .playToServer(
                         OpenAccessoryInventoryPacket.TYPE,
                         OpenAccessoryInventoryPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleOpenAccessoryInventory))
+                        new MainThreadPayloadHandler<>((_, context) ->
+                                OhmegaNetworking.C2S.handleOpenAccessoryInventory((ServerPlayer) context.player())))
                 .playToServer(
-                        OpenInventoryPacket.TYPE,
-                        OpenInventoryPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleOpenInventory))
-                .playToServer(
-                        ResizeContainerPacket.TYPE,
-                        ResizeContainerPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleResizeContainer))
+                        ReloadContainerPacket.TYPE,
+                        ReloadContainerPacket.CODEC,
+                        new MainThreadPayloadHandler<>((_, context) ->
+                                OhmegaNetworking.C2S.handleReloadContainer((ServerPlayer) context.player())))
                 .playToServer(
                         SetHiddenPacket.TYPE,
                         SetHiddenPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleSetHidden))
+                        new MainThreadPayloadHandler<>((packet, context) ->
+                                OhmegaNetworking.C2S.handleSetHidden(packet, (ServerPlayer) context.player())))
                 .playToServer(
                         UseAccessoryPacket.TYPE,
                         UseAccessoryPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.C2S::handleUseAccessory))
+                        new MainThreadPayloadHandler<>((packet, context) ->
+                                OhmegaNetworking.C2S.handleUseAccessory(packet, (ServerPlayer) context.player())))
                 .playToClient(
                         SyncHiddenPacket.TYPE,
                         SyncHiddenPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncHidden))
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncHidden(packet)))
                 .playToClient(
                         SyncStacksPacket.TYPE,
                         SyncStacksPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncStacks))
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncStacks(packet)))
                 .configurationToClient(
                         SyncTypesPacket.TYPE,
                         SyncTypesPacket.CODEC,
-                        new MainThreadPayloadHandler<>(OhmegaNetworkingImpl.S2C::handleSyncTypes));
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncTypes(packet)));
     }
 
     @SubscribeEvent

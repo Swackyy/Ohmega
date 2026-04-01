@@ -7,7 +7,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.MessageHelper;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
-    public static final Identifier ID = Ohmega.id("accessory_type");
+    public static final String KEY = "accessory_type";
 
     public static final String EXCEPTION_UNKNOWN_TYPE_KEY = MessageHelper.exception("unknown_accessory_type");
 

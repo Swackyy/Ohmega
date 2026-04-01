@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.AccessoryHelperImpl;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
@@ -23,6 +24,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -92,6 +94,11 @@ public final class CommonEvents {
         if (event.getTarget() instanceof ServerPlayer tracked && event.getEntity() instanceof ServerPlayer tracker) {
             CommonCallbacks.onPlayerTrack(tracked, tracker);
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterCommandsEvent event) {
+        OhmegaRootCommand.register(event.getDispatcher(), event.getBuildContext());
     }
 
     @SubscribeEvent

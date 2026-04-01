@@ -16,8 +16,8 @@ import java.util.function.Supplier;
 public final class OhmegaMenusImpl implements OhmegaMenus.Service {
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Ohmega.MODID);
 
-    private static final RegistryObject<MenuType<@NonNull AccessoryInventoryMenu>> ACCESSORY_INVENTORY = register("accessory_menu",
-            () -> new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));
+    private static final RegistryObject<MenuType<@NonNull AccessoryInventoryMenu>> ACCESSORY_INVENTORY = register("accessory_menu", () ->
+            new MenuType<>(AccessoryInventoryMenu::new, FeatureFlagSet.of()));
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<@NonNull T>> register(String id, Supplier<MenuType<@NonNull T>> sup) {
         return MENUS.register(id, sup);

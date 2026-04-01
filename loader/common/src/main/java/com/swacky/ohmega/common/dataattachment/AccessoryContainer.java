@@ -249,7 +249,7 @@ public final class AccessoryContainer {
 
     public void onAttach(ServerPlayer player) {
         // If the server config gets de-synced, this fixes it instead of throwing
-        reloadCfg(player);
+        reload(player);
 
         int size = size();
         int[] allIndexes = new int[size];
@@ -305,7 +305,7 @@ public final class AccessoryContainer {
         }
     }
 
-    public void reloadCfg(Player player) {
+    public void reload(Player player) {
         int oldSize = Math.min(changed.length, size());
         int newSize = AccessoryHelper.getSlotTypes().size();
 

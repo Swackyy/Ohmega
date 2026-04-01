@@ -1,6 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.client.OhmegaClientMain;
+import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;
@@ -22,6 +23,7 @@ public final class OhmegaMain {
         container.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
 
         // Registration
+        OhmegaArgumentTypes.register(bus);
         OhmegaItemsImpl.register(bus);
         OhmegaMenusImpl.register(bus);
         OhmegaDataComponentsImpl.register(bus);
