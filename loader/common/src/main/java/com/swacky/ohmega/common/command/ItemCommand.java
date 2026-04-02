@@ -70,7 +70,7 @@ public class ItemCommand {
         for (Entity target : targets) {
             // todo
             if (target instanceof Player player) {
-                AccessoryHelper.getContainer(player).setStackInSlot(player, index, new ItemStack(item, count), EquipContext.GENERIC, true);
+                AccessoryHelper.getContainer(player).setStack(player, index, new ItemStack(item, count), EquipContext.GENERIC, true);
             }
         }
 

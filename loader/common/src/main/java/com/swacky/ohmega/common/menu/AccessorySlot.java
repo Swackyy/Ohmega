@@ -8,7 +8,6 @@ import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -90,20 +89,12 @@ public final class AccessorySlot extends Slot {
 
     @Override
     public @NonNull ItemStack remove(int amount) {
-        int index = getContainerSlot();
-        ItemStack stack = ContainerHelper.removeItem(handler.getStacks(), index, amount);
-
-        if (!ItemStack.isSameItemSameComponents(handler.getStackInSlot(index), stack)) {
-            handler.doUnequip(player, stack);
-            handler.setChanged(index);
-        }
-
-        return stack;
+        return handler.remove(player, getContainerSlot(), amount);
     }
 
     @Override
     public void set(@NonNull ItemStack stack) {
-        handler.setStackInSlot(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE);
+        handler.setStack(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE);
     }
 
     @Override

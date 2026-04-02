@@ -25,7 +25,7 @@ public final class CommonCallbacks {
         AccessoryContainer newA = AccessoryHelper.getContainer(newPlayer);
 
         for (int i = 0; i < Math.min(oldA.size(), newA.size()); i++) {
-            newA.setStackInSlot(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
+            newA.setStack(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
         }
     }
 

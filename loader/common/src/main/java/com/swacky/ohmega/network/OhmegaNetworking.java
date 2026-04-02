@@ -138,7 +138,7 @@ public final class OhmegaNetworking {
                     AccessoryContainer container = AccessoryHelper.getContainer(player);
 
                     for (int i = 0; i < indexes.length; i++) {
-                        container.setStackInSlot(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
+                        container.setStack(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
                     }
                 }
             }

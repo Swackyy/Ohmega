@@ -19,6 +19,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,6 @@ public final class AccessoryContainer {
             Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
     ).apply(builder, AccessoryContainer::new));
 
-    // todo: check if can be removed
     public static final MapCodec<AccessoryContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
@@ -128,18 +128,18 @@ public final class AccessoryContainer {
         }
     }
 
-    private void doSetStackInSlot(int index, ItemStack stack) {
+    private void doSetStack(int index, ItemStack stack) {
         stacks.set(index, stack);
         setChanged(index);
     }
 
-    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
+    public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(player, index, stack, context)) {
             ItemStack current = getStackInSlot(index);
 
             if (!ItemStack.matches(current, stack)) {
                 doUnequip(player, current);
-                doSetStackInSlot(index, stack);
+                doSetStack(index, stack);
 
                 if (forceOnEquip || AccessoryHelper.isActive(stack)) {
                     doEquip(player, stack, index, context);
@@ -152,16 +152,27 @@ public final class AccessoryContainer {
         return false;
     }
 
-    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation) {
-        return setStackInSlot(player, index, stack, context, bypassValidation, true);
+    public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation) {
+        return setStack(player, index, stack, context, bypassValidation, true);
     }
 
     // Use this for most general usage
-    public boolean setStackInSlot(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
-        return setStackInSlot(player, index, stack, context, false);
+    public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
+        return setStack(player, index, stack, context, false);
     }
 
-    private void removeStackFromSlot(Player player, int index) {
+    public ItemStack remove(Player player, int index, int amount) {
+        ItemStack stack = ContainerHelper.removeItem(stacks, index, amount);
+
+        if (!ItemStack.isSameItemSameComponents(getStackInSlot(index), stack)) {
+            doUnequip(player, stack);
+            setChanged(index);
+        }
+
+        return stack;
+    }
+
+    private void removeOrDropStack(Player player, int index) {
         ItemStack stack = getStackInSlot(index);
 
         if (!stack.isEmpty()) {
@@ -178,7 +189,7 @@ public final class AccessoryContainer {
     public int clearMatchingItems(Player player, Predicate<ItemStack> filter, int max) {
         int removed = 0;
 
-        for (int i = 0; i < stacks.size() && (max < 0 || removed < max); i++) {
+        for (int i = 0; i < size() && (max < 0 || removed < max); i++) {
             ItemStack stack = getStackInSlot(i);
 
             if (filter.test(stack)) {
@@ -320,7 +331,7 @@ public final class AccessoryContainer {
         } else if (newSize < oldSize) {
             // Drop stacks outside of range
             for (int i = newSize; i < oldSize; i++) {
-                removeStackFromSlot(player, i);
+                removeOrDropStack(player, i);
             }
 
             // Shrink data
@@ -334,7 +345,7 @@ public final class AccessoryContainer {
 
         for (int i = 0; i < size(); i++) {
             if (slotTypes.get(i) != AccessoryHelper.getType(getStackInSlot(i).getItem())) {
-                removeStackFromSlot(player, i);
+                removeOrDropStack(player, i);
             }
         }
     }
