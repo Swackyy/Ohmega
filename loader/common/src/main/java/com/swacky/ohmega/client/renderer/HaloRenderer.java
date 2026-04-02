@@ -47,6 +47,10 @@ public class HaloRenderer implements IAccessoryRenderer {
         // Render textured model
         context.submitModel(model, HALO_LOCATION);
 
+        if (context.stack().hasFoil()) {
+            context.submitModel(model, RenderTypes.entityGlint());
+        }
+
         stack.popPose();
     }
 }
