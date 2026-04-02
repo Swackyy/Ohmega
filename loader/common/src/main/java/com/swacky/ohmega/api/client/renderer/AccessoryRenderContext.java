@@ -1,16 +1,24 @@
 package com.swacky.ohmega.api.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Some common variables you can use in your renderers.
@@ -24,8 +32,18 @@ public record AccessoryRenderContext(
         ModelManager modelManager,
         int packedLight
 ) {
+    public void submitBlock(BlockModelResolver modelResolver, BlockModelRenderState renderState, BlockState blockState, BlockDisplayContext displayContext) {
+        modelResolver.update(renderState, blockState, displayContext);
+        renderState.submit(poseStack, collector.unwrap(), packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor);
+    }
+
     public void submitCustomGeometry(RenderType renderType, SubmitNodeCollector.CustomGeometryRenderer renderer) {
         collector.next().submitCustomGeometry(poseStack, renderType, renderer);
+    }
+
+    public void submitItem(ItemModelResolver modelResolver, ItemStackRenderState renderState) {
+        modelResolver.updateForTopItem(renderState, stack, ItemDisplayContext.NONE, Minecraft.getInstance().level, null, 0);
+        renderState.submit(poseStack, collector.unwrap(), packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor);
     }
 
     public void submitModel(Model<LivingEntityRenderState> model, RenderType renderType) {
