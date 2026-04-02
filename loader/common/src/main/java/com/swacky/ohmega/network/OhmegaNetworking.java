@@ -69,10 +69,12 @@ public final class OhmegaNetworking {
                 int index = packet.index();
                 boolean value = packet.value();
 
-                AccessoryHelper.getContainer(player).setHidden(index, value);
+                if (index < AccessoryHelper.getSlotTypes().size()) {
+                    AccessoryHelper.getContainer(player).setHidden(index, value);
 
-                for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
-                    OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
+                    for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
+                        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
+                    }
                 }
             }
         }
