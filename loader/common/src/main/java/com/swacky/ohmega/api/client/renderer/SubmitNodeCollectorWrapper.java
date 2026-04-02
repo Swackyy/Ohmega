@@ -16,6 +16,15 @@ public class SubmitNodeCollectorWrapper {
     }
 
     /**
+     * Certain functions may only allow for passing in an unordered {@link SubmitNodeCollector}
+     * If you do not have good reason for doing this, please avoid it and use {@link #next()} instead
+     * @return the held {@link SubmitNodeCollector} this class is wrapping
+     */
+    public SubmitNodeCollector unwrap() {
+        return collector;
+    }
+
+    /**
      * Use this to get an {@link OrderedSubmitNodeCollector} to submit draw calls to
      * @return a new {@link SubmitNodeCollector} with the next order
      */
