@@ -8,6 +8,7 @@ import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,6 +46,8 @@ public final class OhmegaNetworkingImpl {
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
         net.configuration().clientbound().addMain(SyncTypesPacket.class, SyncTypesPacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncTypes(packet));
+        net.play().clientbound().addMain(SyncUsePacket.class, SyncUsePacket.CODEC, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncUse(packet));
 
         OhmegaNetworkingImpl.channel = net;
     }

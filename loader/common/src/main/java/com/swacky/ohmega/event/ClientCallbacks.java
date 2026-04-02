@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 public final class ClientCallbacks {
     // todo
     public static AccessoryRenderStateData createRenderStateData(Player player) {
-        if (OhmegaConfig.Server.allowHideAccessories()) {
+        if (OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.allowHideAccessories()) {
             AccessoryContainer container = AccessoryHelper.getContainer(player);
             NonNullList<ItemStack> stacks = container.getStacks();
             NonNullList<ItemStack> stacksFiltered = NonNullList.createWithCapacity(stacks.size());

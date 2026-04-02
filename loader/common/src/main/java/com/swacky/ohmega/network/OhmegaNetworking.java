@@ -15,6 +15,7 @@ import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -87,6 +88,10 @@ public final class OhmegaNetworking {
                 if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
                     accessory.onUse(player, stack);
                 }
+
+                for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
+                    OhmegaNetworking.S2C.send(receiver, new SyncUsePacket(player.getId(), index));
+                }
             }
         }
 
@@ -147,6 +152,16 @@ public final class OhmegaNetworking {
         public static void handleSyncTypes(SyncTypesPacket packet) {
             AccessoryTypeManager.apply(packet.types);
             AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfig.Server.isLoaded());
+        }
+
+        public static void handleSyncUse(SyncUsePacket packet) {
+            ClientLevel level = Minecraft.getInstance().level;
+
+            if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
+                ItemStack stack = AccessoryHelper.getContainer(player).getStackInSlot(packet.index());
+
+                AccessoryHelper.getAccessory(stack.getItem()).onUse(player, stack);
+            }
         }
 
         public interface Service {

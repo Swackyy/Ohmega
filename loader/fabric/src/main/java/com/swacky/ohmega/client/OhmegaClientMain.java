@@ -14,6 +14,7 @@ import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -45,6 +46,8 @@ public final class OhmegaClientMain implements ClientModInitializer {
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
         ClientConfigurationNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncTypes(packet));
+        ClientPlayNetworking.registerGlobalReceiver(SyncUsePacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncUse(packet));
 
         // Registration
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);

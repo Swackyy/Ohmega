@@ -48,14 +48,17 @@ public final class AccessoryContainer {
     private boolean[] changed;
     private boolean[] hidden;
 
-    private AccessoryContainer(List<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
-        this.stacks = NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0]));
+    private AccessoryContainer(NonNullList<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
+        this.stacks = stacks;
         this.changed = changed;
         this.hidden = hidden;
     }
 
     private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> hidden) {
-        this(stacks, Booleans.toArray(changed), Booleans.toArray(hidden));
+        this(
+                NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])),
+                Booleans.toArray(changed),
+                Booleans.toArray(hidden));
     }
 
     public AccessoryContainer() {
@@ -133,6 +136,7 @@ public final class AccessoryContainer {
         setChanged(index);
     }
 
+    // todo fix: Syncing with this is bugged as it will always call IAccessory#onEquip afaik
     public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(player, index, stack, context)) {
             ItemStack current = getStackInSlot(index);
@@ -322,10 +326,10 @@ public final class AccessoryContainer {
 
         if (newSize > oldSize) {
             // Grow data
-            ItemStack[] newStacks = new ItemStack[newSize - oldSize];
-            Arrays.fill(newStacks, ItemStack.EMPTY);
+            ItemStack[] emptyStackArray = new ItemStack[newSize - oldSize];
+            Arrays.fill(emptyStackArray, ItemStack.EMPTY);
 
-            stacks = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(stacks.toArray(new ItemStack[0]), newStacks));
+            stacks = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(stacks.toArray(new ItemStack[0]), emptyStackArray));
             changed = ArrayUtils.addAll(changed, new boolean[newSize - oldSize]);
             hidden = ArrayUtils.addAll(hidden, new boolean[newSize - oldSize]);
         } else if (newSize < oldSize) {

@@ -12,6 +12,7 @@ import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
@@ -137,7 +138,12 @@ public final class CommonEvents {
                         SyncTypesPacket.TYPE,
                         SyncTypesPacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, _) ->
-                                OhmegaNetworking.S2C.handleSyncTypes(packet)));
+                                OhmegaNetworking.S2C.handleSyncTypes(packet)))
+                .playToClient(
+                        SyncUsePacket.TYPE,
+                        SyncUsePacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncUse(packet)));
     }
 
     @SubscribeEvent

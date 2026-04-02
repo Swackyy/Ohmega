@@ -11,7 +11,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-// todo: check if playerId is needed
 public record SyncStacksPacket(int playerId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements CustomPacketPayload {
     public static final Type<@NonNull SyncStacksPacket> TYPE = new Type<>(Ohmega.id("sync_stacks"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncStacksPacket> CODEC = StreamCodec.composite(

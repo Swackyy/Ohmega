@@ -16,6 +16,7 @@ import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
@@ -48,6 +49,7 @@ public final class OhmegaMain implements ModInitializer {
         PayloadTypeRegistry.clientboundPlay().register(SyncHiddenPacket.TYPE, SyncHiddenPacket.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncStacksPacket.TYPE, SyncStacksPacket.CODEC);
         PayloadTypeRegistry.clientboundConfiguration().register(SyncTypesPacket.TYPE, SyncTypesPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncUsePacket.TYPE, SyncUsePacket.CODEC);
         // Receive
         ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, (_, context) ->
                 OhmegaNetworking.C2S.handleOpenAccessoryInventory(context.player()));
