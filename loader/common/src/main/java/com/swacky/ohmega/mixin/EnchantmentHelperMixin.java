@@ -82,7 +82,7 @@ abstract class EnchantmentHelperMixin {
     private static boolean ohmega$checkSlots(List<EquipmentSlotGroup> groups) {
         for (EquipmentSlotGroup group : groups) {
             for (EquipmentSlot slot : HUMANOID_ARMOUR) {
-                if (group.test(slot)){
+                if (group.test(slot)) {
                     return true;
                 }
             }

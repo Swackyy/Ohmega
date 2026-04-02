@@ -19,7 +19,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(Ohmega.MODID)
 public final class OhmegaMain {
-    public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>(){});
+    public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>() {});
 
     public OhmegaMain(FMLJavaModLoadingContext context) {
         // Bootstrap
