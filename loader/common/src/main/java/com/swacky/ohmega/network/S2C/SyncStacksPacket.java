@@ -14,8 +14,8 @@ import java.util.List;
 public record SyncStacksPacket(int playerId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements CustomPacketPayload {
     public static final Type<@NonNull SyncStacksPacket> TYPE = new Type<>(Ohmega.id("sync_stacks"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncStacksPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, inst -> inst.playerId,
-            OhmegaByteBufCodecs.INT_ARRAY, inst -> inst.indexes,
+            ByteBufCodecs.VAR_INT, inst -> inst.playerId,
+            OhmegaByteBufCodecs.VAR_INT_ARRAY, inst -> inst.indexes,
             ItemStack.OPTIONAL_LIST_STREAM_CODEC, inst -> inst.stacks,
             ByteBufCodecs.BOOL, inst -> inst.forceOnEquip,
             SyncStacksPacket::new);

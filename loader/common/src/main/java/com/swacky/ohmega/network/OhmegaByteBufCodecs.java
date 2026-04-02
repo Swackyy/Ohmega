@@ -30,7 +30,7 @@ public class OhmegaByteBufCodecs {
         }
     };
 
-    public static final StreamCodec<ByteBuf, int[]> INT_ARRAY = new StreamCodec<>() {
+    public static final StreamCodec<ByteBuf, int[]> VAR_INT_ARRAY = new StreamCodec<>() {
         public int @NonNull [] decode(@NonNull ByteBuf buf) {
             int size = VarInt.read(buf);
             int[] values = new int[size];

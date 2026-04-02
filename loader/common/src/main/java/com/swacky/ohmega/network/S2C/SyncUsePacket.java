@@ -11,8 +11,8 @@ import org.jspecify.annotations.NonNull;
 public record SyncUsePacket(int playerId, int index) implements CustomPacketPayload {
     public static final Type<@NonNull SyncUsePacket> TYPE = new Type<>(Ohmega.id("sync_use"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncUsePacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, inst -> inst.playerId,
-            ByteBufCodecs.INT, inst -> inst.index,
+            ByteBufCodecs.VAR_INT, inst -> inst.playerId,
+            ByteBufCodecs.VAR_INT, inst -> inst.index,
             SyncUsePacket::new);
 
     @Override
