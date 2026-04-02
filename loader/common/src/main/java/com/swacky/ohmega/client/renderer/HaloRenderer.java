@@ -1,7 +1,6 @@
 package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.renderer.IAccessoryRenderer;
 import com.swacky.ohmega.client.model.HaloModel;
@@ -29,8 +28,7 @@ public class HaloRenderer implements IAccessoryRenderer {
         stack.pushPose();
 
         // Align with head rotation
-        stack.mulPose(Axis.YP.rotationDegrees(state.yRot));
-        stack.mulPose(Axis.XP.rotationDegrees(state.xRot));
+        context.alignRotationHead();
 
         // Move slightly above head
         stack.translate(0, -state.eyeHeight - 0.45, 0);
@@ -46,10 +44,7 @@ public class HaloRenderer implements IAccessoryRenderer {
 
         // Render textured model
         context.submitModel(model, HALO_LOCATION);
-
-        if (context.stack().hasFoil()) {
-            context.submitModel(model, RenderTypes.entityGlint());
-        }
+        context.submitGlint(model);
 
         stack.popPose();
     }

@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
@@ -24,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Some common variables you can use in your renderers.
  * Also contains a few shortcuts to the most common methods to reduce verbosity
  */
+// todo: add comments
 public record AccessoryRenderContext(
         PoseStack poseStack,
         SubmitNodeCollectorWrapper collector,
@@ -32,6 +35,15 @@ public record AccessoryRenderContext(
         ModelManager modelManager,
         int packedLight
 ) {
+    public void alignRotationHead() {
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot));
+        poseStack.mulPose(Axis.XP.rotationDegrees(state.xRot));
+    }
+
+    public void lockRotation() {
+        poseStack.mulPose(Axis.YP.rotationDegrees(-state.bodyRot));
+    }
+
     public void submitBlock(BlockModelResolver modelResolver, BlockModelRenderState renderState, BlockState blockState, BlockDisplayContext displayContext) {
         modelResolver.update(renderState, blockState, displayContext);
         renderState.submit(poseStack, collector.unwrap(), packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor);
@@ -39,6 +51,12 @@ public record AccessoryRenderContext(
 
     public void submitCustomGeometry(RenderType renderType, SubmitNodeCollector.CustomGeometryRenderer renderer) {
         collector.next().submitCustomGeometry(poseStack, renderType, renderer);
+    }
+
+    public void submitGlint(Model<LivingEntityRenderState> model) {
+        if (stack.hasFoil()) {
+            submitModel(model, RenderTypes.entityGlint());
+        }
     }
 
     public void submitItem(ItemModelResolver modelResolver, ItemStackRenderState renderState) {
