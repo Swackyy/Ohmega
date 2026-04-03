@@ -3,6 +3,7 @@ package com.swacky.ohmega.event;
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.AccessoryInventoryButton;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -24,12 +25,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,6 +191,15 @@ public final class ClientCallbacks {
         options.keyMappings = Arrays.stream(options.keyMappings).filter(v -> !OhmegaBinds.isInstance(v)).toList().toArray(new KeyMapping[0]);
 
         loadFunction.run();
+    }
+
+    public static void preventRender(LivingEntityRenderState state, CallbackInfo ci) {
+        for (ItemStack stack : AccessoryRenderStateData.getData(state).stacks()) {
+            if (AccessoryRenderers.isNoRender(AccessoryHelper.getAccessory(stack.getItem()), state.entityType)) {
+                ci.cancel();
+                return;
+            }
+        }
     }
 
     public static void reloadRegisteredKeybinds(Runnable loadFunction) {

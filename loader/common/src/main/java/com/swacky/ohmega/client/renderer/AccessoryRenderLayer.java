@@ -1,9 +1,9 @@
 package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
-import com.swacky.ohmega.api.client.renderer.IAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -14,8 +14,6 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
-
-import java.util.function.Function;
 
 public class AccessoryRenderLayer<T extends LivingEntityRenderState, U extends EntityModel<? super T>> extends RenderLayer<T, U> {
     private final EntityRendererProvider.Context context;
@@ -33,14 +31,15 @@ public class AccessoryRenderLayer<T extends LivingEntityRenderState, U extends E
             SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
 
             for (ItemStack stack : data.stacks()) {
-                Function<EntityRendererProvider.Context, IAccessoryRenderer> factory = AccessoryRenderers.getFactoryFor(stack.getItem());
+                AccessoryRenderers.RendererFactory factory = AccessoryRenderers.getFactoryFor(AccessoryHelper.getAccessory(stack.getItem()));
 
                 if (factory != null) {
-                    factory.apply(context).submit(new AccessoryRenderContext(
+                    factory.create(context).submit(new AccessoryRenderContext(
                             poseStack,
                             wrapper,
                             stack,
                             state,
+                            getParentModel(),
                             Minecraft.getInstance().getModelManager(),
                             packedLight));
                 }

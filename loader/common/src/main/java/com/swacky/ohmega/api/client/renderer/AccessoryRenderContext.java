@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
@@ -32,6 +33,7 @@ public record AccessoryRenderContext(
         SubmitNodeCollectorWrapper collector,
         ItemStack stack,
         LivingEntityRenderState state,
+        EntityModel<?> parentModel,
         ModelManager modelManager,
         int packedLight
 ) {
