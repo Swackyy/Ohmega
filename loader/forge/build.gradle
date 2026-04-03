@@ -17,9 +17,9 @@ minecraft {
                 }
             }
 
-            environment "MOD_CLASSES": "{source_roots}"
             args "--mixin.config", "${modId}.mixins.json"
             args "--mixin.config", "${modId}_common.mixins.json"
+            environment "MOD_CLASSES": "{source_roots}"
             systemProperty "eventbus.api.strictRuntimeChecks", "true"
             systemProperty "forge.enabledGameTestNamespaces", modId
             workingDir.convention layout.projectDirectory.dir("run")

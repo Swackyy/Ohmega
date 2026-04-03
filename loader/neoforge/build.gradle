@@ -20,7 +20,6 @@ neoForge {
     runs {
         configureEach {
             ideName.set "NeoForge ${it.name.capitalize()} (${project.path})"
-            it.client()
             systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
         }
 
