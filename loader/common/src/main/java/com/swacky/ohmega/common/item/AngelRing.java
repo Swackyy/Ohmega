@@ -75,7 +75,7 @@ public class AngelRing extends Item implements IAccessory {
     }
 
     // Makes the accessory have the enchanted glint when equipped
-    // No super as it may be confusing if active when enchanted, also it is not intended to be enchantable.
+    // No super() call as it may be confusing if active when enchanted, and is not intended to be enchantable.
     @Override
     public boolean isFoil(@NonNull ItemStack stack) {
         return AccessoryHelper.isActive(stack);
@@ -102,5 +102,11 @@ public class AngelRing extends Item implements IAccessory {
     @Override
     public Holder<SoundEvent> getEquipSound() {
         return SoundEvents.ARMOR_EQUIP_GOLD;
+    }
+
+    // The angel ring is a gold item, so we consider it "safe" to piglins
+    @Override
+    public boolean isPiglinSafe(ItemStack stack) {
+        return true;
     }
 }

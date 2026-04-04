@@ -22,6 +22,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
@@ -51,6 +52,14 @@ public final class CommonEvents {
     public static void onLivingDropItems(LivingDropsEvent event) {
         if (event.getEntity() instanceof Player player) {
             CommonCallbacks.onPlayerDeath(player, event.getDrops());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onModifyLivingVisibility(LivingEvent.LivingVisibilityEvent event) {
+        // todo
+        if (event.getEntity() instanceof Player player) {
+            event.modifyVisibility(CommonCallbacks.getVisibilityPercentModifier(player, event.getLookingEntity()));
         }
     }
 

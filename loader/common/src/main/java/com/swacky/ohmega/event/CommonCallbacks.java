@@ -11,6 +11,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +20,16 @@ import net.minecraft.world.level.gamerules.GameRules;
 import java.util.Collection;
 
 public final class CommonCallbacks {
+    // todo
+    public static double getVisibilityPercentModifier(Player player, Entity targetingEntity) {
+        double multiplier = 1;
+
+        for (ItemStack stack : AccessoryHelper.getAccessoryStacks(player)) {
+            multiplier = Math.min(multiplier, AccessoryHelper.getAccessory(stack.getItem()).getMobVisibilityMultiplier(stack, targetingEntity));
+        }
+
+        return multiplier;
+    }
     // Ensure alive or 'shouldKeepInventory' returns true before this
     public static void onClonePlayer(Player oldPlayer, Player newPlayer) {
         AccessoryContainer oldA = AccessoryHelper.getContainer(oldPlayer);

@@ -3,6 +3,7 @@ package com.swacky.ohmega.api;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -117,5 +118,33 @@ public interface IAccessory {
     @Nullable
     default Holder<SoundEvent> getEquipSound() {
         return null;
+    }
+
+    /**
+     * Allows for making accessories which act like leather boots, preventing sinking in powdered snow
+     * @param stack the {@link ItemStack} of this accessory item being worn
+     * @return {@code true} if walking on powdered snow should be allowed, {@code false} otherwise
+     */
+    default boolean allowWalkOnPowderSnow(ItemStack stack) {
+        return false;
+    }
+
+    /**
+     * Will allow for changing mob visibility of players wearing this accessory.
+     * @param stack the {@link ItemStack} of this accessory item being worn
+     * @param targetingEntity the entity being targeted.
+     * @return the multiplier to submit, a value of {@code 1} will mean no change, and {@code 0} will prevent visibility at all
+     */
+    default double getMobVisibilityMultiplier(ItemStack stack, Entity targetingEntity) {
+        return 1;
+    }
+
+    /**
+     * Allows an accessory to act as a gold armour piece, preventing piglins from targeting the wearer
+     * @param stack the {@link ItemStack} of this accessory item being worn
+     * @return {@code true} to prevent piglin targeting, {@code false} otherwise
+     */
+    default boolean isPiglinSafe(ItemStack stack) {
+        return false;
     }
 }

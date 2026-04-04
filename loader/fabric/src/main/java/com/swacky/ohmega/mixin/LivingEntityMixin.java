@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,17 @@ abstract class LivingEntityMixin extends Entity implements Attackable, WaypointT
             for (ItemEntity entity : drops) {
                 level().addFreshEntity(entity);
             }
+        }
+    }
+
+    @Inject(
+            method = "getVisibilityPercent",
+            at = @At(
+                    value = "RETURN"),
+            cancellable = true)
+    private void getVisibilityPercent(Entity targetingEntity, CallbackInfoReturnable<Double> cir) {
+        if ((Object) this instanceof Player player) {
+            cir.setReturnValue(cir.getReturnValue() * CommonCallbacks.getVisibilityPercentModifier(player, targetingEntity));
         }
     }
 }

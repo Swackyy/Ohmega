@@ -27,6 +27,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -63,6 +64,14 @@ public final class CommonEvents {
     public static void onLivingDropItems(LivingDropsEvent event) {
         if (event.getEntity() instanceof Player player) {
             CommonCallbacks.onPlayerDeath(player, event.getDrops());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onModifyLivingVisibility(LivingEvent.LivingVisibilityEvent event) {
+        // todo
+        if (event.getEntity() instanceof Player player) {
+            event.modifyVisibility(CommonCallbacks.getVisibilityPercentModifier(player, event.getLookingEntity()));
         }
     }
 
