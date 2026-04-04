@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
-import com.swacky.ohmega.client.screen.AccessoryInventoryButton;
+import com.swacky.ohmega.client.screen.button.AccessoryInventoryButton;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
@@ -194,10 +194,14 @@ public final class ClientCallbacks {
     }
 
     public static void preventRender(LivingEntityRenderState state, CallbackInfo ci) {
-        for (ItemStack stack : AccessoryRenderStateData.getData(state).stacks()) {
-            if (AccessoryRenderers.isNoRender(AccessoryHelper.getAccessory(stack.getItem()), state.entityType)) {
-                ci.cancel();
-                return;
+        AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
+
+        if (data != null) {
+            for (ItemStack stack : data.stacks()) {
+                if (AccessoryRenderers.isNoRender(AccessoryHelper.getAccessory(stack.getItem()), state.entityType)) {
+                    ci.cancel();
+                    return;
+                }
             }
         }
     }
