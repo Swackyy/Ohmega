@@ -10,6 +10,7 @@ import java.util.ServiceLoader;
 
 public final class OhmegaClient {
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final String LINK_CROWDIN = "https://crowdin.com/project/ohmega";
 
     private static boolean bootstrapped = false;
     private static int NUM_SERVICES = 0;

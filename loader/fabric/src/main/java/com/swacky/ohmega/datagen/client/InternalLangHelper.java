@@ -14,6 +14,18 @@ final class InternalLangHelper {
         builder.add("dataPack." + Ohmega.MODID + ".description", translation);
     }
 
+    void addConfigPort(String key, String translation) {
+        builder.add(Ohmega.MODID + ".port.neoforge.configuration.uitext." + key, translation);
+    }
+
+    void addConfigPortTitle(String key, String translation) {
+        addConfigPort("title." + key, translation);
+    }
+
+    void addConfigPortType(String key, String translation) {
+        addConfigPort("type." + key, translation);
+    }
+
     void addConfig(String key, String translation) {
         builder.add(Ohmega.MODID + ".configuration." + key, translation);
     }

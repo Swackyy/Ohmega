@@ -1,6 +1,6 @@
-package com.swacky.ohmega.client.screen;
+package com.swacky.ohmega.client.screen.button;
 
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -9,38 +9,34 @@ import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.player.Player;
 import org.jspecify.annotations.NonNull;
 
-public final class VisibilityButton extends AbstractButton {
-    private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/visibility_button.png");
+public final class FlipPlayerButton extends AbstractButton {
+    private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/flip_player_button.png");
 
-    private final Player player;
-    private final int index;
+    private final AccessoryInventoryScreen screen;
 
-    public VisibilityButton(Player player, int index, int x, int y) {
-        super(x, y, 6, 6, Component.empty());
-        this.player = player;
-        this.index = index;
+    public FlipPlayerButton(AccessoryInventoryScreen screen, int x, int y) {
+        super(x, y, 9, 9, Component.empty());
+        this.screen = screen;
     }
 
     @Override
     public void onPress(@NonNull InputWithModifiers input) {
-        AccessoryHelper.getContainer(player).toggleHidden(player, index);
+        screen.toggleFlipPlayer();
     }
 
     @Override
     protected void extractContents(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         int hoveredOffsY;
 
-        if (AccessoryHelper.getContainer(player).isHidden(index)) {
+        if (isHovered() || screen.isPlayerFlipped()) {
             hoveredOffsY = height;
         } else {
             hoveredOffsY = 0;
         }
 
-        gui.blit(RenderPipelines.GUI_TEXTURED, LOCATION, getX(), getY(), 0, hoveredOffsY, getWidth(), getHeight(), 6, 12);
-
+        gui.blit(RenderPipelines.GUI_TEXTURED, LOCATION, getX(), getY(), 0, hoveredOffsY, getWidth(), getHeight(), 9, 18);
     }
 
     // todo: change later

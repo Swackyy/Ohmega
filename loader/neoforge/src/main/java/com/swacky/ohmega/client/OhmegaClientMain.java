@@ -1,5 +1,6 @@
 package com.swacky.ohmega.client;
 
+import com.swacky.ohmega.client.screen.button.CrowdinButton;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -13,6 +14,11 @@ public final class OhmegaClientMain {
 
         // Config
         container.registerConfig(ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, (container0, parentScreen) -> {
+            ConfigurationScreen configScreen = new ConfigurationScreen(container0, parentScreen);
+
+            configScreen.addRenderableWidget(new CrowdinButton(configScreen));
+            return configScreen;
+        });
     }
 }

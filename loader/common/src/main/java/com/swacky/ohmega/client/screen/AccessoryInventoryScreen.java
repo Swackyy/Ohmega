@@ -1,6 +1,9 @@
 package com.swacky.ohmega.client.screen;
 
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.client.screen.button.AccessoryInventoryButton;
+import com.swacky.ohmega.client.screen.button.FlipPlayerButton;
+import com.swacky.ohmega.client.screen.button.VisibilityButton;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.common.menu.AccessorySlot;

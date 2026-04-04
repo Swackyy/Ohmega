@@ -22,6 +22,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         super(output, "en_us", lookup);
     }
 
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
         InternalLangHelper internalHelper = new InternalLangHelper(builder);
@@ -80,6 +81,47 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(TypeCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties: %s");
 
         // Config
+        // ConfigurationScreen Forge port UI translations
+        // Titles
+        internalHelper.addConfigPort("title", "%s Configuration");
+        internalHelper.addConfigPortTitle("client", "%s Client Configuration");
+        internalHelper.addConfigPortTitle("server", "%s Server Configuration");
+        internalHelper.addConfigPortTitle("common", "%s Common Configuration");
+        // Types
+        internalHelper.addConfigPortType("client", "Client Settings");
+        internalHelper.addConfigPortType("server", "Common Settings");
+        internalHelper.addConfigPortType("common", "Server Settings");
+        // Misc
+        internalHelper.addConfigPort("notonline", "Settings in here are determined by the server and cannot be changed while online.");
+        internalHelper.addConfigPort("notlan", "Settings in here cannot be edited while your game is open to LAN. Please return to the main menu and load the world again.");
+        internalHelper.addConfigPort("notloaded", "Settings in here are only available while a world is loaded.");
+        internalHelper.addConfigPort("unsupportedelement", "This value cannot be edited in the UI. Please contact the mod author about providing a custom UI for it.");
+        internalHelper.addConfigPort("longstring", "This value is too long to be edited in the UI. Please edit it in the config file.");
+        internalHelper.addConfigPort("section", "%s...");
+        internalHelper.addConfigPort("sectionedit", "Edit");
+        internalHelper.addConfigPort("breadcrumb.order", "%1$s %2$s %3$s");
+        internalHelper.addConfigPort("breadcrumb.separator", ">");
+        internalHelper.addConfigPort("listelement", "%s:");
+        internalHelper.addConfigPort("undo", "Undo");
+        internalHelper.addConfigPort("undo.tooltip", "Reverts changes on this screen only.");
+        internalHelper.addConfigPort("reset", "Reset");
+        internalHelper.addConfigPort("reset.tooltip", "Reverts everything on this screen to its default value.");
+        internalHelper.addConfigPort("newlistelement", "+");
+        internalHelper.addConfigPort("listelementup", "\u23f6");
+        internalHelper.addConfigPort("listelementdown", "\u23f7");
+        internalHelper.addConfigPort("listelementremove", "\u274c");
+        internalHelper.addConfigPort("rangetooltip", "Range: %s");
+        internalHelper.addConfigPort("filenametooltip", "File: \"%s\"");
+        internalHelper.addConfigPort("common", "Common Options");
+        internalHelper.addConfigPort("client", "Client Options");
+        internalHelper.addConfigPort("server", "Server Options");
+        internalHelper.addConfigPort("restart.game.title", "Minecraft needs to be restarted");
+        internalHelper.addConfigPort("restart.game.text", "One or more of the configuration option that were changed will only take effect when the game is started.");
+        internalHelper.addConfigPort("restart.server.title", "World needs to be reloaded");
+        internalHelper.addConfigPort("restart.server.text", "One or more of the configuration option that were changed will only take effect when the world is reloaded.");
+        internalHelper.addConfigPort("restart.return", "Ignore");
+        internalHelper.addConfigPort("restart.return.tooltip", "Your changes will have no effect until you restart!");
+
         internalHelper.addConfigTitle("Ohmega Config");
 
         // Client config

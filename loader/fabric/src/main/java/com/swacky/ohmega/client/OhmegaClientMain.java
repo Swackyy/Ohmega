@@ -4,6 +4,7 @@ import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
+import com.swacky.ohmega.client.screen.button.CrowdinButton;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -36,7 +37,12 @@ public final class OhmegaClientMain implements ClientModInitializer {
 
         // Config
         ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
-        ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, ConfigurationScreen::new);
+        ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, (modId, parentScreen) -> {
+            ConfigurationScreen configScreen = new ConfigurationScreen(modId, parentScreen);
+
+            configScreen.addRenderableWidget(new CrowdinButton(configScreen));
+            return configScreen;
+        });
 
         // Networking
         // Receive

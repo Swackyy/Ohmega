@@ -1,5 +1,6 @@
-package com.swacky.ohmega.client.screen;
+package com.swacky.ohmega.client.screen.button;
 
+import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
