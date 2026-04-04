@@ -57,7 +57,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // Tick method is needed here as there are so many edge cases to account for, it is easier to just use the tick method
     @Override
-    public void tick(@NonNull Player player, @NonNull ItemStack stack) {
+    public void accessoryTick(@NonNull Player player, @NonNull ItemStack stack) {
         if (!(player.isCreative() || player.isSpectator())) {
             if (AccessoryHelper.isActive(stack)) {
                 player.getAbilities().mayfly = true;
@@ -70,7 +70,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // Toggle the accessory being active when the keybind is pressed
     @Override
-    public void onUse(@NonNull Player player, @NonNull ItemStack stack) {
+    public void onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
         AccessoryHelper.toggleActive(player, stack);
     }
 
@@ -83,12 +83,18 @@ public class AngelRing extends Item implements IAccessory {
 
     // Adds modifiers to be applied when the accessory is equipped
     @Override
-    public void addDefaultAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {
-        // This modifier is always applied
-        builder.addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"), 1, AttributeModifier.Operation.ADD_VALUE));
-
-        // This modifier is only applied when the accessory is active
-        builder.addActive(Attributes.MAX_HEALTH, new AttributeModifier(Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"), 4, AttributeModifier.Operation.ADD_VALUE));
+    public void addAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {
+        builder
+                // This modifier is always applied
+                .addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(
+                        Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.strength"),
+                        1,
+                        AttributeModifier.Operation.ADD_VALUE))
+                // This modifier is only applied when the accessory is active
+                .addActive(Attributes.MAX_HEALTH, new AttributeModifier(
+                        Ohmega.id(BuiltInRegistries.ITEM.getKey(this).toLanguageKey() + ".effect.health_boost"),
+                        4,
+                        AttributeModifier.Operation.ADD_VALUE));
     }
 
     // The sound to be played when equipped using a right click

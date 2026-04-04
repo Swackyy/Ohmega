@@ -221,14 +221,17 @@ public final class AccessoryHelper {
      */
     public static AccessoryModifiers getModifiers(ItemStack stack) {
         IAccessory accessory = getAccessory(stack.getItem());
-        AccessoryModifiers.Builder builder = new AccessoryModifiers.Builder();
 
         if (accessory != null) {
-            accessory.addDefaultAttributeModifiers(builder);
+            AccessoryModifiers.Builder builder = new AccessoryModifiers.Builder();
+
+            // todo: cache this
+            accessory.addAttributeModifiers(builder);
             OhmegaHooks.accessoryAttributeModifiersEvent(stack, builder);
+            return builder.build();
         }
 
-        return builder.build();
+        return AccessoryModifiers.EMPTY;
     }
 
     /**

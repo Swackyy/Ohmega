@@ -289,7 +289,7 @@ public final class AccessoryContainer {
             IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
             if (accessory != null && !OhmegaHooks.accessoryTickEventPre(player, stack)) {
-                accessory.tick(player, stack);
+                accessory.accessoryTick(player, stack);
                 OhmegaHooks.accessoryTickEventPost(player, stack);
             }
         }

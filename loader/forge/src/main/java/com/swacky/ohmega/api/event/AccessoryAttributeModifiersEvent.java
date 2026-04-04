@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Fired after {@link com.swacky.ohmega.api.IAccessory#addDefaultAttributeModifiers(AccessoryModifiers.Builder)}
+ * Fired after {@link com.swacky.ohmega.api.IAccessory#addAttributeModifiers(AccessoryModifiers.Builder)}
  * Cancelling and using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
  */
 public record AccessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) implements RecordEvent, Cancellable {

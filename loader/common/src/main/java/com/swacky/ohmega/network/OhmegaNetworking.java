@@ -88,7 +88,7 @@ public final class OhmegaNetworking {
                 IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                 if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
-                    accessory.onUse(player, stack);
+                    accessory.onKeybindUse(player, stack);
                 }
 
                 for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
@@ -162,7 +162,7 @@ public final class OhmegaNetworking {
             if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
                 ItemStack stack = AccessoryHelper.getContainer(player).getStackInSlot(packet.index());
 
-                AccessoryHelper.getAccessory(stack.getItem()).onUse(player, stack);
+                AccessoryHelper.getAccessory(stack.getItem()).onKeybindUse(player, stack);
             }
         }
 

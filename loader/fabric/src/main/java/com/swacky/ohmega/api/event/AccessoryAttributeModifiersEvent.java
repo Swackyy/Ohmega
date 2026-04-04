@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Fired after {@link com.swacky.ohmega.api.IAccessory#addDefaultAttributeModifiers(AccessoryModifiers.Builder)}
+ * Fired after {@link com.swacky.ohmega.api.IAccessory#addAttributeModifiers(AccessoryModifiers.Builder)}
  * Cancelling and using {@link AccessoryModifiers.Builder#clear()} will ensure no attribute modifiers are applied
  */
 public interface AccessoryAttributeModifiersEvent {

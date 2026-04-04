@@ -12,7 +12,10 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * <p>
  * Supports attributes added when equipped, and when equipped but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
+// todo: allow for other conditions here
 public final class AccessoryModifiers {
+    public static final AccessoryModifiers EMPTY = Builder.EMPTY.build();
+
     private final ItemAttributeModifiers passiveModifiers;
     private final ItemAttributeModifiers activeModifiers;
 
@@ -30,6 +33,8 @@ public final class AccessoryModifiers {
     }
 
     public static class Builder {
+        public static final Builder EMPTY = new Builder();
+
         private ItemAttributeModifiers.Builder passiveModifiers = ItemAttributeModifiers.builder();
         private ItemAttributeModifiers.Builder activeModifiers = ItemAttributeModifiers.builder();
 
@@ -46,8 +51,9 @@ public final class AccessoryModifiers {
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
-        public void addPassive(Holder<Attribute> attribute, AttributeModifier modifier) {
+        public Builder addPassive(Holder<Attribute> attribute, AttributeModifier modifier) {
             add(attribute, modifier, false);
+            return this;
         }
 
         /**
@@ -55,8 +61,9 @@ public final class AccessoryModifiers {
          * @param attribute the attribute to modify
          * @param modifier defines how the attribute supplied will be modified
          */
-        public void addActive(Holder<Attribute> attribute, AttributeModifier modifier) {
+        public Builder addActive(Holder<Attribute> attribute, AttributeModifier modifier) {
             add(attribute, modifier, true);
+            return this;
         }
 
         /**

@@ -136,7 +136,7 @@ public final class ClientCallbacks {
                     if (accessory != null) {
                         // Client handling
                         if (!OhmegaHooks.accessoryUseEvent(mc.player, stack)) {
-                            accessory.onUse(mc.player, stack);
+                            accessory.onKeybindUse(mc.player, stack);
                         }
 
                         // Server handling
