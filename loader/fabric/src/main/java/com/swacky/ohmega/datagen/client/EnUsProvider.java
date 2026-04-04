@@ -67,8 +67,9 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Removed %s item(s) from %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Removed %s item(s) from entity %s's accessory inventory");
         // Info
+        builder.add(InfoCommand.CROWDIN_FEEDBACK, "Consider translating Ohmega on Crowdin by clicking this message!");
         builder.add(InfoCommand.DISCORD_FEEDBACK, "If you need help with the API or want to send feedback, click this message to join Ohmega's Discord server");
-        builder.add(InfoCommand.REPORT_FEEDBACK, "Thanks for using Ohmega! If you want to report a bug, click this message to open our issue tracker");
+        builder.add(InfoCommand.REPORT_FEEDBACK, "Thanks for using Ohmega, if you want to report a bug, click this message to open our issue tracker");
         builder.add(InfoCommand.WIKI_FEEDBACK, "Want to make a mod with Ohmega? Click this message to open the Ohmega wiki to learn how");
         // Item
         builder.add(ItemCommand.ROOT_FEEDBACK, "Index %s is out of bounds! Must be greater than or equal to 0 and below %s");
