@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public final class OhmegaDataComponents {
     private static final Service IMPL = Ohmega.loadService(Service.class);
@@ -16,6 +17,10 @@ public final class OhmegaDataComponents {
 
     public static DataComponentType<Integer> getSlotIndex() {
         return IMPL.getSlotIndex();
+    }
+
+    public static DataComponentType<ItemAttributeModifiers> getSlotActiveModifiers() {
+        return IMPL.getSlotActiveModifiers();
     }
 
     @SuppressWarnings("ProtectedMemberInFinalClass")
@@ -36,12 +41,24 @@ public final class OhmegaDataComponents {
                 .build();
     }
 
+    @SuppressWarnings("ProtectedMemberInFinalClass")
+    protected static DataComponentType<ItemAttributeModifiers> createSlotActiveModifiers() {
+        return DataComponentType.<ItemAttributeModifiers>builder()
+                .persistent(ItemAttributeModifiers.CODEC)
+                .networkSynchronized(ItemAttributeModifiers.STREAM_CODEC)
+                .cacheEncoding()
+                .build();
+    }
+
     public interface Service {
         String ACTIVE_KEY = "active";
         String SLOT_INDEX_KEY = "slot_index";
+        String SLOT_ACTIVE_MODIFIERS_KEY = "slot_active_modifiers";
 
         DataComponentType<Boolean> getActive();
 
         DataComponentType<Integer> getSlotIndex();
+
+        DataComponentType<ItemAttributeModifiers> getSlotActiveModifiers();
     }
 }

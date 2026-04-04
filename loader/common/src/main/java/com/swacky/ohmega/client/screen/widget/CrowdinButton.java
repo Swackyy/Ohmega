@@ -1,4 +1,4 @@
-package com.swacky.ohmega.client.screen.button;
+package com.swacky.ohmega.client.screen.widget;
 
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;

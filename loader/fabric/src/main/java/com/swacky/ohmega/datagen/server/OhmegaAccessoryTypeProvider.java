@@ -11,10 +11,11 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
     }
 
     @Override
-    public void addTypes() {
+    protected void addTypes() {
         add(AccessoryType.GENERIC_ID, new AccessoryType.Builder()
                 .hideHoverText()
                 .emptySlotPath("accessory_slot_generic")
+                .noFallback(true)
                 .priority(Integer.MAX_VALUE));
 
         add(AccessoryType.NORMAL_ID, new AccessoryType.Builder()

@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
-import com.swacky.ohmega.client.screen.button.AccessoryInventoryButton;
+import com.swacky.ohmega.client.screen.widget.AccessoryInventoryButton;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;

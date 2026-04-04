@@ -131,12 +131,13 @@ public final class AccessoryHelper {
         }
 
         AccessoryType type = AccessoryType.NONE;
+        ImmutableList<AccessoryType> slotTypes = getSlotTypes();
 
         for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
             if (item.builtInRegistryHolder().is(entry.getValue())) {
                 AccessoryType candidate = entry.getKey();
 
-                if (type == AccessoryType.NONE || candidate.getPriority() < type.getPriority()) {
+                if (candidate.getPriority() < type.getPriority() && (type.isNoFallback() || slotTypes.contains(candidate)) || (!candidate.isNoFallback() && !slotTypes.contains(type))) {
                     type = candidate;
                 }
             }
@@ -168,7 +169,20 @@ public final class AccessoryHelper {
      */
     public static void setActive(Player player, ItemStack stack, boolean value) {
         stack.set(OhmegaDataComponents.getActive(), value);
-        changeModifiers(player, getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive(), value);
+
+        if (value) {
+            ItemAttributeModifiers activeModifiers = getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive();
+
+            stack.set(OhmegaDataComponents.getSlotActiveModifiers(), activeModifiers);
+            changeModifiers(player, activeModifiers, true);
+        } else {
+            ItemAttributeModifiers activeModifiers = stack.get(OhmegaDataComponents.getSlotActiveModifiers());
+
+            if (activeModifiers != null) {
+                changeModifiers(player, activeModifiers, false);
+            }
+        }
+
         changeModifiers(player, getModifiers(stack).getActive(), value);
     }
 
@@ -263,6 +277,7 @@ public final class AccessoryHelper {
      * @return a list of {@link AccessoryType}s matching indexes of accessory indexes
      */
     // todo: cache
+    // todo: make a cached "getUniqueSlotTypes" that returns a Set
     public static ImmutableList<AccessoryType> getSlotTypes() {
         List<String> slotTypes = OhmegaConfig.Server.slotTypes();
         int size = slotTypes.size();

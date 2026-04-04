@@ -64,3 +64,11 @@ fabricApi {
         outputDirectory = file project(":loader:common").sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath()
     }
 }
+
+jar {
+    exclude "**/datagen/**"
+}
+
+sourcesJar {
+    exclude "**/datagen/**"
+}

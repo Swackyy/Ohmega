@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Function4;
 import com.mojang.realmsclient.RealmsMainScreen;
 import com.mojang.serialization.Codec;
-import com.swacky.ohmega.client.screen.button.CrowdinButton;
+import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.Ohmega;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.ChatFormatting;

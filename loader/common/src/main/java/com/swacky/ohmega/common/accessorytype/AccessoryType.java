@@ -38,6 +38,7 @@ public final class AccessoryType {
             ByteBufCodecs.BOOL, AccessoryType::displayHoverText,
             Identifier.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
+            ByteBufCodecs.BOOL, AccessoryType::isNoFallback,
             ByteBufCodecs.INT, AccessoryType::getPriority,
             AccessoryType::new);
 
@@ -46,6 +47,7 @@ public final class AccessoryType {
     public static final String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
     public static final String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
     public static final String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
+    public static final String NO_FALLBACK_KEY = "noFallback";
     public static final String PRIORITY_KEY = "priority";
 
     // Use these for data generation
@@ -70,14 +72,23 @@ public final class AccessoryType {
     private final boolean displayHoverText;
     private final Identifier emptySlotLocation;
     private final int hoverTextColour;
+    private final boolean noFallback;
     private final int priority;
 
-    private AccessoryType(Identifier id, AccessoryModifiers attributeModifiers, boolean displayHoverText, Identifier emptySlotLocation, int hoverTextColour, int priority) {
+    private AccessoryType(
+            Identifier id,
+            AccessoryModifiers attributeModifiers,
+            boolean displayHoverText,
+            Identifier emptySlotLocation,
+            int hoverTextColour,
+            boolean noFallback,
+            int priority) {
         this.id = id;
         this.attributeModifiers = attributeModifiers;
         this.displayHoverText = displayHoverText;
         this.emptySlotLocation = emptySlotLocation;
         this.hoverTextColour = hoverTextColour;
+        this.noFallback = noFallback;
         this.priority = priority;
     }
 
@@ -105,8 +116,12 @@ public final class AccessoryType {
         return displayHoverText;
     }
 
+    public boolean isNoFallback() {
+        return noFallback;
+    }
+
     public boolean isDefault() {
-        return this == NORMAL.get();
+        return this == NONE;
     }
 
     public String getTranslationKey() {
@@ -156,6 +171,7 @@ public final class AccessoryType {
         private boolean displayHoverText = true;
         private String emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
         private int hoverTextColour = 0xffffff;
+        private boolean noFallback = false;
         private int priority = 0;
 
         public Builder attributeModifiers(AccessoryModifiers modifiers) {
@@ -195,6 +211,12 @@ public final class AccessoryType {
             return this;
         }
 
+        public Builder noFallback(boolean value) {
+            noFallback = value;
+
+            return this;
+        }
+
         public Builder priority(int priority) {
             this.priority = priority;
 
@@ -210,6 +232,7 @@ public final class AccessoryType {
                             Identifier.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath) :
                             Identifier.parse(emptySlotPath).withPrefix(LOCATION_PREFIX),
                     hoverTextColour,
+                    noFallback,
                     priority);
         }
 
@@ -265,8 +288,12 @@ public final class AccessoryType {
                 }
             }
 
+            if (json.has(NO_FALLBACK_KEY)) {
+                builder.noFallback(GsonHelper.convertToBoolean(json.get(NO_FALLBACK_KEY), NO_FALLBACK_KEY));
+            }
+
             if (json.has(PRIORITY_KEY)) {
-                builder.priority(GsonHelper.getAsInt(json, PRIORITY_KEY));
+                builder.priority(GsonHelper.convertToInt(json.get(PRIORITY_KEY), PRIORITY_KEY));
             }
 
             return builder;
@@ -291,6 +318,7 @@ public final class AccessoryType {
             object.addProperty(DISPLAY_HOVER_TEXT_KEY, builder.displayHoverText);
             object.addProperty(EMPTY_SLOT_TEXTURE_KEY, builder.emptySlotPath);
             object.addProperty(HOVER_TEXT_COLOUR_KEY, builder.hoverTextColour);
+            object.addProperty(NO_FALLBACK_KEY, builder.noFallback);
             object.addProperty(PRIORITY_KEY, builder.priority);
 
             return object;

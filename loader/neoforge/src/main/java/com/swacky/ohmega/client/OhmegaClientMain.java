@@ -1,6 +1,6 @@
 package com.swacky.ohmega.client;
 
-import com.swacky.ohmega.client.screen.button.CrowdinButton;
+import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;

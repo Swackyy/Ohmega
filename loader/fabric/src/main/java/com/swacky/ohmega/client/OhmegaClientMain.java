@@ -4,7 +4,7 @@ import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
-import com.swacky.ohmega.client.screen.button.CrowdinButton;
+import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;

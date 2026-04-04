@@ -79,6 +79,10 @@ public final class TypeCommand {
                 .append(Component.literal("0x" + Integer.toHexString(colour)).withColor(colour))
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
         components.add(Component
+                .literal('[' + AccessoryType.NO_FALLBACK_KEY + ':').withStyle(ChatFormatting.GREEN)
+                .append(Component.literal(String.valueOf(type.isNoFallback())).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
+        components.add(Component
                 .literal('[' + AccessoryType.PRIORITY_KEY + ':').withStyle(ChatFormatting.GREEN)
                 .append(Component.literal(String.valueOf(type.getPriority())).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
