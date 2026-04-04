@@ -5,8 +5,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -32,9 +35,20 @@ public class ItemCommand {
     public static final String ARGUMENT_ITEM = "item";
     public static final String ARGUMENT_COUNT = "count";
 
+    public static final String ROOT_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).feedback();
     public static final String GET_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
     public static final String SET_FEEDBACK_MULTIPLE = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
     public static final String SET_FEEDBACK_SINGLE = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
+
+    @SuppressWarnings("unchecked")
+    private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(obj -> {
+        Pair<Integer, Integer> pair = (Pair<Integer, Integer>) obj;
+
+        return Component.translatable(
+                ROOT_FEEDBACK,
+                pair.getLeft(),
+                pair.getRight());
+    });
 
     public static ArgumentBuilder<CommandSourceStack, ?> create(CommandBuildContext context) {
         return Commands.literal(ELEMENT_ROOT)
@@ -59,18 +73,28 @@ public class ItemCommand {
         ItemStack stack;
         // todo
         if (target instanceof Player player) {
-            stack = AccessoryHelper.getContainer(player).getStackInSlot(index);
+            AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+            if (index >= 0 && index < container.size()) {
+                stack = container.getStackInSlot(index);
+            } else throw INDEX_EXCEPTION.create(Pair.of(index, container.size()));
         } else return 0;
 
         context.getSource().sendSuccess(() -> Component.translatable(GET_FEEDBACK, target.getDisplayName(), stack.getCount(), stack.getDisplayName(), index), true);
         return Command.SINGLE_SUCCESS;
     }
 
-    public static int doSet(CommandContext<CommandSourceStack> context, List<Entity> targets, int index, Holder<Item> item, int count) {
+    public static int doSet(CommandContext<CommandSourceStack> context, List<Entity> targets, int index, Holder<Item> item, int count) throws CommandSyntaxException {
         for (Entity target : targets) {
             // todo
             if (target instanceof Player player) {
-                AccessoryHelper.getContainer(player).setStack(player, index, new ItemStack(item, count), EquipContext.GENERIC, true);
+                AccessoryContainer container = AccessoryHelper.getContainer(player);
+
+                if (index >= 0 && index < container.size()) {
+                    container.setStack(player, index, new ItemStack(item, count), EquipContext.GENERIC, true);
+                } else {
+                    throw INDEX_EXCEPTION.create(Pair.of(index, container.size()));
+                }
             }
         }
 

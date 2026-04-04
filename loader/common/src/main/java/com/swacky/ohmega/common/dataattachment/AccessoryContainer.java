@@ -77,13 +77,11 @@ public final class AccessoryContainer {
             return true;
         }
 
-        if (index >= 0 && index < size()) {
-            Item item = stack.getItem();
-            IAccessory accessory = AccessoryHelper.getAccessory(item);
+        Item item = stack.getItem();
+        IAccessory accessory = AccessoryHelper.getAccessory(item);
 
-            if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
-                return OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack)) && AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index);
-            }
+        if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
+            return AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) && OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack));
         }
 
         return false;

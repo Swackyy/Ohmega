@@ -71,6 +71,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(InfoCommand.REPORT_FEEDBACK, "Thanks for using Ohmega! If you want to report a bug, click this message to open our issue tracker");
         builder.add(InfoCommand.WIKI_FEEDBACK, "Want to make a mod with Ohmega? Click this message to open the Ohmega wiki to learn how");
         // Item
+        builder.add(ItemCommand.ROOT_FEEDBACK, "Index %s is out of bounds! Must be greater than or equal to 0 and below %s");
         builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s %s in index %s of their accessory inventory");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s of %s entities' accessory inventories to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
