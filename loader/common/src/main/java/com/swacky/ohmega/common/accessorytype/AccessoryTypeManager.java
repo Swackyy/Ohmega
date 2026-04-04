@@ -145,6 +145,10 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
     }
 
     public static boolean exists(Identifier id) {
-        return TYPES.containsKey(id);
+        if (id != null) {
+            return TYPES.containsKey(id);
+        }
+
+        return false;
     }
 }

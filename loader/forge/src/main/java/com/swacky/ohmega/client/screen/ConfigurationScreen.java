@@ -1075,7 +1075,9 @@ public final class ConfigurationScreen extends OptionsSubScreen {
         protected void createAddElementButton() {
             list.addSmall(new StringWidget(Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.empty(), font), Button.builder(NEW_LIST_ELEMENT, button -> {
                 List<T> newValue = new ArrayList<>(cfgList);
-                newValue.add((T) spec.getDefault());
+                // Ohmega: We just assume this, it may crash for other List<T> types
+                newValue.add((T) "");
+
                 undoManager.add(v -> {
                     cfgList = v;
                     onChanged(key);
