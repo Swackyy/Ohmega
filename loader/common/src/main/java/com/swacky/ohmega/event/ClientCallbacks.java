@@ -157,7 +157,7 @@ public final class ClientCallbacks {
         }
     }
 
-    public static void onConfigReload(Runnable loadFunction) {
+    public static void onServerConfigReload(Runnable loadFunction) {
         AccessoryTypeManager.runDeferredAwaitingConfigLoad();
 
         if (OhmegaConfig.Client.isLoaded()) {

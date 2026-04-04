@@ -50,7 +50,7 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onConfigReload(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
         }
     }
 
