@@ -10,7 +10,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class RuRuProvider extends OhmegaLangProvider {
+public final class RuRuProvider extends OhmegaLangProvider {
     public RuRuProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "ru_ru", lookup);
     }

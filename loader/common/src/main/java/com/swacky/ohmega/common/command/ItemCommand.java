@@ -24,7 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-public class ItemCommand {
+public final class ItemCommand {
     public static final String ELEMENT_ROOT = "item";
     public static final String ELEMENT_GET = "get";
     public static final String ELEMENT_SET = "set";

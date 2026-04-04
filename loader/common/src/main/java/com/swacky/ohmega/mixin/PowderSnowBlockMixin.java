@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PowderSnowBlock.class)
-public class PowderSnowBlockMixin {
+abstract class PowderSnowBlockMixin {
     @Inject(
             method = "canEntityWalkOnPowderSnow",
             at = @At(

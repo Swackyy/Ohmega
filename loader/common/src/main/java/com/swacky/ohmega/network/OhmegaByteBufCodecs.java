@@ -8,7 +8,7 @@ import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.NonNull;
 
-public class OhmegaByteBufCodecs {
+public final class OhmegaByteBufCodecs {
     public static final StreamCodec<ByteBuf, boolean[]> BOOLEAN_ARRAY = new StreamCodec<>() {
         public boolean @NonNull [] decode(@NonNull ByteBuf buf) {
             int size = VarInt.read(buf);

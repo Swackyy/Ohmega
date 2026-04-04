@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class InfoCommand {
+public final class InfoCommand {
     public static final String ELEMENT_ROOT = "info";
     public static final String ELEMENT_CROWDIN = "crowdin";
     public static final String ELEMENT_DISCORD = "discord";

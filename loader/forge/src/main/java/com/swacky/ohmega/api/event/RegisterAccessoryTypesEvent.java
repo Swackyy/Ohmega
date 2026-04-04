@@ -8,7 +8,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RegisterAccessoryTypesEvent extends MutableEvent {
+public final class RegisterAccessoryTypesEvent extends MutableEvent {
     public static final EventBus<@NonNull RegisterAccessoryTypesEvent> BUS = EventBus.create(RegisterAccessoryTypesEvent.class);
 
     public final Set<AccessoryType> types = new HashSet<>();

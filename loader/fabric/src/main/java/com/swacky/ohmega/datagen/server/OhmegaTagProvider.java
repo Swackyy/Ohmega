@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class OhmegaTagProvider extends FabricTagsProvider<Item> {
+public final class OhmegaTagProvider extends FabricTagsProvider<Item> {
     public OhmegaTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, Registries.ITEM, lookup);
     }

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PiglinAi.class)
-public class PiglinAiMixin {
+abstract class PiglinAiMixin {
     @Inject(
             method = "isWearingSafeArmor",
             at = @At(

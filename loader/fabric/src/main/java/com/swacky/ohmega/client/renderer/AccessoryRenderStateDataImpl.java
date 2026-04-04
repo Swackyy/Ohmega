@@ -3,7 +3,7 @@ package com.swacky.ohmega.client.renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
-public class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
+public final class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
     public static final RenderStateDataKey<AccessoryRenderStateData> KEY = RenderStateDataKey.create(ID::toString);
 
     @Override

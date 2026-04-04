@@ -8,7 +8,7 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import org.jspecify.annotations.NonNull;
 
-public class OhmegaModelProvider extends FabricModelProvider {
+public final class OhmegaModelProvider extends FabricModelProvider {
     public OhmegaModelProvider(FabricPackOutput output) {
         super(output);
     }

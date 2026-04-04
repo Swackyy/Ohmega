@@ -15,7 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import org.jspecify.annotations.NonNull;
 
-public class CrowdinButton extends AbstractButton {
+public final class CrowdinButton extends AbstractButton {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/crowdin_button.png");
 
     private final Screen parentScreen;

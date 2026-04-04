@@ -3,7 +3,7 @@ package com.swacky.ohmega.client.renderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.util.context.ContextKey;
 
-public class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
+public final class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
     public static final ContextKey<AccessoryRenderStateData> KEY = new ContextKey<>(ID);
 
     @Override
