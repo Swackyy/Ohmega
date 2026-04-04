@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
  * A simple wrapper for {@link SubmitNodeCollector} to automatically order rendering draws.
  * This is done to enforce accessories equipped with a higher index to have higher rendering priority and to avoid Z-fighting
  */
-public class SubmitNodeCollectorWrapper {
+public final class SubmitNodeCollectorWrapper {
     private final SubmitNodeCollector collector;
     private int order = 1; // Begin at 1 instead of 0 to avoid vanilla rendering
 

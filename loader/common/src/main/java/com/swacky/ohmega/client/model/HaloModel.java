@@ -14,7 +14,7 @@ import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
 
-public class HaloModel extends Model<LivingEntityRenderState> {
+public final class HaloModel extends Model<LivingEntityRenderState> {
     public static final ModelLayerLocation LOCATION = new ModelLayerLocation(Ohmega.id("halo"), "main");
 
     public HaloModel(ModelPart root, Function<Identifier, RenderType> renderType) {

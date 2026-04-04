@@ -143,7 +143,7 @@ public final class CommonEvents {
                         SyncStacksPacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, _) ->
                                 OhmegaNetworking.S2C.handleSyncStacks(packet)))
-                .configurationToClient(
+                .playToClient(
                         SyncTypesPacket.TYPE,
                         SyncTypesPacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, _) ->

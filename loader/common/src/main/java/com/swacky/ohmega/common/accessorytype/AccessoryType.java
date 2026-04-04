@@ -2,6 +2,7 @@ package com.swacky.ohmega.common.accessorytype;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -10,9 +11,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.JsonOps;
+import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -27,9 +30,11 @@ import java.lang.reflect.Type;
 import java.util.HexFormat;
 import java.util.function.Supplier;
 
+// todo: move JSON serialisation to just use codecs
 public final class AccessoryType {
-    public static final StreamCodec<FriendlyByteBuf, AccessoryType> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryType> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC, AccessoryType::getId,
+            AccessoryModifiers.STREAM_CODEC, AccessoryType::getAttributeModifiers,
             ByteBufCodecs.BOOL, AccessoryType::displayHoverText,
             Identifier.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
@@ -37,6 +42,7 @@ public final class AccessoryType {
             AccessoryType::new);
 
     // JSON keys
+    public static final String ATTRIBUTE_MODIFIERS_KEY = "attributeModifiers";
     public static final String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
     public static final String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
     public static final String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
@@ -60,13 +66,15 @@ public final class AccessoryType {
     public static final Supplier<AccessoryType> SPECIAL = () -> AccessoryTypeManager.get(SPECIAL_ID);
 
     private final Identifier id;
+    private final AccessoryModifiers attributeModifiers;
     private final boolean displayHoverText;
     private final Identifier emptySlotLocation;
     private final int hoverTextColour;
     private final int priority;
 
-    private AccessoryType(Identifier id, boolean displayHoverText, Identifier emptySlotLocation, int hoverTextColour, int priority) {
+    private AccessoryType(Identifier id, AccessoryModifiers attributeModifiers, boolean displayHoverText, Identifier emptySlotLocation, int hoverTextColour, int priority) {
         this.id = id;
+        this.attributeModifiers = attributeModifiers;
         this.displayHoverText = displayHoverText;
         this.emptySlotLocation = emptySlotLocation;
         this.hoverTextColour = hoverTextColour;
@@ -75,6 +83,10 @@ public final class AccessoryType {
 
     public Identifier getId() {
         return id;
+    }
+
+    public AccessoryModifiers getAttributeModifiers() {
+        return attributeModifiers;
     }
 
     public Identifier getEmptySlotLocation() {
@@ -139,15 +151,21 @@ public final class AccessoryType {
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
         private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
-        public static final String LOCATION_PREFIX_FULL = "gui/sprites/" + LOCATION_PREFIX;
 
+        private AccessoryModifiers attributeModifiers = AccessoryModifiers.EMPTY;
         private boolean displayHoverText = true;
         private String emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
         private int hoverTextColour = 0xffffff;
         private int priority = 0;
 
+        public Builder attributeModifiers(AccessoryModifiers modifiers) {
+            attributeModifiers = modifiers;
+
+            return this;
+        }
+
         public Builder displayHoverText(boolean value) {
-            this.displayHoverText = value;
+            displayHoverText = value;
 
             return this;
         }
@@ -158,6 +176,7 @@ public final class AccessoryType {
             return this;
         }
 
+        @SuppressWarnings("unused")
         public Builder emptySlotPath(Identifier location) {
             this.emptySlotPath = location.toString();
 
@@ -165,7 +184,7 @@ public final class AccessoryType {
         }
 
         public Builder hideHoverText() {
-            this.displayHoverText = false;
+            displayHoverText = false;
 
             return this;
         }
@@ -185,6 +204,7 @@ public final class AccessoryType {
         public AccessoryType build(String namespace, String path) {
             return new AccessoryType(
                     Identifier.fromNamespaceAndPath(namespace, path),
+                    attributeModifiers,
                     displayHoverText,
                     emptySlotPath.indexOf(':') == -1 ?
                             Identifier.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath) :
@@ -209,6 +229,13 @@ public final class AccessoryType {
         public Builder deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
             Builder builder = new Builder();
             JsonObject json = GsonHelper.convertToJsonObject(element, "entry");
+
+            if (json.has(ATTRIBUTE_MODIFIERS_KEY)) {
+                builder.attributeModifiers(AccessoryModifiers.CODEC.parse(
+                        JsonOps.INSTANCE,
+                        json.get(ATTRIBUTE_MODIFIERS_KEY)
+                ).result().orElse(AccessoryModifiers.EMPTY));
+            }
 
             if (json.has(DISPLAY_HOVER_TEXT_KEY)) {
                 builder.displayHoverText(GsonHelper.convertToBoolean(json.get(DISPLAY_HOVER_TEXT_KEY), DISPLAY_HOVER_TEXT_KEY));
@@ -254,13 +281,17 @@ public final class AccessoryType {
         private Serializer() {}
 
         @Override
-        public JsonElement serialize(Builder src, Type type, JsonSerializationContext context) {
+        public JsonElement serialize(Builder builder, Type type, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
 
-            object.addProperty(DISPLAY_HOVER_TEXT_KEY, src.displayHoverText);
-            object.addProperty(EMPTY_SLOT_TEXTURE_KEY, src.emptySlotPath);
-            object.addProperty(HOVER_TEXT_COLOUR_KEY, src.hoverTextColour);
-            object.addProperty(PRIORITY_KEY, src.priority);
+            object.add(ATTRIBUTE_MODIFIERS_KEY, AccessoryModifiers.CODEC
+                    .encodeStart(JsonOps.INSTANCE, builder.attributeModifiers)
+                    .result()
+                    .orElseGet(JsonArray::new));
+            object.addProperty(DISPLAY_HOVER_TEXT_KEY, builder.displayHoverText);
+            object.addProperty(EMPTY_SLOT_TEXTURE_KEY, builder.emptySlotPath);
+            object.addProperty(HOVER_TEXT_COLOUR_KEY, builder.hoverTextColour);
+            object.addProperty(PRIORITY_KEY, builder.priority);
 
             return object;
         }

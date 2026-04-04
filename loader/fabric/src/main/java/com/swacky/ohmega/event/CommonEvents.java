@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
@@ -11,7 +12,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,6 +47,7 @@ public final class CommonEvents {
     }
 
     private static void onPlayerJoin(ServerPlayer player) {
+        OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
         AccessoryHelper.getContainer(player).onAttach(player);
     }
 
@@ -61,6 +62,6 @@ public final class CommonEvents {
     }
 
     private static void onServerConfigure(ServerConfigurationPacketListenerImpl handler, MinecraftServer server) {
-        handler.send(new ClientboundCustomPayloadPacket(new SyncTypesPacket()));
+        //handler.send(new ClientboundCustomPayloadPacket(new SyncTypesPacket()));
     }
 }

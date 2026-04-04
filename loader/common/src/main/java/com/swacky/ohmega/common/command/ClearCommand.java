@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ClearCommand {
+public final class ClearCommand {
     public static final String ELEMENT_ROOT = "clear";
 
     private static final String ARGUMENT_TARGETS = "targets";

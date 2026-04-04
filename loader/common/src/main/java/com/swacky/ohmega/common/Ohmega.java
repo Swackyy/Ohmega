@@ -62,7 +62,11 @@ public final class Ohmega {
      * Use {@link AccessoryHelper#getAccessory}
      */
     public static IAccessory getAccessory(Item item) {
-        return item instanceof IAccessory accessory ? accessory : BOUND_ACCESSORIES.get(item);
+        if (item instanceof IAccessory accessory) {
+            return accessory;
+        }
+
+        return BOUND_ACCESSORIES.get(item);
     }
 
     /**

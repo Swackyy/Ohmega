@@ -4,12 +4,15 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
@@ -56,6 +59,13 @@ public final class TypeCommand {
         int colour = type.getHoverTextColour();
 
         components.add(Component
+                .literal('[' + AccessoryType.ATTRIBUTE_MODIFIERS_KEY + ':').withStyle(ChatFormatting.GREEN)
+                .append(Component.literal(AccessoryModifiers.CODEC.encodeStart(
+                        NbtOps.INSTANCE,
+                        type.getAttributeModifiers()).resultOrPartial().orElseGet(CompoundTag::new).toString()
+                ).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
+        components.add(Component
                 .literal('[' + AccessoryType.DISPLAY_HOVER_TEXT_KEY + ':').withStyle(ChatFormatting.GREEN)
                 .append(Component.literal(String.valueOf(type.displayHoverText())).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
@@ -73,7 +83,7 @@ public final class TypeCommand {
                 .append(Component.literal(String.valueOf(type.getPriority())).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
         context.getSource().sendSuccess(() -> Component.translatable(QUERY_FEEDBACK, type.getId().toString(),
-                ComponentUtils.formatList(components, Component.literal(", "))), false);
+                ComponentUtils.formatList(components, Component.literal("\n"))), false);
         return Command.SINGLE_SUCCESS;
     }
 }

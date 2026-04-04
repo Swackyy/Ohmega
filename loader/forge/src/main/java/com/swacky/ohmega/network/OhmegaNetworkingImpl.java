@@ -44,7 +44,7 @@ public final class OhmegaNetworkingImpl {
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
         net.play().clientbound().addMain(SyncStacksPacket.class, SyncStacksPacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
-        net.configuration().clientbound().addMain(SyncTypesPacket.class, SyncTypesPacket.CODEC, (packet, _) ->
+        net.play().clientbound().addMain(SyncTypesPacket.class, SyncTypesPacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncTypes(packet));
         net.play().clientbound().addMain(SyncUsePacket.class, SyncUsePacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncUse(packet));

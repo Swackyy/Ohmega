@@ -3,7 +3,7 @@ package com.swacky.ohmega.network;
 import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.NonNull;
@@ -51,9 +51,9 @@ public final class OhmegaByteBufCodecs {
         }
     };
 
-    public static final StreamCodec<FriendlyByteBuf, ImmutableSet<AccessoryType>> ACCESSORY_TYPE_SET = new StreamCodec<>() {
+    public static final StreamCodec<RegistryFriendlyByteBuf, ImmutableSet<AccessoryType>> ACCESSORY_TYPE_SET = new StreamCodec<>() {
         @Override
-        public @NonNull ImmutableSet<AccessoryType> decode(@NonNull FriendlyByteBuf buf) {
+        public @NonNull ImmutableSet<AccessoryType> decode(@NonNull RegistryFriendlyByteBuf buf) {
             int size = VarInt.read(buf);
             ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(size);
 
@@ -65,7 +65,7 @@ public final class OhmegaByteBufCodecs {
         }
 
         @Override
-        public void encode(@NonNull FriendlyByteBuf buf, @NonNull ImmutableSet<AccessoryType> values) {
+        public void encode(@NonNull RegistryFriendlyByteBuf buf, @NonNull ImmutableSet<AccessoryType> values) {
             VarInt.write(buf, values.size());
 
             for (AccessoryType value : values) {

@@ -1,6 +1,10 @@
 package com.swacky.ohmega.api;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -13,8 +17,19 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * Supports attributes added when equipped, and when equipped but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
 // todo: allow for other conditions here
+// todo: ^ that will be difficult with the need to encode it now
 public final class AccessoryModifiers {
     public static final AccessoryModifiers EMPTY = Builder.EMPTY.build();
+
+    public static final Codec<AccessoryModifiers> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+            ItemAttributeModifiers.CODEC.fieldOf("passive").forGetter(AccessoryModifiers::getPassive),
+            ItemAttributeModifiers.CODEC.fieldOf("active").forGetter(AccessoryModifiers::getActive)
+    ).apply(builder, AccessoryModifiers::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, AccessoryModifiers> STREAM_CODEC = StreamCodec.composite(
+            ItemAttributeModifiers.STREAM_CODEC, AccessoryModifiers::getPassive,
+            ItemAttributeModifiers.STREAM_CODEC, AccessoryModifiers::getActive,
+            AccessoryModifiers::new);
 
     private final ItemAttributeModifiers passiveModifiers;
     private final ItemAttributeModifiers activeModifiers;

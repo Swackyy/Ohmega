@@ -20,7 +20,6 @@ import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -50,7 +49,7 @@ public final class OhmegaClientMain implements ClientModInitializer {
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
-        ClientConfigurationNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, _) ->
+        ClientPlayNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncTypes(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncUsePacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncUse(packet));

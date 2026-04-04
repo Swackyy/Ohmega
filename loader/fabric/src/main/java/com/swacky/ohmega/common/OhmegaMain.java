@@ -48,7 +48,7 @@ public final class OhmegaMain implements ModInitializer {
         // S2C
         PayloadTypeRegistry.clientboundPlay().register(SyncHiddenPacket.TYPE, SyncHiddenPacket.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncStacksPacket.TYPE, SyncStacksPacket.CODEC);
-        PayloadTypeRegistry.clientboundConfiguration().register(SyncTypesPacket.TYPE, SyncTypesPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncTypesPacket.TYPE, SyncTypesPacket.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncUsePacket.TYPE, SyncUsePacket.CODEC);
         // Receive
         ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, (_, context) ->

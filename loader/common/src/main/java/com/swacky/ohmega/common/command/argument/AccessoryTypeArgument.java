@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
+public final class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
     public static final String KEY = "accessory_type";
 
     public static final String EXCEPTION_UNKNOWN_TYPE_KEY = MessageHelper.exception("unknown_accessory_type");

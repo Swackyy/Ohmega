@@ -168,6 +168,7 @@ public final class AccessoryHelper {
      */
     public static void setActive(Player player, ItemStack stack, boolean value) {
         stack.set(OhmegaDataComponents.getActive(), value);
+        changeModifiers(player, getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive(), value);
         changeModifiers(player, getModifiers(stack).getActive(), value);
     }
 
@@ -261,6 +262,7 @@ public final class AccessoryHelper {
      * Retrieves the index types of each accessory index in players' accessory inventories (determined by the server config)
      * @return a list of {@link AccessoryType}s matching indexes of accessory indexes
      */
+    // todo: cache
     public static ImmutableList<AccessoryType> getSlotTypes() {
         List<String> slotTypes = OhmegaConfig.Server.slotTypes();
         int size = slotTypes.size();
@@ -285,6 +287,7 @@ public final class AccessoryHelper {
      * Retrieves the types of accessory which can be key-bound (determined by the server config)
      * @return a list of {@link AccessoryType}s which can be key-bound
      */
+    // todo: cache
     public static ImmutableList<AccessoryType> getKeyboundSlotTypes() {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 

@@ -55,10 +55,7 @@ public final class AccessoryContainer {
     }
 
     private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> hidden) {
-        this(
-                NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])),
-                Booleans.toArray(changed),
-                Booleans.toArray(hidden));
+        this(NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])), Booleans.toArray(changed), Booleans.toArray(hidden));
     }
 
     public AccessoryContainer() {
@@ -81,7 +78,9 @@ public final class AccessoryContainer {
         IAccessory accessory = AccessoryHelper.getAccessory(item);
 
         if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
-            return AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) && OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack));
+            return
+                    AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) &&
+                    OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack));
         }
 
         return false;
@@ -113,6 +112,7 @@ public final class AccessoryContainer {
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
             if (!OhmegaHooks.accessoryEquipEvent(player, stack, context)) {
@@ -141,6 +141,11 @@ public final class AccessoryContainer {
 
             if (!ItemStack.matches(current, stack)) {
                 doUnequip(player, current);
+
+                if (stack.isEmpty()) {
+                    AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
+                }
+
                 doSetStack(index, stack);
 
                 if (forceOnEquip || AccessoryHelper.isActive(stack)) {
@@ -168,6 +173,7 @@ public final class AccessoryContainer {
 
         if (!ItemStack.isSameItemSameComponents(getStackInSlot(index), stack)) {
             doUnequip(player, stack);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
             setChanged(index);
         }
 

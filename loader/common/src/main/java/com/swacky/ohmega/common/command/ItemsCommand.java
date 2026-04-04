@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemsCommand {
+public final class ItemsCommand {
     public static final String ELEMENT_ROOT = "items";
 
     private static final String ARGUMENT_TARGET = "target";
