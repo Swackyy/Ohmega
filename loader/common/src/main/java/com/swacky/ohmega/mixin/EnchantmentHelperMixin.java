@@ -53,7 +53,7 @@ abstract class EnchantmentHelperMixin {
         ArrayList<EnchantedItemInUse> list = new ArrayList<>();
 
         if (entity instanceof Player player) {
-            for (ItemStack stack : AccessoryHelper.getContainer(player).getStacks()) {
+            for (ItemStack stack : AccessoryHelper.getData(player).getStacks()) {
                 if (filter.test(stack)) {
                     for (Holder<Enchantment> holder : stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).keySet()) {
                         Enchantment enchantment = holder.value();

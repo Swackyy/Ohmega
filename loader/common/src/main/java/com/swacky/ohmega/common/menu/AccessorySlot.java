@@ -4,7 +4,7 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
@@ -21,10 +21,10 @@ public final class AccessorySlot extends Slot {
     private static final Container EMPTY_CONTAINER = new SimpleContainer(0);
 
     private final Player player;
-    private final AccessoryContainer handler;
+    private final AccessoryData handler;
     private final AccessoryType type;
 
-    public AccessorySlot(Player player, AccessoryContainer handler, int index, int x, int y, AccessoryType type) {
+    public AccessorySlot(Player player, AccessoryData handler, int index, int x, int y, AccessoryType type) {
         super(EMPTY_CONTAINER, index, x, y);
         this.player = player;
         this.handler = handler;

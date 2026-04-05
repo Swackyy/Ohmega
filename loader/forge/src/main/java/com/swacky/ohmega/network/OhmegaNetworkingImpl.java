@@ -2,7 +2,7 @@ package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.ReloadContainerPacket;
+import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
@@ -32,7 +32,7 @@ public final class OhmegaNetworkingImpl {
         // C2S
         net.play().serverbound().addMain(OpenAccessoryInventoryPacket.class, OpenAccessoryInventoryPacket.CODEC, (_, context) ->
                 OhmegaNetworking.C2S.handleOpenAccessoryInventory(Objects.requireNonNull(context.getSender())));
-        net.play().serverbound().addMain(ReloadContainerPacket.class, ReloadContainerPacket.CODEC, (_, context) ->
+        net.play().serverbound().addMain(ReloadDataPacket.class, ReloadDataPacket.CODEC, (_, context) ->
                 OhmegaNetworking.C2S.handleReloadContainer(Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(SetHiddenPacket.class, SetHiddenPacket.CODEC, (packet, context) ->
                 OhmegaNetworking.C2S.handleSetHidden(packet, Objects.requireNonNull(context.getSender())));

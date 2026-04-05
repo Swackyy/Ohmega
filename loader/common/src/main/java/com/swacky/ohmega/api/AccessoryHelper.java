@@ -6,7 +6,7 @@ import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
@@ -41,10 +41,10 @@ public final class AccessoryHelper {
     /**
      * Retrieves the data on the {@link Player} pertaining to worn accessories
      * @param player user to retrieve data from
-     * @return the accessory inventory data in the form of an {@link AccessoryContainer}
+     * @return the accessory inventory data in the form of an {@link AccessoryData}
      */
-    public static AccessoryContainer getContainer(Player player) {
-        return IMPL.getContainer(player);
+    public static AccessoryData getData(Player player) {
+        return IMPL.getData(player);
     }
 
     /**
@@ -400,11 +400,11 @@ public final class AccessoryHelper {
      * @return index of the first open index matching the type, or {@code -1} if none is found
      */
     public static int getFirstOpenSlot(Player player, AccessoryType type) {
-        AccessoryContainer container = getContainer(player);
+        AccessoryData data = getData(player);
         ImmutableList<AccessoryType> slotTypes = getSlotTypes();
 
-        for (int i = 0; i < container.size(); i++) {
-            if (slotTypes.get(i) == type && container.getStackInSlot(i).isEmpty()) {
+        for (int i = 0; i < data.size(); i++) {
+            if (slotTypes.get(i) == type && data.getStackInSlot(i).isEmpty()) {
                 return i;
             }
         }
@@ -430,7 +430,7 @@ public final class AccessoryHelper {
             if (slot >= 0) {
                 ItemStack stack0 = stack.copyWithCount(1);
 
-                if (getContainer(player).setStack(player, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
+                if (getData(player).setStack(player, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
                     stack.consume(1, player);
                     return InteractionResult.SUCCESS;
                 }
@@ -474,7 +474,7 @@ public final class AccessoryHelper {
      * @return every matching {@link ItemStack} in the player's accessory inventory
      */
     public static NonNullList<ItemStack> getStacksFiltered(Player player, Predicate<ItemStack> filter) {
-        NonNullList<ItemStack> stacks = getContainer(player).getStacks();
+        NonNullList<ItemStack> stacks = getData(player).getStacks();
         NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
 
         for (ItemStack stack : stacks) {
@@ -510,7 +510,7 @@ public final class AccessoryHelper {
      * @return a nullable list of {@link IAccessory} instances equipped
      */
     public static ArrayList<@Nullable IAccessory> getAccessories(Player player) {
-        NonNullList<ItemStack> stacks = getContainer(player).getStacks();
+        NonNullList<ItemStack> stacks = getData(player).getStacks();
         ArrayList<IAccessory> accessories = new ArrayList<>(stacks.size());
 
         for (ItemStack stack : stacks) {
@@ -531,7 +531,7 @@ public final class AccessoryHelper {
      * @return {@code true} if found, {@code false} otherwise
      */
     public static boolean hasAccessory(Player player, IAccessory accessory) {
-        for (ItemStack stack : getContainer(player).getStacks()) {
+        for (ItemStack stack : getData(player).getStacks()) {
             if (getAccessory(stack.getItem()) == accessory) {
                 return true;
             }
@@ -547,7 +547,7 @@ public final class AccessoryHelper {
      * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
      */
     public static ItemStack getStack(Player player, Item item) {
-        for (ItemStack stack : getContainer(player).getStacks()) {
+        for (ItemStack stack : getData(player).getStacks()) {
             if (stack.getItem() == item) {
                 return stack;
             }
@@ -557,6 +557,6 @@ public final class AccessoryHelper {
     }
 
     public interface Service {
-        AccessoryContainer getContainer(Player player);
+        AccessoryData getData(Player player);
     }
 }

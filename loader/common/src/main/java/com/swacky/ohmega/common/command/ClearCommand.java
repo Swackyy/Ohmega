@@ -53,7 +53,7 @@ public final class ClearCommand {
         for (Entity target : targets) {
             // todo
             if (target instanceof Player player) {
-                rollingCount += AccessoryHelper.getContainer(player).clearMatchingItems(player, filter, max);
+                rollingCount += AccessoryHelper.getData(player).clearMatchingItems(player, filter, max);
             }
         }
 

@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.client.OhmegaClientMain;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;
@@ -19,7 +19,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(Ohmega.MODID)
 public final class OhmegaMain {
-    public static final Capability<AccessoryContainer> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>() {});
+    public static final Capability<AccessoryData> ACCESSORIES = CapabilityManager.get(new CapabilityToken<>() {});
 
     public OhmegaMain(FMLJavaModLoadingContext context) {
         // Bootstrap

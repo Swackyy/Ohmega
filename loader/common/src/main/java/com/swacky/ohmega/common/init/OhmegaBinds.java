@@ -43,8 +43,10 @@ public final class OhmegaBinds {
 
         if (OhmegaConfig.Server.disableAccessoryTypes()) {
             typeCountMap.put(AccessoryType.GENERIC.get(), 0);
-        } else for (AccessoryType type : AccessoryTypeManager.getTypes()) {
-            typeCountMap.put(type, 0);
+        } else {
+            for (AccessoryType type : AccessoryTypeManager.getTypes()) {
+                typeCountMap.put(type, 0);
+            }
         }
 
         for (AccessoryType slotType : AccessoryHelper.getSlotTypes()) {

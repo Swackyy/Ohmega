@@ -26,14 +26,14 @@ public final class VisibilityButton extends AbstractButton {
 
     @Override
     public void onPress(@NonNull InputWithModifiers input) {
-        AccessoryHelper.getContainer(player).toggleHidden(player, index);
+        AccessoryHelper.getData(player).toggleHidden(player, index);
     }
 
     @Override
     protected void extractContents(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         int hoveredOffsY;
 
-        if (AccessoryHelper.getContainer(player).isHidden(index)) {
+        if (AccessoryHelper.getData(player).isHidden(index)) {
             hoveredOffsY = height;
         } else {
             hoveredOffsY = 0;

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.resources.Identifier;
@@ -55,7 +55,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
         addStandardInventorySlots(inv, x + 8, 84);
         addSlot(new OffhandSlot(inv, 40, x + 77, 62)); // Offhand Slot
 
-        AccessoryContainer container = AccessoryHelper.getContainer(player);
+        AccessoryData data = AccessoryHelper.getData(player);
 
         if (!player.level().isClientSide()) {
             renderSlots = 0;
@@ -64,7 +64,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
 
             for (int i = 0; i < slotTypes.size(); i++) {
                 // Position does not matter (only in rare cases) on server
-                addSlot(new AccessorySlot(player, container, i, 0, 0, slotTypes.get(i)));
+                addSlot(new AccessorySlot(player, data, i, 0, 0, slotTypes.get(i)));
             }
         } else {
             renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
@@ -90,7 +90,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 int slotsCreatedCurrentColumn = 0;
 
                 for (int j = 0; true; j++) {
-                    addSlot(new AccessorySlot(player, container, index, x + 4 + 18 * i, 25 + j * 18, slotTypes.get(index++)));
+                    addSlot(new AccessorySlot(player, data, index, x + 4 + 18 * i, 25 + j * 18, slotTypes.get(index++)));
 
                     if (++slotsCreatedCurrentColumn >= renderSlots) {
                         break;
@@ -253,7 +253,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                         ItemStack stack1 = tryMoveItemStackTo(stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) { // Accessory -> inventory
-                            AccessoryHelper.getContainer(player).doUnequip(player, stack1);
+                            AccessoryHelper.getData(player).doUnequip(player, stack1);
                             slot.setChanged();
                             return ItemStack.EMPTY;
                         }

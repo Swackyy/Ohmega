@@ -31,34 +31,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-public final class AccessoryContainer {
-    public static final Codec<AccessoryContainer> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+public final class AccessoryData {
+    public static final Codec<AccessoryData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
             Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
-    ).apply(builder, AccessoryContainer::new));
+    ).apply(builder, AccessoryData::new));
 
-    public static final MapCodec<AccessoryContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+    public static final MapCodec<AccessoryData> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
             Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
             Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
-    ).apply(builder, AccessoryContainer::new));
+    ).apply(builder, AccessoryData::new));
 
     private NonNullList<ItemStack> stacks;
     private boolean[] changed;
     private boolean[] hidden;
 
-    private AccessoryContainer(NonNullList<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
+    private AccessoryData(NonNullList<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
         this.stacks = stacks;
         this.changed = changed;
         this.hidden = hidden;
     }
 
-    private AccessoryContainer(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> hidden) {
+    private AccessoryData(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> hidden) {
         this(NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])), Booleans.toArray(changed), Booleans.toArray(hidden));
     }
 
-    public AccessoryContainer() {
+    public AccessoryData() {
         int size = AccessoryHelper.getSlotTypes().size();
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
         this.changed = new boolean[size];

@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
@@ -61,7 +61,7 @@ public final class OhmegaNetworking {
         }
 
         public static void handleReloadContainer(ServerPlayer player) {
-            AccessoryHelper.getContainer(player).reload(player);
+            AccessoryHelper.getData(player).reload(player);
         }
 
         public static void handleSetHidden(SetHiddenPacket packet, ServerPlayer player) {
@@ -70,7 +70,7 @@ public final class OhmegaNetworking {
                 boolean value = packet.value();
 
                 if (index < AccessoryHelper.getSlotTypes().size()) {
-                    AccessoryHelper.getContainer(player).setHidden(index, value);
+                    AccessoryHelper.getData(player).setHidden(index, value);
 
                     for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
                         OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
@@ -83,8 +83,8 @@ public final class OhmegaNetworking {
             int index = packet.index();
 
             if (index < AccessoryHelper.getSlotTypes().size()) {
-                AccessoryContainer container = AccessoryHelper.getContainer(player);
-                ItemStack stack = container.getStackInSlot(index);
+                AccessoryData data = AccessoryHelper.getData(player);
+                ItemStack stack = data.getStackInSlot(index);
                 IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                 if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
@@ -122,10 +122,10 @@ public final class OhmegaNetworking {
                 }
 
                 if (level.getEntity(packet.playerId()) instanceof Player player) {
-                    AccessoryContainer container = AccessoryHelper.getContainer(player);
+                    AccessoryData data = AccessoryHelper.getData(player);
 
                     for (int i = 0; i < indexes.length; i++) {
-                        container.setHidden(indexes[i], packet.values()[i]);
+                        data.setHidden(indexes[i], packet.values()[i]);
                     }
                 }
             }
@@ -142,10 +142,10 @@ public final class OhmegaNetworking {
                 }
 
                 if (level.getEntity(packet.playerId()) instanceof Player player) {
-                    AccessoryContainer container = AccessoryHelper.getContainer(player);
+                    AccessoryData data = AccessoryHelper.getData(player);
 
                     for (int i = 0; i < indexes.length; i++) {
-                        container.setStack(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
+                        data.setStack(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
                     }
                 }
             }
@@ -160,7 +160,7 @@ public final class OhmegaNetworking {
             ClientLevel level = Minecraft.getInstance().level;
 
             if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
-                ItemStack stack = AccessoryHelper.getContainer(player).getStackInSlot(packet.index());
+                ItemStack stack = AccessoryHelper.getData(player).getStackInSlot(packet.index());
 
                 AccessoryHelper.getAccessory(stack.getItem()).onKeybindUse(player, stack);
             }

@@ -6,7 +6,7 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.core.Direction;
@@ -16,7 +16,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -40,12 +39,11 @@ import org.jspecify.annotations.NonNull;
 @Mod.EventBusSubscriber(modid = Ohmega.MODID)
 public final class CommonEvents {
     private static final Identifier CAPABILITY_ID = Ohmega.id("accessory_data");
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(Ohmega.id("sync_accessory_types").toString());
 
     @SubscribeEvent
     public static void onAttachEntityCaps(AttachCapabilitiesEvent.Entities event) {
         if (event.getObject() instanceof Player) {
-            event.addCapability(CAPABILITY_ID, new AccessoryContainerProvider());
+            event.addCapability(CAPABILITY_ID, new AccessoryDataProvider());
         }
     }
 
@@ -88,7 +86,7 @@ public final class CommonEvents {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
-            AccessoryHelper.getContainer(player).onAttach(player);
+            AccessoryHelper.getData(player).onAttach(player);
         }
     }
 
@@ -134,12 +132,12 @@ public final class CommonEvents {
     }
 
     @SuppressWarnings("deprecation")
-    private static class AccessoryContainerProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-        private AccessoryContainer inner;
-        private final LazyOptional<AccessoryContainer> cap;
+    private static class AccessoryDataProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+        private AccessoryData inner;
+        private final LazyOptional<AccessoryData> cap;
 
-        public AccessoryContainerProvider() {
-            this.inner = new AccessoryContainer();
+        public AccessoryDataProvider() {
+            this.inner = new AccessoryData();
             this.cap = LazyOptional.of(() -> this.inner);
         }
 
@@ -151,13 +149,13 @@ public final class CommonEvents {
 
         @Override
         public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-            return (CompoundTag) AccessoryContainer.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner)
+            return (CompoundTag) AccessoryData.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner)
                     .result().orElseGet(CompoundTag::new);
         }
 
         @Override
         public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            AccessoryContainer.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
+            AccessoryData.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
                     .resultOrPartial().ifPresent(data -> inner = data);
         }
     }

@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api;
 
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
@@ -93,7 +93,7 @@ public interface IAccessory {
      * Dictates whether Ohmega should synchronise the server's {@link ItemStack} instance with each client every tick.
      * Could be useful for stack data component changes, which are not automatically discovered.
      * <p>
-     * If possible, use {@link AccessoryContainer#setChanged(int)} to indicate that a change has been made,
+     * If possible, use {@link AccessoryData#setChanged(int)} to indicate that a change has been made,
      * instead of using this which adds additional network overhead
      * @param player the {@link Player} wearing this accessory
      * @param stack the {@link ItemStack} of this accessory item being worn

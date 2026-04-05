@@ -52,7 +52,7 @@ public final class CommonEvents {
 
     private static void onPlayerJoin(ServerPlayer player) {
         OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
-        AccessoryHelper.getContainer(player).onAttach(player);
+        AccessoryHelper.getData(player).onAttach(player);
     }
 
     private static void onPlayerTrack(Entity entity, ServerPlayer tracker) {

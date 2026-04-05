@@ -6,7 +6,7 @@ import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.ReloadContainerPacket;
+import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -39,7 +39,7 @@ public final class OhmegaMain implements ModInitializer {
         // Send
         // C2S
         PayloadTypeRegistry.serverboundPlay().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(ReloadContainerPacket.TYPE, ReloadContainerPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ReloadDataPacket.TYPE, ReloadDataPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(SetHiddenPacket.TYPE, SetHiddenPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
         // S2C
@@ -50,7 +50,7 @@ public final class OhmegaMain implements ModInitializer {
         // Receive
         ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, (_, context) ->
                 OhmegaNetworking.C2S.handleOpenAccessoryInventory(context.player()));
-        ServerPlayNetworking.registerGlobalReceiver(ReloadContainerPacket.TYPE, (_, context) ->
+        ServerPlayNetworking.registerGlobalReceiver(ReloadDataPacket.TYPE, (_, context) ->
                 OhmegaNetworking.C2S.handleReloadContainer(context.player()));
         ServerPlayNetworking.registerGlobalReceiver(SetHiddenPacket.TYPE, (packet, context) ->
                 OhmegaNetworking.C2S.handleSetHidden(packet, context.player()));

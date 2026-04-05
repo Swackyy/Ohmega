@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.event.EquipContext;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -73,11 +73,13 @@ public final class ItemCommand {
         ItemStack stack;
         // todo
         if (target instanceof Player player) {
-            AccessoryContainer container = AccessoryHelper.getContainer(player);
+            AccessoryData data = AccessoryHelper.getData(player);
 
-            if (index >= 0 && index < container.size()) {
-                stack = container.getStackInSlot(index);
-            } else throw INDEX_EXCEPTION.create(Pair.of(index, container.size()));
+            if (index >= 0 && index < data.size()) {
+                stack = data.getStackInSlot(index);
+            } else {
+                throw INDEX_EXCEPTION.create(Pair.of(index, data.size()));
+            }
         } else return 0;
 
         context.getSource().sendSuccess(() -> Component.translatable(GET_FEEDBACK, target.getDisplayName(), stack.getCount(), stack.getDisplayName(), index), true);
@@ -88,12 +90,12 @@ public final class ItemCommand {
         for (Entity target : targets) {
             // todo
             if (target instanceof Player player) {
-                AccessoryContainer container = AccessoryHelper.getContainer(player);
+                AccessoryData data = AccessoryHelper.getData(player);
 
-                if (index >= 0 && index < container.size()) {
-                    container.setStack(player, index, new ItemStack(item, count), EquipContext.GENERIC, true);
+                if (index >= 0 && index < data.size()) {
+                    data.setStack(player, index, new ItemStack(item, count), EquipContext.GENERIC, true);
                 } else {
-                    throw INDEX_EXCEPTION.create(Pair.of(index, container.size()));
+                    throw INDEX_EXCEPTION.create(Pair.of(index, data.size()));
                 }
             }
         }

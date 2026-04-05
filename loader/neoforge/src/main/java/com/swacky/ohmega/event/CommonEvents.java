@@ -5,7 +5,7 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.ReloadContainerPacket;
+import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -69,7 +69,7 @@ public final class CommonEvents {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
-            AccessoryHelper.getContainer(player).onAttach(player);
+            AccessoryHelper.getData(player).onAttach(player);
         }
     }
 
@@ -99,8 +99,8 @@ public final class CommonEvents {
                         new MainThreadPayloadHandler<>((_, context) ->
                                 OhmegaNetworking.C2S.handleOpenAccessoryInventory((ServerPlayer) context.player())))
                 .playToServer(
-                        ReloadContainerPacket.TYPE,
-                        ReloadContainerPacket.CODEC,
+                        ReloadDataPacket.TYPE,
+                        ReloadDataPacket.CODEC,
                         new MainThreadPayloadHandler<>((_, context) ->
                                 OhmegaNetworking.C2S.handleReloadContainer((ServerPlayer) context.player())))
                 .playToServer(

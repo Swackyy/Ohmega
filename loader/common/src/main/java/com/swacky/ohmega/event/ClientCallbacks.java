@@ -8,12 +8,12 @@ import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.widget.AccessoryInventoryButton;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
-import com.swacky.ohmega.network.C2S.ReloadContainerPacket;
+import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.KeyMapping;
@@ -43,14 +43,14 @@ public final class ClientCallbacks {
     // todo
     public static AccessoryRenderStateData createRenderStateData(Player player) {
         if (OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.allowHideAccessories()) {
-            AccessoryContainer container = AccessoryHelper.getContainer(player);
-            NonNullList<ItemStack> stacks = container.getStacks();
+            AccessoryData data = AccessoryHelper.getData(player);
+            NonNullList<ItemStack> stacks = data.getStacks();
             NonNullList<ItemStack> stacksFiltered = NonNullList.createWithCapacity(stacks.size());
 
             for (int i = 0; i < stacks.size(); i++) {
-                ItemStack stack = container.getStackInSlot(i);
+                ItemStack stack = data.getStackInSlot(i);
 
-                if (!stack.isEmpty() && !container.isHidden(i)) {
+                if (!stack.isEmpty() && !data.isHidden(i)) {
                     stacksFiltered.add(stack);
                 }
             }
@@ -116,7 +116,7 @@ public final class ClientCallbacks {
                 return;
             }
 
-            AccessoryContainer container = AccessoryHelper.getContainer(mc.player);
+            AccessoryData data = AccessoryHelper.getData(mc.player);
 
             // Never ever touch this again; wrote 2 months ago, I now consider it dark magic.
             for (int i = 0; i < OhmegaBinds.size(); i++) {
@@ -130,7 +130,7 @@ public final class ClientCallbacks {
                         }
                     }
 
-                    ItemStack stack = container.getStackInSlot(j);
+                    ItemStack stack = data.getStackInSlot(j);
                     IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                     if (accessory != null) {
@@ -171,8 +171,8 @@ public final class ClientCallbacks {
             LocalPlayer player = Minecraft.getInstance().player;
 
             if (player != null) {
-                AccessoryHelper.getContainer(player).reload(player);
-                OhmegaNetworking.C2S.send(ReloadContainerPacket.INSTANCE);
+                AccessoryHelper.getData(player).reload(player);
+                OhmegaNetworking.C2S.send(ReloadDataPacket.INSTANCE);
 
                 if (!OhmegaConfig.Client.compatibilityMode() && player.containerMenu instanceof AccessoryInventoryMenu) {
                     mc.screen = null;
