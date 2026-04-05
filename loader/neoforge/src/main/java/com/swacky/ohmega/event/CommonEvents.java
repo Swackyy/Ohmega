@@ -16,7 +16,10 @@ import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
@@ -24,6 +27,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
@@ -158,5 +162,20 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddServerReloadListenersEvent event) {
         event.addListener(Ohmega.RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
+        Player player = event.getEntity();
+        ItemStack stack = player.getItemInHand(event.getHand());
+        Item item = stack.getItem();
+
+        if (AccessoryHelper.isAccessory(item) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+            InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
+
+            if (candidate.consumesAction()) {
+                event.setCancellationResult(candidate);
+            }
+        }
     }
 }

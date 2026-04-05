@@ -19,7 +19,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -65,8 +64,8 @@ public final class AccessoryHelper {
      * @param item the item to check if it is bound
      * @return {@code true} if the {@link Item} class implements {@link IAccessory} or is accessory bound by code ({@link #bindAccessory(Item, IAccessory)}
      */
-    public static boolean isItemAccessory(Item item) {
-        return Ohmega.isItemAccessory(item);
+    public static boolean isAccessory(Item item) {
+        return Ohmega.isAccessory(item);
     }
 
     /**
@@ -418,11 +417,10 @@ public final class AccessoryHelper {
      * <p>
      * Used when trying to equip an accessory via right-clicking the held item
      * @param player {@link Player} to equip the accessory on
-     * @param hand the used {@link InteractionHand} to get the held item from
+     * @param stack the right-clicked held {@link ItemStack}
      * @return {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
      */
-    public static InteractionResult tryEquip(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+    public static InteractionResult tryEquip(Player player, ItemStack stack) {
         Item item = stack.getItem();
         IAccessory accessory = getAccessory(item);
 
@@ -503,7 +501,7 @@ public final class AccessoryHelper {
      * @return every {@link ItemStack} in the player's accessory inventory which are accessories
      */
     public static NonNullList<ItemStack> getAccessoryStacks(Player player) {
-        return getStacksFiltered(player, stack -> isItemAccessory(stack.getItem()));
+        return getStacksFiltered(player, stack -> isAccessory(stack.getItem()));
     }
 
     /**

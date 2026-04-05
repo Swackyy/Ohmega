@@ -70,9 +70,9 @@ public final class Ohmega {
     }
 
     /**
-     * Use {@link AccessoryHelper#isItemAccessory}
+     * Use {@link AccessoryHelper#isAccessory}
      */
-    public static boolean isItemAccessory(Item item) {
+    public static boolean isAccessory(Item item) {
         return getAccessory(item) != null;
     }
 
@@ -80,7 +80,7 @@ public final class Ohmega {
      * Use {@link AccessoryHelper#bindAccessory}
      */
     public static boolean bindAccessory(Item item, IAccessory binding) {
-        if (isItemAccessory(item) || item instanceof AirItem) {
+        if (isAccessory(item) || item instanceof AirItem) {
             return false;
         }
 

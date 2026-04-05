@@ -17,7 +17,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ConfigurationTask;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -29,6 +32,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -118,6 +122,21 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(AccessoryTypeManager.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
+        Player player = event.getEntity();
+        ItemStack stack = player.getItemInHand(event.getHand());
+        Item item = stack.getItem();
+
+        if (AccessoryHelper.isAccessory(item) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+            InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
+
+            if (candidate.consumesAction()) {
+                event.setCancellationResult(candidate);
+            }
+        }
     }
 
     @SuppressWarnings("deprecation")

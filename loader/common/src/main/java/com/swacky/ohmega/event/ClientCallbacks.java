@@ -72,7 +72,7 @@ public final class ClientCallbacks {
     }
 
     public static void onItemTooltip(ItemStack stack, List<Component> tooltip) {
-        if (AccessoryHelper.isItemAccessory(stack.getItem())) {
+        if (AccessoryHelper.isAccessory(stack.getItem())) {
             Component component = AccessoryHelper.getTypeTooltip(stack.getItem());
 
             if (component != null) {

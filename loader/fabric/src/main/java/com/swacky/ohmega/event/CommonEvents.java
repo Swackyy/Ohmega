@@ -7,16 +7,20 @@ import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public final class CommonEvents {
     private static boolean bootstrapped = false;
@@ -30,7 +34,7 @@ public final class CommonEvents {
             ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
-            ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onServerConfigure);
+            ItemEvents.USE.register(CommonEvents::onUseItem);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + CommonEvents.class.getName() + " multiple times");
         }
@@ -61,7 +65,18 @@ public final class CommonEvents {
         CommonCallbacks.onRegisterCommands(dispatcher, context);
     }
 
-    private static void onServerConfigure(ServerConfigurationPacketListenerImpl handler, MinecraftServer server) {
-        //handler.send(new ClientboundCustomPayloadPacket(new SyncTypesPacket()));
+    private static InteractionResult onUseItem(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        Item item = stack.getItem();
+
+        if (AccessoryHelper.isAccessory(stack.getItem()) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+            InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
+
+            if (candidate.consumesAction()) {
+                return candidate;
+            }
+        }
+
+        return null;
     }
 }

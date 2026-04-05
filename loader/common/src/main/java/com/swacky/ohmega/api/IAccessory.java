@@ -1,12 +1,16 @@
 package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
+import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -14,11 +18,11 @@ import org.jspecify.annotations.Nullable;
  * The base interface for all accessory items.
  * To make an item an accessory, either:
  * <ul>
- *     <li>Make your {@link net.minecraft.world.item.Item} class inherit this interface (recommended for your own items)</li>
+ *     <li>Make your {@link Item} class inherit this interface (recommended for your own items)</li>
  *     <li>Bind an {@link IAccessory} instance with {@link AccessoryHelper#bindAccessory(Item, IAccessory)} (for vanilla and other mods' items)</li>
  * </ul>
  * <p>
- * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or {@link com.swacky.ohmega.common.item.AngelRing} for examples
+ * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or {@link AngelRing} for examples
  */
 @SuppressWarnings("unused")
 public interface IAccessory {
@@ -74,10 +78,6 @@ public interface IAccessory {
         return AccessoryHelper.getAccessory(other.getItem()) != this;
     }
 
-    // Called when a key-bind is pressed for this index. Will only work for accessories of key-bound types.
-    // It is recommended that when this is overridden and used, that a tooltip will be provided,
-    // a component for the tooltip can be acquired from the AccessoryHelper utility class.
-
     /**
      * Called when this accessory is worn and its corresponding slot's key-bind is pressed.
      * This will only work for accessories of key-bound types, configurable in the server config.
@@ -108,6 +108,26 @@ public interface IAccessory {
      * @param builder the builder provided
      */
     default void addAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {}
+
+    /**
+     * Determines if the vanilla {@link Item#use(Level, Player, InteractionHand)} will be preferred over Ohmega's built-in
+     * right-click to equip behaviour ({@link AccessoryHelper#tryEquip(Player, ItemStack)})
+     * @param stack the {@link ItemStack} of this accessory item which is right-clicked
+     * @return
+     * <ul>
+     *     <li>
+     *         {@code true}: {@link Item#use(Level, Player, InteractionHand)} will run before,
+     *         and if it returns a consuming {@link InteractionResult}, then the accessory will be right-click-equipped
+     *     </li>
+     *     <li>
+     *         {@code false}: Ohmega's right-click to equip behaviour will run first, and will only run {@link Item#use(Level, Player, InteractionHand)}
+     *         if {@link AccessoryHelper#tryEquip(Player, ItemStack)} returns a consuming {@link InteractionResult}
+     *     </li>
+     * </ul>
+     */
+    default boolean preferVanillaUse(ItemStack stack) {
+        return true;
+    }
 
     /**
      * The sound to be played if the accessory is equipped through right-clicking this accessory binding as the held item
