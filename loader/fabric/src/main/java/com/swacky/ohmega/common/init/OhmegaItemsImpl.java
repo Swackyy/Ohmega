@@ -18,8 +18,6 @@ public final class OhmegaItemsImpl implements OhmegaItems.Service {
         return Registry.register(BuiltInRegistries.ITEM, Ohmega.id(id), function.apply(props.setId(ResourceKey.create(Registries.ITEM, Ohmega.id(id)))));
     }
 
-    public static void init() {}
-
     @Override
     public Item getAngelRing() {
         return ANGEL_RING;

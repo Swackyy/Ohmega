@@ -3,9 +3,6 @@ package com.swacky.ohmega.common;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
-import com.swacky.ohmega.common.init.OhmegaItemsImpl;
-import com.swacky.ohmega.common.init.OhmegaMenusImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
@@ -63,9 +60,6 @@ public final class OhmegaMain implements ModInitializer {
         // Registration
         ArgumentTypeRegistry.registerArgumentType(Ohmega.id(AccessoryTypeArgument.KEY), AccessoryTypeArgument.class, SingletonArgumentInfo.contextFree(AccessoryTypeArgument::new));
         OhmegaDataAttachments.init();
-        OhmegaDataComponentsImpl.init();
-        OhmegaItemsImpl.init();
-        OhmegaMenusImpl.init();
 
         // Resource loader
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ohmega.id(Ohmega.MODID), AccessoryTypeManager.getInstance());

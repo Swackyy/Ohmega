@@ -15,8 +15,6 @@ public final class OhmegaDataComponentsImpl implements OhmegaDataComponents.Serv
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Ohmega.id(id), object);
     }
 
-    public static void init() {}
-
     @Override
     public DataComponentType<Boolean> getActive() {
         return ACTIVE;

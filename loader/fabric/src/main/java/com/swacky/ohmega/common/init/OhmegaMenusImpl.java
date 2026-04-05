@@ -17,8 +17,6 @@ public final class OhmegaMenusImpl implements OhmegaMenus.Service {
         return Registry.register(BuiltInRegistries.MENU, Ohmega.id(id), object);
     }
 
-    public static void init() {}
-
     @Override
     public MenuType<@NonNull AccessoryInventoryMenu> getAccessoryMenu() {
         return ACCESSORY_INVENTORY;
