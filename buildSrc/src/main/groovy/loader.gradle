@@ -29,9 +29,10 @@ processResources {
 
     if (project.name != "fabric") {
         modDesc =
-                "\n"                                       +
-                "View the source code here: ${gitUrl}\n"   +
-                "Or visit the wiki here: ${gitUrl}/wiki\n" +
+                "\n"                                                       +
+                "Help translate the mod here if possible: ${crowdinUrl}\n" +
+                "View the source code here: ${gitUrl}\n"                   +
+                "Or visit the wiki here: ${gitUrl}/wiki\n"                 +
                 "And join the discord here: ${discordUrl}"
     }
 
@@ -55,9 +56,10 @@ processResources {
             modAuthors                           : modAuthorsDisplay,
             mcV                                  : mcV,
             modName                              : modName,
-            gitUrl                               : gitUrl,
+            crowdinUrl                           : crowdinUrl,
             curseUrl                             : curseUrl,
             discordUrl                           : discordUrl,
+            gitUrl                               : gitUrl,
             modrinthUrl                          : modrinthUrl,
             modDesc                              : modDesc,
             modChanges                           : modChanges,

@@ -41,6 +41,7 @@
   "custom": {
     "modmenu": {
       "links": {
+        "modmenu.crowdin": "${crowdinUrl}",
         "modmenu.curseforge": "${curseUrl}",
         "modmenu.discord": "${discordUrl}",
         "modmenu.modrinth": "${modrinthUrl}",

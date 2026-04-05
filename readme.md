@@ -19,6 +19,10 @@ If you wish to contribute to the mod, you can do it in multiple ways! Either:
 
 ---
 ## Other links
+
+If you know another language and have some free time, [consider helping to translate the mod here](https://crowdin.com/project/ohmega).
+There aren't too many translations needed per language, and your contributions will be extremely helpful.
+
 [Report issues here](https://github.com/Swackyy/Ohmega/issues)
 
 [Read the Wiki](https://github.com/Swackyy/Ohmega/wiki)

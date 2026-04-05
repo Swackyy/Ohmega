@@ -13,9 +13,7 @@ import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -29,18 +27,11 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
-import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
-import org.jspecify.annotations.NonNull;
-
-import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = Ohmega.MODID)
 public final class CommonEvents {
-    private static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(Ohmega.id("sync_accessory_types"));
-
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
         Player oldPlayer = event.getOriginal();
@@ -97,22 +88,6 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         OhmegaRootCommand.register(event.getDispatcher(), event.getBuildContext());
-    }
-
-    @SubscribeEvent
-    public static void onRegisterConfigTasks(RegisterConfigurationTasksEvent event) {
-        event.register(new ICustomConfigurationTask() {
-            @Override
-            public void run(@NonNull Consumer<CustomPacketPayload> consumer) {
-                consumer.accept(new SyncTypesPacket());
-                event.getListener().finishCurrentTask(TYPE);
-            }
-
-            @Override
-            public @NonNull Type type() {
-                return TYPE;
-            }
-        });
     }
 
     @SubscribeEvent
