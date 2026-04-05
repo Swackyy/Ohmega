@@ -7,7 +7,7 @@ import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryContainer;
-import com.swacky.ohmega.network.OhmegaNetworkingImpl;
+import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -33,10 +33,8 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.config.SimpleConfigurationTask;
 import org.jspecify.annotations.NonNull;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID)
@@ -89,6 +87,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
             AccessoryHelper.getContainer(player).onAttach(player);
         }
     }
@@ -112,11 +111,6 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         OhmegaRootCommand.register(event.getDispatcher(), event.getBuildContext());
-    }
-
-    @SubscribeEvent
-    public static void onRegisterConfigTasks(GatherLoginConfigurationTasksEvent event) {
-        event.addTask(new SimpleConfigurationTask(TYPE, () -> OhmegaNetworkingImpl.S2C.send(event.getConnection(), new SyncTypesPacket())));
     }
 
     @SubscribeEvent

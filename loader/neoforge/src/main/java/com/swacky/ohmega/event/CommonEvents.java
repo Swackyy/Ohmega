@@ -77,6 +77,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
             AccessoryHelper.getContainer(player).onAttach(player);
         }
     }
