@@ -1,14 +1,19 @@
-package com.swacky.ohmega.datagen.client;
+package com.swacky.ohmega.datagen.client.lang;
 
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
 
-abstract class OhmegaLangProvider extends FabricLanguageProvider {
+/**
+ * Do not use this class whatsoever! (even though it is not included with the output JAR)
+ */
+@ApiStatus.Internal
+public abstract class OhmegaLangProvider extends FabricLanguageProvider {
     protected static final String KEY_ACCESSORY_TYPE = "accessory_type";
     protected static final String KEY_ACCESSORY_TYPE_NONE = AccessoryType.NONE_ID.getPath();
     protected static final String KEY_ACCESSORY_TYPE_GENERIC = AccessoryType.GENERIC_ID.getPath();

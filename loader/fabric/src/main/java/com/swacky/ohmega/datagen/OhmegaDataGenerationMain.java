@@ -1,11 +1,12 @@
 package com.swacky.ohmega.datagen;
 
-import com.swacky.ohmega.datagen.client.EnUsProvider;
-import com.swacky.ohmega.datagen.client.EsEsProvider;
-import com.swacky.ohmega.datagen.client.ItItProvider;
+import com.swacky.ohmega.datagen.client.OhmegaSplashProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.EnUsProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.EsEsProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.ItItProvider;
 import com.swacky.ohmega.datagen.client.OhmegaModelProvider;
-import com.swacky.ohmega.datagen.client.NlNlProvider;
-import com.swacky.ohmega.datagen.client.RuRuProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.NlNlProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.RuRuProvider;
 import com.swacky.ohmega.datagen.server.OhmegaAccessoryTypeProvider;
 import com.swacky.ohmega.datagen.server.OhmegaTagProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -19,14 +20,16 @@ public final class OhmegaDataGenerationMain implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = generator.createPack();
 
         // Client
-        // Locales
+        // Language locales
         pack.addProvider(EnUsProvider::new);
         pack.addProvider(EsEsProvider::new);
         pack.addProvider(ItItProvider::new);
         pack.addProvider(NlNlProvider::new);
         pack.addProvider(RuRuProvider::new);
-
+        // Item models
         pack.addProvider(OhmegaModelProvider::new);
+        // Splashes
+        pack.addProvider(OhmegaSplashProvider::new);
 
         // Server
         pack.addProvider((FabricDataGenerator.Pack.Factory<OhmegaAccessoryTypeProvider>) OhmegaAccessoryTypeProvider::new);

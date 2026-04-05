@@ -31,14 +31,14 @@ public abstract class AccessoryTypeProvider implements DataProvider {
     protected abstract void addTypes();
 
     @Override
-    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput output) {
+    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput cache) {
         addTypes();
 
         if (!data.isEmpty()) {
             JsonObject json = new JsonObject();
 
             data.forEach((id, type) -> json.add(id, AccessoryType.Serializer.GSON.toJsonTree(type)));
-            return DataProvider.saveStable(output, json, this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
+            return DataProvider.saveStable(cache, json, output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
         }
 
         return CompletableFuture.allOf();
