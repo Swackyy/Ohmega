@@ -18,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.NeoForge;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
@@ -43,8 +44,8 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
-        return ModLoader.postEventWithReturn(new AccessoryOverrideTypesEvent()).overrideRemaps;
+    public Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent() {
+        return ModLoader.postEventWithReturn(new AccessoryOverrideTypesEvent()).getOverrides();
     }
 
     @Override

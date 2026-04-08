@@ -8,6 +8,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public final class OhmegaHooks {
         return IMPL.accessoryEquipEvent(player, stack, context);
     }
 
-    public static Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
+    public static Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent() {
         return IMPL.accessoryOverrideTypesEvent();
     }
 
@@ -65,7 +66,7 @@ public final class OhmegaHooks {
 
         boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context);
 
-        Map<Item, AccessoryType> accessoryOverrideTypesEvent();
+        Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent();
 
         void accessoryTickEventPost(Player player, ItemStack stack);
 

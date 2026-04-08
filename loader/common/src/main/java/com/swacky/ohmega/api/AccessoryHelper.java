@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -82,17 +83,11 @@ public final class AccessoryHelper {
      * @return all of the {@link AccessoryType}s that the {@link Item} is a part of, ignoring the priority index of each type
      */
     @SuppressWarnings("deprecation")
-    public static ImmutableList<AccessoryType> getTypes(Item item) {
+    public static ImmutableSet<AccessoryType> getTypes(Item item) {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
         if (OhmegaConfig.Server.disableAccessoryTypes()) {
             builder.add(AccessoryType.GENERIC.get());
-        }
-
-        AccessoryType override = AccessoryTypeManager.getTypeOverride(item);
-
-        if (override != null) {
-            builder.add(override);
         }
 
         for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
@@ -101,13 +96,19 @@ public final class AccessoryHelper {
             }
         }
 
+        Pair<AccessoryType, Boolean> override = AccessoryTypeManager.getTypeOverride(item);
+
+        if (override != null) {
+            builder.add(override.getLeft());
+        }
+
         ImmutableSet<AccessoryType> set = builder.build();
 
         if (set.isEmpty()) {
-            return ImmutableList.of(AccessoryType.NORMAL.get());
+            return ImmutableSet.of(AccessoryType.NONE);
         }
 
-        return ImmutableList.copyOf(set);
+        return set;
     }
 
     /**
@@ -123,12 +124,6 @@ public final class AccessoryHelper {
             return AccessoryType.GENERIC.get();
         }
 
-        AccessoryType override = AccessoryTypeManager.getTypeOverride(item);
-
-        if (override != null) {
-            return override;
-        }
-
         AccessoryType type = AccessoryType.NONE;
         ImmutableList<AccessoryType> slotTypes = getSlotTypes();
 
@@ -140,6 +135,12 @@ public final class AccessoryHelper {
                     type = candidate;
                 }
             }
+        }
+
+        Pair<AccessoryType, Boolean> override = AccessoryTypeManager.getTypeOverride(item);
+
+        if (override != null && (override.getRight() || type == AccessoryType.NONE)) {
+            return override.getLeft();
         }
 
         return type;

@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModLoader;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
@@ -39,11 +40,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public Map<Item, AccessoryType> accessoryOverrideTypesEvent() {
+    public Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent() {
         AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
 
         ModLoader.postEvent(event);
-        return event.overrides;
+        return event.getOverrides();
     }
 
     @Override

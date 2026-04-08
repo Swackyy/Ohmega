@@ -14,6 +14,7 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NonNull;
@@ -30,7 +31,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
     private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
     private static final HashMap<Identifier, AccessoryType> TYPES = new HashMap<>();
     private static final int DEFAULT_SIZE = 5;
-    private static Map<Item, AccessoryType> ACCESSORY_TYPE_OVERRIDES;
+    private static Map<Item, Pair<AccessoryType, Boolean>> ACCESSORY_TYPE_OVERRIDES;
     private static Runnable DEFERRED_APPLY = null;
     private static Runnable DEFERRED_CONFIG_LOAD = null;
 
@@ -123,7 +124,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         }
     }
 
-    public static @Nullable AccessoryType getTypeOverride(Item item) {
+    public static @Nullable Pair<AccessoryType, Boolean> getTypeOverride(Item item) {
         return ACCESSORY_TYPE_OVERRIDES.get(item);
     }
 
