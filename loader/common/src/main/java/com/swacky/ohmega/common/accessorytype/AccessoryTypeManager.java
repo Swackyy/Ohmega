@@ -110,7 +110,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
 
     public static void clear() {
         TYPES.clear();
-        ACCESSORY_TYPE_OVERRIDES.clear();
+        ACCESSORY_TYPE_OVERRIDES = null;
     }
 
     public static void deferApply(Runnable runnable) {
@@ -125,7 +125,11 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
     }
 
     public static @Nullable Pair<AccessoryType, Boolean> getTypeOverride(Item item) {
-        return ACCESSORY_TYPE_OVERRIDES.get(item);
+        if (ACCESSORY_TYPE_OVERRIDES != null) {
+            return ACCESSORY_TYPE_OVERRIDES.get(item);
+        }
+
+        return null;
     }
 
     public static ImmutableSet<AccessoryType> getTypes() {
