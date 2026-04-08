@@ -70,6 +70,8 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         TYPES.putAll(types);
         TYPES.putAll(OhmegaHooks.registerAccessoryTypesEvent());
 
+        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
+
         if (DEFERRED_APPLY != null) {
             if (OhmegaConfig.Server.isLoaded()) {
                 DEFERRED_APPLY.run();
@@ -79,8 +81,6 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
 
             DEFERRED_APPLY = null;
         }
-
-        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.accessoryOverrideTypesEvent();
 
         OhmegaTags.refresh();
     }
