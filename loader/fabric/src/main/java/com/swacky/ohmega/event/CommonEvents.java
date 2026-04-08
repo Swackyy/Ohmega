@@ -69,14 +69,14 @@ public final class CommonEvents {
     }
 
     private static void onServerStarted(MinecraftServer server) {
-        OhmegaHooks.accessoryBindEvent();
+        OhmegaHooks.accessoryBind();
     }
 
     private static InteractionResult onUseItem(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
 
-        if (AccessoryHelper.isAccessory(stack.getItem()) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+        if (AccessoryHelper.isAccessory(stack.getItem()) && !OhmegaHooks.preferVanillaUse(stack, AccessoryHelper.getAccessory(item).preferVanillaUse(stack))) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
             if (candidate.consumesAction()) {

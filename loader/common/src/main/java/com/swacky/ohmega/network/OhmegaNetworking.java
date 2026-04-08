@@ -87,7 +87,7 @@ public final class OhmegaNetworking {
                 ItemStack stack = data.getStackInSlot(index);
                 IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-                if (accessory != null && !OhmegaHooks.accessoryUseEvent(player, stack)) {
+                if (accessory != null && !OhmegaHooks.keybindUse(player, stack)) {
                     accessory.onKeybindUse(player, stack);
                 }
 

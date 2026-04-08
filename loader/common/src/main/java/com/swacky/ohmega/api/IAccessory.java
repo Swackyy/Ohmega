@@ -2,8 +2,6 @@ package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.AngelRing;
-import net.minecraft.core.Holder;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -117,11 +115,11 @@ public interface IAccessory {
      * <ul>
      *     <li>
      *         {@code true}: {@link Item#use(Level, Player, InteractionHand)} will run before,
-     *         and if it returns a consuming {@link InteractionResult}, then the accessory will be right-click-equipped
+     *         and if it returns a consuming {@link InteractionResult}, then the accessory will not be right-click-equipped
      *     </li>
      *     <li>
-     *         {@code false}: Ohmega's right-click to equip behaviour will run first, and will only run {@link Item#use(Level, Player, InteractionHand)}
-     *         if {@link AccessoryHelper#tryEquip(Player, ItemStack)} returns a consuming {@link InteractionResult}
+     *         {@code false}: Ohmega's right-click to equip behaviour will run first, and will only call {@link Item#use(Level, Player, InteractionHand)}
+     *         if {@link AccessoryHelper#tryEquip(Player, ItemStack)} returns a non-consuming {@link InteractionResult}
      *     </li>
      * </ul>
      */
@@ -132,11 +130,11 @@ public interface IAccessory {
     /**
      * The sound to be played if the accessory is equipped through right-clicking this accessory binding as the held item
      * <p>
-     * This is a replacement for the vanilla method to ensure easier compatibility
+     * This is a replacement for the vanilla method to ensure easier compatibility and to add volume and pitch control
      * @return sound to be played
      */
     @Nullable
-    default Holder<SoundEvent> getEquipSound() {
+    default SoundData getEquipSound() {
         return null;
     }
 

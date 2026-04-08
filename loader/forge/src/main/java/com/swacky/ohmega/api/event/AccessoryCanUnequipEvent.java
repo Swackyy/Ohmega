@@ -13,9 +13,9 @@ public final class AccessoryCanUnequipEvent extends MutableEvent {
     public final ItemStack stack;
     public boolean returnValue;
 
-    public AccessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
+    public AccessoryCanUnequipEvent(Player player, ItemStack stack, boolean original) {
         this.player = player;
         this.stack = stack;
-        this.returnValue = initial;
+        this.returnValue = original;
     }
 }

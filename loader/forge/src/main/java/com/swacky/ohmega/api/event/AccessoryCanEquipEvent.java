@@ -14,10 +14,10 @@ public final class AccessoryCanEquipEvent extends MutableEvent {
     public final EquipContext context;
     public boolean returnValue;
 
-    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
+    public AccessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean original) {
         this.player = player;
         this.stack = stack;
         this.context = context;
-        this.returnValue = initial;
+        this.returnValue = original;
     }
 }

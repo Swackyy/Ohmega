@@ -1,6 +1,7 @@
 package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +22,7 @@ abstract class PowderSnowBlockMixin {
         // todo
         if (entity instanceof Player player) {
             for (ItemStack stack : AccessoryHelper.getAccessoryStacks(player)) {
-                if (AccessoryHelper.getAccessory(stack.getItem()).allowWalkOnPowderSnow(stack)) {
+                if (OhmegaHooks.allowWalkOnPowderSnow(stack, AccessoryHelper.getAccessory(stack.getItem()).allowWalkOnPowderSnow(stack))) {
                     cir.setReturnValue(true);
                     return;
                 }

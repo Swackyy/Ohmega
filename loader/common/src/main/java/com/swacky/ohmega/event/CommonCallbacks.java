@@ -21,14 +21,16 @@ import java.util.Collection;
 
 public final class CommonCallbacks {
     // todo
+    // todo: test this averaging out
     public static double getVisibilityPercentModifier(Player player, Entity targetingEntity) {
-        double multiplier = 1;
+        NonNullList<ItemStack> stacks = AccessoryHelper.getAccessoryStacks(player);
+        double multiplier = 0;
 
-        for (ItemStack stack : AccessoryHelper.getAccessoryStacks(player)) {
-            multiplier = Math.min(multiplier, AccessoryHelper.getAccessory(stack.getItem()).getMobVisibilityMultiplier(stack, targetingEntity));
+        for (ItemStack stack : stacks) {
+            multiplier += OhmegaHooks.mobVisibility(stack, targetingEntity, AccessoryHelper.getAccessory(stack.getItem()).getMobVisibilityMultiplier(stack, targetingEntity));
         }
 
-        return multiplier;
+        return multiplier / stacks.size();
     }
     // Ensure alive or 'shouldKeepInventory' returns true before this
     public static void onClonePlayer(Player oldPlayer, Player newPlayer) {
@@ -42,7 +44,7 @@ public final class CommonCallbacks {
 
     // Not an event callback in itself
     public static boolean shouldKeepInventory(Player player) {
-        return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) { // Inverse
+        return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) {
             case ALWAYS_ON -> true;
             case ALWAYS_OFF -> false;
             case DEFAULT -> player.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.KEEP_INVENTORY);

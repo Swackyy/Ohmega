@@ -16,5 +16,5 @@ public interface AccessoryCanUnequipEvent {
         }
     );
 
-    boolean process(Player player, ItemStack stack, boolean currentReturnValue);
+    boolean process(Player player, ItemStack stack, boolean original);
 }

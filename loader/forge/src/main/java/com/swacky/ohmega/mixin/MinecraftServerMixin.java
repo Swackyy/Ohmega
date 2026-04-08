@@ -15,6 +15,6 @@ public class MinecraftServerMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/MinecraftServer;buildServerStatus()Lnet/minecraft/network/protocol/status/ServerStatus;"))
     public void runServer(CallbackInfo ci) {
-        OhmegaHooks.accessoryBindEvent();
+        OhmegaHooks.accessoryBind();
     }
 }

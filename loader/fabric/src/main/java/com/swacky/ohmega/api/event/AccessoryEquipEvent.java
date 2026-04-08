@@ -15,9 +15,7 @@ public interface AccessoryEquipEvent {
     Event<AccessoryEquipEvent> EVENT = EventFactory.createArrayBacked(AccessoryEquipEvent.class,
         listeners -> (player, stack, context) -> {
             for (AccessoryEquipEvent listener : listeners) {
-                boolean result = listener.process(player, stack, context);
-
-                if (result) {
+                if (listener.process(player, stack, context)) {
                     return true;
                 }
             }

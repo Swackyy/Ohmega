@@ -13,17 +13,15 @@ import net.minecraft.world.item.ItemStack;
 public final class AccessoryTickEvent {
     public interface Pre {
         Event<Pre> EVENT = EventFactory.createArrayBacked(Pre.class,
-                listeners -> (player, stack) -> {
-                    for (Pre listener : listeners) {
-                        boolean result = listener.process(player, stack);
-
-                        if (result) {
-                            return true;
-                        }
+            listeners -> (player, stack) -> {
+                for (Pre listener : listeners) {
+                    if (listener.process(player, stack)) {
+                        return true;
                     }
-
-                    return false;
                 }
+
+                return false;
+            }
         );
 
         boolean process(Player player, ItemStack stack);
@@ -31,11 +29,11 @@ public final class AccessoryTickEvent {
 
     public interface Post {
         Event<Post> EVENT = EventFactory.createArrayBacked(Post.class,
-                listeners -> (player, stack) -> {
-                    for (Post listener : listeners) {
-                        listener.process(player, stack);
-                    }
+            listeners -> (player, stack) -> {
+                for (Post listener : listeners) {
+                    listener.process(player, stack);
                 }
+            }
         );
 
         void process(Player player, ItemStack stack);

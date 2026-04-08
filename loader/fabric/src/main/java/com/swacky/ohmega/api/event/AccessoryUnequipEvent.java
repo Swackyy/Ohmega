@@ -15,9 +15,7 @@ public interface AccessoryUnequipEvent {
     Event<AccessoryUnequipEvent> EVENT = EventFactory.createArrayBacked(AccessoryUnequipEvent.class,
         listeners -> (player, stack) -> {
             for (AccessoryUnequipEvent listener : listeners) {
-                boolean result = listener.process(player, stack);
-
-                if (result) {
+                if (listener.process(player, stack)) {
                     return true;
                 }
             }

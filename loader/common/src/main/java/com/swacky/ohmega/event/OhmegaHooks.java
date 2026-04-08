@@ -1,10 +1,12 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
+import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,76 +14,107 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
+// todo: add CompatibleWithEvent and AutoSyncEvent
 public final class OhmegaHooks {
     private static final Service IMPL = Ohmega.loadService(Service.class);
 
     public static void bootstrap() {}
 
-    public static void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder) {
-        IMPL.accessoryAttributeModifiersEvent(stack, builder);
+    public static void accessoryBind() {
+        IMPL.accessoryBind();
     }
 
-    public static void accessoryBindEvent() {
-        IMPL.accessoryBindEvent();
+    public static void accessoryTickPost(Player player, ItemStack stack) {
+        IMPL.accessoryTickPost(player, stack);
     }
 
-    public static boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
-        return IMPL.accessoryCanEquipEvent(player, stack, context, initial);
+    public static boolean accessoryTickPre(Player player, ItemStack stack) {
+        return IMPL.accessoryTickPre(player, stack);
     }
 
-    public static boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial) {
-        return IMPL.accessoryCanUnequipEvent(player, stack, initial);
+    public static boolean allowWalkOnPowderSnow(ItemStack stack, boolean original) {
+        return IMPL.allowWalkOnPowderSnow(stack, original);
     }
 
-    public static boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context) {
-        return IMPL.accessoryEquipEvent(player, stack, context);
+    public static AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder) {
+        return IMPL.attributeModifiers(stack, builder);
     }
 
-    public static Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent() {
-        return IMPL.accessoryOverrideTypesEvent();
+    public static boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
+        return IMPL.canEquip(player, stack, context, original);
     }
 
-    public static void accessoryTickPostEvent(Player player, ItemStack stack) {
-        IMPL.accessoryTickPostEvent(player, stack);
+    public static boolean canUnequip(Player player, ItemStack stack, boolean original) {
+        return IMPL.canUnequip(player, stack, original);
     }
 
-    public static boolean accessoryTickPreEvent(Player player, ItemStack stack) {
-        return IMPL.accessoryTickPreEvent(player, stack);
+    public static boolean equip(Player player, ItemStack stack, EquipContext context) {
+        return IMPL.equip(player, stack, context);
     }
 
-    public static boolean accessoryUnequipEvent(Player player, ItemStack stack) {
-        return IMPL.accessoryUnequipEvent(player, stack);
+    public static SoundData equipSound(ItemStack stack, SoundData original) {
+        return IMPL.equipSound(stack, original);
     }
 
-    public static boolean accessoryUseEvent(Player player, ItemStack stack) {
-        return IMPL.accessoryUseEvent(player, stack);
+    public static boolean isPiglinSafe(ItemStack stack, boolean original) {
+        return IMPL.isPiglinSafe(stack, original);
     }
 
-    public static Map<Identifier, AccessoryType> registerAccessoryTypesEvent() {
-        return IMPL.registerAccessoryTypesEvent();
+    public static boolean keybindUse(Player player, ItemStack stack) {
+        return IMPL.keybindUse(player, stack);
+    }
+
+    public static double mobVisibility(ItemStack stack, Entity targetingEntity, double original) {
+        return IMPL.mobVisibility(stack, targetingEntity, original);
+    }
+
+    public static Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
+        return IMPL.overrideTypes();
+    }
+
+    public static boolean preferVanillaUse(ItemStack stack, boolean original) {
+        return IMPL.preferVanillaUse(stack, original);
+    }
+
+    public static Map<Identifier, AccessoryType> registerAccessoryTypes() {
+        return IMPL.registerAccessoryTypes();
+    }
+
+    public static boolean unequip(Player player, ItemStack stack) {
+        return IMPL.unequip(player, stack);
     }
 
     public interface Service {
-        void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder);
+        void accessoryBind();
 
-        void accessoryBindEvent();
+        void accessoryTickPost(Player player, ItemStack stack);
 
-        boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial);
+        boolean accessoryTickPre(Player player, ItemStack stack);
 
-        boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial);
+        boolean allowWalkOnPowderSnow(ItemStack stack, boolean original);
 
-        boolean accessoryEquipEvent(Player player, ItemStack stack, EquipContext context);
+        AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder);
 
-        Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent();
+        boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original);
 
-        void accessoryTickPostEvent(Player player, ItemStack stack);
+        boolean canUnequip(Player player, ItemStack stack, boolean original);
 
-        boolean accessoryTickPreEvent(Player player, ItemStack stack);
+        boolean equip(Player player, ItemStack stack, EquipContext context);
 
-        boolean accessoryUnequipEvent(Player player, ItemStack stack);
+        SoundData equipSound(ItemStack stack, SoundData original);
 
-        boolean accessoryUseEvent(Player player, ItemStack stack);
+        boolean isPiglinSafe(ItemStack stack, boolean original);
 
-        Map<Identifier, AccessoryType> registerAccessoryTypesEvent();
+        boolean keybindUse(Player player, ItemStack stack);
+
+        double mobVisibility(ItemStack stack, Entity targetingEntity, double original);
+
+        Map<Item, Pair<AccessoryType, Boolean>> overrideTypes();
+
+        boolean preferVanillaUse(ItemStack stack, boolean original);
+
+        Map<Identifier, AccessoryType> registerAccessoryTypes();
+
+        boolean unequip(Player player, ItemStack stack);
     }
 }

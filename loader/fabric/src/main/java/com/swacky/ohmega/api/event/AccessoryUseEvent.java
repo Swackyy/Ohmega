@@ -7,17 +7,15 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryUseEvent {
     Event<AccessoryUseEvent> EVENT = EventFactory.createArrayBacked(AccessoryUseEvent.class,
-            listeners -> (player, stack) -> {
-                for (AccessoryUseEvent listener : listeners) {
-                    boolean result = listener.process(player, stack);
-
-                    if (result) {
-                        return true;
-                    }
+        listeners -> (player, stack) -> {
+            for (AccessoryUseEvent listener : listeners) {
+                if (listener.process(player, stack)) {
+                    return true;
                 }
-
-                return false;
             }
+
+            return false;
+        }
     );
 
     boolean process(Player player, ItemStack stack);

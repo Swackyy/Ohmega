@@ -16,5 +16,5 @@ public interface AccessoryCanEquipEvent {
         }
     );
 
-    boolean process(Player player, ItemStack stack, EquipContext context, boolean currentReturnValue);
+    boolean process(Player player, ItemStack stack, EquipContext context, boolean original);
 }

@@ -66,7 +66,7 @@ public final class AccessorySlot extends Slot {
             original &= accessory.canUnequip(player, getItem());
         }
 
-        return OhmegaHooks.accessoryCanUnequipEvent(player, getItem(), original);
+        return OhmegaHooks.canUnequip(player, getItem(), original);
     }
 
     @Override

@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftMixin {
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     public void init(GameConfig config, CallbackInfo ci) {
-        OhmegaHooks.accessoryBindEvent();
+        OhmegaHooks.accessoryBind();
     }
 }

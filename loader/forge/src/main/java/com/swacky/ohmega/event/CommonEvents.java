@@ -122,7 +122,7 @@ public final class CommonEvents {
         ItemStack stack = player.getItemInHand(event.getHand());
         Item item = stack.getItem();
 
-        if (AccessoryHelper.isAccessory(item) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+        if (AccessoryHelper.isAccessory(item) && !OhmegaHooks.preferVanillaUse(stack, AccessoryHelper.getAccessory(item).preferVanillaUse(stack))) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
             if (candidate.consumesAction()) {

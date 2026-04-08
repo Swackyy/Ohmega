@@ -7,6 +7,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -15,10 +16,8 @@ import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -80,7 +79,7 @@ public final class AccessoryData {
         if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
             return
                     AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) &&
-                    OhmegaHooks.accessoryCanEquipEvent(player, stack, context, accessory.canEquip(player, stack));
+                    OhmegaHooks.canEquip(player, stack, context, accessory.canEquip(player, stack));
         }
 
         return false;
@@ -98,7 +97,7 @@ public final class AccessoryData {
         IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
-            if (!OhmegaHooks.accessoryUnequipEvent(player, stack)) {
+            if (!OhmegaHooks.unequip(player, stack)) {
                 accessory.onUnequip(player, stack);
             }
 
@@ -115,15 +114,15 @@ public final class AccessoryData {
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
 
-            if (!OhmegaHooks.accessoryEquipEvent(player, stack, context)) {
+            if (!OhmegaHooks.equip(player, stack, context)) {
                 accessory.onEquip(player, stack);
             }
 
             if (context == EquipContext.RIGHT_CLICK_HELD_ITEM) {
-                Holder<SoundEvent> equipSound = accessory.getEquipSound();
+                SoundData data = OhmegaHooks.equipSound(stack, accessory.getEquipSound());
 
-                if (equipSound != null) {
-                    player.playSound(equipSound.value(), 1, 1);
+                if (data != null) {
+                    player.playSound(data.sound().value(), data.volume(), data.pitch());
                 }
             }
         }
@@ -292,9 +291,9 @@ public final class AccessoryData {
             ItemStack stack = getStackInSlot(i);
             IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-            if (accessory != null && !OhmegaHooks.accessoryTickPreEvent(player, stack)) {
+            if (accessory != null && !OhmegaHooks.accessoryTickPre(player, stack)) {
                 accessory.accessoryTick(player, stack);
-                OhmegaHooks.accessoryTickPostEvent(player, stack);
+                OhmegaHooks.accessoryTickPost(player, stack);
             }
         }
 

@@ -3,11 +3,10 @@ package com.swacky.ohmega.common.item;
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.common.Ohmega;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -97,11 +96,11 @@ public class AngelRing extends Item implements IAccessory {
                         AttributeModifier.Operation.ADD_VALUE));
     }
 
-    // The sound to be played when equipped using a right click
+    // The sound to be played when equipped using a right-click
     @Nullable
     @Override
-    public Holder<SoundEvent> getEquipSound() {
-        return SoundEvents.ARMOR_EQUIP_GOLD;
+    public SoundData getEquipSound() {
+        return new SoundData(SoundEvents.ARMOR_EQUIP_GOLD);
     }
 
     // The angel ring is a gold item, so we consider it "safe" to piglins

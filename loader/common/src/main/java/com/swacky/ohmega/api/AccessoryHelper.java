@@ -242,8 +242,7 @@ public final class AccessoryHelper {
 
             // todo: cache this
             accessory.addAttributeModifiers(builder);
-            OhmegaHooks.accessoryAttributeModifiersEvent(stack, builder);
-            return builder.build();
+            return OhmegaHooks.attributeModifiers(stack, builder);
         }
 
         return AccessoryModifiers.EMPTY;
