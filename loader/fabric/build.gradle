@@ -34,12 +34,12 @@ loom {
 
 repositories {
     maven {
-        name = "Config API"
+        name = "Fuzss"
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven"
     }
 
     maven {
-        name = "ModMenu"
+        name = "Terraformers"
         url = "https://maven.terraformersmc.com/releases"
     }
 
