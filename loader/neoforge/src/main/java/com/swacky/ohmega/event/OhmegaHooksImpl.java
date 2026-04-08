@@ -1,8 +1,18 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
-import com.swacky.ohmega.api.event.*;
+import com.swacky.ohmega.api.event.AccessoryAttributeModifiersEvent;
+import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
+import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
+import com.swacky.ohmega.api.event.AccessoryEquipEvent;
+import com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent;
+import com.swacky.ohmega.api.event.AccessoryTickEvent;
+import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
+import com.swacky.ohmega.api.event.AccessoryUseEvent;
+import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,7 +20,6 @@ import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Map;
-import java.util.Set;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
@@ -59,7 +68,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public Set<AccessoryType> registerAccessoryTypesEvent() {
-        return NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent()).types;
+    public Map<Identifier, AccessoryType> registerAccessoryTypesEvent() {
+        return NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent()).getTypes();
     }
 }

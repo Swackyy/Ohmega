@@ -1,15 +1,16 @@
 package com.swacky.ohmega.event;
 
+import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
@@ -61,7 +62,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public Set<AccessoryType> registerAccessoryTypesEvent() {
-        return RegisterAccessoryTypesEvent.EVENT.invoker().process();
+    public Map<Identifier, AccessoryType> registerAccessoryTypesEvent() {
+        ImmutableMap.Builder<Identifier, AccessoryType> builder = new ImmutableMap.Builder<>();
+
+        RegisterAccessoryTypesEvent.EVENT.invoker().process(builder);
+        return builder.build();
     }
 }

@@ -67,6 +67,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         TYPES.clear();
         TYPES.put(AccessoryType.NONE.getId(), AccessoryType.NONE);
         TYPES.putAll(types);
+        TYPES.putAll(OhmegaHooks.registerAccessoryTypesEvent());
 
         if (DEFERRED_APPLY != null) {
             if (OhmegaConfig.Server.isLoaded()) {

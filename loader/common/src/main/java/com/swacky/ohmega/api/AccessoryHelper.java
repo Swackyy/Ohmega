@@ -507,7 +507,7 @@ public final class AccessoryHelper {
     /**
      * Retrieves all accessories worn by a player in {@link IAccessory} form
      * @param player {@link Player} to get accessory inventory data from
-     * @return a nullable list of {@link IAccessory} instances equipped
+     * @return a list of {@link IAccessory} instances equipped
      */
     public static ArrayList<@Nullable IAccessory> getAccessories(Player player) {
         NonNullList<ItemStack> stacks = getData(player).getStacks();

@@ -4,12 +4,12 @@ import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
-import java.util.Set;
 
 public final class OhmegaHooks {
     private static final Service IMPL = Ohmega.loadService(Service.class);
@@ -52,7 +52,7 @@ public final class OhmegaHooks {
         return IMPL.accessoryUseEvent(player, stack);
     }
 
-    public static Set<AccessoryType> registerAccessoryTypesEvent() {
+    public static Map<Identifier, AccessoryType> registerAccessoryTypesEvent() {
         return IMPL.registerAccessoryTypesEvent();
     }
 
@@ -75,6 +75,6 @@ public final class OhmegaHooks {
 
         boolean accessoryUseEvent(Player player, ItemStack stack);
 
-        Set<AccessoryType> registerAccessoryTypesEvent();
+        Map<Identifier, AccessoryType> registerAccessoryTypesEvent();
     }
 }

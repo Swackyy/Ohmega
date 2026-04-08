@@ -1,24 +1,19 @@
 package com.swacky.ohmega.api.event;
 
+import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-
-import java.util.HashSet;
-import java.util.Set;
+import net.minecraft.resources.Identifier;
 
 public interface RegisterAccessoryTypesEvent {
     Event<RegisterAccessoryTypesEvent> EVENT = EventFactory.createArrayBacked(RegisterAccessoryTypesEvent.class,
-            listeners -> () -> {
-                Set<AccessoryType> types = new HashSet<>();
-
+            listeners -> builder -> {
                 for (RegisterAccessoryTypesEvent listener : listeners) {
-                    types.addAll(listener.process());
+                    listener.process(builder);
                 }
-
-                return types;
             }
     );
 
-    Set<AccessoryType> process();
+    void process(ImmutableMap.Builder<Identifier, AccessoryType> builder);
 }

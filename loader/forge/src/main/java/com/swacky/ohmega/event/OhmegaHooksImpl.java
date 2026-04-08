@@ -3,13 +3,13 @@ package com.swacky.ohmega.event;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModLoader;
 
 import java.util.Map;
-import java.util.Set;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
@@ -67,10 +67,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public Set<AccessoryType> registerAccessoryTypesEvent() {
+    public Map<Identifier, AccessoryType> registerAccessoryTypesEvent() {
         RegisterAccessoryTypesEvent event = new RegisterAccessoryTypesEvent();
 
         RegisterAccessoryTypesEvent.BUS.post(event);
-        return event.types;
+        return event.getTypes();
     }
 }
