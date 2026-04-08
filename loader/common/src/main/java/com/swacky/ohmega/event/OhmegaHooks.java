@@ -21,6 +21,10 @@ public final class OhmegaHooks {
         IMPL.accessoryAttributeModifiersEvent(stack, builder);
     }
 
+    public static void accessoryBindEvent() {
+        IMPL.accessoryBindEvent();
+    }
+
     public static boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
         return IMPL.accessoryCanEquipEvent(player, stack, context, initial);
     }
@@ -37,12 +41,12 @@ public final class OhmegaHooks {
         return IMPL.accessoryOverrideTypesEvent();
     }
 
-    public static void accessoryTickEventPost(Player player, ItemStack stack) {
-        IMPL.accessoryTickEventPost(player, stack);
+    public static void accessoryTickPostEvent(Player player, ItemStack stack) {
+        IMPL.accessoryTickPostEvent(player, stack);
     }
 
-    public static boolean accessoryTickEventPre(Player player, ItemStack stack) {
-        return IMPL.accessoryTickEventPre(player, stack);
+    public static boolean accessoryTickPreEvent(Player player, ItemStack stack) {
+        return IMPL.accessoryTickPreEvent(player, stack);
     }
 
     public static boolean accessoryUnequipEvent(Player player, ItemStack stack) {
@@ -60,6 +64,8 @@ public final class OhmegaHooks {
     public interface Service {
         void accessoryAttributeModifiersEvent(ItemStack stack, AccessoryModifiers.Builder builder);
 
+        void accessoryBindEvent();
+
         boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial);
 
         boolean accessoryCanUnequipEvent(Player player, ItemStack stack, boolean initial);
@@ -68,9 +74,9 @@ public final class OhmegaHooks {
 
         Map<Item, Pair<AccessoryType, Boolean>> accessoryOverrideTypesEvent();
 
-        void accessoryTickEventPost(Player player, ItemStack stack);
+        void accessoryTickPostEvent(Player player, ItemStack stack);
 
-        boolean accessoryTickEventPre(Player player, ItemStack stack);
+        boolean accessoryTickPreEvent(Player player, ItemStack stack);
 
         boolean accessoryUnequipEvent(Player player, ItemStack stack);
 

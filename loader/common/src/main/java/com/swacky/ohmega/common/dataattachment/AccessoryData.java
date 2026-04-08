@@ -292,9 +292,9 @@ public final class AccessoryData {
             ItemStack stack = getStackInSlot(i);
             IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-            if (accessory != null && !OhmegaHooks.accessoryTickEventPre(player, stack)) {
+            if (accessory != null && !OhmegaHooks.accessoryTickPreEvent(player, stack)) {
                 accessory.accessoryTick(player, stack);
-                OhmegaHooks.accessoryTickEventPost(player, stack);
+                OhmegaHooks.accessoryTickPostEvent(player, stack);
             }
         }
 

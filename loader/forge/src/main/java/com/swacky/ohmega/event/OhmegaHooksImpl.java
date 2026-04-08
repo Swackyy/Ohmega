@@ -19,6 +19,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public void accessoryBindEvent() {
+        ModLoader.postEvent(new AccessoryBindEvent());
+    }
+
+    @Override
     public boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
         AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, context, initial);
 
@@ -48,12 +53,12 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryTickEventPost(Player player, ItemStack stack) {
+    public void accessoryTickPostEvent(Player player, ItemStack stack) {
         AccessoryTickEvent.Post.BUS.post(new AccessoryTickEvent.Post(player, stack));
     }
 
     @Override
-    public boolean accessoryTickEventPre(Player player, ItemStack stack) {
+    public boolean accessoryTickPreEvent(Player player, ItemStack stack) {
         return AccessoryTickEvent.Pre.BUS.post(new AccessoryTickEvent.Pre(player, stack));
     }
 

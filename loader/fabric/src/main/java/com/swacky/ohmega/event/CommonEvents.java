@@ -7,11 +7,13 @@ import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -34,6 +36,7 @@ public final class CommonEvents {
             ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
+            ServerLifecycleEvents.SERVER_STARTED.register(CommonEvents::onServerStarted);
             ItemEvents.USE.register(CommonEvents::onUseItem);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + CommonEvents.class.getName() + " multiple times");
@@ -63,6 +66,10 @@ public final class CommonEvents {
 
     private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {
         CommonCallbacks.onRegisterCommands(dispatcher, context);
+    }
+
+    private static void onServerStarted(MinecraftServer server) {
+        OhmegaHooks.accessoryBindEvent();
     }
 
     private static InteractionResult onUseItem(Level level, Player player, InteractionHand hand) {

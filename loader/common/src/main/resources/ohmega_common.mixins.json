@@ -9,6 +9,7 @@
     "ServerPlayerGameModeMixin"
   ],
   "client": [
+    "client.MinecraftMixin",
     "client.MultiPlayerGameModeMixin"
   ],
   "minVersion": "0.8.5"

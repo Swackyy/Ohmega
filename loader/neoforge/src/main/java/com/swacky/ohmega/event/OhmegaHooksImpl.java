@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.event.AccessoryAttributeModifiersEvent;
+import com.swacky.ohmega.api.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryEquipEvent;
@@ -29,6 +30,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public void accessoryBindEvent() {
+        ModLoader.postEvent(new AccessoryBindEvent());
+    }
+
+    @Override
     public boolean accessoryCanEquipEvent(Player player, ItemStack stack, EquipContext context, boolean initial) {
         return NeoForge.EVENT_BUS.post(new AccessoryCanEquipEvent(player, stack, context, initial)).returnValue;
     }
@@ -49,12 +55,12 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryTickEventPost(Player player, ItemStack stack) {
+    public void accessoryTickPostEvent(Player player, ItemStack stack) {
         NeoForge.EVENT_BUS.post(new AccessoryTickEvent.Post(player, stack));
     }
 
     @Override
-    public boolean accessoryTickEventPre(Player player, ItemStack stack) {
+    public boolean accessoryTickPreEvent(Player player, ItemStack stack) {
         return NeoForge.EVENT_BUS.post(new AccessoryTickEvent.Pre(player, stack)).isCanceled();
     }
 

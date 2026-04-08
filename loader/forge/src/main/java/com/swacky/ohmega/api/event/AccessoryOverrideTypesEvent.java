@@ -3,11 +3,10 @@ package com.swacky.ohmega.api.event;
 import com.google.common.collect.ImmutableMap;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
-public final class AccessoryOverrideTypesEvent extends MutableEvent implements IModBusEvent {
+public final class AccessoryOverrideTypesEvent implements IModBusEvent {
     public final ImmutableMap.Builder<Item, Pair<AccessoryType, Boolean>> builder = new ImmutableMap.Builder<>();
 
     // If 'hard' is true, it will always override the type.
