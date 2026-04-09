@@ -133,7 +133,7 @@ if (secretsFile.exists()) {
 
             repositories {
                 maven {
-                    name = "Maven Central"
+                    name = "MavenCentral"
                     url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
 
                     credentials {
