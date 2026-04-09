@@ -47,6 +47,14 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public boolean autoSync(ItemStack stack, boolean original) {
+        AccessoryAutoSyncEvent event = new AccessoryAutoSyncEvent(stack, original);
+
+        AccessoryAutoSyncEvent.BUS.post(event);
+        return event.returnValue;
+    }
+
+    @Override
     public boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
         AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, context, original);
 
@@ -59,6 +67,14 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
         AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, original);
 
         AccessoryCanUnequipEvent.BUS.post(event);
+        return event.returnValue;
+    }
+
+    @Override
+    public boolean compatibleWith(ItemStack stack, ItemStack other, boolean original) {
+        AccessoryCompatibleWithEvent event = new AccessoryCompatibleWithEvent(stack, other, original);
+
+        AccessoryCompatibleWithEvent.BUS.post(event);
         return event.returnValue;
     }
 

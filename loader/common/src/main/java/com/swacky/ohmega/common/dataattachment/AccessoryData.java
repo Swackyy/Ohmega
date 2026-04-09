@@ -206,7 +206,7 @@ public final class AccessoryData {
                 if (max < 0) {
                     toRemoveCurrentStack = count;
                 } else {
-                    toRemoveCurrentStack = Math.min(count, Math.max(0, max - removed));
+                    toRemoveCurrentStack = Math.clamp(max - removed, 0, count);
                 }
 
                 if (max < 0 || removed + count <= max) {
@@ -307,7 +307,7 @@ public final class AccessoryData {
                 ItemStack stack = getStackInSlot(i);
                 IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-                if (changed[i] || (accessory != null && accessory.autoSync(player, stack))) {
+                if (changed[i] || (accessory != null && OhmegaHooks.autoSync(stack, accessory.autoSync(stack)))) {
                     indexes.add(i);
                     stacks.add(stack);
 

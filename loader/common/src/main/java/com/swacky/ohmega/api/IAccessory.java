@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or {@link AngelRing} for examples
  */
+// todo: create a decorator class which adds event posting for these so it is less complicated
 @SuppressWarnings("unused")
 public interface IAccessory {
     /**
@@ -69,10 +70,11 @@ public interface IAccessory {
      * Determines if accessories can be worn when others are.
      * Called against every other currently accessory in the accessory inventory.
      * By default, Ohmega prevents players from equipping two of the same accessory at once
+     * @param stack the {@link ItemStack} of this accessory to test with
      * @param other the {@link ItemStack} of another accessory to test against
      * @return {@code true} if compatible, {@code false} otherwise
      */
-    default boolean compatibleWith(@NonNull ItemStack other) {
+    default boolean compatibleWith(@NonNull ItemStack stack, @NonNull ItemStack other) {
         return AccessoryHelper.getAccessory(other.getItem()) != this;
     }
 
@@ -93,11 +95,10 @@ public interface IAccessory {
      * <p>
      * If possible, use {@link AccessoryData#setChanged(int)} to indicate that a change has been made,
      * instead of using this which adds additional network overhead
-     * @param player the {@link Player} wearing this accessory
      * @param stack the {@link ItemStack} of this accessory item being worn
      * @return {@code true} if the server should send updates to clients every tick, {@code false} otherwise
      */
-    default boolean autoSync(@NonNull Player player, @NonNull ItemStack stack) {
+    default boolean autoSync(@NonNull ItemStack stack) {
         return false;
     }
 
@@ -123,7 +124,7 @@ public interface IAccessory {
      *     </li>
      * </ul>
      */
-    default boolean preferVanillaUse(ItemStack stack) {
+    default boolean preferVanillaUse(@NonNull ItemStack stack) {
         return true;
     }
 
@@ -143,7 +144,7 @@ public interface IAccessory {
      * @param stack the {@link ItemStack} of this accessory item being worn
      * @return {@code true} if walking on powdered snow should be allowed, {@code false} otherwise
      */
-    default boolean allowWalkOnPowderSnow(ItemStack stack) {
+    default boolean allowWalkOnPowderSnow(@NonNull ItemStack stack) {
         return false;
     }
 
@@ -153,7 +154,7 @@ public interface IAccessory {
      * @param targetingEntity the entity being targeted.
      * @return the multiplier to submit, a value of {@code 1} will mean no change, and {@code 0} will prevent visibility at all
      */
-    default double getMobVisibilityMultiplier(ItemStack stack, Entity targetingEntity) {
+    default double getMobVisibilityMultiplier(@NonNull ItemStack stack, @NonNull Entity targetingEntity) {
         return 1;
     }
 
@@ -162,7 +163,7 @@ public interface IAccessory {
      * @param stack the {@link ItemStack} of this accessory item being worn
      * @return {@code true} to prevent piglin targeting, {@code false} otherwise
      */
-    default boolean isPiglinSafe(ItemStack stack) {
+    default boolean isPiglinSafe(@NonNull ItemStack stack) {
         return false;
     }
 }

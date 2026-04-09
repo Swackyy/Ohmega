@@ -105,7 +105,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // The angel ring is a gold item, so we consider it "safe" to piglins
     @Override
-    public boolean isPiglinSafe(ItemStack stack) {
+    public boolean isPiglinSafe(@NonNull ItemStack stack) {
         return true;
     }
 }

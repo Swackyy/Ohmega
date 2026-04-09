@@ -447,7 +447,9 @@ public final class AccessoryHelper {
      * @return {@code true} if both are compatible with each other, {@code false} otherwise
      */
     public static boolean compatibleWith(ItemStack first, ItemStack second) {
-        return getAccessory(first.getItem()).compatibleWith(second) && getAccessory(second.getItem()).compatibleWith(first);
+        return
+                OhmegaHooks.compatibleWith(first, second, getAccessory(first.getItem()).compatibleWith(first, second)) &&
+                OhmegaHooks.compatibleWith(second, first, getAccessory(second.getItem()).compatibleWith(second, first));
     }
 
     /**

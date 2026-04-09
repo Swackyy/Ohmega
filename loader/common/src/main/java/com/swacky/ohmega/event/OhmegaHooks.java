@@ -14,7 +14,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
-// todo: add CompatibleWithEvent and AutoSyncEvent
 public final class OhmegaHooks {
     private static final Service IMPL = Ohmega.loadService(Service.class);
 
@@ -40,12 +39,20 @@ public final class OhmegaHooks {
         return IMPL.attributeModifiers(stack, builder);
     }
 
+    public static boolean autoSync(ItemStack stack, boolean original) {
+        return IMPL.autoSync(stack, original);
+    }
+
     public static boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
         return IMPL.canEquip(player, stack, context, original);
     }
 
     public static boolean canUnequip(Player player, ItemStack stack, boolean original) {
         return IMPL.canUnequip(player, stack, original);
+    }
+
+    public static boolean compatibleWith(ItemStack stack, ItemStack other, boolean original) {
+        return IMPL.compatibleWith(stack, other, original);
     }
 
     public static boolean equip(Player player, ItemStack stack, EquipContext context) {
@@ -95,9 +102,13 @@ public final class OhmegaHooks {
 
         AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder);
 
+        boolean autoSync(ItemStack stack, boolean original);
+
         boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original);
 
         boolean canUnequip(Player player, ItemStack stack, boolean original);
+
+        boolean compatibleWith(ItemStack stack, ItemStack other, boolean original);
 
         boolean equip(Player player, ItemStack stack, EquipContext context);
 

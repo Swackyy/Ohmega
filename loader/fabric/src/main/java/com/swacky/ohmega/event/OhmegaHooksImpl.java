@@ -5,9 +5,11 @@ import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
 import com.swacky.ohmega.api.event.AccessoryAttributeModifiersEvent;
+import com.swacky.ohmega.api.event.AccessoryAutoSyncEvent;
 import com.swacky.ohmega.api.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
+import com.swacky.ohmega.api.event.AccessoryCompatibleWithEvent;
 import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryEquipSoundEvent;
 import com.swacky.ohmega.api.event.AccessoryIsPiglinSafeEvent;
@@ -57,6 +59,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public boolean autoSync(ItemStack stack, boolean original) {
+        return AccessoryAutoSyncEvent.EVENT.invoker().process(stack, original);
+    }
+
+    @Override
     public boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
         return AccessoryCanEquipEvent.EVENT.invoker().process(player, stack, context, original);
     }
@@ -64,6 +71,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean canUnequip(Player player, ItemStack stack, boolean original) {
         return AccessoryCanUnequipEvent.EVENT.invoker().process(player, stack, original);
+    }
+
+    @Override
+    public boolean compatibleWith(ItemStack stack, ItemStack other, boolean original) {
+        return AccessoryCompatibleWithEvent.EVENT.invoker().process(stack, other, original);
     }
 
     @Override

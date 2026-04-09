@@ -4,9 +4,11 @@ import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
 import com.swacky.ohmega.api.event.AccessoryAttributeModifiersEvent;
+import com.swacky.ohmega.api.event.AccessoryAutoSyncEventEvent;
 import com.swacky.ohmega.api.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
+import com.swacky.ohmega.api.event.AccessoryCompatibleWithEvent;
 import com.swacky.ohmega.api.event.AccessoryEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryEquipSoundEvent;
 import com.swacky.ohmega.api.event.AccessoryIsPiglinSafeEvent;
@@ -58,6 +60,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public boolean autoSync(ItemStack stack, boolean original) {
+        return NeoForge.EVENT_BUS.post(new AccessoryAutoSyncEventEvent(stack, original)).returnValue;
+    }
+
+    @Override
     public boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
         return NeoForge.EVENT_BUS.post(new AccessoryCanEquipEvent(player, stack, context, original)).returnValue;
     }
@@ -65,6 +72,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean canUnequip(Player player, ItemStack stack, boolean original) {
         return NeoForge.EVENT_BUS.post(new AccessoryCanUnequipEvent(player, stack, original)).returnValue;
+    }
+
+    @Override
+    public boolean compatibleWith(ItemStack stack, ItemStack other, boolean original) {
+        return NeoForge.EVENT_BUS.post(new AccessoryCompatibleWithEvent(stack, other, original)).returnValue;
     }
 
     @Override
