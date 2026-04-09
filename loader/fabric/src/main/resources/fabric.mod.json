@@ -33,7 +33,7 @@
   "accessWidener": "aw.accesswidener",
   "depends": {
     "fabricloader": "${loaderFabricVRange}",
-    "minecraft": "${mcV}",
+    "minecraft": "~${mcV}",
     "java": ">=${javaV}",
     "fabric-api": "*",
     "forgeconfigapiport": "${loaderFabricForgeConfigApiPortVRange}"

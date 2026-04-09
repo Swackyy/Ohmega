@@ -55,6 +55,7 @@ processResources {
             modV                                 : modV,
             modAuthors                           : modAuthorsDisplay,
             mcV                                  : mcV,
+            mcVRangeMax                          : mcVRangeMax,
             modName                              : modName,
             crowdinUrl                           : crowdinUrl,
             curseUrl                             : curseUrl,
