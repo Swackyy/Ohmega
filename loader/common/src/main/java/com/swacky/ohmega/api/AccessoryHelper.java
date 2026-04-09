@@ -2,7 +2,6 @@ package com.swacky.ohmega.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
@@ -10,8 +9,8 @@ import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.NonNullList;
@@ -49,10 +48,10 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Use this to bind an {@link IAccessory} instance to an {@link Item}, essentially turning it into an accessory.
-     * If you have read access on the type of item (if the item class is yours), instead implement the {@link IAccessory} interface
+     * Use this to bind an {@link Accessory} instance to an {@link Item}, essentially turning it into an accessory.
+     * If you have read access on the type of item (if the item class is yours), instead implement the {@link Accessory} interface
      * @param item item to bind
-     * @param binding the {@link IAccessory} instance to store on the item, determining most accessory behaviour
+     * @param binding the {@link Accessory} instance to store on the item, determining most accessory behaviour
      * @return {@code true} if it worked, false if the item is already bound or is air
      */
     public static boolean bindAccessory(Item item, IAccessory binding) {
@@ -60,10 +59,10 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Check if an item is registered as an accessory, either by implementing {@link IAccessory} in your {@link Item} class
+     * Check if an item is registered as an accessory, either by implementing {@link Accessory} in your {@link Item} class
      * or by calling {@link #bindAccessory(Item, IAccessory)},
      * @param item the item to check if it is bound
-     * @return {@code true} if the {@link Item} class implements {@link IAccessory} or is accessory bound by code ({@link #bindAccessory(Item, IAccessory)}
+     * @return {@code true} if the {@link Item} class implements {@link Accessory} or is accessory bound by code ({@link #bindAccessory(Item, IAccessory)}
      */
     public static boolean isAccessory(Item item) {
         return Ohmega.isAccessory(item);
@@ -71,9 +70,9 @@ public final class AccessoryHelper {
 
     /**
      * @param item the item to get the binding of
-     * @return the {@link IAccessory} binding
+     * @return the {@link Accessory} binding
      */
-    public static IAccessory getAccessory(Item item) {
+    public static Accessory getAccessory(Item item) {
         return Ohmega.getAccessory(item);
     }
 
@@ -235,14 +234,14 @@ public final class AccessoryHelper {
      * @return the {@link AccessoryModifiers} to apply when accessory equipped
      */
     public static AccessoryModifiers getModifiers(ItemStack stack) {
-        IAccessory accessory = getAccessory(stack.getItem());
+        Accessory accessory = getAccessory(stack.getItem());
 
         if (accessory != null) {
             AccessoryModifiers.Builder builder = new AccessoryModifiers.Builder();
 
             // todo: cache this
-            accessory.addAttributeModifiers(builder);
-            return OhmegaHooks.attributeModifiers(stack, builder);
+            accessory.addAttributeModifiers(stack, builder);
+            return builder.build();
         }
 
         return AccessoryModifiers.EMPTY;
@@ -345,7 +344,7 @@ public final class AccessoryHelper {
             }
         }
 
-        IAccessory accessory = getAccessory(stack.getItem());
+        Accessory accessory = getAccessory(stack.getItem());
         boolean flag = false;
 
         if (accessory != null) {
@@ -422,7 +421,7 @@ public final class AccessoryHelper {
      */
     public static InteractionResult tryEquip(Player player, ItemStack stack) {
         Item item = stack.getItem();
-        IAccessory accessory = getAccessory(item);
+        Accessory accessory = getAccessory(item);
 
         if (accessory != null) {
             int slot = getFirstOpenSlot(player, getType(item));
@@ -447,9 +446,7 @@ public final class AccessoryHelper {
      * @return {@code true} if both are compatible with each other, {@code false} otherwise
      */
     public static boolean compatibleWith(ItemStack first, ItemStack second) {
-        return
-                OhmegaHooks.compatibleWith(first, second, getAccessory(first.getItem()).compatibleWith(first, second)) &&
-                OhmegaHooks.compatibleWith(second, first, getAccessory(second.getItem()).compatibleWith(second, first));
+        return getAccessory(first.getItem()).compatibleWith(first, second) && getAccessory(second.getItem()).compatibleWith(second, first);
     }
 
     /**
@@ -507,16 +504,16 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves all accessories worn by a player in {@link IAccessory} form
+     * Retrieves all accessories worn by a player in {@link Accessory} form
      * @param player {@link Player} to get accessory inventory data from
-     * @return a list of {@link IAccessory} instances equipped
+     * @return a list of {@link Accessory} instances equipped
      */
-    public static ArrayList<@Nullable IAccessory> getAccessories(Player player) {
+    public static ArrayList<@Nullable Accessory> getAccessories(Player player) {
         NonNullList<ItemStack> stacks = getData(player).getStacks();
-        ArrayList<IAccessory> accessories = new ArrayList<>(stacks.size());
+        ArrayList<Accessory> accessories = new ArrayList<>(stacks.size());
 
         for (ItemStack stack : stacks) {
-            IAccessory accessory = getAccessory(stack.getItem());
+            Accessory accessory = getAccessory(stack.getItem());
 
             if (accessory != null) {
                 accessories.add(accessory);
@@ -532,7 +529,7 @@ public final class AccessoryHelper {
      * @param accessory to find
      * @return {@code true} if found, {@code false} otherwise
      */
-    public static boolean hasAccessory(Player player, IAccessory accessory) {
+    public static boolean hasAccessory(Player player, Accessory accessory) {
         for (ItemStack stack : getData(player).getStacks()) {
             if (getAccessory(stack.getItem()) == accessory) {
                 return true;

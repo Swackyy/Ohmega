@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;

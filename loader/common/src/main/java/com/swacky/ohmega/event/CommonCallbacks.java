@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -27,7 +27,7 @@ public final class CommonCallbacks {
         double multiplier = 0;
 
         for (ItemStack stack : stacks) {
-            multiplier += OhmegaHooks.mobVisibility(stack, targetingEntity, AccessoryHelper.getAccessory(stack.getItem()).getMobVisibilityMultiplier(stack, targetingEntity));
+            multiplier += AccessoryHelper.getAccessory(stack.getItem()).getMobVisibilityMultiplier(stack, targetingEntity);
         }
 
         return multiplier / stacks.size();

@@ -1,11 +1,10 @@
 package com.swacky.ohmega.common.menu;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.event.OhmegaHooks;
+import com.swacky.ohmega.common.item.Accessory;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -42,7 +41,7 @@ public final class AccessorySlot extends Slot {
         }
 
         Item item = stack.getItem();
-        IAccessory accessory = AccessoryHelper.getAccessory(item);
+        Accessory accessory = AccessoryHelper.getAccessory(item);
 
         if (accessory != null) {
             return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE) && AccessoryHelper.getType(item) == type;
@@ -59,14 +58,13 @@ public final class AccessorySlot extends Slot {
             return false;
         }
 
-        IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
-        boolean original = !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE);
+        Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-        if (accessory != null) {
-            original &= accessory.canUnequip(player, getItem());
+        if (EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) {
+            return false;
         }
 
-        return OhmegaHooks.canUnequip(player, getItem(), original);
+        return accessory.canUnequip(player, getItem());
     }
 
     @Override

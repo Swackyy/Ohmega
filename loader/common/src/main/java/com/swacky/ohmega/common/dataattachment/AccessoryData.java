@@ -6,12 +6,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.SoundData;
-import com.swacky.ohmega.api.event.EquipContext;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
@@ -74,12 +73,12 @@ public final class AccessoryData {
         }
 
         Item item = stack.getItem();
-        IAccessory accessory = AccessoryHelper.getAccessory(item);
+        Accessory accessory = AccessoryHelper.getAccessory(item);
 
         if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
             return
                     AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) &&
-                    OhmegaHooks.canEquip(player, stack, context, accessory.canEquip(player, stack));
+                    accessory.canEquip(player, stack, context);
         }
 
         return false;
@@ -94,32 +93,26 @@ public final class AccessoryData {
     }
 
     public void doUnequip(Player player, ItemStack stack) {
-        IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+        Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
-            if (!OhmegaHooks.unequip(player, stack)) {
-                accessory.onUnequip(player, stack);
-            }
-
+            accessory.onUnequip(player, stack);
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
             AccessoryHelper.setNoSlot(stack);
         }
     }
 
     private void doEquip(Player player, ItemStack stack, int index, EquipContext context) {
-        IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+        Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
             AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
-
-            if (!OhmegaHooks.equip(player, stack, context)) {
-                accessory.onEquip(player, stack);
-            }
+            accessory.onEquip(player, stack, context);
 
             if (context == EquipContext.RIGHT_CLICK_HELD_ITEM) {
-                SoundData data = OhmegaHooks.equipSound(stack, accessory.getEquipSound());
+                SoundData data = accessory.getEquipSound(stack);
 
                 if (data != null) {
                     player.playSound(data.sound().value(), data.volume(), data.pitch());
@@ -133,7 +126,7 @@ public final class AccessoryData {
         setChanged(index);
     }
 
-    // todo fix: Syncing with this is bugged as it will always call IAccessory#onEquip afaik
+    // todo fix: Syncing with this is bugged as it will always call Accessory#onEquip afaik
     public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(player, index, stack, context)) {
             ItemStack current = getStackInSlot(index);
@@ -289,11 +282,10 @@ public final class AccessoryData {
     public void tick(Player player) {
         for (int i = 0; i < size(); i++) {
             ItemStack stack = getStackInSlot(i);
-            IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+            Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-            if (accessory != null && !OhmegaHooks.accessoryTickPre(player, stack)) {
+            if (accessory != null) {
                 accessory.accessoryTick(player, stack);
-                OhmegaHooks.accessoryTickPost(player, stack);
             }
         }
 
@@ -305,9 +297,9 @@ public final class AccessoryData {
 
             for (int i = 0; i < size(); i++) {
                 ItemStack stack = getStackInSlot(i);
-                IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+                Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-                if (changed[i] || (accessory != null && OhmegaHooks.autoSync(stack, accessory.autoSync(stack)))) {
+                if (changed[i] || (accessory != null && accessory.autoSync(stack))) {
                     indexes.add(i);
                     stacks.add(stack);
 

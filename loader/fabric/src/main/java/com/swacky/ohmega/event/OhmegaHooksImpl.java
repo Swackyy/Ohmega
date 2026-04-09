@@ -19,7 +19,7 @@ import com.swacky.ohmega.api.event.AccessoryPreferVanillaUseEvent;
 import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
-import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;

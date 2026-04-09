@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api;
 
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -14,16 +15,18 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The base interface for all accessory items.
+ * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or {@link AngelRing} for examples
+ * <p>
  * To make an item an accessory, either:
  * <ul>
  *     <li>Make your {@link Item} class inherit this interface (recommended for your own items)</li>
  *     <li>Bind an {@link IAccessory} instance with {@link AccessoryHelper#bindAccessory(Item, IAccessory)} (for vanilla and other mods' items)</li>
  * </ul>
  * <p>
- * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or {@link AngelRing} for examples
+ * One technical feature to be aware of is that internally, accessory instances are not stored with this class.
+ * They are stored as the decorated {@link Accessory} class, so try not to store instances of {@link IAccessory},
+ * but the wrapper instead to help with performance
  */
-// todo: create a decorator class which adds event posting for these so it is less complicated
-@SuppressWarnings("unused")
 public interface IAccessory {
     /**
      * Called every tick when equipped in an accessory slot
@@ -36,8 +39,9 @@ public interface IAccessory {
      * Called upon the player equipping the accessory
      * @param player the {@link Player} equipping this accessory
      * @param stack the {@link ItemStack} of this accessory item being equipped
+     * @param context context surrounding how the accessory was equipped
      */
-    default void onEquip(@NonNull Player player, @NonNull ItemStack stack) {}
+    default void onEquip(@NonNull Player player, @NonNull ItemStack stack, @NonNull EquipContext context) {}
 
     /**
      * Called upon the player un-equipping the accessory
@@ -50,9 +54,10 @@ public interface IAccessory {
      * Dictates if the player can wear the accessory
      * @param player the {@link Player} trying to equip this accessory
      * @param stack the {@link ItemStack} of this accessory item being (possibly) equipped
+     * @param context context surrounding how the accessory may be equipped
      * @return {@code true} if it should be allowed to be worn, {@code false} otherwise
      */
-    default boolean canEquip(@NonNull Player player, @NonNull ItemStack stack) {
+    default boolean canEquip(@NonNull Player player, @NonNull ItemStack stack, @NonNull EquipContext context) {
         return true;
     }
 
@@ -104,9 +109,10 @@ public interface IAccessory {
 
     /**
      * Add attribute modifiers to be applied under certain conditions using the provided {@link AccessoryModifiers.Builder}
+     * @param stack the {@link ItemStack} of this accessory item being worn
      * @param builder the builder provided
      */
-    default void addAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {}
+    default void addAttributeModifiers(@NonNull ItemStack stack, AccessoryModifiers.@NonNull Builder builder) {}
 
     /**
      * Determines if the vanilla {@link Item#use(Level, Player, InteractionHand)} will be preferred over Ohmega's built-in
@@ -132,10 +138,11 @@ public interface IAccessory {
      * The sound to be played if the accessory is equipped through right-clicking this accessory binding as the held item
      * <p>
      * This is a replacement for the vanilla method to ensure easier compatibility and to add volume and pitch control
+     * @param stack the {@link ItemStack} of this accessory item being worn
      * @return sound to be played
      */
     @Nullable
-    default SoundData getEquipSound() {
+    default SoundData getEquipSound(@NonNull ItemStack stack) {
         return null;
     }
 

@@ -1,7 +1,6 @@
 package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +21,7 @@ abstract class PiglinAiMixin {
         // todo
         if (entity instanceof Player player) {
             for (ItemStack stack : AccessoryHelper.getAccessoryStacks(player)) {
-                if (OhmegaHooks.isPiglinSafe(stack, AccessoryHelper.getAccessory(stack.getItem()).isPiglinSafe(stack))) {
+                if (AccessoryHelper.getAccessory(stack.getItem()).isPiglinSafe(stack)) {
                     cir.setReturnValue(true);
                     return;
                 }

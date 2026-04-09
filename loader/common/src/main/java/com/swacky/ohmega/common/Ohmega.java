@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenus;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -22,7 +23,7 @@ public final class Ohmega {
     public static final String MODID = "ohmega";
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Identifier RELOAD_LISTENER_ID = Ohmega.id("accessory_type_manager");
-    private static final Map<Item, IAccessory> BOUND_ACCESSORIES = new WeakHashMap<>();
+    private static final Map<Item, Accessory> BOUND_ACCESSORIES = new WeakHashMap<>();
 
     private static boolean bootstrapped = false;
     private static int NUM_SERVICES = 0;
@@ -61,12 +62,19 @@ public final class Ohmega {
     /**
      * Use {@link AccessoryHelper#getAccessory}
      */
-    public static IAccessory getAccessory(Item item) {
-        if (item instanceof IAccessory accessory) {
+    public static Accessory getAccessory(Item item) {
+        if (BOUND_ACCESSORIES.containsKey(item)) {
+            return BOUND_ACCESSORIES.get(item);
+        }
+
+        if (item instanceof IAccessory binding) {
+            Accessory accessory = new Accessory(binding);
+
+            BOUND_ACCESSORIES.put(item, accessory);
             return accessory;
         }
 
-        return BOUND_ACCESSORIES.get(item);
+        return null;
     }
 
     /**
@@ -84,7 +92,7 @@ public final class Ohmega {
             return false;
         }
 
-        BOUND_ACCESSORIES.put(item, binding);
+        BOUND_ACCESSORIES.put(item, new Accessory(binding));
         return true;
     }
 }

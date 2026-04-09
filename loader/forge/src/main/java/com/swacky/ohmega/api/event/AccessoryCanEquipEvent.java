@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.event;
 
+import com.swacky.ohmega.api.EquipContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.bus.EventBus;

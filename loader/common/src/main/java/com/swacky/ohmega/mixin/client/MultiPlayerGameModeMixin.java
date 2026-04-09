@@ -1,7 +1,6 @@
 package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,7 +25,7 @@ abstract class MultiPlayerGameModeMixin {
             ItemStack stack = player.getItemInHand(hand);
             Item item = stack.getItem();
 
-            if (AccessoryHelper.isAccessory(item) && OhmegaHooks.preferVanillaUse(stack, AccessoryHelper.getAccessory(item).preferVanillaUse(stack))) {
+            if (AccessoryHelper.isAccessory(item) && AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
                 InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
                 if (candidate.consumesAction()) {

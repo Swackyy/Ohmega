@@ -2,7 +2,6 @@ package com.swacky.ohmega.event;
 
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.widget.AccessoryInventoryButton;
@@ -10,6 +9,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
@@ -131,13 +131,11 @@ public final class ClientCallbacks {
                     }
 
                     ItemStack stack = data.getStackInSlot(j);
-                    IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+                    Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
                     if (accessory != null) {
                         // Client handling
-                        if (!OhmegaHooks.keybindUse(mc.player, stack)) {
-                            accessory.onKeybindUse(mc.player, stack);
-                        }
+                        accessory.onKeybindUse(mc.player, stack);
 
                         // Server handling
                         OhmegaNetworking.C2S.send(new UseAccessoryPacket(j));

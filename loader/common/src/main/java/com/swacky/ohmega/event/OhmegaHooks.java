@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.SoundData;
-import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;
@@ -100,6 +100,8 @@ public final class OhmegaHooks {
 
         boolean allowWalkOnPowderSnow(ItemStack stack, boolean original);
 
+        // todo: possibly change this to be cancellable?
+        // todo: return value is no longer used with decorator approach
         AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder);
 
         boolean autoSync(ItemStack stack, boolean original);

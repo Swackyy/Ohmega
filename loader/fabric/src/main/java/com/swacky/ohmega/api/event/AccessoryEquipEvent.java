@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.event;
 
+import com.swacky.ohmega.api.EquipContext;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.player.Player;

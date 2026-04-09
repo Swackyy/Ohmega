@@ -1,15 +1,14 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.event.EquipContext;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
-import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
@@ -85,9 +84,9 @@ public final class OhmegaNetworking {
             if (index < AccessoryHelper.getSlotTypes().size()) {
                 AccessoryData data = AccessoryHelper.getData(player);
                 ItemStack stack = data.getStackInSlot(index);
-                IAccessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+                Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
-                if (accessory != null && !OhmegaHooks.keybindUse(player, stack)) {
+                if (accessory != null) {
                     accessory.onKeybindUse(player, stack);
                 }
 

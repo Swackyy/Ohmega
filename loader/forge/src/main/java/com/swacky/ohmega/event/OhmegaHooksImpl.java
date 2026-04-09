@@ -1,6 +1,7 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;

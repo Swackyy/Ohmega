@@ -2,6 +2,7 @@ package com.swacky.ohmega.common.item;
 
 import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.AccessoryModifiers;
+import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.common.Ohmega;
@@ -39,7 +40,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // Activates the accessory when you equip it
     @Override
-    public void onEquip(@NonNull Player player, @NonNull ItemStack stack) {
+    public void onEquip(@NonNull Player player, @NonNull ItemStack stack, @NonNull EquipContext context) {
         AccessoryHelper.setActive(player, stack, true);
     }
 
@@ -82,7 +83,7 @@ public class AngelRing extends Item implements IAccessory {
 
     // Adds modifiers to be applied when the accessory is equipped
     @Override
-    public void addAttributeModifiers(AccessoryModifiers.@NonNull Builder builder) {
+    public void addAttributeModifiers(@NonNull ItemStack stack, AccessoryModifiers.@NonNull Builder builder) {
         builder
                 // This modifier is always applied
                 .addPassive(Attributes.ATTACK_DAMAGE, new AttributeModifier(
@@ -99,7 +100,7 @@ public class AngelRing extends Item implements IAccessory {
     // The sound to be played when equipped using a right-click
     @Nullable
     @Override
-    public SoundData getEquipSound() {
+    public SoundData getEquipSound(@NonNull ItemStack stack) {
         return new SoundData(SoundEvents.ARMOR_EQUIP_GOLD);
     }
 

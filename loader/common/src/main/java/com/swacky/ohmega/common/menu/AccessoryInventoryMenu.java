@@ -2,10 +2,10 @@ package com.swacky.ohmega.common.menu;
 
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.IAccessory;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaMenus;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -13,7 +13,15 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ArmorSlot;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.ResultSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
@@ -241,7 +249,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
                 Item item = stack.getItem();
                 AccessoryType type = AccessoryHelper.getType(item);
                 int openIndex = AccessoryHelper.getFirstOpenSlot(player, type);
-                IAccessory accessory = AccessoryHelper.getAccessory(item);
+                Accessory accessory = AccessoryHelper.getAccessory(item);
                 Slot slot0 = getSlot(46 + openIndex);
 
                 if (accessory != null && index > 8 && index < 45 && openIndex != -1 && slot0.mayPlace(stack0)) { // Inventory -> accessory
