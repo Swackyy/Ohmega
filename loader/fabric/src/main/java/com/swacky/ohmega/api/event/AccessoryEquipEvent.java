@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.event;
 
 import com.swacky.ohmega.api.EquipContext;
+import com.swacky.ohmega.api.IAccessory;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * This event is posted when an accessory is equipped
  * <p>
- * Cancelling only cancels overrides of {@link com.swacky.ohmega.api.IAccessory#onEquip(Player, ItemStack)} and does not stop the accessory from being equipped;
+ * Cancelling only cancels overrides of {@link IAccessory#onEquip(Player, ItemStack, EquipContext)} and does not stop the accessory from being equipped;
  * Instead, to achieve such behaviour, use {@link AccessoryCanEquipEvent}
  */
 public interface AccessoryEquipEvent {

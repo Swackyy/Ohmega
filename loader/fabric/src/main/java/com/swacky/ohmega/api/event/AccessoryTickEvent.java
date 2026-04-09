@@ -7,8 +7,6 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * This event is posted for every ticking accessory in the accessory inventory.
- * <p>
- * Posted before the tick
  */
 public final class AccessoryTickEvent {
     public interface Pre {
