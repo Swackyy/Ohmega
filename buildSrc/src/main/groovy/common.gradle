@@ -6,7 +6,7 @@ plugins {
 }
 
 group "com.swacky"
-version "${project.name}+${supportedMcV}"
+version "${project.name}-mc${supportedMcV}"
 
 base {
     archivesName.set "${modId}-${modV}"
@@ -92,7 +92,7 @@ if (secretsFile.exists()) {
                 mavenJava(MavenPublication) {
                     groupId = "io.github.swackyy"
                     artifactId = "${modId}-${project.name}"
-                    version = "${modV}-mc${mcV}"
+                    version = "${modV}-mc${supportedMcV}"
 
                     artifact tasks.named("jar")
                     artifact tasks.named("javadocJar")
@@ -120,8 +120,6 @@ if (secretsFile.exists()) {
                             developer {
                                 id = "swackyy"
                                 name = modAuthorsDisplay
-                                // todo: check if a-ok
-                                //email = "68652827+Swackyy@users.noreply.github.com"
                             }
                         }
                     }

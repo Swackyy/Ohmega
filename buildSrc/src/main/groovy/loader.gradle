@@ -122,7 +122,11 @@ if (rootProject.file("secrets.properties").exists()) {
                 serverRequired = true
 
                 javaVersions.add(JavaVersion.toVersion(javaV))
-                minecraftVersions.add(mcV)
+
+                minecraftVersionRange {
+                    start = mcVMin
+                    end = mcVMax
+                }
 
                 if (project.name == "fabric") {
                     requires "fabric-api"
@@ -135,7 +139,10 @@ if (rootProject.file("secrets.properties").exists()) {
                 projectId = "scvT0o5w"
                 version = modV
 
-                minecraftVersions.add(mcV)
+                minecraftVersionRange {
+                    start = mcVMin
+                    end = mcVMax
+                }
 
                 if (project.name == "fabric") {
                     requires "fabric-api"
