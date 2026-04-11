@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.client.renderer;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.common.item.Accessory;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -11,14 +11,14 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public final class AccessoryRenderers {
-    private static final Map<IAccessory, RendererFactory> RENDERERS = new HashMap<>();
-    private static final Map<IAccessory, Predicate<EntityType<?>>> NO_RENDERS = new HashMap<>();
+    private static final Map<Accessory, RendererFactory> RENDERERS = new HashMap<>();
+    private static final Map<Accessory, Predicate<EntityType<?>>> NO_RENDERS = new HashMap<>();
 
-    private static void register(IAccessory key, RendererFactory factory) {
+    private static void register(Accessory key, RendererFactory factory) {
         RENDERERS.put(key, factory);
     }
 
-    private static boolean registerNoRender(IAccessory key, Predicate<EntityType<?>> type) {
+    private static boolean registerNoRender(Accessory key, Predicate<EntityType<?>> type) {
         if (!NO_RENDERS.containsKey(key)) {
             NO_RENDERS.put(key, type);
             return true;
@@ -39,11 +39,11 @@ public final class AccessoryRenderers {
         return registerNoRender(item, _ -> true);
     }
 
-    public static RendererFactory getFactoryFor(IAccessory key) {
+    public static RendererFactory getFactoryFor(Accessory key) {
         return RENDERERS.get(key);
     }
 
-    public static boolean isNoRender(IAccessory key, EntityType<?> type) {
+    public static boolean isNoRender(Accessory key, EntityType<?> type) {
         if (NO_RENDERS.containsKey(key)) {
             return NO_RENDERS.get(key).test(type);
         }
