@@ -14,9 +14,9 @@ import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 public final class OhmegaBinds {
     private static final Service INST = OhmegaClient.loadService(Service.class);
@@ -38,8 +38,8 @@ public final class OhmegaBinds {
         ORDERED_SLOT_KEYS = new ArrayList<>();
 
         ImmutableList<AccessoryType> keyBoundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
-        WeakHashMap<AccessoryType, ImmutableList.Builder<KeyMapping>> builder = new WeakHashMap<>(keyBoundSlotTypes.size());
-        Map<AccessoryType, Integer> typeCountMap = new WeakHashMap<>();
+        Map<AccessoryType, ImmutableList.Builder<KeyMapping>> builder = new HashMap<>(keyBoundSlotTypes.size());
+        Map<AccessoryType, Integer> typeCountMap = new HashMap<>();
 
         if (OhmegaConfig.Server.disableAccessoryTypes()) {
             typeCountMap.put(AccessoryType.GENERIC.get(), 0);

@@ -15,15 +15,15 @@ import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.WeakHashMap;
 
 public final class Ohmega {
     public static final String MODID = "ohmega";
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Identifier RELOAD_LISTENER_ID = Ohmega.id("accessory_type_manager");
-    private static final Map<Item, Accessory> BOUND_ACCESSORIES = new WeakHashMap<>();
+    private static final Map<Item, Accessory> BOUND_ACCESSORIES = new HashMap<>();
 
     private static boolean bootstrapped = false;
     private static int NUM_SERVICES = 0;

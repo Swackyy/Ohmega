@@ -13,6 +13,13 @@ configurations {
     }
 }
 
+repositories {
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+}
+
 dependencies {
     compileOnly(project(":loader:common")) {
         capabilities {
@@ -22,6 +29,8 @@ dependencies {
 
     commonJava project(path: ":loader:common", configuration: "commonJava")
     commonResources project(path: ":loader:common", configuration: "commonResources")
+
+    runtimeOnly "maven.modrinth:spark:${sparkV}-${project.name}"
 }
 
 processResources {

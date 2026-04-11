@@ -55,7 +55,7 @@ public final class TypeCommand {
 
     private static int query(CommandContext<CommandSourceStack> context) {
         AccessoryType type = AccessoryTypeArgument.getType(context, ARGUMENT_TYPE);
-        List<Component> components = new ArrayList<>(4);
+        List<Component> components = new ArrayList<>(6);
         int colour = type.getHoverTextColour();
 
         components.add(Component

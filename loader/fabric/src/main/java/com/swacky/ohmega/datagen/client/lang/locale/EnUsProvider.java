@@ -82,7 +82,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Entity %s has the following items in their accessory inventory: %s");
         // Type
         builder.add(TypeCommand.LIST_FEEDBACK, "There are %s accessory type(s) recognised on this world: %s");
-        builder.add(TypeCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties: %s");
+        builder.add(TypeCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties:%s");
 
         // Config
         // ConfigurationScreen Forge port UI translations
