@@ -51,6 +51,8 @@ processResources {
             modV                                 : modV,
             modAuthors                           : modAuthorsDisplay,
             mcV                                  : mcV,
+            mcVMin                               : mcVMin,
+            mcVMax                               : mcVMax,
             modName                              : modName,
             gitUrl                               : gitUrl,
             curseUrl                             : curseUrl,
