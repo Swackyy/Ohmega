@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,9 +33,9 @@ public final class CommonEvents {
             bootstrapped = true;
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
+            EntityTrackingEvents.START_TRACKING.register(CommonEvents::onLivingTrack);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
             ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
-            EntityTrackingEvents.START_TRACKING.register(CommonEvents::onPlayerTrack);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
             ServerLifecycleEvents.SERVER_STARTED.register(CommonEvents::onServerStarted);
             ItemEvents.USE.register(CommonEvents::onUseItem);
@@ -49,6 +50,12 @@ public final class CommonEvents {
         }
     }
 
+    private static void onLivingTrack(Entity entity, ServerPlayer tracker) {
+        if (entity instanceof LivingEntity tracked) {
+            CommonCallbacks.onLivingTrack(tracker, tracked);
+        }
+    }
+
     private static void onPlayerChangeDimension(ServerPlayer player, ServerLevel from, ServerLevel to) {
         CommonCallbacks.onPlayerChangeDimension(player);
     }
@@ -56,12 +63,6 @@ public final class CommonEvents {
     private static void onPlayerJoin(ServerPlayer player) {
         OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
         AccessoryHelper.getData(player).onAttach(player);
-    }
-
-    private static void onPlayerTrack(Entity entity, ServerPlayer tracker) {
-        if (entity instanceof ServerPlayer tracked) {
-            CommonCallbacks.onPlayerTrack(tracker, tracked);
-        }
     }
 
     private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {

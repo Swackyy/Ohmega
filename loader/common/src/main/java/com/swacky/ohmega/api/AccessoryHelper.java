@@ -20,8 +20,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -40,12 +40,12 @@ public final class AccessoryHelper {
     public static void bootstrap() {}
 
     /**
-     * Retrieves the data on the {@link Player} pertaining to worn accessories
-     * @param player user to retrieve data from
+     * Retrieves the data on the {@link LivingEntity} pertaining to accessories
+     * @param entity to retrieve data from
      * @return the accessory inventory data in the form of an {@link AccessoryData}
      */
-    public static AccessoryData getData(Player player) {
-        return IMPL.getData(player);
+    public static AccessoryData getData(LivingEntity entity) {
+        return IMPL.getData(entity);
     }
 
     /**
@@ -163,36 +163,36 @@ public final class AccessoryHelper {
 
     /**
      * Sets the active state of an accessory item.
-     * @param player the player wearing (or going to equip) the accessory
+     * @param entity the entity wearing (or going to equip) the accessory
      * @param stack {@link ItemStack} to set active state of
      * @param value {@code true} if active, {@code false} if inactive
      */
-    public static void setActive(Player player, ItemStack stack, boolean value) {
+    public static void setActive(LivingEntity entity, ItemStack stack, boolean value) {
         stack.set(OhmegaDataComponents.getActive(), value);
 
         if (value) {
             ItemAttributeModifiers activeModifiers = getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive();
 
             stack.set(OhmegaDataComponents.getSlotActiveModifiers(), activeModifiers);
-            changeModifiers(player, activeModifiers, true);
+            changeModifiers(entity, activeModifiers, true);
         } else {
             ItemAttributeModifiers activeModifiers = stack.get(OhmegaDataComponents.getSlotActiveModifiers());
 
             if (activeModifiers != null) {
-                changeModifiers(player, activeModifiers, false);
+                changeModifiers(entity, activeModifiers, false);
             }
         }
 
-        changeModifiers(player, getModifiers(stack).getActive(), value);
+        changeModifiers(entity, getModifiers(stack).getActive(), value);
     }
 
     /**
      * Toggles the active state of an accessory
-     * @param player the player wearing the accessory
+     * @param entity the entity wearing the accessory
      * @param stack {@link ItemStack} to set active state of
      */
-    public static void toggleActive(Player player, ItemStack stack) {
-        setActive(player, stack, !isActive(stack));
+    public static void toggleActive(LivingEntity entity, ItemStack stack) {
+        setActive(entity, stack, !isActive(stack));
     }
 
     /**
@@ -249,15 +249,15 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Utility function to add attribute modifiers to a {@link Player} from {@link AccessoryModifiers}
-     * @param player {@link Player} to add/remove modifiers to/from
+     * Utility function to add attribute modifiers to a {@link LivingEntity} from {@link AccessoryModifiers}
+     * @param entity {@link LivingEntity} to add/remove modifiers to/from
      * @param modifiers to add or remove
-     * @param add if {@code true}, will add the attribute modifiers to the {@link Player},
+     * @param add if {@code true}, will add the attribute modifiers to the {@link LivingEntity},
      * if {@code false} existing ones will be removed
      */
-    public static void changeModifiers(Player player, ItemAttributeModifiers modifiers, boolean add) {
+    public static void changeModifiers(LivingEntity entity, ItemAttributeModifiers modifiers, boolean add) {
         for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            AttributeInstance attribute = player.getAttribute(entry.attribute());
+            AttributeInstance attribute = entity.getAttribute(entry.attribute());
 
             if (attribute != null) {
                 if (add) {
@@ -272,7 +272,7 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the index types of each accessory index in players' accessory inventories (determined by the server config)
+     * Retrieves the index types of each accessory index in entities' accessory inventories (determined by the server config)
      * @return a list of {@link AccessoryType}s matching indexes of accessory indexes
      */
     // todo: cache
@@ -395,12 +395,12 @@ public final class AccessoryHelper {
 
     /**
      * Finds the first open index of
-     * @param player {@link Player} to search the accessory inventory of
+     * @param entity {@link LivingEntity} to search the accessory inventory of
      * @param type {@link AccessoryType} of index to find
      * @return index of the first open index matching the type, or {@code -1} if none is found
      */
-    public static int getFirstOpenSlot(Player player, AccessoryType type) {
-        AccessoryData data = getData(player);
+    public static int getFirstOpenSlot(LivingEntity entity, AccessoryType type) {
+        AccessoryData data = getData(entity);
         ImmutableList<AccessoryType> slotTypes = getSlotTypes();
 
         for (int i = 0; i < data.size(); i++) {
@@ -416,22 +416,22 @@ public final class AccessoryHelper {
      * This is automatically handled internally
      * <p>
      * Used when trying to equip an accessory via right-clicking the held item
-     * @param player {@link Player} to equip the accessory on
+     * @param entity {@link LivingEntity} to equip the accessory on
      * @param stack the right-clicked held {@link ItemStack}
      * @return {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
      */
-    public static InteractionResult tryEquip(Player player, ItemStack stack) {
+    public static InteractionResult tryEquip(LivingEntity entity, ItemStack stack) {
         Item item = stack.getItem();
         Accessory accessory = getAccessory(item);
 
         if (accessory != null) {
-            int slot = getFirstOpenSlot(player, getType(item));
+            int slot = getFirstOpenSlot(entity, getType(item));
 
             if (slot >= 0) {
                 ItemStack stack0 = stack.copyWithCount(1);
 
-                if (getData(player).setStack(player, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
-                    stack.consume(1, player);
+                if (getData(entity).setStack(entity, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
+                    stack.consume(1, entity);
                     return InteractionResult.SUCCESS;
                 }
             }
@@ -452,13 +452,13 @@ public final class AccessoryHelper {
 
     /**
      * Checks if an accessory is able to be worn, testing the target accessory {@link ItemStack} against every other worn accessory
-     * @param player {@link Player} to get accessory inventory data from
-     * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the player
+     * @param entity {@link LivingEntity} to get accessory inventory data from
+     * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the entity
      * @return {@code true} if the target accessory is compatible with every other worn accessory, {@code false} otherwise
      */
 
-    public static boolean compatibleWith(Player player, ItemStack stack) {
-        for (ItemStack other : getAccessoryStacks(player)) {
+    public static boolean compatibleWith(LivingEntity entity, ItemStack stack) {
+        for (ItemStack other : getAccessoryStacks(entity)) {
             if (!compatibleWith(stack, other))  {
                 return false;
             }
@@ -468,13 +468,13 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that match a given filter
-     * @param player {@link Player} to get accessory inventory data from
+     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory that match a given filter
+     * @param entity {@link LivingEntity} to get accessory inventory data from
      * @param filter A predicate filter to allow or deny elements from the returned list
-     * @return every matching {@link ItemStack} in the player's accessory inventory
+     * @return every matching {@link ItemStack} in the entity's accessory inventory
      */
-    public static NonNullList<ItemStack> getStacksFiltered(Player player, Predicate<ItemStack> filter) {
-        NonNullList<ItemStack> stacks = getData(player).getStacks();
+    public static NonNullList<ItemStack> getStacksFiltered(LivingEntity entity, Predicate<ItemStack> filter) {
+        NonNullList<ItemStack> stacks = getData(entity).getStacks();
         NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
 
         for (ItemStack stack : stacks) {
@@ -487,30 +487,30 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory that are not empty.
-     * @param player {@link Player} to get accessory inventory data from
-     * @return every non-empty {@link ItemStack} in the player's accessory inventory
+     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory that are not empty.
+     * @param entity {@link LivingEntity} to get accessory inventory data from
+     * @return every non-empty {@link ItemStack} in the entity's accessory inventory
      */
-    public static NonNullList<ItemStack> getStacksNoEmpty(Player player) {
-        return getStacksFiltered(player, stack -> !stack.isEmpty());
+    public static NonNullList<ItemStack> getStacksNoEmpty(LivingEntity entity) {
+        return getStacksFiltered(entity, stack -> !stack.isEmpty());
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in a player's accessory inventory which are accessories.
-     * @param player {@link Player} to get accessory inventory data from
-     * @return every {@link ItemStack} in the player's accessory inventory which are accessories
+     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory which are accessories.
+     * @param entity {@link LivingEntity} to get accessory inventory data from
+     * @return every {@link ItemStack} in the entity's accessory inventory which are accessories
      */
-    public static NonNullList<ItemStack> getAccessoryStacks(Player player) {
-        return getStacksFiltered(player, stack -> isAccessory(stack.getItem()));
+    public static NonNullList<ItemStack> getAccessoryStacks(LivingEntity entity) {
+        return getStacksFiltered(entity, stack -> isAccessory(stack.getItem()));
     }
 
     /**
-     * Retrieves all accessories worn by a player in {@link Accessory} form
-     * @param player {@link Player} to get accessory inventory data from
+     * Retrieves all accessories worn by an entity in {@link Accessory} form
+     * @param entity {@link LivingEntity} to get accessory inventory data from
      * @return a list of {@link Accessory} instances equipped
      */
-    public static ArrayList<@Nullable Accessory> getAccessories(Player player) {
-        NonNullList<ItemStack> stacks = getData(player).getStacks();
+    public static ArrayList<@Nullable Accessory> getAccessories(LivingEntity entity) {
+        NonNullList<ItemStack> stacks = getData(entity).getStacks();
         ArrayList<Accessory> accessories = new ArrayList<>(stacks.size());
 
         for (ItemStack stack : stacks) {
@@ -525,13 +525,13 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Check if a player is wearing a certain accessory
-     * @param player {@link Player} to get accessory inventory data from
+     * Check if an entity is wearing a certain accessory
+     * @param entity {@link LivingEntity} to get accessory inventory data from
      * @param accessory to find
      * @return {@code true} if found, {@code false} otherwise
      */
-    public static boolean hasAccessory(Player player, Accessory accessory) {
-        for (ItemStack stack : getData(player).getStacks()) {
+    public static boolean hasAccessory(LivingEntity entity, Accessory accessory) {
+        for (ItemStack stack : getData(entity).getStacks()) {
             if (getAccessory(stack.getItem()) == accessory) {
                 return true;
             }
@@ -542,12 +542,12 @@ public final class AccessoryHelper {
 
     /**
      * Find the first {@link ItemStack} of a certain item
-     * @param player {@link Player} to get accessory inventory data from
+     * @param entity {@link LivingEntity} to get accessory inventory data from
      * @param item the item to find
      * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
      */
-    public static ItemStack getStack(Player player, Item item) {
-        for (ItemStack stack : getData(player).getStacks()) {
+    public static ItemStack getStack(LivingEntity entity, Item item) {
+        for (ItemStack stack : getData(entity).getStacks()) {
             if (stack.getItem() == item) {
                 return stack;
             }
@@ -557,6 +557,6 @@ public final class AccessoryHelper {
     }
 
     public interface Service {
-        AccessoryData getData(Player player);
+        AccessoryData getData(LivingEntity entity);
     }
 }

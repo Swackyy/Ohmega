@@ -13,7 +13,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public final class ItemsCommand {
     private static final String ARGUMENT_TARGET = "target";
     private static final String ARGUMENT_INCLUDE_AIR = "includeAir";
 
-    public static final String ROOT_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).feedback();
+    public static final String ROOT_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).feedback();
 
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal(ELEMENT_ROOT)
@@ -37,17 +37,15 @@ public final class ItemsCommand {
                                 .executes(ItemsCommand::printWithEntityIncludeAir)));
     }
 
-    private static int doPrint(CommandContext<CommandSourceStack> context, Entity target, boolean includeAir) {
+    private static int doPrint(CommandContext<CommandSourceStack> context, Entity target, boolean includeAir) throws CommandSyntaxException {
         NonNullList<ItemStack> stacks;
+        LivingEntity entity = CommandHelper.convertLiving(target);
 
-        // todo
-        if (target instanceof Player player) {
-            if (includeAir) {
-                stacks = AccessoryHelper.getData(player).getStacks();
-            } else {
-                stacks = AccessoryHelper.getStacksNoEmpty(player);
-            }
-        } else return 0;
+        if (includeAir) {
+            stacks = AccessoryHelper.getData(entity).getStacks();
+        } else {
+            stacks = AccessoryHelper.getStacksNoEmpty(entity);
+        }
 
         List<Component> components = new ArrayList<>(stacks.size());
 
@@ -59,7 +57,7 @@ public final class ItemsCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int print(CommandContext<CommandSourceStack> context) {
+    private static int print(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return doPrint(context, context.getSource().getEntity(), false);
     }
 

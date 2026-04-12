@@ -9,6 +9,7 @@ import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -40,25 +41,25 @@ public class AngelRing extends Item implements IAccessory {
 
     // Activates the accessory when you equip it
     @Override
-    public void onEquip(@NonNull Player player, @NonNull ItemStack stack, @NonNull EquipContext context) {
-        AccessoryHelper.setActive(player, stack, true);
+    public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+        AccessoryHelper.setActive(entity, stack, true);
     }
 
     // Deactivates when unequipped, also this makes it not force a creative player to stop flying when taking off the accessory
     @Override
-    public void onUnequip(@NonNull Player player, @NonNull ItemStack stack) {
-        if (!(player.isCreative() || player.isSpectator())) {
+    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
+        if (entity instanceof Player player && !(player.isCreative() || player.isSpectator())) {
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;
         }
 
-        AccessoryHelper.setActive(player, stack, false);
+        AccessoryHelper.setActive(entity, stack, false);
     }
 
     // Tick method is needed here as there are so many edge cases to account for, it is easier to just use the tick method
     @Override
-    public void accessoryTick(@NonNull Player player, @NonNull ItemStack stack) {
-        if (!(player.isCreative() || player.isSpectator())) {
+    public void accessoryTick(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
+        if (entity instanceof Player player && !(player.isCreative() || player.isSpectator())) {
             if (AccessoryHelper.isActive(stack)) {
                 player.getAbilities().mayfly = true;
             } else {

@@ -17,7 +17,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * Supports attributes added when equipped, and when equipped but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
 // todo: allow for other conditions here
-// todo: ^ that will be difficult with the need to encode it now
 public final class AccessoryModifiers {
     public static final AccessoryModifiers EMPTY = Builder.EMPTY.build();
 

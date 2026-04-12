@@ -3,7 +3,6 @@ package com.swacky.ohmega.mixin;
 import com.swacky.ohmega.api.AccessoryHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,13 +17,10 @@ abstract class PiglinAiMixin {
                     value = "HEAD"),
             cancellable = true)
     private static void isWearingSafeArmor(LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
-        // todo
-        if (entity instanceof Player player) {
-            for (ItemStack stack : AccessoryHelper.getAccessoryStacks(player)) {
-                if (AccessoryHelper.getAccessory(stack.getItem()).isPiglinSafe(stack)) {
-                    cir.setReturnValue(true);
-                    return;
-                }
+        for (ItemStack stack : AccessoryHelper.getAccessoryStacks(entity)) {
+            if (AccessoryHelper.getAccessory(stack.getItem()).isPiglinSafe(stack)) {
+                cir.setReturnValue(true);
+                return;
             }
         }
     }

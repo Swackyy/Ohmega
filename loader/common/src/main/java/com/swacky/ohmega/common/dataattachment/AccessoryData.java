@@ -16,8 +16,10 @@ import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -67,7 +69,7 @@ public final class AccessoryData {
         return stacks.size();
     }
 
-    public boolean isItemValid(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
+    public boolean isItemValid(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context) {
         if (stack.isEmpty()) {
             return true;
         }
@@ -75,10 +77,10 @@ public final class AccessoryData {
         Item item = stack.getItem();
         Accessory accessory = AccessoryHelper.getAccessory(item);
 
-        if (accessory != null && (AccessoryHelper.compatibleWith(player, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
+        if (accessory != null && (AccessoryHelper.compatibleWith(entity, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
             return
                     AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) &&
-                    accessory.canEquip(player, stack, context);
+                    accessory.canEquip(entity, stack, context);
         }
 
         return false;
@@ -92,30 +94,30 @@ public final class AccessoryData {
         return stacks.get(index);
     }
 
-    public void doUnequip(Player player, ItemStack stack) {
+    public void doUnequip(LivingEntity entity, ItemStack stack) {
         Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
-            accessory.onUnequip(player, stack);
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
+            accessory.onUnequip(entity, stack);
+            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getModifiers(stack).getPassive(), true);
             AccessoryHelper.setNoSlot(stack);
         }
     }
 
-    private void doEquip(Player player, ItemStack stack, int index, EquipContext context) {
+    private void doEquip(LivingEntity entity, ItemStack stack, int index, EquipContext context) {
         Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
-            accessory.onEquip(player, stack, context);
+            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
+            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getModifiers(stack).getPassive(), true);
+            accessory.onEquip(entity, stack, context);
 
             if (context == EquipContext.RIGHT_CLICK_HELD_ITEM) {
                 SoundData data = accessory.getEquipSound(stack);
 
                 if (data != null) {
-                    player.playSound(data.sound().value(), data.volume(), data.pitch());
+                    entity.playSound(data.sound().value(), data.volume(), data.pitch());
                 }
             }
         }
@@ -127,21 +129,21 @@ public final class AccessoryData {
     }
 
     // todo fix: Syncing with this is bugged as it will always call Accessory#onEquip afaik
-    public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
-        if (bypassValidation || isItemValid(player, index, stack, context)) {
+    public boolean setStack(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
+        if (bypassValidation || isItemValid(entity, index, stack, context)) {
             ItemStack current = getStackInSlot(index);
 
             if (!ItemStack.matches(current, stack)) {
-                doUnequip(player, current);
+                doUnequip(entity, current);
 
                 if (stack.isEmpty()) {
-                    AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
+                    AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
                 }
 
                 doSetStack(index, stack);
 
                 if (forceOnEquip || AccessoryHelper.isActive(stack)) {
-                    doEquip(player, stack, index, context);
+                    doEquip(entity, stack, index, context);
                 }
             }
 
@@ -151,42 +153,42 @@ public final class AccessoryData {
         return false;
     }
 
-    public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation) {
-        return setStack(player, index, stack, context, bypassValidation, true);
+    public boolean setStack(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation) {
+        return setStack(entity, index, stack, context, bypassValidation, true);
     }
 
     // Use this for most general usage
-    public boolean setStack(Player player, int index, @NonNull ItemStack stack, EquipContext context) {
-        return setStack(player, index, stack, context, false);
+    public boolean setStack(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context) {
+        return setStack(entity, index, stack, context, false);
     }
 
-    public ItemStack remove(Player player, int index, int amount) {
+    public ItemStack remove(LivingEntity entity, int index, int amount) {
         ItemStack stack = ContainerHelper.removeItem(stacks, index, amount);
 
         if (!ItemStack.isSameItemSameComponents(getStackInSlot(index), stack)) {
-            doUnequip(player, stack);
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
+            doUnequip(entity, stack);
+            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
             setChanged(index);
         }
 
         return stack;
     }
 
-    private void removeOrDropStack(Player player, int index) {
+    private void removeOrDropStack(LivingEntity entity, int index) {
         ItemStack stack = getStackInSlot(index);
 
         if (!stack.isEmpty()) {
-            doUnequip(player, stack);
+            doUnequip(entity, stack);
 
-            if (!player.addItem(stack)) {
-                player.drop(stack, true);
+            if (!(entity instanceof Player player) || !player.addItem(stack)) {
+                entity.drop(stack, false, true);
             }
 
             setChanged(index);
         }
     }
 
-    public int clearMatchingItems(Player player, Predicate<ItemStack> filter, int max) {
+    public int clearMatchingItems(LivingEntity entity, Predicate<ItemStack> filter, int max) {
         int removed = 0;
 
         for (int i = 0; i < size() && (max < 0 || removed < max); i++) {
@@ -203,7 +205,7 @@ public final class AccessoryData {
                 }
 
                 if (max < 0 || removed + count <= max) {
-                    doUnequip(player, stack);
+                    doUnequip(entity, stack);
                 }
 
                 stack.shrink(toRemoveCurrentStack);
@@ -230,24 +232,24 @@ public final class AccessoryData {
     }
 
     // Use in client toggling
-    public void toggleHidden(Player player, int index) {
+    public void toggleHidden(LivingEntity entity, int index) {
         if (OhmegaConfig.Server.allowHideAccessories()) {
             boolean value = !isHidden(index);
 
             setHidden(index, value);
 
-            if (player.level().isClientSide()) {
+            if (entity.level().isClientSide()) {
                 OhmegaNetworking.C2S.send(new SetHiddenPacket(index, value));
             }
         }
     }
 
-    private void syncAllData(ServerPlayer receiver, int senderId, int[] allIndexes) {
-        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(senderId, allIndexes, hidden));
-        OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(senderId, allIndexes, stacks, false));
+    private void syncAllData(ServerPlayer receiver, int entityId, int[] indexes) {
+        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(entityId, indexes, hidden));
+        OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entityId, indexes, stacks, false));
     }
 
-    public void syncAllData(ServerPlayer receiver, int playerId) {
+    public void syncAllData(ServerPlayer receiver, int entityId) {
         int size = size();
         int[] allIndexes = new int[size];
 
@@ -255,9 +257,10 @@ public final class AccessoryData {
             allIndexes[i] = i;
         }
 
-        syncAllData(receiver, playerId, allIndexes);
+        syncAllData(receiver, entityId, allIndexes);
     }
 
+    // todo: im confused
     public void onAttach(ServerPlayer player) {
         // If the server config gets de-synced, this fixes it instead of throwing
         reload(player);
@@ -279,19 +282,19 @@ public final class AccessoryData {
         syncAllData(player, player.getId(), allIndexes);
     }
 
-    public void tick(Player player) {
+    public void tick(LivingEntity entity) {
         for (int i = 0; i < size(); i++) {
             ItemStack stack = getStackInSlot(i);
             Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
             if (accessory != null) {
-                accessory.accessoryTick(player, stack);
+                accessory.accessoryTick(entity, stack);
             }
         }
 
         // Syncing
-        // todo: move this to an on demand approach and add initial sync to onAttach
-        if (player instanceof ServerPlayer svr) {
+        // todo: move this to an on demand approach
+        if (entity.level() instanceof ServerLevel level) {
             List<Integer> indexes = new ArrayList<>();
             List<ItemStack> stacks = new ArrayList<>();
 
@@ -308,14 +311,14 @@ public final class AccessoryData {
             }
 
             if (!indexes.isEmpty()) {
-                for (ServerPlayer receiver : svr.level().getPlayers(_ -> true)) {
-                    OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(svr.getId(), indexes.stream().mapToInt(Integer::intValue).toArray(), stacks, true));
+                for (ServerPlayer receiver : level.getPlayers(_ -> true)) {
+                    OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes.stream().mapToInt(Integer::intValue).toArray(), stacks, true));
                 }
             }
         }
     }
 
-    public void reload(Player player) {
+    public void reload(LivingEntity entity) {
         int oldSize = Math.min(changed.length, size());
         int newSize = AccessoryHelper.getSlotTypes().size();
 
@@ -330,7 +333,7 @@ public final class AccessoryData {
         } else if (newSize < oldSize) {
             // Drop stacks outside of range
             for (int i = newSize; i < oldSize; i++) {
-                removeOrDropStack(player, i);
+                removeOrDropStack(entity, i);
             }
 
             // Shrink data
@@ -344,7 +347,7 @@ public final class AccessoryData {
 
         for (int i = 0; i < size(); i++) {
             if (slotTypes.get(i) != AccessoryHelper.getType(getStackInSlot(i).getItem())) {
-                removeOrDropStack(player, i);
+                removeOrDropStack(entity, i);
             }
         }
     }

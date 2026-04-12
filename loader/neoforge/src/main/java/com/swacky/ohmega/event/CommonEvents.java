@@ -15,6 +15,7 @@ import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +27,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 
@@ -45,17 +46,19 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onLivingDropItems(LivingDropsEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            CommonCallbacks.onPlayerDeath(player, event.getDrops());
+        CommonCallbacks.onLivingDeath(event.getEntity(), event.getDrops());
+    }
+
+    @SubscribeEvent
+    public static void onLivingPostTick(EntityTickEvent.Post event) {
+        if (event.getEntity() instanceof LivingEntity entity) {
+            CommonCallbacks.onLivingPostTick(entity);
         }
     }
 
     @SubscribeEvent
     public static void onModifyLivingVisibility(LivingEvent.LivingVisibilityEvent event) {
-        // todo
-        if (event.getEntity() instanceof Player player) {
-            event.modifyVisibility(CommonCallbacks.getVisibilityPercentModifier(player, event.getLookingEntity()));
-        }
+        event.modifyVisibility(CommonCallbacks.getVisibilityPercentModifier(event.getEntity(), event.getLookingEntity()));
     }
 
     @SubscribeEvent
@@ -74,14 +77,9 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerPostTick(PlayerTickEvent.Post event) {
-        CommonCallbacks.onPlayerPostTick(event.getEntity());
-    }
-
-    @SubscribeEvent
     public static void onPlayerTrack(PlayerEvent.StartTracking event) {
-        if (event.getTarget() instanceof ServerPlayer tracked && event.getEntity() instanceof ServerPlayer tracker) {
-            CommonCallbacks.onPlayerTrack(tracker, tracked);
+        if (event.getEntity() instanceof ServerPlayer tracker && event.getTarget() instanceof LivingEntity tracked) {
+            CommonCallbacks.onLivingTrack(tracker, tracked);
         }
     }
 

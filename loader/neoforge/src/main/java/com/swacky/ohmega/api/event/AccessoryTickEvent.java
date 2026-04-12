@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
@@ -11,23 +11,23 @@ import net.neoforged.bus.api.ICancellableEvent;
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
 public abstract sealed class AccessoryTickEvent extends Event permits AccessoryTickEvent.Pre, AccessoryTickEvent.Post {
-    public final Player player;
+    public final LivingEntity entity;
     public final ItemStack stack;
 
-    public AccessoryTickEvent(Player player, ItemStack stack) {
-        this.player = player;
+    public AccessoryTickEvent(LivingEntity entity, ItemStack stack) {
+        this.entity = entity;
         this.stack = stack;
     }
 
     public static final class Pre extends AccessoryTickEvent implements ICancellableEvent {
-        public Pre(Player player, ItemStack stack) {
-            super(player, stack);
+        public Pre(LivingEntity entity, ItemStack stack) {
+            super(entity, stack);
         }
     }
 
     public static final class Post extends AccessoryTickEvent {
-        public Post(Player player, ItemStack stack) {
-            super(player, stack);
+        public Post(LivingEntity entity, ItemStack stack) {
+            super(entity, stack);
         }
     }
 }

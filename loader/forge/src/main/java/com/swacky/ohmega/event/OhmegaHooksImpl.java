@@ -7,6 +7,7 @@ import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,13 +23,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryTickPost(Player player, ItemStack stack) {
-        AccessoryTickEvent.Post.BUS.post(new AccessoryTickEvent.Post(player, stack));
+    public void accessoryTickPost(LivingEntity entity, ItemStack stack) {
+        AccessoryTickEvent.Post.BUS.post(new AccessoryTickEvent.Post(entity, stack));
     }
 
     @Override
-    public boolean accessoryTickPre(Player player, ItemStack stack) {
-        return AccessoryTickEvent.Pre.BUS.post(new AccessoryTickEvent.Pre(player, stack));
+    public boolean accessoryTickPre(LivingEntity entity, ItemStack stack) {
+        return AccessoryTickEvent.Pre.BUS.post(new AccessoryTickEvent.Pre(entity, stack));
     }
 
     @Override
@@ -56,16 +57,16 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
-        AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(player, stack, context, original);
+    public boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
+        AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(entity, stack, context, original);
 
         AccessoryCanEquipEvent.BUS.post(event);
         return event.returnValue;
     }
 
     @Override
-    public boolean canUnequip(Player player, ItemStack stack, boolean original) {
-        AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(player, stack, original);
+    public boolean canUnequip(LivingEntity entity, ItemStack stack, boolean original) {
+        AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(entity, stack, original);
 
         AccessoryCanUnequipEvent.BUS.post(event);
         return event.returnValue;
@@ -80,8 +81,8 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean equip(Player player, ItemStack stack, EquipContext context) {
-        return AccessoryEquipEvent.BUS.post(new AccessoryEquipEvent(player, stack, context));
+    public boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+        return AccessoryEquipEvent.BUS.post(new AccessoryEquipEvent(entity, stack, context));
     }
 
     @Override
@@ -138,7 +139,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean unequip(Player player, ItemStack stack) {
-        return AccessoryUnequipEvent.BUS.post(new AccessoryUnequipEvent(player, stack));
+    public boolean unequip(LivingEntity entity, ItemStack stack) {
+        return AccessoryUnequipEvent.BUS.post(new AccessoryUnequipEvent(entity, stack));
     }
 }

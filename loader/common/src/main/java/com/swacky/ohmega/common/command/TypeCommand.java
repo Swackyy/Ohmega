@@ -27,8 +27,8 @@ public final class TypeCommand {
 
     private static final String ARGUMENT_TYPE = "type";
 
-    public static final String LIST_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_LIST).feedback();
-    public static final String QUERY_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_QUERY).feedback();
+    public static final String LIST_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_LIST).feedback();
+    public static final String QUERY_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_QUERY).feedback();
 
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal(ELEMENT_ROOT)
@@ -71,7 +71,7 @@ public final class TypeCommand {
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
         components.add(Component
                 .literal('[' + AccessoryType.EMPTY_SLOT_TEXTURE_KEY + ':').withStyle(ChatFormatting.GREEN)
-                .append(Component.translatable(MessageHelper.CONTEXT_HOVER_KEY).withStyle(ChatFormatting.WHITE).withStyle(style ->
+                .append(Component.translatable(CommandHelper.CONTEXT_HOVER).withStyle(ChatFormatting.WHITE).withStyle(style ->
                         style.withHoverEvent(new HoverEvent.ShowText(Component.literal(type.getEmptySlotLocation().toString())))))
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN)));
         components.add(Component

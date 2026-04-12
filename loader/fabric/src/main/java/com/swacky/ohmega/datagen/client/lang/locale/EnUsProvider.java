@@ -6,7 +6,7 @@ import com.swacky.ohmega.common.command.ClearCommand;
 import com.swacky.ohmega.common.command.InfoCommand;
 import com.swacky.ohmega.common.command.ItemCommand;
 import com.swacky.ohmega.common.command.ItemsCommand;
-import com.swacky.ohmega.common.command.MessageHelper;
+import com.swacky.ohmega.common.command.CommandHelper;
 import com.swacky.ohmega.common.command.TypeCommand;
 import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -33,7 +33,6 @@ public final class EnUsProvider extends OhmegaLangProvider {
         internalHelper.addDataPackDescription("Mod resources for Ohmega");
 
         // Toast
-        // todo: these toast translations are subject to change
         builder.add("toast." + Ohmega.MODID + ".translation.title", "Ohmega translations");
         builder.add("toast." + Ohmega.MODID + ".translation.message", "Consider translating Ohmega on Crowdin through the config menu");
 
@@ -59,8 +58,9 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(KEY_BIND_OPEN_ACC_INV, "Open/Close Accessories Inventory");
 
         // Commands
-        // General context
-        builder.add(MessageHelper.CONTEXT_HOVER_KEY, "(hover)");
+        // Misc
+        builder.add(CommandHelper.CONTEXT_HOVER, "(hover)");
+        builder.add(CommandHelper.EXCEPTION_ARGUMENT_LIVING_ONLY, "Only living entities may be specified for this argument, however the provided selector includes non-living entities");
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown accessory type: %s");
         // Clear

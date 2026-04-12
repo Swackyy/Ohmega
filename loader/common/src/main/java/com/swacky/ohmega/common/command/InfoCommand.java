@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+// todo: convert to client command
 public final class InfoCommand {
     public static final String ELEMENT_ROOT = "info";
     public static final String ELEMENT_CROWDIN = "crowdin";
@@ -19,10 +20,10 @@ public final class InfoCommand {
     public static final String ELEMENT_REPORT = "report";
     public static final String ELEMENT_WIKI = "wiki";
 
-    public static final String CROWDIN_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_CROWDIN).feedback();
-    public static final String DISCORD_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_DISCORD).feedback();
-    public static final String REPORT_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_REPORT).feedback();
-    public static final String WIKI_FEEDBACK = MessageHelper.command(ELEMENT_ROOT).add(ELEMENT_WIKI).feedback();
+    public static final String CROWDIN_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_CROWDIN).feedback();
+    public static final String DISCORD_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_DISCORD).feedback();
+    public static final String REPORT_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_REPORT).feedback();
+    public static final String WIKI_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_WIKI).feedback();
 
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal(ELEMENT_ROOT)

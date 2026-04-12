@@ -1,12 +1,13 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryModifiers;
-import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.api.EquipContext;
+import com.swacky.ohmega.api.SoundData;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,12 +24,12 @@ public final class OhmegaHooks {
         IMPL.accessoryBind();
     }
 
-    public static void accessoryTickPost(Player player, ItemStack stack) {
-        IMPL.accessoryTickPost(player, stack);
+    public static void accessoryTickPost(LivingEntity entity, ItemStack stack) {
+        IMPL.accessoryTickPost(entity, stack);
     }
 
-    public static boolean accessoryTickPre(Player player, ItemStack stack) {
-        return IMPL.accessoryTickPre(player, stack);
+    public static boolean accessoryTickPre(LivingEntity entity, ItemStack stack) {
+        return IMPL.accessoryTickPre(entity, stack);
     }
 
     public static boolean allowWalkOnPowderSnow(ItemStack stack, boolean original) {
@@ -43,20 +44,20 @@ public final class OhmegaHooks {
         return IMPL.autoSync(stack, original);
     }
 
-    public static boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
-        return IMPL.canEquip(player, stack, context, original);
+    public static boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
+        return IMPL.canEquip(entity, stack, context, original);
     }
 
-    public static boolean canUnequip(Player player, ItemStack stack, boolean original) {
-        return IMPL.canUnequip(player, stack, original);
+    public static boolean canUnequip(LivingEntity entity, ItemStack stack, boolean original) {
+        return IMPL.canUnequip(entity, stack, original);
     }
 
     public static boolean compatibleWith(ItemStack stack, ItemStack other, boolean original) {
         return IMPL.compatibleWith(stack, other, original);
     }
 
-    public static boolean equip(Player player, ItemStack stack, EquipContext context) {
-        return IMPL.equip(player, stack, context);
+    public static boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+        return IMPL.equip(entity, stack, context);
     }
 
     public static SoundData equipSound(ItemStack stack, SoundData original) {
@@ -87,16 +88,16 @@ public final class OhmegaHooks {
         return IMPL.registerAccessoryTypes();
     }
 
-    public static boolean unequip(Player player, ItemStack stack) {
-        return IMPL.unequip(player, stack);
+    public static boolean unequip(LivingEntity entity, ItemStack stack) {
+        return IMPL.unequip(entity, stack);
     }
 
     public interface Service {
         void accessoryBind();
 
-        void accessoryTickPost(Player player, ItemStack stack);
+        void accessoryTickPost(LivingEntity entity, ItemStack stack);
 
-        boolean accessoryTickPre(Player player, ItemStack stack);
+        boolean accessoryTickPre(LivingEntity entity, ItemStack stack);
 
         boolean allowWalkOnPowderSnow(ItemStack stack, boolean original);
 
@@ -106,13 +107,13 @@ public final class OhmegaHooks {
 
         boolean autoSync(ItemStack stack, boolean original);
 
-        boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original);
+        boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original);
 
-        boolean canUnequip(Player player, ItemStack stack, boolean original);
+        boolean canUnequip(LivingEntity entity, ItemStack stack, boolean original);
 
         boolean compatibleWith(ItemStack stack, ItemStack other, boolean original);
 
-        boolean equip(Player player, ItemStack stack, EquipContext context);
+        boolean equip(LivingEntity entity, ItemStack stack, EquipContext context);
 
         SoundData equipSound(ItemStack stack, SoundData original);
 
@@ -128,6 +129,6 @@ public final class OhmegaHooks {
 
         Map<Identifier, AccessoryType> registerAccessoryTypes();
 
-        boolean unequip(Player player, ItemStack stack);
+        boolean unequip(LivingEntity entity, ItemStack stack);
     }
 }

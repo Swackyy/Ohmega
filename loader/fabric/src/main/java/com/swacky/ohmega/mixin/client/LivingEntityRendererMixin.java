@@ -5,7 +5,6 @@ import com.swacky.ohmega.client.renderer.AccessoryRenderLayer;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.event.ClientCallbacks;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -40,10 +39,7 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
             at = @At(
                     value = "TAIL"))
     private void extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTicks, CallbackInfo ci) {
-        // todo
-        if (entity instanceof AbstractClientPlayer player) {
-            state.setData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(player));
-        }
+        state.setData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
     }
 
     @Inject(

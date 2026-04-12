@@ -9,9 +9,9 @@ import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.NonNullList;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,10 +20,8 @@ import net.minecraft.world.level.gamerules.GameRules;
 import java.util.Collection;
 
 public final class CommonCallbacks {
-    // todo
-    // todo: test this averaging out
-    public static double getVisibilityPercentModifier(Player player, Entity targetingEntity) {
-        NonNullList<ItemStack> stacks = AccessoryHelper.getAccessoryStacks(player);
+    public static double getVisibilityPercentModifier(LivingEntity entity, Entity targetingEntity) {
+        NonNullList<ItemStack> stacks = AccessoryHelper.getAccessoryStacks(entity);
         double multiplier = 0;
 
         for (ItemStack stack : stacks) {
@@ -42,34 +40,22 @@ public final class CommonCallbacks {
         }
     }
 
-    // Not an event callback in itself
-    public static boolean shouldKeepInventory(Player player) {
-        return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) {
-            case ALWAYS_ON -> true;
-            case ALWAYS_OFF -> false;
-            case DEFAULT -> player.level() instanceof ServerLevel level && level.getGameRules().get(GameRules.KEEP_INVENTORY);
-        };
-    }
-
-    public static void onPlayerChangeDimension(ServerPlayer player) {
-        AccessoryHelper.getData(player).syncAllData(player, player.getId());
-    }
-
-    public static void onPlayerDeath(Player player, Collection<ItemEntity> itemDrops) {
-        if (!shouldKeepInventory(player)) {
-            AccessoryData data = AccessoryHelper.getData(player);
+    public static void onLivingDeath(LivingEntity entity, Collection<ItemEntity> itemDrops) {
+        if (!shouldKeepInventory(entity)) {
+            AccessoryData data = AccessoryHelper.getData(entity);
             NonNullList<ItemStack> stacks = data.getStacks();
 
             for (int i = 0; i < stacks.size(); i++) {
                 ItemStack stack = stacks.get(i);
 
                 if (!stack.isEmpty()) {
-                    data.doUnequip(player, stack);
+                    data.doUnequip(entity, stack);
 
-                    ItemEntity entity = player.createItemStackToDrop(stack, true, true);
+                    ItemEntity itemEntity = entity.createItemStackToDrop(stack, true, false);
 
-                    if (entity != null) {
-                        itemDrops.add(entity);
+                    if (itemEntity != null) {
+                        itemEntity.setDefaultPickUpDelay();
+                        itemDrops.add(itemEntity);
                     }
 
                     data.setChanged(i);
@@ -78,15 +64,32 @@ public final class CommonCallbacks {
         }
     }
 
-    public static void onPlayerPostTick(Player player) {
-        AccessoryHelper.getData(player).tick(player);
+    public static void onLivingPostTick(LivingEntity living) {
+        AccessoryHelper.getData(living).tick(living);
     }
 
-    public static void onPlayerTrack(ServerPlayer tracker, ServerPlayer tracked) {
+    public static void onLivingTrack(ServerPlayer tracker, LivingEntity tracked) {
         AccessoryHelper.getData(tracked).syncAllData(tracker, tracked.getId());
+    }
+
+    public static void onPlayerChangeDimension(ServerPlayer player) {
+        AccessoryHelper.getData(player).syncAllData(player, player.getId());
     }
 
     public static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         OhmegaRootCommand.register(dispatcher, context);
+    }
+
+    // Not an event callback in itself
+    public static boolean shouldKeepInventory(LivingEntity entity) {
+        if (entity instanceof ServerPlayer player) {
+            return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) {
+                case ALWAYS_ON -> true;
+                case ALWAYS_OFF -> false;
+                case DEFAULT -> player.level().getGameRules().get(GameRules.KEEP_INVENTORY);
+            };
+        }
+
+        return false;
     }
 }

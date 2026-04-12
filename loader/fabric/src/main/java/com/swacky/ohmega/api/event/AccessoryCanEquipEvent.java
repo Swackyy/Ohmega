@@ -3,19 +3,19 @@ package com.swacky.ohmega.api.event;
 import com.swacky.ohmega.api.EquipContext;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryCanEquipEvent {
     Event<AccessoryCanEquipEvent> EVENT = EventFactory.createArrayBacked(AccessoryCanEquipEvent.class,
-        listeners -> (player, stack, context, ret) -> {
+        listeners -> (entity, stack, context, ret) -> {
             for (AccessoryCanEquipEvent listener : listeners) {
-                ret = listener.process(player, stack, context, ret);
+                ret = listener.process(entity, stack, context, ret);
             }
 
             return ret;
         }
     );
 
-    boolean process(Player player, ItemStack stack, EquipContext context, boolean original);
+    boolean process(LivingEntity entity, ItemStack stack, EquipContext context, boolean original);
 }

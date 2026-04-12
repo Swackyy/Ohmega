@@ -1,7 +1,6 @@
 package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.AccessoryHelperImpl;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
@@ -17,6 +16,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +27,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -41,10 +40,8 @@ public final class CommonEvents {
     private static final Identifier CAPABILITY_ID = Ohmega.id("accessory_data");
 
     @SubscribeEvent
-    public static void onAttachEntityCaps(AttachCapabilitiesEvent.Entities event) {
-        if (event.getObject() instanceof Player) {
-            event.addCapability(CAPABILITY_ID, new AccessoryDataProvider());
-        }
+    public static void onAttachEntityCapabilities(AttachCapabilitiesEvent.Entities event) {
+        event.addCapability(CAPABILITY_ID, new AccessoryDataProvider());
     }
 
     @SubscribeEvent
@@ -62,17 +59,12 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onLivingDropItems(LivingDropsEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            CommonCallbacks.onPlayerDeath(player, event.getDrops());
-        }
+        CommonCallbacks.onLivingDeath(event.getEntity(), event.getDrops());
     }
 
     @SubscribeEvent
     public static void onModifyLivingVisibility(LivingEvent.LivingVisibilityEvent event) {
-        // todo
-        if (event.getEntity() instanceof Player player) {
-            event.modifyVisibility(CommonCallbacks.getVisibilityPercentModifier(player, event.getLookingEntity()));
-        }
+        event.modifyVisibility(CommonCallbacks.getVisibilityPercentModifier(event.getEntity(), event.getLookingEntity()));
     }
 
     @SubscribeEvent
@@ -91,18 +83,9 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerPostTick(TickEvent.PlayerTickEvent.Post event) {
-        Player player = event.player();
-
-        if (AccessoryHelperImpl.isPlayerDataPresent(player)) {
-            CommonCallbacks.onPlayerPostTick(player);
-        }
-    }
-
-    @SubscribeEvent
     public static void onPlayerTrack(PlayerEvent.StartTracking event) {
-        if (event.getTarget() instanceof ServerPlayer tracked && event.getEntity() instanceof ServerPlayer tracker) {
-            CommonCallbacks.onPlayerTrack(tracked, tracker);
+        if (event.getEntity() instanceof ServerPlayer tracker && event.getTarget() instanceof LivingEntity tracked) {
+            CommonCallbacks.onLivingTrack(tracker, tracked);
         }
     }
 
@@ -133,30 +116,29 @@ public final class CommonEvents {
 
     @SuppressWarnings("deprecation")
     private static class AccessoryDataProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-        private AccessoryData inner;
-        private final LazyOptional<AccessoryData> cap;
+        private AccessoryData data;
+        private final LazyOptional<AccessoryData> capabilityOpt;
 
         public AccessoryDataProvider() {
-            this.inner = new AccessoryData();
-            this.cap = LazyOptional.of(() -> this.inner);
+            this.data = new AccessoryData();
+            this.capabilityOpt = LazyOptional.of(() -> this.data);
         }
 
         @NonNull
         @Override
         public <T> LazyOptional<T> getCapability(@NonNull Capability<T> cap, Direction side) {
-            return OhmegaMain.ACCESSORIES.orEmpty(cap, this.cap);
+            return OhmegaMain.ACCESSORIES.orEmpty(cap, capabilityOpt);
         }
 
         @Override
         public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-            return (CompoundTag) AccessoryData.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), inner)
+            return (CompoundTag) AccessoryData.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryAccess), data)
                     .result().orElseGet(CompoundTag::new);
         }
 
         @Override
         public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            AccessoryData.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
-                    .resultOrPartial().ifPresent(data -> inner = data);
+            AccessoryData.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag).resultOrPartial().ifPresent(data -> this.data = data);
         }
     }
 }

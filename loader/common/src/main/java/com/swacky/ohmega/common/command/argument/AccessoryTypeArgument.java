@@ -9,7 +9,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.command.MessageHelper;
+import com.swacky.ohmega.common.command.CommandHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 public final class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
     public static final String KEY = "accessory_type";
 
-    public static final String EXCEPTION_UNKNOWN_TYPE_KEY = MessageHelper.exception("unknown_accessory_type");
+    public static final String EXCEPTION_UNKNOWN_TYPE_KEY = CommandHelper.exception("unknown_accessory_type");
 
     private static final DynamicCommandExceptionType EXCEPTION_UNKNOWN_TYPE = new DynamicCommandExceptionType(id -> Component.translatable(EXCEPTION_UNKNOWN_TYPE_KEY, id));
     private static final List<String> EXAMPLES = List.of("normal", "ohmega:utility");

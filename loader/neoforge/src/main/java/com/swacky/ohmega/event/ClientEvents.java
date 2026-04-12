@@ -1,10 +1,8 @@
 package com.swacky.ohmega.event;
 
 import com.google.common.reflect.TypeToken;
-import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.model.HaloModel;
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
@@ -15,7 +13,6 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -103,10 +100,7 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onRegisterRenderStateModifiers(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<LivingEntityRenderer<?, ?, ?>>() {}, (entity, state) -> {
-            // todo
-            if (entity instanceof AbstractClientPlayer player) {
-                state.setRenderData(AccessoryRenderStateDataImpl.KEY, new AccessoryRenderStateData(AccessoryHelper.getStacksNoEmpty(player)));
-            }
+            state.setRenderData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
         });
     }
 }

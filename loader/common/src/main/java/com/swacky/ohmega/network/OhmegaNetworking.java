@@ -23,6 +23,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -120,8 +121,8 @@ public final class OhmegaNetworking {
                     return;
                 }
 
-                if (level.getEntity(packet.playerId()) instanceof Player player) {
-                    AccessoryData data = AccessoryHelper.getData(player);
+                if (level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
+                    AccessoryData data = AccessoryHelper.getData(entity);
 
                     for (int i = 0; i < indexes.length; i++) {
                         data.setHidden(indexes[i], packet.values()[i]);
@@ -140,11 +141,11 @@ public final class OhmegaNetworking {
                     return;
                 }
 
-                if (level.getEntity(packet.playerId()) instanceof Player player) {
-                    AccessoryData data = AccessoryHelper.getData(player);
+                if (level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
+                    AccessoryData data = AccessoryHelper.getData(entity);
 
                     for (int i = 0; i < indexes.length; i++) {
-                        data.setStack(player, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
+                        data.setStack(entity, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
                     }
                 }
             }
@@ -158,7 +159,7 @@ public final class OhmegaNetworking {
         public static void handleSyncUse(SyncUsePacket packet) {
             ClientLevel level = Minecraft.getInstance().level;
 
-            if (level != null && level.getEntity(packet.playerId()) instanceof Player player) {
+            if (level != null && level.getEntity(packet.entityId()) instanceof Player player) {
                 ItemStack stack = AccessoryHelper.getData(player).getStackInSlot(packet.index());
 
                 AccessoryHelper.getAccessory(stack.getItem()).onKeybindUse(player, stack);

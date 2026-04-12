@@ -8,7 +8,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.waypoints.WaypointTransmitter;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,14 +29,12 @@ abstract class LivingEntityMixin extends Entity implements Attackable, WaypointT
             at = @At(
                     value = "TAIL"))
     private void dropAllDeathLoot(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
-        if (((LivingEntity) (Object) this) instanceof Player player) {
-            ArrayList<ItemEntity> drops = new ArrayList<>();
+        ArrayList<ItemEntity> drops = new ArrayList<>();
 
-            CommonCallbacks.onPlayerDeath(player, drops);
+        CommonCallbacks.onLivingDeath((LivingEntity) (Object) this, drops);
 
-            for (ItemEntity entity : drops) {
-                level().addFreshEntity(entity);
-            }
+        for (ItemEntity entity : drops) {
+            level().addFreshEntity(entity);
         }
     }
 
@@ -47,8 +44,14 @@ abstract class LivingEntityMixin extends Entity implements Attackable, WaypointT
                     value = "RETURN"),
             cancellable = true)
     private void getVisibilityPercent(Entity targetingEntity, CallbackInfoReturnable<Double> cir) {
-        if ((Object) this instanceof Player player) {
-            cir.setReturnValue(cir.getReturnValue() * CommonCallbacks.getVisibilityPercentModifier(player, targetingEntity));
-        }
+        cir.setReturnValue(cir.getReturnValue() * CommonCallbacks.getVisibilityPercentModifier((LivingEntity) (Object) this, targetingEntity));
+    }
+
+    @Inject(
+            method = "tick",
+            at = @At(
+                    value = "TAIL"))
+    private void tick(CallbackInfo ci) {
+        CommonCallbacks.onLivingPostTick(((LivingEntity) (Object) this));
     }
 }

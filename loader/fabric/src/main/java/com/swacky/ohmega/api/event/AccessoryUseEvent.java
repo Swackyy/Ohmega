@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryUseEvent {
@@ -18,5 +18,5 @@ public interface AccessoryUseEvent {
         }
     );
 
-    boolean process(Player player, ItemStack stack);
+    boolean process(Entity entity, ItemStack stack);
 }

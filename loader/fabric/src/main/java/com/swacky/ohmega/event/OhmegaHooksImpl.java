@@ -24,6 +24,7 @@ import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,13 +39,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void accessoryTickPost(Player player, ItemStack stack) {
-        AccessoryTickEvent.Post.EVENT.invoker().process(player, stack);
+    public void accessoryTickPost(LivingEntity entity, ItemStack stack) {
+        AccessoryTickEvent.Post.EVENT.invoker().process(entity, stack);
     }
 
     @Override
-    public boolean accessoryTickPre(Player player, ItemStack stack) {
-        return AccessoryTickEvent.Pre.EVENT.invoker().process(player, stack);
+    public boolean accessoryTickPre(LivingEntity entity, ItemStack stack) {
+        return AccessoryTickEvent.Pre.EVENT.invoker().process(entity, stack);
     }
 
     @Override
@@ -64,13 +65,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean canEquip(Player player, ItemStack stack, EquipContext context, boolean original) {
-        return AccessoryCanEquipEvent.EVENT.invoker().process(player, stack, context, original);
+    public boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
+        return AccessoryCanEquipEvent.EVENT.invoker().process(entity, stack, context, original);
     }
 
     @Override
-    public boolean canUnequip(Player player, ItemStack stack, boolean original) {
-        return AccessoryCanUnequipEvent.EVENT.invoker().process(player, stack, original);
+    public boolean canUnequip(LivingEntity entity, ItemStack stack, boolean original) {
+        return AccessoryCanUnequipEvent.EVENT.invoker().process(entity, stack, original);
     }
 
     @Override
@@ -79,8 +80,8 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean equip(Player player, ItemStack stack, EquipContext context) {
-        return AccessoryEquipEvent.EVENT.invoker().process(player, stack, context);
+    public boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+        return AccessoryEquipEvent.EVENT.invoker().process(entity, stack, context);
     }
 
     @Override
@@ -125,7 +126,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean unequip(Player player, ItemStack stack) {
-        return AccessoryUnequipEvent.EVENT.invoker().process(player, stack);
+    public boolean unequip(LivingEntity entity, ItemStack stack) {
+        return AccessoryUnequipEvent.EVENT.invoker().process(entity, stack);
     }
 }

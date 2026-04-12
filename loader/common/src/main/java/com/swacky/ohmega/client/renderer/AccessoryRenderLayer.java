@@ -24,7 +24,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
     }
 
     @Override
-    public void submit(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, int packedLight, T state, float yRot, float xRot) {
+    public void submit(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, int packedLight, @NonNull T state, float yRot, float xRot) {
         AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
         if (data != null) {

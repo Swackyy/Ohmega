@@ -14,7 +14,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -27,13 +27,13 @@ public final class ClearCommand {
     private static final String ARGUMENT_FILTER = "filter";
     private static final String ARGUMENT_MAX = "max";
 
-    public static final String ROOT_EXCEPTION_MULTIPLE = MessageHelper.command(ELEMENT_ROOT).exception("multiple");
-    public static final String ROOT_EXCEPTION_SINGLE = MessageHelper.command(ELEMENT_ROOT).exception("single");
-    public static final String ROOT_FEEDBACK_MULTIPLE = MessageHelper.command(ELEMENT_ROOT).feedback("multiple");
-    public static final String ROOT_FEEDBACK_SINGLE = MessageHelper.command(ELEMENT_ROOT).feedback("single");
+    public static final String ROOT_EXCEPTION_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).exception("multiple");
+    public static final String ROOT_EXCEPTION_SINGLE = CommandHelper.command(ELEMENT_ROOT).exception("single");
+    public static final String ROOT_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).feedback("multiple");
+    public static final String ROOT_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).feedback("single");
 
-    private static final DynamicCommandExceptionType EXCEPTION_SINGLE = new DynamicCommandExceptionType(name -> Component.translatable(ROOT_EXCEPTION_SINGLE, name));
     private static final DynamicCommandExceptionType EXCEPTION_MULTIPLE = new DynamicCommandExceptionType((count) -> Component.translatable(ROOT_EXCEPTION_MULTIPLE, count));
+    private static final DynamicCommandExceptionType EXCEPTION_SINGLE = new DynamicCommandExceptionType(name -> Component.translatable(ROOT_EXCEPTION_SINGLE, name));
 
     public static ArgumentBuilder<CommandSourceStack, ?> create(CommandBuildContext context) {
         return Commands.literal(ELEMENT_ROOT)
@@ -50,11 +50,8 @@ public final class ClearCommand {
     private static int doClear(CommandContext<CommandSourceStack> context, List<Entity> targets, Predicate<ItemStack> filter, int max) throws CommandSyntaxException {
         int rollingCount = 0;
 
-        for (Entity target : targets) {
-            // todo
-            if (target instanceof Player player) {
-                rollingCount += AccessoryHelper.getData(player).clearMatchingItems(player, filter, max);
-            }
+        for (LivingEntity target : CommandHelper.convertLiving(targets)) {
+            rollingCount += AccessoryHelper.getData(target).clearMatchingItems(target, filter, max);
         }
 
         if (rollingCount == 0) {

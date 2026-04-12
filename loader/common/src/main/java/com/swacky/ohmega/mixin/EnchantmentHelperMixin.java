@@ -9,7 +9,6 @@ import net.minecraft.util.Util;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -52,25 +51,23 @@ abstract class EnchantmentHelperMixin {
 
         ArrayList<EnchantedItemInUse> list = new ArrayList<>();
 
-        if (entity instanceof Player player) {
-            for (ItemStack stack : AccessoryHelper.getData(player).getStacks()) {
-                if (filter.test(stack)) {
-                    for (Holder<Enchantment> holder : stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).keySet()) {
-                        Enchantment enchantment = holder.value();
+        for (ItemStack stack : AccessoryHelper.getData(entity).getStacks()) {
+            if (filter.test(stack)) {
+                for (Holder<Enchantment> holder : stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).keySet()) {
+                    Enchantment enchantment = holder.value();
 
-                        if (enchantment.effects().has(dataType) && ohmega$checkSlots(enchantment.definition().slots())) {
-                            list.add(new EnchantedItemInUse(stack, EquipmentSlot.MAINHAND, entity));
-                        }
+                    if (enchantment.effects().has(dataType) && ohmega$checkSlots(enchantment.definition().slots())) {
+                        list.add(new EnchantedItemInUse(stack, EquipmentSlot.MAINHAND, entity));
                     }
                 }
             }
+        }
 
-            if (!list.isEmpty()) {
-                RandomSource random = entity.getRandom();
+        if (!list.isEmpty()) {
+            RandomSource random = entity.getRandom();
 
-                if (random.nextInt(list.size() + original) >= original) {
-                    cir.setReturnValue(Util.getRandomSafe(list, random));
-                }
+            if (random.nextInt(list.size() + original) >= original) {
+                cir.setReturnValue(Util.getRandomSafe(list, random));
             }
         }
     }

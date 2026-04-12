@@ -29,7 +29,7 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -40,10 +40,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class ClientCallbacks {
-    // todo
-    public static AccessoryRenderStateData createRenderStateData(Player player) {
+    public static AccessoryRenderStateData createRenderStateData(LivingEntity entity) {
         if (OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.allowHideAccessories()) {
-            AccessoryData data = AccessoryHelper.getData(player);
+            AccessoryData data = AccessoryHelper.getData(entity);
             NonNullList<ItemStack> stacks = data.getStacks();
             NonNullList<ItemStack> stacksFiltered = NonNullList.createWithCapacity(stacks.size());
 
@@ -58,7 +57,7 @@ public final class ClientCallbacks {
             return new AccessoryRenderStateData(stacksFiltered);
         }
 
-        return new AccessoryRenderStateData(AccessoryHelper.getStacksNoEmpty(player));
+        return new AccessoryRenderStateData(AccessoryHelper.getStacksNoEmpty(entity));
     }
 
     public static void onClientConfigReload() {
