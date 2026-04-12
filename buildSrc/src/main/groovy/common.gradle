@@ -6,7 +6,7 @@ plugins {
 }
 
 group "com.swacky"
-version "${project.name}-mcd${mcV}"
+version "${project.name}-mc${mcV}"
 
 base {
     archivesName.set "${modId}-${modV}"
