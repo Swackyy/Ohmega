@@ -38,7 +38,8 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
 
     @SuppressWarnings("unused")
     public AccessoryInventoryScreen(AccessoryInventoryMenu menu, Inventory inv, Component title) {
-        int extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) AccessoryHelper.getSlotTypes().size() / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
+        int size = AccessoryHelper.getSlotTypes().size();
+        int extraWidth = 2 + 4 * 2 + 18 * (int) Math.min(Math.ceil((double) size / Math.min(OhmegaConfig.Client.maxColumnRenderSlots(), OhmegaConfig.Client.maxColumnSlots())), OhmegaConfig.Client.maxColumns());
 
         super(menu, inv, Component.translatable("container.crafting"), 176 + extraWidth, 166);
 
@@ -51,7 +52,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             this.titleLabelX = 97;
         }
 
-        this.mostSlotsPerColumn = Math.min(menu.renderSlots, AccessoryHelper.getSlotTypes().size());
+        this.mostSlotsPerColumn = Math.min(menu.renderSlots, size);
     }
 
     private void addVisibilityWidgets() {
@@ -62,7 +63,7 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
             int slotsCreatedCurrentColumn = 0;
 
             for (int j = 0; true; j++) {
-                addRenderableWidget(new VisibilityButton(menu.getPlayer(), j + i * mostSlotsPerColumn, xOffsSlots + 18 * (i + 1) + 1, topPos + 24 + j * 18 - 2));
+                addRenderableWidget(new VisibilityButton(menu.getPlayer(), index, xOffsSlots + 18 * (i + 1) + 1, topPos + 24 + j * 18 - 2));
 
                 index++;
 

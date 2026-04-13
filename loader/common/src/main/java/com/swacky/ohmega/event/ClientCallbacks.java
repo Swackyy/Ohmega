@@ -164,13 +164,16 @@ public final class ClientCallbacks {
                 reloadRegisteredKeybinds(loadFunction);
             }
 
-            LocalPlayer player = Minecraft.getInstance().player;
+            Minecraft mc = Minecraft.getInstance();
+            LocalPlayer player = mc.player;
 
             if (player != null) {
                 AccessoryHelper.getData(player).reload(player);
                 OhmegaNetworking.C2S.send(ReloadDataPacket.INSTANCE);
 
                 if (!OhmegaConfig.Client.compatibilityMode() && player.containerMenu instanceof AccessoryInventoryMenu) {
+                    mc.screen = null;
+
                     player.connection.send(new ServerboundContainerClosePacket(player.containerMenu.containerId));
                     OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
                 }
