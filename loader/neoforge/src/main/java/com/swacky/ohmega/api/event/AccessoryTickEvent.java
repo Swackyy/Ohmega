@@ -10,7 +10,7 @@ import net.neoforged.bus.api.ICancellableEvent;
  * <p>
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
-public abstract sealed class AccessoryTickEvent extends Event permits AccessoryTickEvent.Pre, AccessoryTickEvent.Post {
+public abstract sealed class AccessoryTickEvent extends Event {
     public final LivingEntity entity;
     public final ItemStack stack;
 

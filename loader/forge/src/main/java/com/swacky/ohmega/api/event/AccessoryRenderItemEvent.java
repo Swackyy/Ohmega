@@ -1,7 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.RecordEvent;
@@ -13,12 +12,12 @@ import org.jspecify.annotations.NonNull;
  * <p>
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
-public sealed interface AccessoryTickEvent {
-    record Pre(LivingEntity entity, ItemStack stack) implements AccessoryTickEvent, RecordEvent, Cancellable {
+public sealed interface AccessoryRenderItemEvent {
+    record Pre(AccessoryRenderContext context) implements AccessoryRenderItemEvent, RecordEvent, Cancellable {
         public static final CancellableEventBus<@NonNull Pre> BUS = CancellableEventBus.create(Pre.class);
     }
 
-    record Post(LivingEntity entity, ItemStack stack) implements AccessoryTickEvent, RecordEvent {
+    record Post(AccessoryRenderContext context) implements AccessoryRenderItemEvent, RecordEvent {
         public static final EventBus<@NonNull Post> BUS = EventBus.create(Post.class);
     }
 }

@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
+import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -27,21 +28,26 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
     public void submit(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, int packedLight, @NonNull T state, float yRot, float xRot) {
         AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
-        if (data != null) {
+        if (data != null && !OhmegaHooks.renderPre(state, poseStack)) {
             SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
 
             for (ItemStack stack : data.stacks()) {
                 AccessoryRenderers.RendererFactory factory = AccessoryRenderers.getFactoryFor(AccessoryHelper.getAccessory(stack.getItem()));
 
                 if (factory != null) {
-                    factory.create(context).submit(new AccessoryRenderContext(
+                    AccessoryRenderContext context = new AccessoryRenderContext(
                             poseStack,
                             wrapper,
                             stack,
                             state,
                             getParentModel(),
                             Minecraft.getInstance().getModelManager(),
-                            packedLight));
+                            packedLight);
+
+                    if (!OhmegaHooks.renderItemPre(context)) {
+                        factory.create(this.context).submit(context);
+                        OhmegaHooks.renderItemPost(context);
+                    }
                 }
             }
         }

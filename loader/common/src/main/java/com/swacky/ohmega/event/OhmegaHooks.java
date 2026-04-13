@@ -1,10 +1,13 @@
 package com.swacky.ohmega.event;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -88,6 +91,18 @@ public final class OhmegaHooks {
         return IMPL.registerAccessoryTypes();
     }
 
+    public static void renderItemPost(AccessoryRenderContext context) {
+        IMPL.renderItemPost(context);
+    }
+
+    public static boolean renderItemPre(AccessoryRenderContext context) {
+        return IMPL.renderItemPre(context);
+    }
+
+    public static boolean renderPre(LivingEntityRenderState state, PoseStack stack) {
+        return IMPL.renderPre(state, stack);
+    }
+
     public static boolean unequip(LivingEntity entity, ItemStack stack) {
         return IMPL.unequip(entity, stack);
     }
@@ -128,6 +143,12 @@ public final class OhmegaHooks {
         boolean preferVanillaUse(ItemStack stack, boolean original);
 
         Map<Identifier, AccessoryType> registerAccessoryTypes();
+
+        void renderItemPost(AccessoryRenderContext context);
+
+        boolean renderItemPre(AccessoryRenderContext context);
+
+        boolean renderPre(LivingEntityRenderState state, PoseStack stack);
 
         boolean unequip(LivingEntity entity, ItemStack stack);
     }

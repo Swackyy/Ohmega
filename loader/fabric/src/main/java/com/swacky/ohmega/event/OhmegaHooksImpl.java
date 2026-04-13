@@ -1,8 +1,10 @@
 package com.swacky.ohmega.event;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
 import com.swacky.ohmega.api.event.AccessoryAttributeModifiersEvent;
 import com.swacky.ohmega.api.event.AccessoryAutoSyncEvent;
@@ -16,12 +18,15 @@ import com.swacky.ohmega.api.event.AccessoryIsPiglinSafeEvent;
 import com.swacky.ohmega.api.event.AccessoryMobVisibilityEvent;
 import com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent;
 import com.swacky.ohmega.api.event.AccessoryPreferVanillaUseEvent;
+import com.swacky.ohmega.api.event.AccessoryRenderItemEvent;
+import com.swacky.ohmega.api.event.AccessoryRenderPreEvent;
 import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -123,6 +128,21 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
         RegisterAccessoryTypesEvent.EVENT.invoker().process(builder);
         return builder.build();
+    }
+
+    @Override
+    public void renderItemPost(AccessoryRenderContext context) {
+        AccessoryRenderItemEvent.Post.EVENT.invoker().process(context);
+    }
+
+    @Override
+    public boolean renderItemPre(AccessoryRenderContext context) {
+        return AccessoryRenderItemEvent.Pre.EVENT.invoker().process(context);
+    }
+
+    @Override
+    public boolean renderPre(LivingEntityRenderState state, PoseStack stack) {
+        return AccessoryRenderPreEvent.EVENT.invoker().process(state, stack);
     }
 
     @Override

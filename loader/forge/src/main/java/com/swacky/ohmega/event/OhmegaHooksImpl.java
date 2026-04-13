@@ -1,10 +1,13 @@
 package com.swacky.ohmega.event;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.AccessoryModifiers;
 import com.swacky.ohmega.api.EquipContext;
 import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.event.*;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -136,6 +139,21 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
         RegisterAccessoryTypesEvent.BUS.post(event);
         return event.getTypes();
+    }
+
+    @Override
+    public void renderItemPost(AccessoryRenderContext context) {
+        AccessoryRenderItemEvent.Post.BUS.post(new AccessoryRenderItemEvent.Post(context));
+    }
+
+    @Override
+    public boolean renderItemPre(AccessoryRenderContext context) {
+        return AccessoryRenderItemEvent.Pre.BUS.post(new AccessoryRenderItemEvent.Pre(context));
+    }
+
+    @Override
+    public boolean renderPre(LivingEntityRenderState state, PoseStack stack) {
+        return AccessoryRenderPreEvent.BUS.post(new AccessoryRenderPreEvent(state, stack));
     }
 
     @Override
