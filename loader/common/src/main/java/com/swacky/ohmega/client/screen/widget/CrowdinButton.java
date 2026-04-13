@@ -52,6 +52,7 @@ public final class CrowdinButton extends AbstractButton {
         gui.blit(RenderPipelines.GUI_TEXTURED, LOCATION, getX(), getY(), 0, hoveredOffsY, getWidth(), getHeight(), 20, 40);
     }
 
+    // todo: change later
     @Override
     protected void updateWidgetNarration(@NonNull NarrationElementOutput output) {
         defaultButtonNarrationText(output);

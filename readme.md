@@ -14,7 +14,7 @@ This mod aims to be a performant and stable alternative to other accessory API m
 
 ## Contributing
 If you wish to contribute to the mod, you can do it in multiple ways! Either:
-- Create an issue report, detailing that a bug be fixed, or a desire for a new feature, or to improve on an existing one
+- Create an issue report, detailing that a bug be fixed, a desire for a new feature, or to improve on an existing one
 - Submit a pull request to the GitHub repository
 
 ---
