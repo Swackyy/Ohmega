@@ -10,6 +10,7 @@ import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -26,9 +27,13 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class AccessoryInventoryScreen extends AbstractContainerScreen<@NonNull AccessoryInventoryMenu> {
     private static final Identifier SLOT_LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/slot.png");
 
+    private final List<AbstractWidget> deferredWidgets = new ArrayList<>(AccessoryHelper.getSlotTypes().size());
     private final EffectsInInventory effects;
     private final int extraWidth;
     private final int mostSlotsPerColumn;
@@ -55,28 +60,9 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         this.mostSlotsPerColumn = Math.min(menu.renderSlots, size);
     }
 
-    private void addVisibilityWidgets() {
-        int index = 0;
-
-        for (int i = 0; i < menu.renderColumns; i++) {
-            // Slots
-            int slotsCreatedCurrentColumn = 0;
-
-            for (int j = 0; true; j++) {
-                addRenderableWidget(new VisibilityButton(menu.getPlayer(), index, xOffsSlots + 18 * (i + 1) + 1, topPos + 24 + j * 18 - 2));
-
-                index++;
-
-                if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= menu.slotsAvailable) {
-                    break;
-                }
-            }
-        }
-    }
-
     @Override
     protected void init() {
-        renderables.clear();
+        super.init();
 
         if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
             leftPos = (width - imageWidth - extraWidth) / 2;
@@ -95,15 +81,66 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         addRenderableWidget(new FlipPlayerButton(this, leftPos + 65, topPos + 9));
 
         if (OhmegaConfig.Server.allowHideAccessories()) {
-            addVisibilityWidgets();
+            int index = 0;
+
+            for (int i = 0; i < menu.renderColumns; i++) {
+                // Slots
+                int slotsCreatedCurrentColumn = 0;
+
+                for (int j = 0; true; j++) {
+                    VisibilityButton widget = new VisibilityButton(menu.getPlayer(), index, xOffsSlots + 18 * (i + 1) + 1, topPos + 24 + j * 18 - 2);
+
+                    deferredWidgets.add(widget);
+                    children.add(widget);
+                    narratables.add(widget);
+
+                    index++;
+
+                    if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= menu.slotsAvailable) {
+                        break;
+                    }
+                }
+            }
         }
     }
 
+    @Override
+    public void extractContents(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
+        super.extractContents(gui, mx, my, partialTicks);
+
+        for (AbstractWidget widget : deferredWidgets) {
+            widget.extractRenderState(gui, mx, my, partialTicks);
+        }
+    }
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         super.extractRenderState(gui, mx, my, partialTicks);
         effects.extractRenderState(gui, mx, my);
+    }
+
+    private boolean isHoveringVisibilityButton() {
+        for (AbstractWidget child : deferredWidgets) {
+            if (child instanceof VisibilityButton button && button.isHovered()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void extractSlotHighlightBack(@NonNull GuiGraphicsExtractor gui) {
+        if (!isHoveringVisibilityButton()) {
+            super.extractSlotHighlightBack(gui);
+        }
+    }
+
+    @Override
+    public void extractSlotHighlightFront(@NonNull GuiGraphicsExtractor gui) {
+        if (!isHoveringVisibilityButton()) {
+            super.extractSlotHighlightFront(gui);
+        }
     }
 
     @Override
@@ -233,14 +270,6 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
         LocalPlayer player = minecraft.player;
 
         if (player != null) {
-            int x;
-
-            if (OhmegaConfig.Client.side() == OhmegaConfig.Client.Service.Side.LEFT) {
-                x = leftPos + extraWidth;
-            } else {
-                x = leftPos;
-            }
-
             // Main inventory
             gui.blit(RenderPipelines.GUI_TEXTURED, InventoryScreen.INVENTORY_LOCATION, xOffsBg, topPos, 0, 0, 176, 166, 256, 256);
 
@@ -259,10 +288,12 @@ public final class AccessoryInventoryScreen extends AbstractContainerScreen<@Non
 
     @Override
     protected void extractTooltip(@NonNull GuiGraphicsExtractor gui, int mx, int my) {
-        if (menu.getCarried().isEmpty() && hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.Client.showHoverTooltip() && !hoveredSlot.hasItem()) {
-            gui.setTooltipForNextFrame(accSlot.getType().getTranslation(), mx, my);
-        } else {
-            super.extractTooltip(gui, mx, my);
+        if (!isHoveringVisibilityButton()) {
+            if (menu.getCarried().isEmpty() && hoveredSlot instanceof AccessorySlot accSlot && accSlot.getType().displayHoverText() && OhmegaConfig.Client.showHoverTooltip() && !hoveredSlot.hasItem()) {
+                gui.setTooltipForNextFrame(accSlot.getType().getTranslation(), mx, my);
+            } else {
+                super.extractTooltip(gui, mx, my);
+            }
         }
     }
 
