@@ -1,11 +1,13 @@
 package com.swacky.ohmega.event;
 
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.core.Direction;
@@ -83,6 +85,13 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void onPlayerRespawnPost(PlayerEvent.PlayerRespawnEvent event) {
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+
+        AccessoryHelper.getData(player).onAttach(player);
+    }
+
+    @SubscribeEvent
     public static void onPlayerTrack(PlayerEvent.StartTracking event) {
         if (event.getEntity() instanceof ServerPlayer tracker && event.getTarget() instanceof LivingEntity tracked) {
             CommonCallbacks.onLivingTrack(tracker, tracked);
@@ -104,8 +113,9 @@ public final class CommonEvents {
         Player player = event.getEntity();
         ItemStack stack = player.getItemInHand(event.getHand());
         Item item = stack.getItem();
+        Accessory accessory = Accessories.get(item);
 
-        if (AccessoryHelper.isAccessory(item) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+        if (accessory != null && !accessory.preferVanillaUse(stack)) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
             if (candidate.consumesAction()) {

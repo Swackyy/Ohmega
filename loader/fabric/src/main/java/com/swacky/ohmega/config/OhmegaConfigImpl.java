@@ -12,12 +12,16 @@ public final class OhmegaConfigImpl {
 
         private final ModConfigSpec.BooleanValue compatibilityMode;
         private final ModConfigSpec.EnumValue<ButtonStyle> buttonStyle;
-        private final ModConfigSpec.EnumValue<Side> side;
+        private final ModConfigSpec.EnumValue<FillDirection> fillDirection;
         private final ModConfigSpec.BooleanValue showHoverTooltip;
         private final ModConfigSpec.IntValue maxColumns;
         private final ModConfigSpec.IntValue maxColumnSlots;
         private final ModConfigSpec.IntValue maxColumnRenderSlots;
         private final ModConfigSpec.BooleanValue showTranslationToast;
+        private final ModConfigSpec.IntValue survivalExtensionX;
+        private final ModConfigSpec.IntValue survivalExtensionY;
+        private final ModConfigSpec.IntValue creativeExtensionX;
+        private final ModConfigSpec.IntValue creativeExtensionY;
 
         public Client() {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -28,9 +32,9 @@ public final class OhmegaConfigImpl {
             buttonStyle = builder
                     .comment(BUTTON_STYLE_DESCRIPTION)
                     .defineEnum(BUTTON_STYLE_KEY, ButtonStyle.DEFAULT);
-            side = builder
-                    .comment(INVENTORY_SIDE_DESCRIPTION)
-                    .defineEnum(INVENTORY_SIDE_KEY, INVENTORY_SIDE_DEFAULT);
+            fillDirection = builder
+                    .comment(FILL_DIRECTION_DESCRIPTION)
+                    .defineEnum(FILL_DIRECTION_KEY, FILL_DIRECTION_DEFAULT);
             showHoverTooltip = builder
                     .comment(SHOW_HOVER_TOOLTIP_DESCRIPTION)
                     .define(SHOW_HOVER_TOOLTIP_KEY, SHOW_HOVER_TOOLTIP_DEFAULT);
@@ -46,6 +50,18 @@ public final class OhmegaConfigImpl {
             showTranslationToast = builder
                     .comment(SHOW_TRANSLATION_TOAST_DESCRIPTION)
                     .define(SHOW_TRANSLATION_TOAST_KEY, SHOW_TRANSLATION_TOAST_DEFAULT);
+            survivalExtensionX = builder
+                    .comment(SURVIVAL_EXTENSION_X_DESCRIPTION)
+                    .defineInRange(SURVIVAL_EXTENSION_X_KEY, SURVIVAL_EXTENSION_X_DEFAULT, SURVIVAL_EXTENSION_X_MIN, SURVIVAL_EXTENSION_X_MAX);
+            survivalExtensionY = builder
+                    .comment(SURVIVAL_EXTENSION_Y_DESCRIPTION)
+                    .defineInRange(SURVIVAL_EXTENSION_Y_KEY, SURVIVAL_EXTENSION_Y_DEFAULT, SURVIVAL_EXTENSION_Y_MIN, SURVIVAL_EXTENSION_Y_MAX);
+            creativeExtensionX = builder
+                    .comment(CREATIVE_EXTENSION_X_DESCRIPTION)
+                    .defineInRange(CREATIVE_EXTENSION_X_KEY, CREATIVE_EXTENSION_X_DEFAULT, CREATIVE_EXTENSION_X_MIN, CREATIVE_EXTENSION_X_MAX);
+            creativeExtensionY = builder
+                    .comment(CREATIVE_EXTENSION_Y_DESCRIPTION)
+                    .defineInRange(CREATIVE_EXTENSION_Y_KEY, CREATIVE_EXTENSION_Y_DEFAULT, CREATIVE_EXTENSION_Y_MIN, CREATIVE_EXTENSION_Y_MAX);
             Client.spec = builder.build();
         }
 
@@ -64,8 +80,8 @@ public final class OhmegaConfigImpl {
         }
 
         @Override
-        public Side side() {
-            return side.get();
+        public FillDirection fillDirection() {
+            return fillDirection.get();
         }
 
         @Override
@@ -100,6 +116,26 @@ public final class OhmegaConfigImpl {
         }
 
         @Override
+        public int survivalExtensionX() {
+            return survivalExtensionX.get();
+        }
+
+        @Override
+        public int survivalExtensionY() {
+            return survivalExtensionY.get();
+        }
+
+        @Override
+        public int creativeExtensionX() {
+            return creativeExtensionX.get();
+        }
+
+        @Override
+        public int creativeExtensionY() {
+            return creativeExtensionY.get();
+        }
+
+        @Override
         public boolean isLoaded() {
             return spec.isLoaded();
         }
@@ -113,6 +149,7 @@ public final class OhmegaConfigImpl {
         private final ModConfigSpec.EnumValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour;
         private final ModConfigSpec.BooleanValue disableAccessoryTypes;
         private final ModConfigSpec.BooleanValue allowHideAccessories;
+        private final ModConfigSpec.ConfigValue<String> menuExtensionId;
 
         public Server() {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -132,6 +169,9 @@ public final class OhmegaConfigImpl {
             allowHideAccessories = builder
                     .comment(ALLOW_HIDE_ACCESSORIES_DESCRIPTION)
                     .define(ALLOW_HIDE_ACCESSORIES_KEY, ALLOW_HIDE_ACCESSORIES_DEFAULT);
+            menuExtensionId = builder
+                    .comment(MENU_EXTENSION_ID_DESCRIPTION)
+                    .define(MENU_EXTENSION_ID_KEY, MENU_EXTENSION_ID_DEFAULT);
             Server.spec = builder.build();
         }
 
@@ -162,6 +202,11 @@ public final class OhmegaConfigImpl {
         @Override
         public boolean allowHideAccessories() {
             return allowHideAccessories.get();
+        }
+
+        @Override
+        public String menuExtensionId() {
+            return menuExtensionId.get();
         }
 
         @Override

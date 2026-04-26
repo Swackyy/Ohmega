@@ -64,10 +64,10 @@ public final class ItItProvider extends OhmegaLangProvider {
                         LEGACY: Uno stile ispirato alla curios/baubles che renderizza il pulsante accanto al modello del giocatore nell'inventario
                         TAG: Un piccolo pulsante simile ad un tag che appare appena fuori dall'angolo superiore dell'inventario
                         HIDDEN: Non mostrerà alcun pulsante, si utilizzi il tasto dedicato invece per aprire l'inventario accessori""");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.INVENTORY_SIDE_KEY,
+        /*internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Lato Dell'Inventario",
-                "Il lato dell'inventario nel quale l'inventario accessori sarà posizionato");
+                "Il lato dell'inventario nel quale l'inventario accessori sarà posizionato");*/
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Mostra suggerimento quando passa il cursore del mouse",

@@ -3,12 +3,10 @@ package com.swacky.ohmega.client;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
-import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientEvents;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -22,7 +20,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
@@ -47,16 +44,15 @@ public final class OhmegaClientMain implements ClientModInitializer {
         // Receive
         ClientPlayNetworking.registerGlobalReceiver(SyncHiddenPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
-        ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, (packet, _) ->
-                OhmegaNetworking.S2C.handleSyncStacks(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncTypes(packet));
+        ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncStacks(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncUsePacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncUse(packet));
 
         // Registration
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);
-        MenuScreens.register(OhmegaMenus.getAccessoryMenu(), AccessoryInventoryScreen::new);
 
         // Rendering
         AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new);

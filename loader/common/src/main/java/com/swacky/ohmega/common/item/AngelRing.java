@@ -1,10 +1,10 @@
 package com.swacky.ohmega.common.item;
 
-import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.AccessoryModifiers;
-import com.swacky.ohmega.api.EquipContext;
-import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.IAccessory;
+import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;

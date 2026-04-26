@@ -1,10 +1,15 @@
 package com.swacky.ohmega.common.menu;
 
-import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.Accessory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -23,15 +28,30 @@ public final class AccessorySlot extends Slot {
     private final AccessoryData handler;
     private final AccessoryType type;
 
-    public AccessorySlot(Player player, AccessoryData handler, int index, int x, int y, AccessoryType type) {
+    public AccessorySlot(Player player, int index, int x, int y, AccessoryType type) {
         super(EMPTY_CONTAINER, index, x, y);
         this.player = player;
-        this.handler = handler;
+        this.handler = AccessoryHelper.getData(player);
         this.type = type;
     }
 
     public AccessoryType getType() {
         return type;
+    }
+
+    @Override
+    public boolean isActive() {
+        if (player.containerMenu instanceof IAccessoryMenu menu) {
+            if (!menu.isAccessoryExtensionVisible()) {
+                return false;
+            }
+        }
+
+        if (player.level().isClientSide()) {
+            return Client.areAccessoryExtensionWidgetsVisible();
+        }
+
+        return true;
     }
 
     @Override
@@ -41,10 +61,10 @@ public final class AccessorySlot extends Slot {
         }
 
         Item item = stack.getItem();
-        Accessory accessory = AccessoryHelper.getAccessory(item);
+        Accessory accessory = Accessories.get(item);
 
         if (accessory != null) {
-            return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE) && AccessoryHelper.getType(item) == type;
+            return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE);
         }
 
         return false;
@@ -55,16 +75,20 @@ public final class AccessorySlot extends Slot {
         ItemStack stack = getItem();
 
         if (stack.isEmpty()) {
-            return false;
+            return true;
         }
-
-        Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
 
         if (EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) {
             return false;
         }
 
-        return accessory.canUnequip(player, getItem());
+        Accessory accessory = Accessories.get(stack.getItem());
+
+        if (accessory != null) {
+            return accessory.canUnequip(player, getItem());
+        }
+
+        return super.mayPickup(player);
     }
 
     @Override
@@ -108,5 +132,17 @@ public final class AccessorySlot extends Slot {
     @Override
     public Identifier getNoItemIcon() {
         return type.getEmptySlotLocation();
+    }
+
+    private static class Client {
+        private static boolean areAccessoryExtensionWidgetsVisible() {
+            Screen screen = Minecraft.getInstance().screen;
+
+            if (screen instanceof IAccessoryScreen accessoryScreen) {
+                return accessoryScreen.areAccessoryExtensionWidgetsVisible();
+            }
+
+            return false;
+        }
     }
 }

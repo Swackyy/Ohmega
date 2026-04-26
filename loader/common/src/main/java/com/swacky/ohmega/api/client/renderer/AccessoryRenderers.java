@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.client.renderer;
 
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.common.item.Accessory;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.EntityType;
@@ -28,11 +28,11 @@ public final class AccessoryRenderers {
     }
 
     public static void register(Item item, RendererFactory factory) {
-        register(AccessoryHelper.getAccessory(item), factory);
+        register(Accessories.get(item), factory);
     }
 
     public static boolean registerNoRender(Item item, Predicate<EntityType<?>> type) {
-        return registerNoRender(AccessoryHelper.getAccessory(item), type);
+        return registerNoRender(Accessories.get(item), type);
     }
 
     public static boolean registerNoRender(Item item) {

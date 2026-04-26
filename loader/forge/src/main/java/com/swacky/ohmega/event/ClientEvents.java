@@ -2,15 +2,12 @@ package com.swacky.ohmega.event;
 
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
-import com.swacky.ohmega.client.screen.AccessoryInventoryScreen;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
@@ -28,10 +25,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public final class ClientEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new);
-            MenuScreens.register(OhmegaMenus.getAccessoryMenu(), AccessoryInventoryScreen::new);
-        });
+        event.enqueueWork(() -> AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new));
     }
 
     @SubscribeEvent

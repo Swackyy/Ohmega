@@ -64,10 +64,10 @@ public final class NlNlProvider extends OhmegaLangProvider {
                         LEGACY: Een curios/baubles geïnspireerde knop die naast het spelersmodel staat
                         TAG: Een kleine markering die in de bovenste hoek van de inventaris staat
                         HIDDEN: Zal verborgen blijven, gebruik de toegewezen toets om de inventaris te openen""");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.INVENTORY_SIDE_KEY,
+        /*internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Inventaris Zijde",
-                "De kant van de inventaris waar de accessoire inventaris geplaatst wordt");
+                "De kant van de inventaris waar de accessoire inventaris geplaatst wordt");*/
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Laat Zwevende Tooltips Zien",

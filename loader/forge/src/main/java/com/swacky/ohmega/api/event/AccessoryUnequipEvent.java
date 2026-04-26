@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.common.item.IAccessory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;

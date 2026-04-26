@@ -5,7 +5,7 @@ import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.CommonEvents;
-import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
+import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
@@ -38,7 +38,7 @@ public final class OhmegaMain implements ModInitializer {
         // Networking
         // Send
         // C2S
-        PayloadTypeRegistry.serverboundPlay().register(OpenAccessoryInventoryPacket.TYPE, OpenAccessoryInventoryPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SetExtensionVisiblePacket.TYPE, SetExtensionVisiblePacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(ReloadDataPacket.TYPE, ReloadDataPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(SetHiddenPacket.TYPE, SetHiddenPacket.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(UseAccessoryPacket.TYPE, UseAccessoryPacket.CODEC);
@@ -48,10 +48,10 @@ public final class OhmegaMain implements ModInitializer {
         PayloadTypeRegistry.clientboundPlay().register(SyncTypesPacket.TYPE, SyncTypesPacket.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncUsePacket.TYPE, SyncUsePacket.CODEC);
         // Receive
-        ServerPlayNetworking.registerGlobalReceiver(OpenAccessoryInventoryPacket.TYPE, (_, context) ->
-                OhmegaNetworking.C2S.handleOpenAccessoryInventory(context.player()));
         ServerPlayNetworking.registerGlobalReceiver(ReloadDataPacket.TYPE, (_, context) ->
                 OhmegaNetworking.C2S.handleReloadContainer(context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(SetExtensionVisiblePacket.TYPE, (packet, context) ->
+                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, context.player()));
         ServerPlayNetworking.registerGlobalReceiver(SetHiddenPacket.TYPE, (packet, context) ->
                 OhmegaNetworking.C2S.handleSetHidden(packet, context.player()));
         ServerPlayNetworking.registerGlobalReceiver(UseAccessoryPacket.TYPE, (packet, context) ->

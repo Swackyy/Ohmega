@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.common.item.SoundData;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 

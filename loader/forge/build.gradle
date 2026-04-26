@@ -22,6 +22,7 @@ minecraft {
             environment "MOD_CLASSES": "{source_roots}"
             systemProperty "eventbus.api.strictRuntimeChecks", "true"
             systemProperty "forge.enabledGameTestNamespaces", modId
+            systemProperty "mixin.debug.export", "true"
             workingDir.convention layout.projectDirectory.dir("run")
         }
 

@@ -64,10 +64,10 @@ public final class EsEsProvider extends OhmegaLangProvider {
                         ANTIGUO: Un botón inspirado en curios/baubles que se renderiza al lado del modelo en el inventario del jugador
                         ETIQUETA: Un botón pequeño como una etiqueta en la esquina superior del inventario
                         OCULTO: No se va a mostrar, usa una tecla asignada para abrir el inventario de accesorios""");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.INVENTORY_SIDE_KEY,
+        /*internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Lado del Inventario",
-                "El lado del inventario en el que el accesorio será colocado");
+                "El lado del inventario en el que el accesorio será colocado");*/
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Hacer aparecer una pista de la utilidad al tener el ratón encima",

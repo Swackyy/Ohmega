@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.common.item.IAccessory;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.LivingEntity;

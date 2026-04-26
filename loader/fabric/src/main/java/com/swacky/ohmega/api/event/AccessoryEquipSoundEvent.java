@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.common.item.SoundData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.ItemStack;

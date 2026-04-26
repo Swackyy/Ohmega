@@ -34,7 +34,7 @@ public final class ClientEvents {
             ClientPlayConnectionEvents.JOIN.register(ClientEvents::onJoinWorld);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
         } else {
-            throw new IllegalStateException("Attempted to bootstrap " + ClientEvents.class.getName() + " multiple times");
+            throw new IllegalStateException("Attempted to bootstrap " + ClientEvents.class + " multiple times");
         }
     }
 

@@ -1,6 +1,9 @@
 package com.swacky.ohmega.client;
 
+import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
+import com.swacky.ohmega.client.screen.DefaultScreenExtension;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.config.OhmegaConfig;
 import org.apache.logging.log4j.LogManager;
@@ -27,14 +30,18 @@ public final class OhmegaClient {
 
     public static void bootstrap() {
         if (!bootstrapped) {
+            // Bootstrap services
             AccessoryRenderStateData.bootstrap();
             OhmegaBinds.bootstrap();
             OhmegaConfig.Client.bootstrap();
             LOGGER.info("Successfully loaded {} client services", NUM_SERVICES);
 
+            // Register screen extension
+            AccessoryScreenExtensions.register(Ohmega.INTERFACE_ID, DefaultScreenExtension::new);
+
             bootstrapped = true;
         } else {
-            throw new IllegalStateException("Attempted to bootstrap " + OhmegaClient.class.getName() + " multiple times");
+            throw new IllegalStateException("Attempted to bootstrap " + OhmegaClient.class + " multiple times");
         }
     }
 }

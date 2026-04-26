@@ -1,0 +1,78 @@
+package com.swacky.ohmega.api.common.menu;
+
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+// todo: clear added slots and replace with new ones on config change
+// todo: see if we can move client position related code to IAccessoryScreen completely
+/**
+ * Implemented by {@link AbstractContainerMenu}s to allow them to have an accessory extension.
+ * See {@link AccessoryMenuExtensions} for crucial implementation details
+ * <p>
+ * This also contains some utility methods which you <strong>should</strong> call to implement complete functionality,
+ * failing to call them may cause your menu to not have an extension applied
+ * <p>
+ * By default, this is applied by Ohmega via mixin to:
+ * <ul>
+ *     <li>{@link CreativeModeInventoryScreen.ItemPickerMenu}</li>
+ *     <li>{@link InventoryMenu}</li>
+ * </ul>
+ */
+public interface IAccessoryMenu {
+    /**
+     * Retrieve the accessory extension bound to this menu.
+     * If using this, you should almost always check for nullability
+     * @return bound accessory extension
+     */
+    @Nullable AccessoryMenuExtension getAccessoryExtension();
+
+    /**
+     * Set the accessory extension bound to this menu.
+     * This is called in {@link AccessoryMenuExtensions#onConstruct(AbstractContainerMenu, Player)} (which you should be calling) for you
+     * @param extension accessory extension to set to
+     */
+    void setAccessoryExtension(@NonNull AccessoryMenuExtension extension);
+
+    /**
+     * The x-coordinate, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed
+     * @return relative x-coordinate to place the extension
+     */
+    int getAccessoryExtensionX();
+
+    /**
+     * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed
+     * @return relative y-coordinate to place the extension
+     */
+    int getAccessoryExtensionY();
+
+    /**
+     * Determines whether the extension should be shown
+     * @return {@code true} if the accessory extension should be shown, {@code false} otherwise
+     */
+    default boolean isAccessoryExtensionVisible() {
+        AccessoryMenuExtension extension = getAccessoryExtension();
+
+        if (extension != null) {
+            return extension.isVisible();
+        }
+
+        return false;
+    }
+
+    /**
+     * Set the visibility of the extension
+     * @param value {@code true} to make the extension visible, {@code false} to hide it
+     */
+    default void setAccessoryExtensionVisible(boolean value) {
+        AccessoryMenuExtension extension = getAccessoryExtension();
+
+        if (extension != null) {
+            extension.setVisible(value);
+        }
+    }
+}

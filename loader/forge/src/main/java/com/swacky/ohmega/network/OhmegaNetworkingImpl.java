@@ -1,7 +1,7 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
+import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
@@ -30,8 +30,8 @@ public final class OhmegaNetworkingImpl {
                 .simpleChannel();
 
         // C2S
-        net.play().serverbound().addMain(OpenAccessoryInventoryPacket.class, OpenAccessoryInventoryPacket.CODEC, (_, context) ->
-                OhmegaNetworking.C2S.handleOpenAccessoryInventory(Objects.requireNonNull(context.getSender())));
+        net.play().serverbound().addMain(SetExtensionVisiblePacket.class, SetExtensionVisiblePacket.CODEC, (packet, context) ->
+                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(ReloadDataPacket.class, ReloadDataPacket.CODEC, (_, context) ->
                 OhmegaNetworking.C2S.handleReloadContainer(Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(SetHiddenPacket.class, SetHiddenPacket.CODEC, (packet, context) ->

@@ -2,12 +2,13 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.command.ClearCommand;
-import com.swacky.ohmega.common.command.InfoCommand;
-import com.swacky.ohmega.common.command.ItemCommand;
-import com.swacky.ohmega.common.command.ItemsCommand;
-import com.swacky.ohmega.common.command.CommandHelper;
-import com.swacky.ohmega.common.command.TypeCommand;
+import com.swacky.ohmega.common.command.node.ClearCommand;
+import com.swacky.ohmega.common.command.node.ExtensionsCommand;
+import com.swacky.ohmega.common.command.node.InfoCommand;
+import com.swacky.ohmega.common.command.node.ItemCommand;
+import com.swacky.ohmega.common.command.node.ItemsCommand;
+import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.common.command.node.TypesCommand;
 import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -68,6 +69,8 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching items were found in entity %s's accessory inventory");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Removed %s item(s) from %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Removed %s item(s) from entity %s's accessory inventory");
+        // Extensions
+        builder.add(ExtensionsCommand.ROOT_FEEDBACK, "There are %s accessory extensions recognised by Ohmega: %s");
         // Info
         builder.add(InfoCommand.CROWDIN_FEEDBACK, "Consider translating Ohmega on Crowdin by clicking this message!");
         builder.add(InfoCommand.DISCORD_FEEDBACK, "If you need help with the API or want to send feedback, click this message to join Ohmega's Discord server");
@@ -80,52 +83,12 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Entity %s has the following items in their accessory inventory: %s");
+        builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Entity %s has no items in their accessory inventory");
         // Type
-        builder.add(TypeCommand.LIST_FEEDBACK, "There are %s accessory type(s) recognised on this world: %s");
-        builder.add(TypeCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties:%s");
+        builder.add(TypesCommand.LIST_FEEDBACK, "There are %s accessory type(s) recognised on this world: %s");
+        builder.add(TypesCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties:%s");
 
         // Config
-        // ConfigurationScreen Forge port UI translations
-        // Titles
-        internalHelper.addConfigPort("title", "%s Configuration");
-        internalHelper.addConfigPortTitle("client", "%s Client Configuration");
-        internalHelper.addConfigPortTitle("server", "%s Server Configuration");
-        internalHelper.addConfigPortTitle("common", "%s Common Configuration");
-        // Types
-        internalHelper.addConfigPortType("client", "Client Settings");
-        internalHelper.addConfigPortType("server", "Common Settings");
-        internalHelper.addConfigPortType("common", "Server Settings");
-        // Misc
-        internalHelper.addConfigPort("notonline", "Settings in here are determined by the server and cannot be changed while online.");
-        internalHelper.addConfigPort("notlan", "Settings in here cannot be edited while your game is open to LAN. Please return to the main menu and load the world again.");
-        internalHelper.addConfigPort("notloaded", "Settings in here are only available while a world is loaded.");
-        internalHelper.addConfigPort("unsupportedelement", "This value cannot be edited in the UI. Please contact the mod author about providing a custom UI for it.");
-        internalHelper.addConfigPort("longstring", "This value is too long to be edited in the UI. Please edit it in the config file.");
-        internalHelper.addConfigPort("section", "%s...");
-        internalHelper.addConfigPort("sectionedit", "Edit");
-        internalHelper.addConfigPort("breadcrumb.order", "%1$s %2$s %3$s");
-        internalHelper.addConfigPort("breadcrumb.separator", ">");
-        internalHelper.addConfigPort("listelement", "%s:");
-        internalHelper.addConfigPort("undo", "Undo");
-        internalHelper.addConfigPort("undo.tooltip", "Reverts changes on this screen only.");
-        internalHelper.addConfigPort("reset", "Reset");
-        internalHelper.addConfigPort("reset.tooltip", "Reverts everything on this screen to its default value.");
-        internalHelper.addConfigPort("newlistelement", "+");
-        internalHelper.addConfigPort("listelementup", "\u23f6");
-        internalHelper.addConfigPort("listelementdown", "\u23f7");
-        internalHelper.addConfigPort("listelementremove", "\u274c");
-        internalHelper.addConfigPort("rangetooltip", "Range: %s");
-        internalHelper.addConfigPort("filenametooltip", "File: \"%s\"");
-        internalHelper.addConfigPort("common", "Common Options");
-        internalHelper.addConfigPort("client", "Client Options");
-        internalHelper.addConfigPort("server", "Server Options");
-        internalHelper.addConfigPort("restart.game.title", "Minecraft needs to be restarted");
-        internalHelper.addConfigPort("restart.game.text", "One or more of the configuration option that were changed will only take effect when the game is started.");
-        internalHelper.addConfigPort("restart.server.title", "World needs to be reloaded");
-        internalHelper.addConfigPort("restart.server.text", "One or more of the configuration option that were changed will only take effect when the world is reloaded.");
-        internalHelper.addConfigPort("restart.return", "Ignore");
-        internalHelper.addConfigPort("restart.return.tooltip", "Your changes will have no effect until you restart!");
-
         internalHelper.addConfigTitle("Ohmega Config");
 
         // Client config
@@ -139,9 +102,9 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 "Button Style",
                 OhmegaConfig.Client.Service.BUTTON_STYLE_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.INVENTORY_SIDE_KEY,
+                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Inventory Side",
-                OhmegaConfig.Client.Service.INVENTORY_SIDE_DESCRIPTION);
+                OhmegaConfig.Client.Service.FILL_DIRECTION_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Show Hover Tooltip",
@@ -187,5 +150,46 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Allow Hide Accessories",
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_DESCRIPTION);
+
+        // ConfigurationScreen Forge port UI translations
+        // Titles
+        internalHelper.addConfigPort("title", "%s Configuration");
+        internalHelper.addConfigPortTitle("client", "%s Client Configuration");
+        internalHelper.addConfigPortTitle("server", "%s Server Configuration");
+        internalHelper.addConfigPortTitle("common", "%s Common Configuration");
+        // Types
+        internalHelper.addConfigPortType("client", "Client Settings");
+        internalHelper.addConfigPortType("server", "Common Settings");
+        internalHelper.addConfigPortType("common", "Server Settings");
+        // Misc
+        internalHelper.addConfigPort("notonline", "Settings in here are determined by the server and cannot be changed while online.");
+        internalHelper.addConfigPort("notlan", "Settings in here cannot be edited while your game is open to LAN. Please return to the main menu and load the world again.");
+        internalHelper.addConfigPort("notloaded", "Settings in here are only available while a world is loaded.");
+        internalHelper.addConfigPort("unsupportedelement", "This value cannot be edited in the UI. Please contact the mod author about providing a custom UI for it.");
+        internalHelper.addConfigPort("longstring", "This value is too long to be edited in the UI. Please edit it in the config file.");
+        internalHelper.addConfigPort("section", "%s...");
+        internalHelper.addConfigPort("sectionedit", "Edit");
+        internalHelper.addConfigPort("breadcrumb.order", "%1$s %2$s %3$s");
+        internalHelper.addConfigPort("breadcrumb.separator", ">");
+        internalHelper.addConfigPort("listelement", "%s:");
+        internalHelper.addConfigPort("undo", "Undo");
+        internalHelper.addConfigPort("undo.tooltip", "Reverts changes on this screen only.");
+        internalHelper.addConfigPort("reset", "Reset");
+        internalHelper.addConfigPort("reset.tooltip", "Reverts everything on this screen to its default value.");
+        internalHelper.addConfigPort("newlistelement", "+");
+        internalHelper.addConfigPort("listelementup", "\u23f6");
+        internalHelper.addConfigPort("listelementdown", "\u23f7");
+        internalHelper.addConfigPort("listelementremove", "\u274c");
+        internalHelper.addConfigPort("rangetooltip", "Range: %s");
+        internalHelper.addConfigPort("filenametooltip", "File: \"%s\"");
+        internalHelper.addConfigPort("common", "Common Options");
+        internalHelper.addConfigPort("client", "Client Options");
+        internalHelper.addConfigPort("server", "Server Options");
+        internalHelper.addConfigPort("restart.game.title", "Minecraft needs to be restarted");
+        internalHelper.addConfigPort("restart.game.text", "One or more of the configuration option that were changed will only take effect when the game is started.");
+        internalHelper.addConfigPort("restart.server.title", "World needs to be reloaded");
+        internalHelper.addConfigPort("restart.server.text", "One or more of the configuration option that were changed will only take effect when the world is reloaded.");
+        internalHelper.addConfigPort("restart.return", "Ignore");
+        internalHelper.addConfigPort("restart.return.tooltip", "Your changes will have no effect until you restart!");
     }
 }

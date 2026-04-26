@@ -1,10 +1,10 @@
 package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -32,7 +32,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
             SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
 
             for (ItemStack stack : data.stacks()) {
-                AccessoryRenderers.RendererFactory factory = AccessoryRenderers.getFactoryFor(AccessoryHelper.getAccessory(stack.getItem()));
+                AccessoryRenderers.RendererFactory factory = AccessoryRenderers.getFactoryFor(Accessories.get(stack.getItem()));
 
                 if (factory != null) {
                     AccessoryRenderContext context = new AccessoryRenderContext(

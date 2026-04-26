@@ -3,14 +3,27 @@
   "package": "com.swacky.ohmega.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractContainerMenuMixin",
     "EnchantmentHelperMixin",
+    "InventoryMenuMixin",
     "PiglinAiMixin",
     "PowderSnowBlockMixin",
+    "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin"
   ],
   "client": [
+    "client.AbstractContainerScreenMixin",
+    "client.AbstractRecipeBookScreenMixin",
+    "client.CreativeModeInventoryScreenMixin",
+    "client.InventoryScreenMixin",
+    "client.ItemPickerMenuMixin",
     "client.MinecraftMixin",
-    "client.MultiPlayerGameModeMixin"
+    "client.MultiPlayerGameModeMixin",
+    "client.RecipeBookComponentMixin",
+    "client.ScreenMixin"
   ],
-  "minVersion": "0.8.5"
+  "minVersion": "0.8.5",
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
 }

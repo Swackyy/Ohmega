@@ -1,9 +1,9 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.AccessoryModifiers;
-import com.swacky.ohmega.api.EquipContext;
-import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;

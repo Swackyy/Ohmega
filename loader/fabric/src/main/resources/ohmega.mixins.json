@@ -6,7 +6,7 @@
     "LivingEntityMixin"
   ],
   "client": [
-    "client.AbstractContainerScreenMixin",
+    "client.Fabric_AbstractContainerScreenMixin",
     "client.KeyBindsList$KeyEntryMixin",
     "client.KeyboardHandlerMixin",
     "client.LivingEntityRendererMixin"

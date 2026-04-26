@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -25,8 +25,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+// todo: see if a better injection can be done here
 @Mixin(EnchantmentHelper.class)
 abstract class EnchantmentHelperMixin {
+    @Unique
+    private static final EquipmentSlot[] HUMANOID_ARMOUR = new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+
     @Inject(
             method = "getRandomItemWith",
             at = @At(
@@ -71,9 +75,6 @@ abstract class EnchantmentHelperMixin {
             }
         }
     }
-
-    @Unique
-    private static final EquipmentSlot[] HUMANOID_ARMOUR = new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
 
     @Unique
     private static boolean ohmega$checkSlots(List<EquipmentSlotGroup> groups) {

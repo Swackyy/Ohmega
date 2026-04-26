@@ -1,11 +1,13 @@
 package com.swacky.ohmega.event;
 
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
-import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
+import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -17,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -77,6 +78,13 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void onPlayerRespawnPost(PlayerEvent.PlayerRespawnEvent event) {
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+
+        AccessoryHelper.getData(player).onAttach(player);
+    }
+
+    @SubscribeEvent
     public static void onPlayerTrack(PlayerEvent.StartTracking event) {
         if (event.getEntity() instanceof ServerPlayer tracker && event.getTarget() instanceof LivingEntity tracked) {
             CommonCallbacks.onLivingTrack(tracker, tracked);
@@ -92,10 +100,10 @@ public final class CommonEvents {
     public static void onRegisterNetwork(RegisterPayloadHandlersEvent event) {
         event.registrar("1.0")
                 .playToServer(
-                        OpenAccessoryInventoryPacket.TYPE,
-                        OpenAccessoryInventoryPacket.CODEC,
-                        new MainThreadPayloadHandler<>((_, context) ->
-                                OhmegaNetworking.C2S.handleOpenAccessoryInventory((ServerPlayer) context.player())))
+                        SetExtensionVisiblePacket.TYPE,
+                        SetExtensionVisiblePacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, context) ->
+                                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, (ServerPlayer) context.player())))
                 .playToServer(
                         ReloadDataPacket.TYPE,
                         ReloadDataPacket.CODEC,
@@ -135,16 +143,16 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddServerReloadListenersEvent event) {
-        event.addListener(Ohmega.RELOAD_LISTENER_ID, AccessoryTypeManager.getInstance());
+        event.addListener(Ohmega.id("accessory_type_manager"), AccessoryTypeManager.getInstance());
     }
 
     @SubscribeEvent
     public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
         ItemStack stack = player.getItemInHand(event.getHand());
-        Item item = stack.getItem();
+        Accessory accessory = Accessories.get(stack.getItem());
 
-        if (AccessoryHelper.isAccessory(item) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+        if (accessory != null && !accessory.preferVanillaUse(stack)) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
             if (candidate.consumesAction()) {

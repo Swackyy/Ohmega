@@ -6,8 +6,8 @@
     "MinecraftServerMixin"
   ],
   "client": [
-    "client.AbstractContainerScreenMixin",
-    "client.LivingEntityRendererMixin"
+    "client.LivingEntityRendererMixin",
+    "client.NeoForge_AbstractContainerScreenMixin"
   ],
   "minVersion": "0.8.5"
 }

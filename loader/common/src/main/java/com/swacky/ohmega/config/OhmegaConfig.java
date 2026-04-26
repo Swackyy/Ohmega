@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+// todo: order elements alphabetically
 // Descriptions written in the config file are all in English
 public final class OhmegaConfig {
     public static final class Client {
         private static final Service IMPL = OhmegaClient.loadService(Service.class);
 
-        public static void bootstrap() {}
+        public static void bootstrap() {
+        }
 
         public static boolean compatibilityMode() {
             return IMPL.compatibilityMode();
@@ -25,8 +27,8 @@ public final class OhmegaConfig {
             return IMPL.buttonStyle();
         }
 
-        public static Service.Side side() {
-            return IMPL.side();
+        public static Service.FillDirection fillDirection() {
+            return IMPL.fillDirection();
         }
 
         public static boolean showHoverTooltip() {
@@ -53,6 +55,22 @@ public final class OhmegaConfig {
             IMPL.setShowTranslationToast(value);
         }
 
+        public static int survivalExtensionX() {
+            return IMPL.survivalExtensionX();
+        }
+
+        public static int survivalExtensionY() {
+            return IMPL.survivalExtensionY();
+        }
+
+        public static int creativeExtensionX() {
+            return IMPL.creativeExtensionX();
+        }
+
+        public static int creativeExtensionY() {
+            return IMPL.creativeExtensionY();
+        }
+
         public static boolean isLoaded() {
             return IMPL.isLoaded();
         }
@@ -68,13 +86,14 @@ public final class OhmegaConfig {
                     Style of the accessory inventory button
                     DEFAULT: The normal Ohmega button style
                     LEGACY: A curios/baubles inspired button that renders next to the inventory player model
-                    TAG: A small tag-like button appearing just off the top corner of the inventory
+                    TAG_LEFT: A small tag-like button appearing just off the top left corner of the inventory
+                    TAG_RIGHT: A small tag-like button appearing just off the top right corner of the inventory
                     HIDDEN: Will not show, use the dedicated keybind to open the accessory inventory instead""";
             // - - -
-            String INVENTORY_SIDE_KEY = "inventorySide";
-            String INVENTORY_SIDE_DESCRIPTION = """
-                    The side of the inventory that the accessory inventory will be placed""";
-            Side INVENTORY_SIDE_DEFAULT = Side.RIGHT;
+            String FILL_DIRECTION_KEY = "fillDirection";
+            String FILL_DIRECTION_DESCRIPTION = """
+                    The direction that accessory slots will fill up in""";
+            FillDirection FILL_DIRECTION_DEFAULT = FillDirection.RIGHT;
             // - - -
             String SHOW_HOVER_TOOLTIP_KEY = "showHoverTooltip";
             String SHOW_HOVER_TOOLTIP_DESCRIPTION = """
@@ -109,12 +128,40 @@ public final class OhmegaConfig {
                     This is automatically set to false after the first pop-up, making it only display once""";
             boolean SHOW_TRANSLATION_TOAST_DEFAULT = true;
             // - - -
+            String SURVIVAL_EXTENSION_X_KEY = "survivalExtensionX";
+            String SURVIVAL_EXTENSION_X_DESCRIPTION = """
+                    The x-coordinate of the accessory extension in the survival inventory, relative to the main segment of the current screen with left and right being negative and positive X respectively""";
+            int SURVIVAL_EXTENSION_X_DEFAULT = 178;
+            int SURVIVAL_EXTENSION_X_MIN = -2048;
+            int SURVIVAL_EXTENSION_X_MAX = 2048;
+            // - - -
+            String SURVIVAL_EXTENSION_Y_KEY = "survivalExtensionY";
+            String SURVIVAL_EXTENSION_Y_DESCRIPTION = """
+                    The y-coordinate of the accessory extension in the survival inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
+            int SURVIVAL_EXTENSION_Y_DEFAULT = 24;
+            int SURVIVAL_EXTENSION_Y_MIN = -2048;
+            int SURVIVAL_EXTENSION_Y_MAX = 2048;
+            // - - -
+            String CREATIVE_EXTENSION_X_KEY = "creativeExtensionX";
+            String CREATIVE_EXTENSION_X_DESCRIPTION = """
+                    The x-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with left and right being negative and positive X respectively""";
+            int CREATIVE_EXTENSION_X_DEFAULT = 196;
+            int CREATIVE_EXTENSION_X_MIN = -2048;
+            int CREATIVE_EXTENSION_X_MAX = 2048;
+            // - - -
+            String CREATIVE_EXTENSION_Y_KEY = "creativeExtensionY";
+            String CREATIVE_EXTENSION_Y_DESCRIPTION = """
+                    The y-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
+            int CREATIVE_EXTENSION_Y_DEFAULT = -2;
+            int CREATIVE_EXTENSION_Y_MIN = -2048;
+            int CREATIVE_EXTENSION_Y_MAX = 2048;
+            // - - -
 
             boolean compatibilityMode();
 
             ButtonStyle buttonStyle();
 
-            Side side();
+            FillDirection fillDirection();
 
             boolean showHoverTooltip();
 
@@ -128,95 +175,37 @@ public final class OhmegaConfig {
 
             void setShowTranslationToast(boolean value);
 
+            int survivalExtensionX();
+
+            int survivalExtensionY();
+
+            int creativeExtensionX();
+
+            int creativeExtensionY();
+
             boolean isLoaded();
 
             enum ButtonStyle {
-                DEFAULT(new Builder()
-                        .texture("default")
-                        .both(new Data(132, 61, 20, 18))),
-                LEGACY(new Builder()
-                        .texture("legacy")
-                        .both(new Data(27, 9, 9, 9))),
-                TAG(new Builder()
-                        .texture("tag")
-                        .left(new Data(-11, 8, 14, 8))
-                        .right(new Data(173, 8, 14, 8))
-                        .noHoverHighlight()),
-                HIDDEN(new Builder()
-                        .both(new Data(0, 0, 0, 0)));
+                DEFAULT(20, 18, "default", true),
+                LEGACY(9, 9, "legacy", true),
+                TAG_LEFT(14, 8, "tag_left", false),
+                TAG_RIGHT(14, 8, "tag_right", false),
+                HIDDEN(0, 0, null, false);
 
-                private final Identifier textureLocation;
-                private final Data left;
-                private final Data right;
-                private final boolean highlightWhenHovered;
+                public final int width;
+                public final int height;
+                public final Identifier textureLocation;
+                public final boolean highlightWhenHovered;
 
-                ButtonStyle(Builder builder) {
-                    if (builder.left == null || builder.right == null) {
-                        throw new NullPointerException("ButtonStyle builder has not been properly configured. Ensure both left and right data are set");
-                    }
-
-                    this.textureLocation = builder.textureLocation;
-                    this.left = builder.left;
-                    this.right = builder.right;
-                    this.highlightWhenHovered = builder.highlightWhenHovered;
-                }
-
-                public Identifier getTextureLocation() {
-                    return textureLocation;
-                }
-
-                public Data getData() {
-                    return Client.side() == Side.LEFT ? left : right;
-                }
-
-                public boolean highlightWhenHovered() {
-                    return highlightWhenHovered;
-                }
-
-                public record Data(int x, int y, int width, int height) {}
-
-                private static final class Builder {
-                    private Identifier textureLocation;
-                    private Data left;
-                    private Data right;
-                    private boolean highlightWhenHovered = true;
-
-                    private Builder() {}
-
-                    private Builder texture(String name) {
-                        this.textureLocation = Ohmega.id("textures/gui/container/accessory_inventory/inventory_buttons/" + name + ".png");
-
-                        return this;
-                    }
-
-                    private Builder left(Data left) {
-                        this.left = left;
-
-                        return this;
-                    }
-
-                    private Builder right(Data right) {
-                        this.right = right;
-
-                        return this;
-                    }
-
-                    private Builder both(Data data) {
-                        left = data;
-                        right = data;
-
-                        return this;
-                    }
-
-                    private Builder noHoverHighlight() {
-                        highlightWhenHovered = false;
-
-                        return this;
-                    }
+                ButtonStyle(int width, int height, String textureName, boolean highlightWhenHovered) {
+                    this.width = width;
+                    this.height = height;
+                    this.textureLocation = Ohmega.id("textures/gui/container/accessory_inventory/inventory_buttons/" + textureName + ".png");
+                    this.highlightWhenHovered = highlightWhenHovered;
                 }
             }
 
-            enum Side {
+            enum FillDirection {
                 LEFT,
                 RIGHT
             }
@@ -248,6 +237,10 @@ public final class OhmegaConfig {
 
         public static boolean allowHideAccessories() {
             return IMPL.allowHideAccessories();
+        }
+
+        public static String menuExtensionId() {
+            return IMPL.menuExtensionId();
         }
 
         public static boolean isLoaded() {
@@ -300,6 +293,11 @@ public final class OhmegaConfig {
                     Will prevent players from toggling visibility on their accessories if false, so that they always render""";
             boolean ALLOW_HIDE_ACCESSORIES_DEFAULT = true;
             // - - -
+            String MENU_EXTENSION_ID_KEY = "menuExtensionId";
+            String MENU_EXTENSION_ID_DESCRIPTION = """
+                    The menu extension type to use, other mods can register custom accessory menu extensions, which can be chosen here""";
+            String MENU_EXTENSION_ID_DEFAULT = Ohmega.INTERFACE_ID.toString();
+            // - - -
 
             List<? extends String> slotTypes();
 
@@ -310,6 +308,8 @@ public final class OhmegaConfig {
             boolean disableAccessoryTypes();
 
             boolean allowHideAccessories();
+
+            String menuExtensionId();
 
             boolean isLoaded();
 

@@ -1,11 +1,12 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.common.item.Accessory;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,9 +25,9 @@ abstract class ServerPlayerGameModeMixin {
         InteractionResult original = stack.use(level, player, hand);
 
         if (!original.consumesAction()) {
-            Item item = stack.getItem();
+            Accessory accessory = Accessories.get(stack.getItem());
 
-            if (AccessoryHelper.isAccessory(item) && AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+            if (accessory != null && accessory.preferVanillaUse(stack)) {
                 InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
                 if (candidate.consumesAction()) {

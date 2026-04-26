@@ -5,11 +5,14 @@ import com.google.common.primitives.Booleans;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.EquipContext;
-import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.SoundData;
+import com.swacky.ohmega.api.common.menu.AccessoryMenuExtensions;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.common.menu.TemporarySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -21,6 +24,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
@@ -45,7 +50,7 @@ public final class AccessoryData {
     ).apply(builder, AccessoryData::new));
 
     private NonNullList<ItemStack> stacks;
-    private boolean[] changed;
+    private boolean[] changed; // todo: may now be unneeded
     private boolean[] hidden;
 
     private AccessoryData(NonNullList<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
@@ -75,7 +80,7 @@ public final class AccessoryData {
         }
 
         Item item = stack.getItem();
-        Accessory accessory = AccessoryHelper.getAccessory(item);
+        Accessory accessory = Accessories.get(item);
 
         if (accessory != null && (AccessoryHelper.compatibleWith(entity, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
             return
@@ -95,7 +100,7 @@ public final class AccessoryData {
     }
 
     public void doUnequip(LivingEntity entity, ItemStack stack) {
-        Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+        Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null) {
             accessory.onUnequip(entity, stack);
@@ -105,7 +110,7 @@ public final class AccessoryData {
     }
 
     private void doEquip(LivingEntity entity, ItemStack stack, int index, EquipContext context) {
-        Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+        Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
@@ -163,7 +168,13 @@ public final class AccessoryData {
     }
 
     public ItemStack remove(LivingEntity entity, int index, int amount) {
-        ItemStack stack = ContainerHelper.removeItem(stacks, index, amount);
+        ItemStack stack;
+
+        if (amount < 0) {
+            stack = ContainerHelper.takeItem(stacks, index);
+        } else {
+            stack = ContainerHelper.removeItem(stacks, index, amount);
+        }
 
         if (!ItemStack.isSameItemSameComponents(getStackInSlot(index), stack)) {
             doUnequip(entity, stack);
@@ -246,7 +257,7 @@ public final class AccessoryData {
 
     private void syncAllData(ServerPlayer receiver, int entityId, int[] indexes) {
         OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(entityId, indexes, hidden));
-        OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entityId, indexes, stacks, false));
+        OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entityId, indexes, stacks, true));
     }
 
     public void syncAllData(ServerPlayer receiver, int entityId) {
@@ -260,7 +271,7 @@ public final class AccessoryData {
         syncAllData(receiver, entityId, allIndexes);
     }
 
-    // todo: im confused
+    // todo: call on neoforge player respawn
     public void onAttach(ServerPlayer player) {
         // If the server config gets de-synced, this fixes it instead of throwing
         reload(player);
@@ -280,27 +291,45 @@ public final class AccessoryData {
 
         // Initial load syncing
         syncAllData(player, player.getId(), allIndexes);
+
+        // Rebuild slots for InventoryMenu
+        InventoryMenu menu = player.inventoryMenu;
+        NonNullList<Slot> slots = menu.slots;
+        Slot[] toRemove = new Slot[AccessoryHelper.getSlotTypes().size()];
+        int cursor = 0;
+
+        for (Slot slot : slots) {
+            if (slot instanceof TemporarySlot) {
+                toRemove[cursor++] = slot;
+            }
+        }
+
+        for (Slot slot : toRemove) {
+            slots.remove(slot);
+        }
+
+        AccessoryMenuExtensions.onConstruct(menu, player);
+        menu.sendAllDataToRemote();
     }
 
     public void tick(LivingEntity entity) {
         for (int i = 0; i < size(); i++) {
             ItemStack stack = getStackInSlot(i);
-            Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+            Accessory accessory = Accessories.get(stack.getItem());
 
             if (accessory != null) {
                 accessory.accessoryTick(entity, stack);
             }
         }
 
-        // Syncing
-        // todo: move this to an on demand approach
+        // todo: move to an on demand system
         if (entity.level() instanceof ServerLevel level) {
             List<Integer> indexes = new ArrayList<>();
             List<ItemStack> stacks = new ArrayList<>();
 
             for (int i = 0; i < size(); i++) {
                 ItemStack stack = getStackInSlot(i);
-                Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+                Accessory accessory = Accessories.get(stack.getItem());
 
                 if (changed[i] || (accessory != null && accessory.autoSync(stack))) {
                     indexes.add(i);
@@ -309,6 +338,7 @@ public final class AccessoryData {
                     changed[i] = false;
                 }
             }
+
 
             if (!indexes.isEmpty()) {
                 for (ServerPlayer receiver : level.getPlayers(_ -> true)) {
@@ -320,7 +350,8 @@ public final class AccessoryData {
 
     public void reload(LivingEntity entity) {
         int oldSize = Math.min(changed.length, size());
-        int newSize = AccessoryHelper.getSlotTypes().size();
+        ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
+        int newSize = types.size();
 
         if (newSize > oldSize) {
             // Grow data
@@ -343,10 +374,8 @@ public final class AccessoryData {
         }
 
         // Drop invalid stacks (mismatched accessory types and non-accessory items)
-        ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
-
         for (int i = 0; i < size(); i++) {
-            if (slotTypes.get(i) != AccessoryHelper.getType(getStackInSlot(i).getItem())) {
+            if (types.get(i) != AccessoryHelper.getType(getStackInSlot(i).getItem())) {
                 removeOrDropStack(entity, i);
             }
         }

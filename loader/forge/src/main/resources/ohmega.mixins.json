@@ -7,7 +7,7 @@
     "MinecraftServerMixin"
   ],
   "client": [
-    "client.AbstractContainerScreenMixin",
+    "client.Forge_AbstractContainerScreenMixin",
     "client.KeyBindsList$KeyEntryMixin",
     "client.LayerDefinitionsMixin",
     "client.LivingEntityRendererMixin",

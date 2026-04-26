@@ -1,14 +1,16 @@
 package com.swacky.ohmega.network;
 
-import com.swacky.ohmega.api.AccessoryHelper;
-import com.swacky.ohmega.api.EquipContext;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.Accessory;
-import com.swacky.ohmega.common.menu.AccessoryInventoryMenu;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
+import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
@@ -18,14 +20,11 @@ import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 // todo: will probably need to add entityIds to a lot of packets for allowing entities to have accessory inventories
@@ -49,19 +48,14 @@ public final class OhmegaNetworking {
             player.connection.send(packet);
         }
 
-        public static void handleOpenAccessoryInventory(ServerPlayer player) {
-            ItemStack stack = player.containerMenu.getCarried();
-
-            if (!stack.isEmpty()) {
-                AbstractContainerMenu.dropOrPlaceInInventory(player, stack);
-                player.containerMenu.setCarried(ItemStack.EMPTY);
-            }
-
-            player.openMenu(new SimpleMenuProvider((id, inv, _) -> new AccessoryInventoryMenu(id, inv), Component.empty()));
-        }
-
         public static void handleReloadContainer(ServerPlayer player) {
             AccessoryHelper.getData(player).reload(player);
+        }
+
+        public static void handleSetExtensionVisible(SetExtensionVisiblePacket packet, ServerPlayer player) {
+            if (player.containerMenu instanceof IAccessoryMenu menu) {
+                menu.setAccessoryExtensionVisible(packet.value());
+            }
         }
 
         public static void handleSetHidden(SetHiddenPacket packet, ServerPlayer player) {
@@ -85,7 +79,7 @@ public final class OhmegaNetworking {
             if (index < AccessoryHelper.getSlotTypes().size()) {
                 AccessoryData data = AccessoryHelper.getData(player);
                 ItemStack stack = data.getStackInSlot(index);
-                Accessory accessory = AccessoryHelper.getAccessory(stack.getItem());
+                Accessory accessory = Accessories.get(stack.getItem());
 
                 if (accessory != null) {
                     accessory.onKeybindUse(player, stack);
@@ -161,8 +155,11 @@ public final class OhmegaNetworking {
 
             if (level != null && level.getEntity(packet.entityId()) instanceof Player player) {
                 ItemStack stack = AccessoryHelper.getData(player).getStackInSlot(packet.index());
+                Accessory accessory = Accessories.get(stack.getItem());
 
-                AccessoryHelper.getAccessory(stack.getItem()).onKeybindUse(player, stack);
+                if (accessory != null) {
+                    accessory.onKeybindUse(player, stack);
+                }
             }
         }
 

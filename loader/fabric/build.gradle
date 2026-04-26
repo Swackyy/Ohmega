@@ -8,6 +8,7 @@ loom {
 
     runs {
         configureEach {
+            property "mixin.debug.export", "true"
             setConfigName "Fabric ${it.name.capitalize()}"
 
             runDir = "run"
@@ -34,6 +35,11 @@ loom {
 
 repositories {
     maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
+
+    maven {
         name = "Fuzss"
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven"
     }
@@ -55,6 +61,10 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+
+    compileOnly "mezz.jei:jei-${mcVMax}-fabric-api:${jeiV}"
+    runtimeOnly "mezz.jei:jei-${mcVMax}-fabric:${jeiV}"
+
     implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
 }
 

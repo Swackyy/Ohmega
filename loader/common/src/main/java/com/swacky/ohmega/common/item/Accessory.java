@@ -1,9 +1,9 @@
 package com.swacky.ohmega.common.item;
 
-import com.swacky.ohmega.api.AccessoryModifiers;
-import com.swacky.ohmega.api.EquipContext;
-import com.swacky.ohmega.api.IAccessory;
-import com.swacky.ohmega.api.SoundData;
+import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.IAccessory;
+import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,8 +26,8 @@ public final class Accessory implements IAccessory {
     /**
      * Do not use this unless you have good reason
      * <p>
-     * The option of exposing the wrapped object instead of simply overriding {@link Object#equals(Object)} was chosen
-     * to give developers more versatility with the API, such as for checking if other accessories are subclasses of this (wrapped) one
+     * The decision of exposing the wrapped object instead of simply overriding {@link Object#equals(Object)} was to give developers
+     * more versatility with the API, such as for checking if other accessories are subclasses of this (wrapped) one
      * @return the wrapped {@link IAccessory} instance stored within this class
      */
     public IAccessory unwrap() {

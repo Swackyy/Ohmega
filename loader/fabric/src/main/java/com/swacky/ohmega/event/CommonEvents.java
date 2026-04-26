@@ -1,10 +1,15 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTabOutput;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -21,7 +26,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -34,13 +39,15 @@ public final class CommonEvents {
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onLivingTrack);
+            CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(CommonEvents::onModifyCreativeTabOpBlocks);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
             ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
+            ServerPlayerEvents.AFTER_RESPAWN.register(CommonEvents::onPlayerRespawnPost);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
             ServerLifecycleEvents.SERVER_STARTED.register(CommonEvents::onServerStarted);
             ItemEvents.USE.register(CommonEvents::onUseItem);
         } else {
-            throw new IllegalStateException("Attempted to bootstrap " + CommonEvents.class.getName() + " multiple times");
+            throw new IllegalStateException("Attempted to bootstrap " + CommonEvents.class + " multiple times");
         }
     }
 
@@ -56,6 +63,10 @@ public final class CommonEvents {
         }
     }
 
+    private static void onModifyCreativeTabOpBlocks(FabricCreativeModeTabOutput output) {
+        output.accept(OhmegaItems.getAngelRing());
+    }
+
     private static void onPlayerChangeDimension(ServerPlayer player, ServerLevel from, ServerLevel to) {
         CommonCallbacks.onPlayerChangeDimension(player);
     }
@@ -63,6 +74,10 @@ public final class CommonEvents {
     private static void onPlayerJoin(ServerPlayer player) {
         OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
         AccessoryHelper.getData(player).onAttach(player);
+    }
+
+    private static void onPlayerRespawnPost(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
+        AccessoryHelper.getData(newPlayer).onAttach(newPlayer);
     }
 
     private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {
@@ -75,9 +90,9 @@ public final class CommonEvents {
 
     private static InteractionResult onUseItem(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        Item item = stack.getItem();
+        Accessory accessory = Accessories.get(stack.getItem());
 
-        if (AccessoryHelper.isAccessory(stack.getItem()) && !AccessoryHelper.getAccessory(item).preferVanillaUse(stack)) {
+        if (accessory != null && !accessory.preferVanillaUse(stack)) {
             InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
 
             if (candidate.consumesAction()) {

@@ -63,10 +63,10 @@ public final class RuRuProvider extends OhmegaLangProvider {
                         LEGACY: Кнопка, вдохновленная Curios/Baubles, которая отображается рядом с моделью инвентаря
                         TAG: Маленькая кнопка-ярлык, выступающая за верхний угол инвентаря
                         HIDDEN: Не отображать. Вместо кнопки использовать горячую клавишу для открытия панели аксессуаров""");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.INVENTORY_SIDE_KEY,
+        /*internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Сторона Панели",
-                "Сторона, с которой панель аксессуаров будет отображаться");
+                "Сторона, с которой панель аксессуаров будет отображаться");*/
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Отображать Подсказку При Наведении",

@@ -3,7 +3,7 @@ package com.swacky.ohmega.common.init;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.swacky.ohmega.api.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -29,6 +29,7 @@ public final class OhmegaBinds {
 
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Ohmega.id(Ohmega.MODID));
 
+    // todo: make this also close the extension when pressed while it's open
     public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + Ohmega.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
 
     private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> SLOT_KEYS = ImmutableMap.of();

@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.api.AccessoryModifiers;
-import com.swacky.ohmega.api.IAccessory;
+import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.common.item.IAccessory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
