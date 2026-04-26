@@ -19,6 +19,7 @@ public final class CrowdinButton extends HoverableButton {
 
     public CrowdinButton(Screen parentScreen) {
         super(6, parentScreen.height - 26, 20, 20, LOCATION);
+
         this.parentScreen = parentScreen;
     }
 

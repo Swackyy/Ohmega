@@ -21,6 +21,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
 
     public AccessoryRenderLayer(EntityRendererProvider.Context context, RenderLayerParent<T, U> renderer) {
         super(renderer);
+
         this.context = context;
     }
 

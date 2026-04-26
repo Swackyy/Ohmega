@@ -21,6 +21,10 @@ public enum EquipContext {
         this.mutateSafe = mutateSafe;
     }
 
+    /**
+     * Whether modification of changes with this context is safe
+     * @return {@code true} if modifying changes with this context is probably safe, {@code false} otherwise
+     */
     public boolean isMutateSafe() {
         return mutateSafe;
     }

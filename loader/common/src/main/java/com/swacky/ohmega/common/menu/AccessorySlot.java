@@ -30,6 +30,7 @@ public final class AccessorySlot extends Slot {
 
     public AccessorySlot(Player player, int index, int x, int y, AccessoryType type) {
         super(EMPTY_CONTAINER, index, x, y);
+
         this.player = player;
         this.handler = AccessoryHelper.getData(player);
         this.type = type;

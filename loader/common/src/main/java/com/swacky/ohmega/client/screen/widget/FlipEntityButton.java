@@ -15,6 +15,7 @@ public final class FlipEntityButton extends ExtensionContainerScreenButton {
 
     public FlipEntityButton(AbstractContainerScreen<?> screen, IEntityRenderingExtension extension, int x, int y) {
         super(screen, x, y, 9, 9, LOCATION);
+
         this.extension = extension;
     }
 
