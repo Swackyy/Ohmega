@@ -39,7 +39,7 @@ public final class CommonEvents {
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onLivingTrack);
-            CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(CommonEvents::onModifyCreativeTabOpBlocks);
+            CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(CommonEvents::onModifyCreativeOpBlocksTab);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
             ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
             ServerPlayerEvents.AFTER_RESPAWN.register(CommonEvents::onPlayerRespawnPost);
@@ -63,7 +63,7 @@ public final class CommonEvents {
         }
     }
 
-    private static void onModifyCreativeTabOpBlocks(FabricCreativeModeTabOutput output) {
+    private static void onModifyCreativeOpBlocksTab(FabricCreativeModeTabOutput output) {
         output.accept(OhmegaItems.getAngelRing());
     }
 
