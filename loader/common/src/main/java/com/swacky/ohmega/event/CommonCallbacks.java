@@ -75,7 +75,7 @@ public final class CommonCallbacks {
         AccessoryData newA = AccessoryHelper.getData(newPlayer);
 
         for (int i = 0; i < Math.min(oldA.size(), newA.size()); i++) {
-            newA.setStack(newPlayer, i, oldA.getStackInSlot(i), EquipContext.GENERIC, true);
+            newA.setStack(newPlayer, i, oldA.getStackInSlot(i), EquipContext.SYNC, true);
         }
     }
 
@@ -88,7 +88,7 @@ public final class CommonCallbacks {
                 ItemStack stack = data.getStackInSlot(i);
 
                 if (!stack.isEmpty()) {
-                    data.setStack(entity, i, ItemStack.EMPTY, EquipContext.GENERIC);
+                    data.setStack(entity, i, ItemStack.EMPTY, EquipContext.DEATH);
 
                     ItemEntity itemEntity = entity.createItemStackToDrop(stack, true, false);
 

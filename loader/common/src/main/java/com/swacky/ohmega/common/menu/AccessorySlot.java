@@ -64,7 +64,7 @@ public final class AccessorySlot extends Slot {
         Accessory accessory = Accessories.get(item);
 
         if (accessory != null) {
-            return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE);
+            return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT);
         }
 
         return false;
@@ -116,7 +116,7 @@ public final class AccessorySlot extends Slot {
 
     @Override
     public void set(@NonNull ItemStack stack) {
-        handler.setStack(player, getContainerSlot(), stack, EquipContext.SLOT_PLACE);
+        handler.setStack(player, getContainerSlot(), stack, EquipContext.SLOT);
     }
 
     @Override

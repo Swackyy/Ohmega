@@ -35,12 +35,12 @@ public class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBehavior 
                 if (slot >= 0) {
                     AccessoryData data = AccessoryHelper.getData(entity);
 
-                    if (data.isItemValid(entity, slot, stack, EquipContext.GENERIC)) {
+                    if (data.isItemValid(entity, slot, stack, EquipContext.DISPENSE)) {
                         data.setStack(
                                 entity,
                                 slot,
                                 stack.split(1),
-                                EquipContext.GENERIC);
+                                EquipContext.DISPENSE);
                         return stack;
                     }
                 }

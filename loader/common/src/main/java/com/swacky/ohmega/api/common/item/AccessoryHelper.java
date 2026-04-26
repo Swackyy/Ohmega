@@ -404,7 +404,7 @@ public final class AccessoryHelper {
             if (slot >= 0) {
                 ItemStack stack0 = stack.copyWithCount(1);
 
-                if (getData(entity).setStack(entity, slot, stack0, EquipContext.RIGHT_CLICK_HELD_ITEM)) {
+                if (getData(entity).setStack(entity, slot, stack0, EquipContext.USE_HELD)) {
                     stack.consume(1, entity);
                     return InteractionResult.SUCCESS;
                 }

@@ -118,7 +118,7 @@ public final class AccessoryData {
             AccessoryHelper.changeModifiers(entity, AccessoryHelper.getModifiers(stack).getPassive(), true);
             accessory.onEquip(entity, stack, context);
 
-            if (context == EquipContext.RIGHT_CLICK_HELD_ITEM) {
+            if (context == EquipContext.USE_HELD) {
                 SoundData data = accessory.getEquipSound(stack);
 
                 if (data != null) {
@@ -283,7 +283,7 @@ public final class AccessoryData {
             ItemStack stack = getStackInSlot(i);
 
             if (AccessoryHelper.isActive(stack)) {
-                doEquip(player, stack, i, EquipContext.GENERIC);
+                doEquip(player, stack, i, EquipContext.ATTACH);
             }
 
             allIndexes[i] = i;

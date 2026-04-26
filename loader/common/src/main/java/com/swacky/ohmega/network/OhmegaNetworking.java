@@ -139,7 +139,7 @@ public final class OhmegaNetworking {
                     AccessoryData data = AccessoryHelper.getData(entity);
 
                     for (int i = 0; i < indexes.length; i++) {
-                        data.setStack(entity, indexes[i], packet.stacks().get(i), EquipContext.GENERIC, true, packet.forceOnEquip());
+                        data.setStack(entity, indexes[i], packet.stacks().get(i), EquipContext.SYNC, true, packet.forceOnEquip());
                     }
                 }
             }

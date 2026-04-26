@@ -90,7 +90,7 @@ public final class ItemCommand extends OhmegaCommandNode {
             AccessoryData data = AccessoryHelper.getData(target);
 
             if (index >= 0 && index < data.size()) {
-                data.setStack(target, index, new ItemStack(item, count), EquipContext.GENERIC, true);
+                data.setStack(target, index, new ItemStack(item, count), EquipContext.COMMAND, true);
             } else {
                 throw INDEX_EXCEPTION.create(Pair.of(index, data.size()));
             }
