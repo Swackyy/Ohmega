@@ -206,7 +206,7 @@ public abstract class AccessoryMenuExtension {
                 Accessory accessory = Accessories.get(item);
                 Slot slot0 = menu.getSlot(46 + openIndex);
 
-                if (considerExtensionSlots && accessory != null && index > 8 && index < 45 && openIndex != -1 && slot0.mayPlace(stack0)) { // Inventory -> accessory
+                if (considerExtensionSlots && accessory != null && index > 8 && index < 45 && openIndex >= 0 && slot0.mayPlace(stack0)) { // Inventory -> accessory
                     if (!menu.moveItemStackTo(stack, 46, 52, false)) {
                         return ItemStack.EMPTY;
                     }
