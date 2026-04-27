@@ -43,6 +43,11 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
+    public boolean preferInventoryTick(@NonNull ItemStack stack) {
+        return OhmegaHooks.preferInventoryTick(stack, inner.preferInventoryTick(stack));
+    }
+
+    @Override
     public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
         if (!OhmegaHooks.equip(entity, stack, context)) {
             inner.onEquip(entity, stack, context);

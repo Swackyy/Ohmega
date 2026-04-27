@@ -83,6 +83,10 @@ public final class OhmegaHooks {
         return IMPL.overrideTypes();
     }
 
+    public static boolean preferInventoryTick(ItemStack stack, boolean original) {
+        return IMPL.preferInventoryTick(stack, original);
+    }
+
     public static boolean preferVanillaUse(ItemStack stack, boolean original) {
         return IMPL.preferVanillaUse(stack, original);
     }
@@ -139,6 +143,8 @@ public final class OhmegaHooks {
         double mobVisibility(ItemStack stack, Entity targetingEntity, double original);
 
         Map<Item, Pair<AccessoryType, Boolean>> overrideTypes();
+
+        boolean preferInventoryTick(ItemStack stack, boolean original);
 
         boolean preferVanillaUse(ItemStack stack, boolean original);
 

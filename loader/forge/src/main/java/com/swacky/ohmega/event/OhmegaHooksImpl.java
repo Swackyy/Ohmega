@@ -126,6 +126,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public boolean preferInventoryTick(ItemStack stack, boolean original) {
+        AccessoryPreferInventoryTickEvent event = new AccessoryPreferInventoryTickEvent(stack, original);
+
+        AccessoryPreferInventoryTickEvent.BUS.post(event);
+        return event.returnValue;    }
+
+    @Override
     public boolean preferVanillaUse(ItemStack stack, boolean original) {
         AccessoryPreferVanillaUseEvent event = new AccessoryPreferVanillaUseEvent(stack, original);
 

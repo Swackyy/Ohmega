@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -23,11 +24,11 @@ public abstract class OhmegaCommandNode {
      * The boolean part of the argument value marks {@code true} for mandatory and {@code false} for optional
      * @return a map of raw elements to add to the built-in {@code /ohmega help} command
      */
-    public /*abstract*/ Map<String, List<BooleanObjectPair<String>>> getHelpElements()/*;*/{
+    public /*abstract*/ @NonNull Map<String, List<BooleanObjectPair<String>>> getHelpElements()/*;*/{
         return Map.of();
     }
 
     public interface Factory {
-        OhmegaCommandNode construct(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder);
+        @NonNull OhmegaCommandNode construct(@NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<CommandSourceStack> builder);
     }
 }

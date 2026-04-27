@@ -3,9 +3,11 @@ package com.swacky.ohmega.api.common.item;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.common.item.AngelRing;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -30,12 +32,28 @@ import org.jspecify.annotations.Nullable;
  */
 public interface IAccessory {
     /**
-     * Called every tick when equipped in an accessory slot.
+     * Called every tick when equipped in an accessory slot if {@link #preferInventoryTick(ItemStack)} returns {@code false}
      * Specifically, it is called at the end of {@link LivingEntity#tick()}
      * @param entity the {@link LivingEntity} wearing this accessory
      * @param stack the {@link ItemStack} of this accessory item being worn
      */
     default void accessoryTick(@NonNull LivingEntity entity, @NonNull ItemStack stack) {}
+
+    /**
+     * Check whether {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} should be called
+     * <strong>instead of</strong> {@link #accessoryTick(LivingEntity, ItemStack)} when equipped in an accessory slot
+     * <p>
+     * Take note that {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} is only called on the server side
+     * @param stack the {@link ItemStack} of this accessory item being worn
+     * @return
+     * <ul>
+     *     <li>{@code true}: only call {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} every tick when equipped</li>
+     *     <li>{@code false}: only call {@link #accessoryTick(LivingEntity, ItemStack)} every tick when equipped</li>
+     * </ul>
+     */
+    default boolean preferInventoryTick(@NonNull ItemStack stack) {
+        return false;
+    }
 
     /**
      * Called upon the entity equipping the accessory

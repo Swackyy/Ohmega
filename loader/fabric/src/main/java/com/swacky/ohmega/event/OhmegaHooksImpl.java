@@ -17,6 +17,7 @@ import com.swacky.ohmega.api.event.AccessoryEquipSoundEvent;
 import com.swacky.ohmega.api.event.AccessoryIsPiglinSafeEvent;
 import com.swacky.ohmega.api.event.AccessoryMobVisibilityEvent;
 import com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent;
+import com.swacky.ohmega.api.event.AccessoryPreferInventoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryPreferVanillaUseEvent;
 import com.swacky.ohmega.api.event.AccessoryRenderItemEvent;
 import com.swacky.ohmega.api.event.AccessoryRenderPreEvent;
@@ -115,6 +116,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
         AccessoryOverrideTypesEvent.EVENT.invoker().process(builder);
         return builder.build();
+    }
+
+    @Override
+    public boolean preferInventoryTick(ItemStack stack, boolean original) {
+        return AccessoryPreferInventoryTickEvent.EVENT.invoker().process(stack, original);
     }
 
     @Override

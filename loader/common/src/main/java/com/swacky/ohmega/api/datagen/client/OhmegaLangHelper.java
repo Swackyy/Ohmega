@@ -13,6 +13,7 @@ public final class OhmegaLangHelper {
 
     /**
      * @param adder a function reference, usually to (pseudo) {@code this.add("key", "translation")}
+     * @param namespace usually your mod ID, but can be whatever desired
      */
     public OhmegaLangHelper(BiConsumer<String, String> adder, String namespace) {
         this.adder = adder;

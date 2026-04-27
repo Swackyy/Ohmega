@@ -16,6 +16,7 @@ import com.swacky.ohmega.api.event.AccessoryEquipSoundEvent;
 import com.swacky.ohmega.api.event.AccessoryIsPiglinSafeEvent;
 import com.swacky.ohmega.api.event.AccessoryMobVisibilityEvent;
 import com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent;
+import com.swacky.ohmega.api.event.AccessoryPreferInventoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryPreferVanillaUseEvent;
 import com.swacky.ohmega.api.event.AccessoryRenderItemEvent;
 import com.swacky.ohmega.api.event.AccessoryRenderPreEvent;
@@ -113,6 +114,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
         return ModLoader.postEventWithReturn(new AccessoryOverrideTypesEvent()).getOverrides();
+    }
+
+    @Override
+    public boolean preferInventoryTick(ItemStack stack, boolean original) {
+        return NeoForge.EVENT_BUS.post(new AccessoryPreferInventoryTickEvent(stack, original)).returnValue;
     }
 
     @Override

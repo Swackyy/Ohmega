@@ -22,6 +22,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -315,10 +316,17 @@ public final class AccessoryData {
     public void tick(LivingEntity entity) {
         for (int i = 0; i < size(); i++) {
             ItemStack stack = getStackInSlot(i);
-            Accessory accessory = Accessories.get(stack.getItem());
+            Item item = stack.getItem();
+            Accessory accessory = Accessories.get(item);
 
             if (accessory != null) {
-                accessory.accessoryTick(entity, stack);
+                if (accessory.preferInventoryTick(stack)) {
+                    if (entity.level() instanceof ServerLevel level) {
+                        item.inventoryTick(stack, level, entity, EquipmentSlot.MAINHAND);
+                    }
+                } else {
+                    accessory.accessoryTick(entity, stack);
+                }
             }
         }
 
