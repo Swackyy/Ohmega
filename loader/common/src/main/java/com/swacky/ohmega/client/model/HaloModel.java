@@ -29,7 +29,7 @@ public final class HaloModel extends Model<LivingEntityRenderState> {
                         .texOffs(6, 5).addBox(-3, -1, -2, 1, 1, 4)
                         .texOffs(0, 0).addBox(-3, -1, 2, 6, 1, 1)
                         .texOffs(0, 4).addBox(2, -1, -2, 1, 1, 4),
-                PartPose.offset(0, 24, 0));
+                PartPose.offset(0, 0, 0));
         return LayerDefinition.create(mesh, 16, 16);
     }
 }

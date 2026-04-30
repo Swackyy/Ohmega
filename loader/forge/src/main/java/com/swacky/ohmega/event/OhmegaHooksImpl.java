@@ -149,13 +149,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void renderItemPost(AccessoryRenderContext context) {
-        AccessoryRenderItemEvent.Post.BUS.post(new AccessoryRenderItemEvent.Post(context));
+    public void renderAccessoryPost(AccessoryRenderContext<?, ?> context) {
+        AccessoryRenderEvent.Post.BUS.post(new AccessoryRenderEvent.Post(context));
     }
 
     @Override
-    public boolean renderItemPre(AccessoryRenderContext context) {
-        return AccessoryRenderItemEvent.Pre.BUS.post(new AccessoryRenderItemEvent.Pre(context));
+    public boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
+        return AccessoryRenderEvent.Pre.BUS.post(new AccessoryRenderEvent.Pre(context));
     }
 
     @Override

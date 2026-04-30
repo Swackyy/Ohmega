@@ -95,12 +95,12 @@ public final class OhmegaHooks {
         return IMPL.registerAccessoryTypes();
     }
 
-    public static void renderItemPost(AccessoryRenderContext context) {
-        IMPL.renderItemPost(context);
+    public static void renderAccessoryPost(AccessoryRenderContext<?, ?> context) {
+        IMPL.renderAccessoryPost(context);
     }
 
-    public static boolean renderItemPre(AccessoryRenderContext context) {
-        return IMPL.renderItemPre(context);
+    public static boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
+        return IMPL.renderAccessoryPre(context);
     }
 
     public static boolean renderPre(LivingEntityRenderState state, PoseStack stack) {
@@ -150,9 +150,9 @@ public final class OhmegaHooks {
 
         Map<Identifier, AccessoryType> registerAccessoryTypes();
 
-        void renderItemPost(AccessoryRenderContext context);
+        void renderAccessoryPost(AccessoryRenderContext<?, ?> context);
 
-        boolean renderItemPre(AccessoryRenderContext context);
+        boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context);
 
         boolean renderPre(LivingEntityRenderState state, PoseStack stack);
 

@@ -62,7 +62,7 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onModifyCreativeOpBlocksTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
+        if (event.hasPermissions() && event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(OhmegaItems.getAngelRing());
         }
     }

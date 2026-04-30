@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 public final class ClientEvents {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new));
+        event.enqueueWork(() -> AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new));
     }
 
     @SubscribeEvent

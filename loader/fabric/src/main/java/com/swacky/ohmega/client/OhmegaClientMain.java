@@ -55,7 +55,7 @@ public final class OhmegaClientMain implements ClientModInitializer {
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);
 
         // Rendering
-        AccessoryRenderers.register(OhmegaItems.getAngelRing(), HaloRenderer::new);
+        AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new);
         ModelLayerRegistry.registerModelLayer(HaloModel.LOCATION, HaloModel::createDefinition);
     }
 }

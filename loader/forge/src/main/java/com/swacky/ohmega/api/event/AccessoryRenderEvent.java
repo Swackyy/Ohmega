@@ -12,12 +12,12 @@ import org.jspecify.annotations.NonNull;
  * <p>
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
-public sealed interface AccessoryRenderItemEvent {
-    record Pre(AccessoryRenderContext context) implements AccessoryRenderItemEvent, RecordEvent, Cancellable {
+public sealed interface AccessoryRenderEvent {
+    record Pre(AccessoryRenderContext<?, ?> context) implements AccessoryRenderEvent, RecordEvent, Cancellable {
         public static final CancellableEventBus<@NonNull Pre> BUS = CancellableEventBus.create(Pre.class);
     }
 
-    record Post(AccessoryRenderContext context) implements AccessoryRenderItemEvent, RecordEvent {
+    record Post(AccessoryRenderContext<?, ?> context) implements AccessoryRenderEvent, RecordEvent {
         public static final EventBus<@NonNull Post> BUS = EventBus.create(Post.class);
     }
 }

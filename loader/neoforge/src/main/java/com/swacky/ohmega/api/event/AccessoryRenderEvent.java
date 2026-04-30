@@ -9,21 +9,21 @@ import net.neoforged.bus.api.ICancellableEvent;
  * <p>
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
-public abstract sealed class AccessoryRenderItemEvent extends Event {
-    public final AccessoryRenderContext context;
+public abstract sealed class AccessoryRenderEvent extends Event {
+    public final AccessoryRenderContext<?, ?> context;
 
-    public AccessoryRenderItemEvent(AccessoryRenderContext context) {
+    public AccessoryRenderEvent(AccessoryRenderContext<?, ?> context) {
         this.context = context;
     }
 
-    public static final class Pre extends AccessoryRenderItemEvent implements ICancellableEvent {
-        public Pre(AccessoryRenderContext context) {
+    public static final class Pre extends AccessoryRenderEvent implements ICancellableEvent {
+        public Pre(AccessoryRenderContext<?, ?> context) {
             super(context);
         }
     }
 
-    public static final class Post extends AccessoryRenderItemEvent {
-        public Post(AccessoryRenderContext context) {
+    public static final class Post extends AccessoryRenderEvent {
+        public Post(AccessoryRenderContext<?, ?> context) {
             super(context);
         }
     }

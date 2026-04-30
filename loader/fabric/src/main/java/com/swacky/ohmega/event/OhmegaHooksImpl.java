@@ -19,7 +19,7 @@ import com.swacky.ohmega.api.event.AccessoryMobVisibilityEvent;
 import com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent;
 import com.swacky.ohmega.api.event.AccessoryPreferInventoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryPreferVanillaUseEvent;
-import com.swacky.ohmega.api.event.AccessoryRenderItemEvent;
+import com.swacky.ohmega.api.event.AccessoryRenderEvent;
 import com.swacky.ohmega.api.event.AccessoryRenderPreEvent;
 import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
@@ -137,13 +137,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void renderItemPost(AccessoryRenderContext context) {
-        AccessoryRenderItemEvent.Post.EVENT.invoker().process(context);
+    public void renderAccessoryPost(AccessoryRenderContext<?, ?> context) {
+        AccessoryRenderEvent.Post.EVENT.invoker().process(context);
     }
 
     @Override
-    public boolean renderItemPre(AccessoryRenderContext context) {
-        return AccessoryRenderItemEvent.Pre.EVENT.invoker().process(context);
+    public boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
+        return AccessoryRenderEvent.Pre.EVENT.invoker().process(context);
     }
 
     @Override

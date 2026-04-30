@@ -93,6 +93,7 @@ public final class CommonCallbacks {
                     ItemEntity itemEntity = entity.createItemStackToDrop(stack, true, false);
 
                     if (itemEntity != null) {
+                        itemEntity.setDefaultPickUpDelay();
                         itemDrops.add(itemEntity);
                     }
                 }

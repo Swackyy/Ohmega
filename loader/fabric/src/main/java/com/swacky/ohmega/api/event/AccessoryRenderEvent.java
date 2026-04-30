@@ -4,7 +4,7 @@ import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
-public final class AccessoryRenderItemEvent {
+public final class AccessoryRenderEvent {
     public interface Pre {
         Event<Pre> EVENT = EventFactory.createArrayBacked(Pre.class,
             listeners -> context -> {
@@ -18,7 +18,7 @@ public final class AccessoryRenderItemEvent {
             }
         );
 
-        boolean process(AccessoryRenderContext context);
+        boolean process(AccessoryRenderContext<?, ?> context);
     }
 
     public interface Post {
@@ -30,6 +30,6 @@ public final class AccessoryRenderItemEvent {
             }
         );
 
-        void process(AccessoryRenderContext context);
+        void process(AccessoryRenderContext<?, ?> context);
     }
 }

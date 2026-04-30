@@ -22,7 +22,7 @@ public final class OhmegaLangHelper {
 
     /**
      * Adds translations for an accessory type
-     * @param namespace specify an alternate namespace that does not match the {@link OhmegaLangHelper#namespace} field
+     * @param namespace specify an alternate namespace that does not match the {@link #namespace} field
      * @param typeKey accessory type key, e.g: "normal", "utility"
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */

@@ -64,7 +64,9 @@ public final class CommonEvents {
     }
 
     private static void onModifyCreativeOpBlocksTab(FabricCreativeModeTabOutput output) {
-        output.accept(OhmegaItems.getAngelRing());
+        if (output.shouldShowOpRestrictedItems()) {
+            output.accept(OhmegaItems.getAngelRing());
+        }
     }
 
     private static void onPlayerChangeDimension(ServerPlayer player, ServerLevel from, ServerLevel to) {

@@ -16,6 +16,7 @@ accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/Lis
 accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraft/client/Minecraft;
 accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
 mutable field net/minecraft/client/Options keyMappings [Lnet/minecraft/client/KeyMapping;
 accessible method net/minecraft/world/entity/LivingEntity createItemStackToDrop (Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;
 accessible method net/minecraft/world/inventory/AbstractContainerMenu addSlot (Lnet/minecraft/world/inventory/Slot;)Lnet/minecraft/world/inventory/Slot;
