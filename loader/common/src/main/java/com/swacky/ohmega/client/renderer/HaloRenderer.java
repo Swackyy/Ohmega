@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 
 /**
@@ -41,7 +42,7 @@ public class HaloRenderer implements ILivingAccessoryRenderer {
 
                 // Align to head top face and follow its rotation
                 context.lockToPart(head);
-                context.offsetToPartCentre(head);
+                context.offsetToPartFace(head, Direction.UP);
 
                 // Account for baby entities
                 context.applyBabyScaling();
