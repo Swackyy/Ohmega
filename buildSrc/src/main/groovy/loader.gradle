@@ -64,8 +64,7 @@ processResources {
             modV                                 : modV,
             modAuthors                           : modAuthorsDisplay,
             mcV                                  : mcV,
-            mcVMin                               : mcVMin,
-            mcVMax                               : mcVMax,
+            mcVRangeMax                          : mcVRangeMax,
             modName                              : modName,
             crowdinUrl                           : crowdinUrl,
             curseUrl                             : curseUrl,
@@ -138,8 +137,8 @@ if (rootProject.file("secrets.properties").exists()) {
                 javaVersions.add JavaVersion.toVersion(javaV)
 
                 minecraftVersionRange {
-                    start = mcVMin
-                    end = mcVMax
+                    start = mcV
+                    end = mcVRangeMax
                 }
 
                 if (project.name == "fabric") {
@@ -154,8 +153,8 @@ if (rootProject.file("secrets.properties").exists()) {
                 version = modV
 
                 minecraftVersionRange {
-                    start = mcVMin
-                    end = mcVMax
+                    start = mcV
+                    end = mcVRangeMax
                 }
 
                 if (project.name == "fabric") {

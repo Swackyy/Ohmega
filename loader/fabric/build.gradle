@@ -4,7 +4,7 @@ plugins {
 }
 
 loom {
-    accessWidenerPath.set file("src/main/resources/aw.accesswidener")
+    accessWidenerPath = file "src/main/resources/aw.accesswidener"
 
     runs {
         configureEach {
@@ -59,11 +59,11 @@ dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
 
     implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcVRangeMax}"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 
-    compileOnly "mezz.jei:jei-${mcVMax}-fabric-api:${jeiV}"
-    runtimeOnly "mezz.jei:jei-${mcVMax}-fabric:${jeiV}"
+    compileOnly "mezz.jei:jei-${mcVRangeMax}-fabric-api:${jeiV}"
+    runtimeOnly "mezz.jei:jei-${mcVRangeMax}-fabric:${jeiV}"
 
     implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
 }
