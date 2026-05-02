@@ -136,11 +136,7 @@ public final class OhmegaNetworking {
                 }
 
                 if (level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
-                    AccessoryData data = AccessoryHelper.getData(entity);
-
-                    for (int i = 0; i < indexes.length; i++) {
-                        data.setStack(entity, indexes[i], packet.stacks().get(i), EquipContext.SYNC, true, packet.forceOnEquip());
-                    }
+                    AccessoryHelper.getData(entity).setStacks(entity, packet.indexes(), packet.stacks(), EquipContext.SYNC, packet.forceOnEquip());
                 }
             }
         }

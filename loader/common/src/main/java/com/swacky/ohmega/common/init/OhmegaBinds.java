@@ -1,7 +1,5 @@
 package com.swacky.ohmega.common.init;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.client.OhmegaClient;
@@ -14,9 +12,10 @@ import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class OhmegaBinds {
     private static final Service INST = OhmegaClient.loadService(Service.class);
@@ -32,15 +31,15 @@ public final class OhmegaBinds {
     // todo: make this also close the extension when pressed while it's open
     public static final KeyMapping OPEN_ACC_INV = new KeyMapping("key." + Ohmega.MODID + ".open_acc_inv", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, CATEGORY);
 
-    private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> SLOT_KEYS = ImmutableMap.of();
+    private static Map<AccessoryType, List<KeyMapping>> SLOT_KEYS = Map.of();
     private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
 
-    private static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> createSlotKeys() {
+    private static Map<AccessoryType, List<KeyMapping>> createSlotKeys() {
         ORDERED_SLOT_KEYS = new ArrayList<>();
 
-        ImmutableList<AccessoryType> keyBoundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
-        Map<AccessoryType, ImmutableList.Builder<KeyMapping>> builder = new HashMap<>(keyBoundSlotTypes.size());
-        Map<AccessoryType, Integer> typeCountMap = new HashMap<>();
+        Set<AccessoryType> keyBoundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
+        Map<AccessoryType, List<KeyMapping>> map = new IdentityHashMap<>(keyBoundSlotTypes.size());
+        Map<AccessoryType, Integer> typeCountMap = new IdentityHashMap<>();
 
         if (OhmegaConfig.Server.disableAccessoryTypes()) {
             typeCountMap.put(AccessoryType.GENERIC.get(), 0);
@@ -67,12 +66,12 @@ public final class OhmegaBinds {
                                             count == 0 ? GLFW.GLFW_KEY_B :
                                             GLFW.GLFW_KEY_UNKNOWN;
 
-                    builder.computeIfAbsent(keyboundType, _ -> new ImmutableList.Builder<>());
+                    map.computeIfAbsent(keyboundType, _ -> new ArrayList<>());
 
                     Identifier id = keyboundType.getId();
                     KeyMapping mapping = INST.createMapping("key." + id.getNamespace() + "." + id.getPath() + "_" + count, key);
 
-                    builder.get(keyboundType).add(mapping);
+                    map.get(keyboundType).add(mapping);
                     ORDERED_SLOT_KEYS.add(mapping);
                     typeCountMap.put(keyboundType, count + 1);
                     break;
@@ -80,21 +79,15 @@ public final class OhmegaBinds {
             }
         }
 
-        ImmutableMap.Builder<AccessoryType, ImmutableList<KeyMapping>> map = ImmutableMap.builderWithExpectedSize(builder.size());
-
-        for (AccessoryType key : builder.keySet()) {
-            map.put(key, builder.get(key).build());
-        }
-
-        return map.build();
+        return map;
     }
 
-    public static ImmutableMap<AccessoryType, ImmutableList<KeyMapping>> getSlotKeys() {
+    public static Map<AccessoryType, List<KeyMapping>> getSlotKeys() {
         return SLOT_KEYS = createSlotKeys();
     }
 
     public static KeyMapping getMapping(AccessoryType type, int index) {
-        ImmutableList<KeyMapping> list = SLOT_KEYS.get(type);
+        List<KeyMapping> list = SLOT_KEYS.get(type);
 
         if (list != null) {
             return list.get(index);
@@ -103,14 +96,14 @@ public final class OhmegaBinds {
         return null;
     }
 
-    public static ImmutableList<KeyMapping> getMappings() {
-        return ImmutableList.copyOf(ORDERED_SLOT_KEYS);
+    public static List<KeyMapping> getMappings() {
+        return ORDERED_SLOT_KEYS;
     }
 
     public static int size() {
         int size = 0;
 
-        for (ImmutableList<KeyMapping> list : SLOT_KEYS.values()) {
+        for (List<KeyMapping> list : SLOT_KEYS.values()) {
             size += list.size();
         }
 

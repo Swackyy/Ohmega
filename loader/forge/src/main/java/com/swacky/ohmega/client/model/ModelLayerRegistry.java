@@ -4,12 +4,12 @@ import com.swacky.ohmega.mixin.client.ModelLayersMixin;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public final class ModelLayerRegistry {
-    private static final Map<ModelLayerLocation, LayerDefinition> PROVIDERS = new HashMap<>();
+    private static final Map<ModelLayerLocation, LayerDefinition> PROVIDERS = new IdentityHashMap<>();
 
     public static void register(ModelLayerLocation location, Supplier<LayerDefinition> supplier) {
         ModelLayersMixin.getLayers().add(location);

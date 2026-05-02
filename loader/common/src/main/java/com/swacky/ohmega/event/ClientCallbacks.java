@@ -1,13 +1,13 @@
 package com.swacky.ohmega.event;
 
 import com.google.common.collect.ImmutableList;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
@@ -34,7 +34,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,27 +45,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public final class ClientCallbacks {
     public static AccessoryRenderStateData createRenderStateData(LivingEntity entity) {
-        if (OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.allowHideAccessories()) {
-            AccessoryData data = AccessoryHelper.getData(entity);
-            NonNullList<ItemStack> stacks = data.getStacks();
-            NonNullList<ItemStack> stacksFiltered = NonNullList.createWithCapacity(stacks.size());
+        AccessoryData data = AccessoryHelper.getData(entity);
 
-            for (int i = 0; i < stacks.size(); i++) {
-                ItemStack stack = data.getStackInSlot(i);
-
-                if (!stack.isEmpty() && !data.isHidden(i)) {
-                    stacksFiltered.add(stack);
-                }
-            }
-
-            return new AccessoryRenderStateData(stacksFiltered);
-        }
-
-        return new AccessoryRenderStateData(AccessoryHelper.getStacksNoEmpty(entity));
+        return new AccessoryRenderStateData(data.getStacks(), data.getHidden());
     }
 
     public static void onClientConfigReload() {
@@ -149,8 +135,8 @@ public final class ClientCallbacks {
                     }
                 }
 
-                ImmutableList<KeyMapping> mappings = OhmegaBinds.getMappings();
-                ImmutableList<AccessoryType> keyboundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
+                List<KeyMapping> mappings = OhmegaBinds.getMappings();
+                Set<AccessoryType> keyboundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
                 ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
 
                 if (mappings.isEmpty() || keyboundSlotTypes.isEmpty() || slotTypes.isEmpty()) {
@@ -263,6 +249,7 @@ public final class ClientCallbacks {
 
         if (data != null) {
             for (ItemStack stack : data.stacks()) {
+                // todo: optimise this by caching it somehow
                 if (AccessoryRenderers.isNoRender(Accessories.get(stack.getItem()), state.entityType)) {
                     ci.cancel();
                     return;
@@ -274,7 +261,7 @@ public final class ClientCallbacks {
     public static void reloadRegisteredKeybinds(Runnable loadFunction) {
         ArrayList<KeyMapping> list = new ArrayList<>();
 
-        for (ImmutableList<KeyMapping> immutableList : OhmegaBinds.getSlotKeys().values()) {
+        for (List<KeyMapping> immutableList : OhmegaBinds.getSlotKeys().values()) {
             list.addAll(immutableList);
         }
 

@@ -37,6 +37,8 @@ import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
@@ -113,7 +115,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
-        return ModLoader.postEventWithReturn(new AccessoryOverrideTypesEvent()).getOverrides();
+        Map<Item, Pair<AccessoryType, Boolean>> map = new IdentityHashMap<>();
+
+        ModLoader.postEvent(new AccessoryOverrideTypesEvent(map));
+        return map;
     }
 
     @Override
@@ -128,7 +133,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Map<Identifier, AccessoryType> registerAccessoryTypes() {
-        return NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent()).getTypes();
+        Map<Identifier, AccessoryType> map = new HashMap<>();
+
+        NeoForge.EVENT_BUS.post(new RegisterAccessoryTypesEvent(map));
+        return map;
     }
 
     @Override

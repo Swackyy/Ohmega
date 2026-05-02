@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.command.node;
 
-import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -21,6 +20,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public final class TypesCommand extends OhmegaCommandNode {
@@ -43,7 +43,7 @@ public final class TypesCommand extends OhmegaCommandNode {
     }
 
     private static int list(CommandContext<CommandSourceStack> context) {
-        ImmutableSet<AccessoryType> types = AccessoryTypeManager.getTypes();
+        Collection<AccessoryType> types = AccessoryTypeManager.getTypes();
         List<Component> components = new ArrayList<>(types.size());
 
         for (AccessoryType type : types) {

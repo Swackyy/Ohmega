@@ -42,6 +42,7 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
         state.setData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
     }
 
+    // todo: move to a common mixin
     @Inject(
             method = "<init>",
             at = @At(
@@ -50,6 +51,7 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
         layers.add(new AccessoryRenderLayer<>(context, this));
     }
 
+    // todo: move to a common mixin
     @Inject(
             method = "submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
             at = @At(

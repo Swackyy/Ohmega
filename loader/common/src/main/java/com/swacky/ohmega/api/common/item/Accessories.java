@@ -4,22 +4,24 @@ import com.swacky.ohmega.common.item.Accessory;
 import net.minecraft.world.item.AirItem;
 import net.minecraft.world.item.Item;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
  * Holds data related to accessory items
  */
 public final class Accessories {
-    private static final Map<Item, Accessory> BOUND_ACCESSORIES = new HashMap<>();
+    private static final Map<Item, Accessory> BOUND_ACCESSORIES = new IdentityHashMap<>();
 
     /**
      * @param item the item to get the binding of
      * @return the {@link Accessory} binding
      */
     public static Accessory get(Item item) {
-        if (BOUND_ACCESSORIES.containsKey(item)) {
-            return BOUND_ACCESSORIES.get(item);
+        Accessory candidate = BOUND_ACCESSORIES.get(item);
+
+        if (candidate != null) {
+            return candidate;
         }
 
         if (item instanceof IAccessory binding) {

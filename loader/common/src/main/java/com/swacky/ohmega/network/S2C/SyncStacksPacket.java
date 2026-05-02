@@ -11,6 +11,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
+// todo: forceOnEquip is always true, probably related to the todo fix in AccessoryData
 public record SyncStacksPacket(int entityId, int[] indexes, List<ItemStack> stacks, boolean forceOnEquip) implements CustomPacketPayload {
     public static final Type<@NonNull SyncStacksPacket> TYPE = new Type<>(Ohmega.id("sync_stacks"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncStacksPacket> CODEC = StreamCodec.composite(

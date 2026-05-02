@@ -16,7 +16,7 @@ abstract class MinecraftMixin extends ReentrantBlockableEventLoop<Runnable> impl
         super(name, propagatesCrashes);
     }
 
-    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void init(GameConfig config, CallbackInfo ci) {
         OhmegaHooks.accessoryBind();
     }

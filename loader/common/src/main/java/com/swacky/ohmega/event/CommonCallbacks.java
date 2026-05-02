@@ -55,7 +55,7 @@ public final class CommonCallbacks {
     }
 
     public static double getVisibilityPercentModifier(LivingEntity entity, Entity targetingEntity) {
-        NonNullList<ItemStack> stacks = AccessoryHelper.getAccessoryStacks(entity);
+        NonNullList<ItemStack> stacks = AccessoryHelper.getData(entity).getStacks();
         double multiplier = 0;
 
         for (ItemStack stack : stacks) {
@@ -75,7 +75,7 @@ public final class CommonCallbacks {
         AccessoryData newA = AccessoryHelper.getData(newPlayer);
 
         for (int i = 0; i < Math.min(oldA.size(), newA.size()); i++) {
-            newA.setStack(newPlayer, i, oldA.getStackInSlot(i), EquipContext.SYNC, true);
+            newA.setStacksRange(newPlayer, 0, Math.min(oldA.size(), newA.size()), oldA.getStacks(), EquipContext.SYNC, true);
         }
     }
 
@@ -83,13 +83,12 @@ public final class CommonCallbacks {
         if (!shouldKeepInventory(entity)) {
             AccessoryData data = AccessoryHelper.getData(entity);
             NonNullList<ItemStack> stacks = data.getStacks();
+            int size = stacks.size();
 
-            for (int i = 0; i < stacks.size(); i++) {
+            for (int i = 0; i < size; i++) {
                 ItemStack stack = data.getStackInSlot(i);
 
                 if (!stack.isEmpty()) {
-                    data.setStack(entity, i, ItemStack.EMPTY, EquipContext.DEATH);
-
                     ItemEntity itemEntity = entity.createItemStackToDrop(stack, true, false);
 
                     if (itemEntity != null) {
@@ -98,6 +97,8 @@ public final class CommonCallbacks {
                     }
                 }
             }
+
+            data.setStacksRange(entity, 0, size, NonNullList.withSize(size, ItemStack.EMPTY), EquipContext.DEATH, false);
         }
     }
 

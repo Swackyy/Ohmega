@@ -28,7 +28,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -273,17 +272,17 @@ public final class AccessoryHelper {
 
     /**
      * Retrieves the types of accessory which can be key-bound (determined by the server config)
-     * @return a list of {@link AccessoryType}s which can be key-bound
+     * @return a set of {@link AccessoryType}s which can be key-bound
      */
     // todo: cache
-    public static ImmutableList<AccessoryType> getKeyboundSlotTypes() {
+    public static ImmutableSet<AccessoryType> getKeyboundSlotTypes() {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
         for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
             builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
         }
 
-        return builder.build().asList();
+        return builder.build();
     }
 
     /**
@@ -442,8 +441,8 @@ public final class AccessoryHelper {
      */
 
     public static boolean compatibleWith(LivingEntity entity, ItemStack stack) {
-        for (ItemStack other : getAccessoryStacks(entity)) {
-            if (!compatibleWith(stack, other))  {
+        for (ItemStack other : getData(entity).getStacks()) {
+            if (!other.isEmpty() && !compatibleWith(stack, other))  {
                 return false;
             }
         }
@@ -477,35 +476,6 @@ public final class AccessoryHelper {
      */
     public static NonNullList<ItemStack> getStacksNoEmpty(LivingEntity entity) {
         return getStacksFiltered(entity, stack -> !stack.isEmpty());
-    }
-
-    /**
-     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory which are accessories.
-     * @param entity {@link LivingEntity} to get accessory inventory data from
-     * @return every {@link ItemStack} in the entity's accessory inventory which are accessories
-     */
-    public static NonNullList<ItemStack> getAccessoryStacks(LivingEntity entity) {
-        return getStacksFiltered(entity, stack -> Accessories.isBound(stack.getItem()));
-    }
-
-    /**
-     * Retrieves all accessories worn by an entity in {@link Accessory} form
-     * @param entity {@link LivingEntity} to get accessory inventory data from
-     * @return a list of {@link Accessory} instances equipped
-     */
-    public static ArrayList<@Nullable Accessory> getAccessories(LivingEntity entity) {
-        NonNullList<ItemStack> stacks = getData(entity).getStacks();
-        ArrayList<Accessory> accessories = new ArrayList<>(stacks.size());
-
-        for (ItemStack stack : stacks) {
-            Accessory accessory = Accessories.get(stack.getItem());
-
-            if (accessory != null) {
-                accessories.add(accessory);
-            }
-        }
-
-        return accessories;
     }
 
     /**

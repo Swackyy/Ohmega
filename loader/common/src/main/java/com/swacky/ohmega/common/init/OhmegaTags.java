@@ -1,7 +1,5 @@
 package com.swacky.ohmega.common.init;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.core.registries.Registries;
@@ -9,24 +7,28 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
+import java.util.Collection;
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 /**
  * Dynamically creates tags matching each registered {@link AccessoryType}
  */
 public final class OhmegaTags {
-    private static ImmutableMap<AccessoryType, TagKey<Item>> TAG_MAP = ImmutableMap.of();
+    private static Map<AccessoryType, TagKey<Item>> TAG_MAP = new IdentityHashMap<>();
 
     public static void refresh() {
-        ImmutableSet<AccessoryType> types = AccessoryTypeManager.getTypes();
-        ImmutableMap.Builder<AccessoryType, TagKey<Item>> builder = ImmutableMap.builderWithExpectedSize(types.size());
+        Collection<AccessoryType> types = AccessoryTypeManager.getTypes();
+        Map<AccessoryType, TagKey<Item>> map = new IdentityHashMap<>(types.size());
 
         for (AccessoryType type : types) {
-            builder.put(type, TagKey.create(Registries.ITEM, type.getId()));
+            map.put(type, TagKey.create(Registries.ITEM, type.getId()));
         }
 
-        TAG_MAP = builder.build();
+        TAG_MAP = map;
     }
 
-    public static ImmutableMap<AccessoryType, TagKey<Item>> getTags() {
+    public static Map<AccessoryType, TagKey<Item>> getTags() {
         return TAG_MAP;
     }
 

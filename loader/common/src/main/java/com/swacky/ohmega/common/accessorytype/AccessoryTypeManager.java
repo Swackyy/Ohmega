@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.accessorytype;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.reflect.TypeToken;
 import com.swacky.ohmega.common.Ohmega;
@@ -21,16 +20,16 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class AccessoryTypeManager extends SimplePreparableReloadListener<ImmutableMap<Identifier, AccessoryType>> {
+public final class AccessoryTypeManager extends SimplePreparableReloadListener<Map<Identifier, AccessoryType>> {
     private static final AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
     private static final Logger LOGGER = LogManager.getLogger();
     public static final String LOCATION = Ohmega.MODID + "/accessory_types.json";
     private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
-    private static final HashMap<Identifier, AccessoryType> TYPES = new HashMap<>();
-    private static final int DEFAULT_SIZE = 5;
+    private static final Map<Identifier, AccessoryType> TYPES = new HashMap<>();
     private static Map<Item, Pair<AccessoryType, Boolean>> ACCESSORY_TYPE_OVERRIDES;
     private static Runnable DEFERRED_APPLY = null;
     private static Runnable DEFERRED_CONFIG_LOAD = null;
@@ -42,18 +41,18 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
     }
 
     @Override
-    protected @NonNull ImmutableMap<Identifier, AccessoryType> prepare(@NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
-        ImmutableMap.Builder<Identifier, AccessoryType> builder = ImmutableMap.builderWithExpectedSize(DEFAULT_SIZE);
+    protected @NonNull Map<Identifier, AccessoryType> prepare(@NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
+        Map<Identifier, AccessoryType> map = new HashMap<>(5);
 
         for (String namespace : manager.getNamespaces()) {
             for (Resource resource : manager.getResourceStack(Identifier.fromNamespaceAndPath(namespace, LOCATION))) {
                 try (Reader reader = resource.openAsReader()) {
-                    Map<String, AccessoryType.Builder> map = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
+                    Map<String, AccessoryType.Builder> jsonMap = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
 
-                    for (Map.Entry<String, AccessoryType.Builder> entry : map.entrySet()) {
+                    for (Map.Entry<String, AccessoryType.Builder> entry : jsonMap.entrySet()) {
                         AccessoryType type = entry.getValue().build(namespace, entry.getKey());
 
-                        builder.put(type.getId(), type);
+                        map.put(type.getId(), type);
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
@@ -61,10 +60,10 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
             }
         }
 
-        return builder.build();
+        return map;
     }
 
-    private static void apply(ImmutableMap<Identifier, AccessoryType> types) {
+    private static void apply(Map<Identifier, AccessoryType> types) {
         TYPES.clear();
         TYPES.put(AccessoryType.NONE.getId(), AccessoryType.NONE);
         TYPES.putAll(types);
@@ -85,18 +84,19 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         OhmegaTags.refresh();
     }
 
-    public static void apply(ImmutableSet<AccessoryType> types) {
-        ImmutableMap.Builder<Identifier, AccessoryType> builder = ImmutableMap.builderWithExpectedSize(types.size());
+    public static void apply(Collection<AccessoryType> types) {
+        Map<Identifier, AccessoryType> map = new HashMap<>(types.size());
 
         for (AccessoryType type : types) {
-            builder.put(type.getId(), type);
+            map.put(type.getId(), type);
         }
 
-        apply(builder.build());
+        apply(map);
     }
 
+
     @Override
-    protected void apply(@NonNull ImmutableMap<Identifier, AccessoryType> types, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
+    protected void apply(@NonNull Map<Identifier, AccessoryType> types, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
         apply(types);
     }
 
@@ -132,8 +132,8 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<I
         return null;
     }
 
-    public static ImmutableSet<AccessoryType> getTypes() {
-        return ImmutableSet.copyOf(TYPES.values());
+    public static Collection<AccessoryType> getTypes() {
+        return TYPES.values();
     }
 
     public static ImmutableSet<Identifier> getTypeIdentifiers() {

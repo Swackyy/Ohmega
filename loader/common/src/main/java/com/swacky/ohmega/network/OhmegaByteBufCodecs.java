@@ -1,12 +1,15 @@
 package com.swacky.ohmega.network;
 
-import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.NonNull;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class OhmegaByteBufCodecs {
     public static final StreamCodec<ByteBuf, boolean[]> BOOLEAN_ARRAY = new StreamCodec<>() {
@@ -51,21 +54,21 @@ public final class OhmegaByteBufCodecs {
         }
     };
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ImmutableSet<AccessoryType>> ACCESSORY_TYPE_SET = new StreamCodec<>() {
+    public static final StreamCodec<RegistryFriendlyByteBuf, Collection<AccessoryType>> ACCESSORY_TYPE_COLLECTION = new StreamCodec<>() {
         @Override
-        public @NonNull ImmutableSet<AccessoryType> decode(@NonNull RegistryFriendlyByteBuf buf) {
+        public @NonNull Collection<AccessoryType> decode(@NonNull RegistryFriendlyByteBuf buf) {
             int size = VarInt.read(buf);
-            ImmutableSet.Builder<AccessoryType> builder = ImmutableSet.builderWithExpectedSize(size);
+            Set<AccessoryType> map = new HashSet<>(size);
 
             for (int i = 0; i < size; i++) {
-                builder.add(AccessoryType.STREAM_CODEC.decode(buf));
+                map.add(AccessoryType.STREAM_CODEC.decode(buf));
             }
 
-            return builder.build();
+            return map;
         }
 
         @Override
-        public void encode(@NonNull RegistryFriendlyByteBuf buf, @NonNull ImmutableSet<AccessoryType> values) {
+        public void encode(@NonNull RegistryFriendlyByteBuf buf, @NonNull Collection<AccessoryType> values) {
             VarInt.write(buf, values.size());
 
             for (AccessoryType value : values) {

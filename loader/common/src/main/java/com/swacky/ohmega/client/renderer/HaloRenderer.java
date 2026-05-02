@@ -45,7 +45,7 @@ public class HaloRenderer implements ILivingAccessoryRenderer {
                 context.offsetToPartFace(head, Direction.UP);
 
                 // Account for baby entities
-                context.applyBabyScaling();
+                context.applyAgeScaling();
 
                 float ageFactor = state.ageScale;
 
@@ -56,7 +56,7 @@ public class HaloRenderer implements ILivingAccessoryRenderer {
                 if (!state.headItem.isEmpty()) {
                     // Non-helmet items
                     stack.translate(0, -state.headItem.getModelBoundingBox().getYsize() / 16 * ageFactor, 0);
-                } else if (state instanceof AvatarRenderState state0 && !state0.headEquipment.isEmpty()) {
+                } else if (state instanceof AvatarRenderState avatarState && !avatarState.headEquipment.isEmpty()) {
                     // Helmets
                     stack.translate(0, -1f / 16 * ageFactor, 0);
                 }

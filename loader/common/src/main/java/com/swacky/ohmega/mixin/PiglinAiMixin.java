@@ -19,7 +19,7 @@ abstract class PiglinAiMixin {
                     value = "HEAD"),
             cancellable = true)
     private static void isWearingSafeArmor(LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
-        for (ItemStack stack : AccessoryHelper.getAccessoryStacks(entity)) {
+        for (ItemStack stack : AccessoryHelper.getData(entity).getStacks()) {
             Accessory accessory = Accessories.get(stack.getItem());
 
             if (accessory != null && accessory.isPiglinSafe(stack)) {

@@ -27,7 +27,7 @@ abstract class PowderSnowBlockMixin extends Block implements BucketPickup {
             cancellable = true)
     private static void canEntityWalkOnPowderSnow(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (entity instanceof LivingEntity living) {
-            for (ItemStack stack : AccessoryHelper.getAccessoryStacks(living)) {
+            for (ItemStack stack : AccessoryHelper.getData(living).getStacks()) {
                 Accessory accessory = Accessories.get(stack.getItem());
 
                 if (accessory != null && accessory.allowWalkOnPowderSnow(stack)) {

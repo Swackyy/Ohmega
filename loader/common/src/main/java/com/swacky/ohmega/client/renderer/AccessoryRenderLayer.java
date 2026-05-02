@@ -2,12 +2,13 @@ package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
+import com.swacky.ohmega.api.client.renderer.HumanoidRenderContext;
 import com.swacky.ohmega.api.client.renderer.IHumanoidAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.ILivingAccessoryRenderer;
-import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
-import com.swacky.ohmega.api.client.renderer.HumanoidRenderContext;
 import com.swacky.ohmega.api.client.renderer.LivingRenderContext;
+import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
@@ -38,44 +40,50 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
 
         if (data != null && !OhmegaHooks.renderPre(state, poseStack)) {
             SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
+            NonNullList<ItemStack> stacks = data.stacks();
+            boolean flag = OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.allowHideAccessories();
 
-            for (ItemStack stack : data.stacks()) {
-                if (state instanceof HumanoidRenderState humanoidState) {
-                    IHumanoidAccessoryRenderer.Factory factory = AccessoryRenderers.getHumanoidFactory(Accessories.get(stack.getItem()));
+            for (int i = 0; i < stacks.size(); i++) {
+                ItemStack stack = stacks.get(i);
+
+                if (!stack.isEmpty() && !(flag && data.hidden()[i])) {
+                    if (state instanceof HumanoidRenderState humanoidState) {
+                        IHumanoidAccessoryRenderer.Factory factory = AccessoryRenderers.getHumanoidFactory(Accessories.get(stack.getItem()));
+
+                        if (factory != null) {
+                            HumanoidRenderContext context = new HumanoidRenderContext(
+                                    poseStack,
+                                    wrapper,
+                                    stack,
+                                    humanoidState,
+                                    (HumanoidModel<HumanoidRenderState>) getParentModel(),
+                                    Minecraft.getInstance().getModelManager(),
+                                    packedLight);
+
+                            if (!OhmegaHooks.renderAccessoryPre(context)) {
+                                factory.construct(providerContext).submit(context);
+                                OhmegaHooks.renderAccessoryPost(context);
+                                continue;
+                            }
+                        }
+                    }
+
+                    ILivingAccessoryRenderer.Factory factory = AccessoryRenderers.getLivingFactory(Accessories.get(stack.getItem()));
 
                     if (factory != null) {
-                        HumanoidRenderContext context = new HumanoidRenderContext(
+                        LivingRenderContext context = new LivingRenderContext(
                                 poseStack,
                                 wrapper,
                                 stack,
-                                humanoidState,
-                                (HumanoidModel<HumanoidRenderState>) getParentModel(),
+                                state,
+                                (EntityModel<LivingEntityRenderState>) getParentModel(),
                                 Minecraft.getInstance().getModelManager(),
                                 packedLight);
 
                         if (!OhmegaHooks.renderAccessoryPre(context)) {
                             factory.construct(providerContext).submit(context);
                             OhmegaHooks.renderAccessoryPost(context);
-                            continue;
                         }
-                    }
-                }
-
-                ILivingAccessoryRenderer.Factory factory = AccessoryRenderers.getLivingFactory(Accessories.get(stack.getItem()));
-
-                if (factory != null) {
-                    LivingRenderContext context = new LivingRenderContext(
-                            poseStack,
-                            wrapper,
-                            stack,
-                            state,
-                            (EntityModel<LivingEntityRenderState>) getParentModel(),
-                            Minecraft.getInstance().getModelManager(),
-                            packedLight);
-
-                    if (!OhmegaHooks.renderAccessoryPre(context)) {
-                        factory.construct(providerContext).submit(context);
-                        OhmegaHooks.renderAccessoryPost(context);
                     }
                 }
             }

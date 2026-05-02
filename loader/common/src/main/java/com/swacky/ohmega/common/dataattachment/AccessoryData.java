@@ -18,11 +18,12 @@ import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -40,34 +41,29 @@ import java.util.function.Predicate;
 public final class AccessoryData {
     public static final Codec<AccessoryData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
             Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
     ).apply(builder, AccessoryData::new));
 
     public static final MapCodec<AccessoryData> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("changed").forGetter(inst -> Booleans.asList(inst.changed)),
             Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
     ).apply(builder, AccessoryData::new));
 
     private NonNullList<ItemStack> stacks;
-    private boolean[] changed; // todo: may now be unneeded
     private boolean[] hidden;
 
-    private AccessoryData(NonNullList<ItemStack> stacks, boolean[] changed, boolean[] hidden) {
+    private AccessoryData(NonNullList<ItemStack> stacks, boolean[] hidden) {
         this.stacks = stacks;
-        this.changed = changed;
         this.hidden = hidden;
     }
 
-    private AccessoryData(List<ItemStack> stacks, List<Boolean> changed, List<Boolean> hidden) {
-        this(NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])), Booleans.toArray(changed), Booleans.toArray(hidden));
+    private AccessoryData(List<ItemStack> stacks, List<Boolean> hidden) {
+        this(NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])), Booleans.toArray(hidden));
     }
 
     public AccessoryData() {
         int size = AccessoryHelper.getSlotTypes().size();
         this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        this.changed = new boolean[size];
         this.hidden = new boolean[size];
     }
 
@@ -90,10 +86,6 @@ public final class AccessoryData {
         }
 
         return false;
-    }
-
-    public void setChanged(int index) {
-        changed[index] = true;
     }
 
     public ItemStack getStackInSlot(int index) {
@@ -129,43 +121,71 @@ public final class AccessoryData {
         }
     }
 
-    private void doSetStack(int index, ItemStack stack) {
-        stacks.set(index, stack);
-        setChanged(index);
+    private void syncWithPlayers(LivingEntity entity, int[] indexes, List<ItemStack> stacks) {
+        if (entity.level() instanceof ServerLevel level) {
+            for (ServerPlayer receiver : level.players()) {
+                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes, stacks, true));
+            }
+        }
+    }
+
+    private void doSetStack(LivingEntity entity, int index, ItemStack stack, EquipContext context, boolean forceOnEquip, boolean sync) {
+        ItemStack current = getStackInSlot(index);
+
+        if (!ItemStack.matches(current, stack)) {
+            doUnequip(entity, current);
+
+            if (stack.isEmpty()) {
+                AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
+            }
+
+            stacks.set(index, stack);
+
+            if (forceOnEquip || AccessoryHelper.isActive(stack)) {
+                doEquip(entity, stack, index, context);
+            }
+
+            if (sync) {
+                syncWithPlayers(entity, new int[]{index}, List.of(stack));
+            }
+        }
     }
 
     // todo fix: Syncing with this is bugged as it will always call Accessory#onEquip afaik
-    public boolean setStack(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
+    public boolean setStack(LivingEntity entity, int index, ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(entity, index, stack, context)) {
-            ItemStack current = getStackInSlot(index);
-
-            if (!ItemStack.matches(current, stack)) {
-                doUnequip(entity, current);
-
-                if (stack.isEmpty()) {
-                    AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
-                }
-
-                doSetStack(index, stack);
-
-                if (forceOnEquip || AccessoryHelper.isActive(stack)) {
-                    doEquip(entity, stack, index, context);
-                }
-            }
-
+            doSetStack(entity, index, stack, context, forceOnEquip, true);
             return true;
         }
 
         return false;
     }
 
-    public boolean setStack(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context, boolean bypassValidation) {
-        return setStack(entity, index, stack, context, bypassValidation, true);
-    }
-
     // Use this for most general usage
     public boolean setStack(LivingEntity entity, int index, @NonNull ItemStack stack, EquipContext context) {
-        return setStack(entity, index, stack, context, false);
+        return setStack(entity, index, stack, context, false, true);
+    }
+
+    public void setStacks(LivingEntity entity, int[] indexes, List<ItemStack> stacks, EquipContext context, boolean forceOnEquip) {
+        for (int i = 0; i < indexes.length; i++) {
+            doSetStack(entity, indexes[i], stacks.get(i), context, forceOnEquip, false);
+        }
+
+        syncWithPlayers(entity, indexes, stacks);
+    }
+
+    public void setStacksRange(LivingEntity entity, int minIndex, int maxIndex, List<ItemStack> allStacks, EquipContext context, boolean forceOnEquip) {
+        int size = maxIndex - minIndex;
+        int[] indexes = new int[size];
+        List<ItemStack> stacks = new ArrayList<>(size);
+        int cursor = 0;
+
+        for (int i = minIndex; i < maxIndex; i++) {
+            indexes[cursor] = i;
+            stacks.add(cursor++, allStacks.get(i));
+        }
+
+        setStacks(entity, indexes, stacks, context, forceOnEquip);
     }
 
     public ItemStack remove(LivingEntity entity, int index, int amount) {
@@ -180,7 +200,6 @@ public final class AccessoryData {
         if (!ItemStack.isSameItemSameComponents(getStackInSlot(index), stack)) {
             doUnequip(entity, stack);
             AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
-            setChanged(index);
         }
 
         return stack;
@@ -195,8 +214,6 @@ public final class AccessoryData {
             if (!(entity instanceof Player player) || !player.addItem(stack)) {
                 entity.drop(stack, false, true);
             }
-
-            setChanged(index);
         }
     }
 
@@ -221,7 +238,6 @@ public final class AccessoryData {
                 }
 
                 stack.shrink(toRemoveCurrentStack);
-                setChanged(i);
 
                 removed += toRemoveCurrentStack;
             }
@@ -232,6 +248,10 @@ public final class AccessoryData {
 
     public NonNullList<ItemStack> getStacks() {
         return stacks;
+    }
+
+    public boolean[] getHidden() {
+        return hidden;
     }
 
     public boolean isHidden(int index) {
@@ -314,50 +334,48 @@ public final class AccessoryData {
     }
 
     public void tick(LivingEntity entity) {
-        for (int i = 0; i < size(); i++) {
+        int size = size();
+
+        // Server only variables
+        ServerLevel level = entity.level() instanceof ServerLevel serverLevel ? serverLevel : null;
+        IntList indexes = null;
+        List<ItemStack> stacks = null;
+
+        for (int i = 0; i < size; i++) {
             ItemStack stack = getStackInSlot(i);
             Item item = stack.getItem();
             Accessory accessory = Accessories.get(item);
 
             if (accessory != null) {
-                if (accessory.preferInventoryTick(stack)) {
-                    if (entity.level() instanceof ServerLevel level) {
-                        item.inventoryTick(stack, level, entity, EquipmentSlot.MAINHAND);
-                    }
-                } else {
+                if (!accessory.preferInventoryTick(stack)) {
                     accessory.accessoryTick(entity, stack);
+                }
+
+                if (level != null) {
+                    item.inventoryTick(stack, level, entity, null);
+
+                    if (accessory.autoSync(stack)) {
+                        if (indexes == null) {
+                            indexes = new IntArrayList(size);
+                            stacks = new ArrayList<>(size);
+                        }
+
+                        indexes.add(i);
+                        stacks.add(stack);
+                    }
                 }
             }
         }
 
-        // todo: move to an on demand system
-        if (entity.level() instanceof ServerLevel level) {
-            List<Integer> indexes = new ArrayList<>();
-            List<ItemStack> stacks = new ArrayList<>();
-
-            for (int i = 0; i < size(); i++) {
-                ItemStack stack = getStackInSlot(i);
-                Accessory accessory = Accessories.get(stack.getItem());
-
-                if (changed[i] || (accessory != null && accessory.autoSync(stack))) {
-                    indexes.add(i);
-                    stacks.add(stack);
-
-                    changed[i] = false;
-                }
-            }
-
-
-            if (!indexes.isEmpty()) {
-                for (ServerPlayer receiver : level.getPlayers(_ -> true)) {
-                    OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes.stream().mapToInt(Integer::intValue).toArray(), stacks, true));
-                }
+        if (indexes != null) {
+            for (ServerPlayer receiver : level.players()) {
+                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes.toIntArray(), stacks, true));
             }
         }
     }
 
     public void reload(LivingEntity entity) {
-        int oldSize = Math.min(changed.length, size());
+        int oldSize = size();
         ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
         int newSize = types.size();
 
@@ -367,7 +385,6 @@ public final class AccessoryData {
             Arrays.fill(emptyStackArray, ItemStack.EMPTY);
 
             stacks = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(stacks.toArray(new ItemStack[0]), emptyStackArray));
-            changed = ArrayUtils.addAll(changed, new boolean[newSize - oldSize]);
             hidden = ArrayUtils.addAll(hidden, new boolean[newSize - oldSize]);
         } else if (newSize < oldSize) {
             // Drop stacks outside of range
@@ -377,7 +394,6 @@ public final class AccessoryData {
 
             // Shrink data
             stacks = NonNullList.of(ItemStack.EMPTY, Arrays.copyOfRange(stacks.toArray(new ItemStack[0]), 0, newSize));
-            changed = Arrays.copyOfRange(changed, 0, newSize);
             hidden = Arrays.copyOfRange(hidden, 0, newSize);
         }
 

@@ -60,7 +60,7 @@ public final class ItemCommand extends OhmegaCommandNode {
                                 .then(Commands.argument(ARGUMENT_INDEX, IntegerArgumentType.integer(0))
                                         .executes(ItemCommand::get))))
                 .then(Commands.literal(ELEMENT_SET)
-                        .then(Commands.argument(ARGUMENT_TARGETS, EntityArgument.entity())
+                        .then(Commands.argument(ARGUMENT_TARGETS, EntityArgument.entities())
                                 .then(Commands.argument(ARGUMENT_INDEX, IntegerArgumentType.integer(0))
                                         .then(Commands.argument(ARGUMENT_ITEM, ItemArgument.item(context))
                                                 .executes(ItemCommand::setWithTargetIndexItem)
@@ -90,7 +90,7 @@ public final class ItemCommand extends OhmegaCommandNode {
             AccessoryData data = AccessoryHelper.getData(target);
 
             if (index >= 0 && index < data.size()) {
-                data.setStack(target, index, new ItemStack(item, count), EquipContext.COMMAND, true);
+                data.setStack(target, index, new ItemStack(item, count), EquipContext.COMMAND, true, true);
             } else {
                 throw INDEX_EXCEPTION.create(Pair.of(index, data.size()));
             }

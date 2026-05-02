@@ -36,6 +36,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
@@ -112,10 +113,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
-        ImmutableMap.Builder<Item, Pair<AccessoryType, Boolean>> builder = new ImmutableMap.Builder<>();
+        Map<Item, Pair<AccessoryType, Boolean>> map = new IdentityHashMap<>();
 
-        AccessoryOverrideTypesEvent.EVENT.invoker().process(builder);
-        return builder.build();
+        AccessoryOverrideTypesEvent.EVENT.invoker().process(map);
+        return map;
     }
 
     @Override

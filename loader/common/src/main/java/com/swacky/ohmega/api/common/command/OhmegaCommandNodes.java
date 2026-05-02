@@ -6,14 +6,14 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
  * Class for registering extra {@code /ohmega} command nodes
  */
 public final class OhmegaCommandNodes {
-    private static final Map<String, OhmegaCommandNode.Factory> NODES = new HashMap<>();
+    private static final Map<String, OhmegaCommandNode.Factory> NODES = new IdentityHashMap<>();
 
     /**
      * Register a command node

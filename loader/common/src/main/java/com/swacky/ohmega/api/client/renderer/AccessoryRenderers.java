@@ -6,14 +6,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public final class AccessoryRenderers {
-    private static final Map<Accessory, IHumanoidAccessoryRenderer.Factory> HUMANOID_RENDERERS = new HashMap<>();
-    private static final Map<Accessory, ILivingAccessoryRenderer.Factory> LIVING_RENDERERS = new HashMap<>();
-    private static final Map<Accessory, Predicate<EntityType<?>>> NO_RENDERS = new HashMap<>();
+    private static final Map<Accessory, IHumanoidAccessoryRenderer.Factory> HUMANOID_RENDERERS = new IdentityHashMap<>();
+    private static final Map<Accessory, ILivingAccessoryRenderer.Factory> LIVING_RENDERERS = new IdentityHashMap<>();
+    private static final Map<Accessory, Predicate<EntityType<?>>> NO_RENDERS = new IdentityHashMap<>();
 
     private static boolean registerNoRender(Accessory key, Predicate<EntityType<?>> type) {
         if (!NO_RENDERS.containsKey(key)) {

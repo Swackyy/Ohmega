@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModLoader;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public final class OhmegaHooksImpl implements OhmegaHooks.Service {
@@ -119,10 +121,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
-        AccessoryOverrideTypesEvent event = new AccessoryOverrideTypesEvent();
+        Map<Item, Pair<AccessoryType, Boolean>> map = new IdentityHashMap<>();
 
-        ModLoader.postEvent(event);
-        return event.getOverrides();
+        ModLoader.postEvent(new AccessoryOverrideTypesEvent(map));
+        return map;
     }
 
     @Override
@@ -130,7 +132,8 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
         AccessoryPreferInventoryTickEvent event = new AccessoryPreferInventoryTickEvent(stack, original);
 
         AccessoryPreferInventoryTickEvent.BUS.post(event);
-        return event.returnValue;    }
+        return event.returnValue;
+    }
 
     @Override
     public boolean preferVanillaUse(ItemStack stack, boolean original) {
@@ -142,10 +145,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public Map<Identifier, AccessoryType> registerAccessoryTypes() {
-        RegisterAccessoryTypesEvent event = new RegisterAccessoryTypesEvent();
+        Map<Identifier, AccessoryType> map = new HashMap<>();
 
-        RegisterAccessoryTypesEvent.BUS.post(event);
-        return event.getTypes();
+        RegisterAccessoryTypesEvent.BUS.post(new RegisterAccessoryTypesEvent(map));
+        return map;
     }
 
     @Override

@@ -49,11 +49,11 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
         this.packedLight = packedLight;
     }
 
-    public void applyBabyScaling() {
+    public void applyAgeScaling() {
         if (state.isBaby) {
-            float scale = 2f / 3;
+            float scaleFactor = state.ageScale * 4 / 3;
 
-            poseStack.scale(scale, scale, scale);
+            poseStack.scale(scaleFactor, scaleFactor, scaleFactor);
         }
     }
 

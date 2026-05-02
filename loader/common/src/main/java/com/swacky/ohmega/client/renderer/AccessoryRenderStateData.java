@@ -7,7 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
-public record AccessoryRenderStateData(NonNullList<ItemStack> stacks) {
+public record AccessoryRenderStateData(NonNullList<ItemStack> stacks, boolean[] hidden) {
     private static final Service IMPL = OhmegaClient.loadService(Service.class);
 
     public static void bootstrap() {}
