@@ -8,7 +8,6 @@ import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
@@ -60,8 +59,14 @@ public final class ClientCallbacks {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
 
-            if (player != null && player.containerMenu instanceof IAccessoryMenu) {
-                mc.screen = new InventoryScreen(player);
+            if (player != null && mc.screen instanceof IAccessoryScreen) {
+                mc.execute(() -> mc.setScreen(null));
+
+                AbstractContainerMenu menu = player.containerMenu;
+
+                if (menu != mc.player.inventoryMenu) {
+                    player.connection.send(new ServerboundContainerClosePacket(menu.containerId));
+                }
             }
         }
     }
@@ -219,13 +224,13 @@ public final class ClientCallbacks {
             LocalPlayer player = mc.player;
 
             if (player != null) {
-                AbstractContainerMenu menu = player.containerMenu;
-
-                if (menu instanceof IAccessoryMenu) {
+                if (mc.screen instanceof IAccessoryScreen) {
                     mc.execute(() -> mc.setScreen(null));
 
+                    AbstractContainerMenu menu = player.containerMenu;
+
                     if (menu != mc.player.inventoryMenu) {
-                        player.connection.send(new ServerboundContainerClosePacket(player.containerMenu.containerId));
+                        player.connection.send(new ServerboundContainerClosePacket(menu.containerId));
                     }
                 }
 
@@ -260,6 +265,8 @@ public final class ClientCallbacks {
 
     public static void reloadRegisteredKeybinds(Runnable loadFunction) {
         ArrayList<KeyMapping> list = new ArrayList<>();
+
+        OhmegaBinds.reloadSlotKeys();
 
         for (List<KeyMapping> immutableList : OhmegaBinds.getSlotKeys().values()) {
             list.addAll(immutableList);
