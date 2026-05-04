@@ -152,7 +152,7 @@ public final class OhmegaConfig {
             String CREATIVE_EXTENSION_Y_KEY = "creativeExtensionY";
             String CREATIVE_EXTENSION_Y_DESCRIPTION = """
                     The y-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
-            int CREATIVE_EXTENSION_Y_DEFAULT = -2;
+            int CREATIVE_EXTENSION_Y_DEFAULT = 8;
             int CREATIVE_EXTENSION_Y_MIN = -2048;
             int CREATIVE_EXTENSION_Y_MAX = 2048;
             // - - -
