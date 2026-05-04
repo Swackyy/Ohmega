@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.io.BufferedReader;
@@ -55,15 +56,15 @@ public class OhmegaSplashProvider implements DataProvider {
         addSplashes();
 
         if (!data.isEmpty()) {
-            Optional<ModContainer> container = FabricLoader.getInstance().getModContainer("minecraft");
+            Optional<ModContainer> container = FabricLoader.getInstance().getModContainer(Identifier.DEFAULT_NAMESPACE);
             Path path = output.getOutputFolder(PackOutput.Target.RESOURCE_PACK)
-                    .resolve("minecraft")
+                    .resolve(Identifier.DEFAULT_NAMESPACE)
                     .resolve("texts")
                     .resolve("splashes.txt");
 
             return CompletableFuture.runAsync(() -> {
                 if (container.isPresent()) {
-                    Optional<Path> vanilla = container.get().findPath("assets/minecraft/texts/splashes.txt");
+                    Optional<Path> vanilla = container.get().findPath("assets/" + Identifier.DEFAULT_NAMESPACE + "/texts/splashes.txt");
 
                     if (vanilla.isPresent()) {
                         try {

@@ -7,6 +7,7 @@ import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartNames;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -33,10 +34,10 @@ public class HaloRenderer implements ILivingAccessoryRenderer {
         if (!context.state.isInvisible) {
             ModelPart root = context.parentModel.root();
 
-            if (root.hasChild("head")) {
+            if (root.hasChild(PartNames.HEAD)) {
                 PoseStack stack = context.poseStack;
                 LivingEntityRenderState state = context.state;
-                ModelPart head = root.getChild("head");
+                ModelPart head = root.getChild(PartNames.HEAD);
 
                 stack.pushPose();
 
