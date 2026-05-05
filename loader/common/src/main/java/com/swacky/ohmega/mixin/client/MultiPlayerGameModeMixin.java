@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 // todo: see if this can be moved to one ItemStackMixin or something
 @Mixin(MultiPlayerGameMode.class)
 abstract class MultiPlayerGameModeMixin {
+    // todo: maybe use a different injector? Slightly more difficult here because synthetic targets are less reliable
     @Inject(
             method = "useItem",
             at = @At(

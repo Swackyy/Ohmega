@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RecipeBookComponent.class)
 abstract class RecipeBookComponentMixin implements GuiEventListener, Renderable, NarratableEntry {
+    // todo: maybe use a different injector?
     @Inject(
             method = "updateScreenPosition",
             at = @At(

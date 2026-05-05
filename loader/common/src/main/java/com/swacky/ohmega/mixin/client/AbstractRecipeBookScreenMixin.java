@@ -40,6 +40,7 @@ abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> extends A
         }
     }
 
+    // todo: maybe use a different injector?
     @Inject(
             method = "hasClickedOutside",
             at = @At(

@@ -88,6 +88,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
         return original;
     }
 
+    // todo: maybe use a different injector?
     @Inject(
             method = "extractTooltip",
             at = @At(
@@ -106,6 +107,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
         }
     }
 
+    // todo: maybe use a different injector?
     @Inject(
             method = "hasClickedOutside",
             at = @At(

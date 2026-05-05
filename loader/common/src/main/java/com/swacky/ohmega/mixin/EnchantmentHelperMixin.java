@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-// todo: see if a better injection can be done here
 @Mixin(EnchantmentHelper.class)
 abstract class EnchantmentHelperMixin {
     @Unique
     private static final EquipmentSlot[] HUMANOID_ARMOUR = new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
 
+    // todo: evaluate the use of a better injector here, as this is both slower than needed and may introduce incompatibility
     @Inject(
             method = "getRandomItemWith",
             at = @At(

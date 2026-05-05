@@ -1,5 +1,7 @@
 package com.swacky.ohmega.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
@@ -26,7 +28,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
@@ -91,15 +92,15 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
         return size;
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "extractEntityInInventoryFollowsMouse",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;entity(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;FLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;IIII)V"))
-    private static void extractEntityInInventoryFollowsMouse(GuiGraphicsExtractor gui, EntityRenderState state, float size, Vector3f translation, Quaternionf rotation, Quaternionf xRotation, int x0, int y0, int x1, int y1) {
+    private static void extractEntityInInventoryFollowsMouse(GuiGraphicsExtractor gui, EntityRenderState state, float scale, Vector3f translation, Quaternionf rotation, Quaternionf xRotation, int x0, int y0, int x1, int y1, Operation<Void> handle) {
         // Hacky thing, shouldn't cause issues
-        if (state instanceof LivingEntityRenderState livingState && size < 0) {
-            size = -size;
+        if (state instanceof LivingEntityRenderState livingState && scale < 0) {
+            scale = -scale;
 
             livingState.bodyRot = -livingState.bodyRot;
             livingState.yRot = -livingState.yRot;
@@ -107,6 +108,6 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
             rotation.rotationX((float) Math.PI);
         }
 
-        gui.entity(state, size, translation, rotation, xRotation, x0, y0, x1, y1);
+        handle.call(gui, state, scale, translation, rotation, xRotation, x0, y0, x1, y1);
     }
 }

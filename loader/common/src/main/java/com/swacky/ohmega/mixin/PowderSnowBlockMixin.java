@@ -1,7 +1,9 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.item.Accessory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,8 +13,6 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PowderSnowBlock.class)
 abstract class PowderSnowBlockMixin extends Block implements BucketPickup {
@@ -20,21 +20,22 @@ abstract class PowderSnowBlockMixin extends Block implements BucketPickup {
         super(properties);
     }
 
-    @Inject(
+    @ModifyReturnValue(
             method = "canEntityWalkOnPowderSnow",
             at = @At(
-                    value = "HEAD"),
-            cancellable = true)
-    private static void canEntityWalkOnPowderSnow(Entity entity, CallbackInfoReturnable<Boolean> cir) {
+                    value = "RETURN",
+                    ordinal = 1))
+    private static boolean canEntityWalkOnPowderSnow(boolean original, @Local(argsOnly = true) Entity entity) {
         if (entity instanceof LivingEntity living) {
             for (ItemStack stack : AccessoryHelper.getData(living).getStacks()) {
                 Accessory accessory = Accessories.get(stack.getItem());
 
                 if (accessory != null && accessory.allowWalkOnPowderSnow(stack)) {
-                    cir.setReturnValue(true);
-                    return;
+                    return true;
                 }
             }
         }
+
+        return original;
     }
 }
