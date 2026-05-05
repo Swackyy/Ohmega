@@ -59,11 +59,11 @@ dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
 
     implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcVRangeMax}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 
-    compileOnly "mezz.jei:jei-${mcVRangeMax}-fabric-api:${jeiV}"
-    runtimeOnly "mezz.jei:jei-${mcVRangeMax}-fabric:${jeiV}"
+    compileOnly "mezz.jei:jei-${mcV}-fabric-api:${jeiV}"
+    runtimeOnly "mezz.jei:jei-${mcV}-fabric:${jeiV}"
 
     implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
 }

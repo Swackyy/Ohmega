@@ -44,6 +44,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly "mezz.jei:jei-${mcVRangeMax}-fabric-api:${jeiV}"
-    runtimeOnly "mezz.jei:jei-${mcVRangeMax}-fabric:${jeiV}"
+    compileOnly "mezz.jei:jei-${mcV}-fabric-api:${jeiV}"
+    runtimeOnly "mezz.jei:jei-${mcV}-fabric:${jeiV}"
 }
