@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -80,7 +81,7 @@ public final class CommonCallbacks {
     }
 
     public static void onLivingDeath(LivingEntity entity, Collection<ItemEntity> itemDrops) {
-        if (!shouldKeepInventory(entity)) {
+        if (!shouldKeepInventory(entity) && entity.level() instanceof ServerLevel level && entity.shouldDropLoot(level)) {
             AccessoryData data = AccessoryHelper.getData(entity);
             NonNullList<ItemStack> stacks = data.getStacks();
             int size = stacks.size();

@@ -19,6 +19,7 @@ accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
 mutable field net/minecraft/client/Options keyMappings [Lnet/minecraft/client/KeyMapping;
 accessible method net/minecraft/world/entity/LivingEntity createItemStackToDrop (Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;
+accessible method net/minecraft/world/entity/LivingEntity shouldDropLoot (Lnet/minecraft/server/level/ServerLevel;)Z
 accessible method net/minecraft/world/inventory/AbstractContainerMenu addSlot (Lnet/minecraft/world/inventory/Slot;)Lnet/minecraft/world/inventory/Slot;
 accessible method net/minecraft/world/inventory/AbstractContainerMenu moveItemStackTo (Lnet/minecraft/world/item/ItemStack;IIZ)Z
 accessible field net/minecraft/world/inventory/AbstractContainerMenu stateId I
