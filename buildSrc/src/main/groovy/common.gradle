@@ -6,7 +6,7 @@ plugins {
 }
 
 group "com.swacky"
-version "${project.name}-mc${supportedMcV}"
+version "${project.name}-mc${mcV}"
 
 base {
     archivesName.set "${modId}-${modV}"
@@ -92,7 +92,7 @@ if (secretsFile.exists()) {
                 mavenJava(MavenPublication) {
                     groupId = "io.github.swackyy"
                     artifactId = "${modId}-${project.name}"
-                    version = "${modV}-mc${supportedMcV}"
+                    version = "${modV}-mc${mcV}"
 
                     artifact tasks.named("jar")
                     artifact tasks.named("javadocJar")
