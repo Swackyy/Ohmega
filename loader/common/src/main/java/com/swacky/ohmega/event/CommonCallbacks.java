@@ -56,17 +56,17 @@ public final class CommonCallbacks {
 
     public static double getVisibilityPercentModifier(LivingEntity entity, Entity targetingEntity) {
         NonNullList<ItemStack> stacks = AccessoryHelper.getData(entity).getStacks();
-        double multiplier = 0;
+        double multiplier = 1;
 
         for (ItemStack stack : stacks) {
             Accessory accessory = Accessories.get(stack.getItem());
 
             if (accessory != null) {
-                multiplier += accessory.getMobVisibilityMultiplier(stack, targetingEntity);
+                multiplier *= accessory.getMobVisibilityMultiplier(stack, targetingEntity);
             }
         }
 
-        return multiplier / stacks.size();
+        return multiplier;
     }
 
     // Ensure alive or 'shouldKeepInventory' returns true before this
