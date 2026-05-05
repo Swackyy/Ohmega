@@ -219,6 +219,7 @@ public final class AccessoryData {
 
     public int clearMatchingItems(LivingEntity entity, Predicate<ItemStack> filter, int max) {
         int removed = 0;
+        IntList indexes = new IntArrayList();
 
         for (int i = 0; i < size() && (max < 0 || removed < max); i++) {
             ItemStack stack = getStackInSlot(i);
@@ -235,6 +236,7 @@ public final class AccessoryData {
 
                 if (max < 0 || removed + count <= max) {
                     doUnequip(entity, stack);
+                    indexes.add(i);
                 }
 
                 stack.shrink(toRemoveCurrentStack);
@@ -243,6 +245,7 @@ public final class AccessoryData {
             }
         }
 
+        syncWithPlayers(entity, indexes.toIntArray(), NonNullList.withSize(indexes.size(), ItemStack.EMPTY));
         return removed;
     }
 
