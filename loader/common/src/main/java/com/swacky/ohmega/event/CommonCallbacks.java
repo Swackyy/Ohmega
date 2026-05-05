@@ -44,7 +44,7 @@ public final class CommonCallbacks {
     }
 
     public static void onPlayerDeath(Player player, Collection<ItemEntity> itemDrops) {
-        if (!shouldKeepInventory(player)) {
+        if (!shouldKeepInventory(player) && player.level() instanceof ServerLevel level && player.shouldDropLoot(level)) {
             AccessoryContainer container = AccessoryHelper.getContainer(player);
             NonNullList<ItemStack> stacks = container.getStacks();
 

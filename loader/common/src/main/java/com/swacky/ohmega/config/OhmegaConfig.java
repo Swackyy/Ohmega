@@ -226,7 +226,7 @@ public final class OhmegaConfig {
             String NORMAL  = AccessoryType.NORMAL_ID.toString();
             String UTILITY = AccessoryType.UTILITY_ID.toString();
             String SPECIAL = AccessoryType.SPECIAL_ID.toString();
-            Predicate<Object> ACCESSORY_TYPE_VALIDATOR = v -> v instanceof String str && AccessoryTypeManager.exists(str);
+            Predicate<Object> ACCESSORY_TYPE_VALIDATOR = v -> AccessoryTypeManager.getTypes().isEmpty() || (v instanceof String str && AccessoryTypeManager.exists(str));
 
             String SLOT_TYPES_KEY = "slotTypes";
             String SLOT_TYPES_DESCRIPTION = """
