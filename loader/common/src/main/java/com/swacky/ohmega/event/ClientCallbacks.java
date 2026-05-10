@@ -3,6 +3,7 @@ package com.swacky.ohmega.event;
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
+import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
@@ -32,17 +33,19 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -52,6 +55,63 @@ public final class ClientCallbacks {
         AccessoryData data = AccessoryHelper.getData(entity);
 
         return new AccessoryRenderStateData(data.getStacks(), data.getHidden());
+    }
+
+    public static List<Rect2i> getJeiAvoidRects(AbstractContainerScreen<?> screen) {
+        if (screen instanceof IAccessoryScreen accessoryScreen) {
+            AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
+
+            if (extension != null && extension.isVisible()) {
+                List<Rect2i> rects = null;
+
+                if (screen.showsActiveEffects()) {
+                    Minecraft minecraft = Minecraft.getInstance();
+                    LocalPlayer player = minecraft.player;
+
+                    if (player != null) {
+                        Collection<MobEffectInstance> activeEffects = player.getActiveEffects();
+
+                        if (!activeEffects.isEmpty()) {
+                            int height;
+                            rects = new ArrayList<>(3);
+
+                            if (activeEffects.size() > 5) {
+                                height = 132 / (activeEffects.size() - 1);
+                            } else {
+                                height = 33;
+                            }
+
+                            rects.add(new Rect2i(
+                                    screen.leftPos + screen.imageWidth + extension.getExtraWidthRight() + 2,
+                                    screen.topPos,
+                                    32,
+                                    height * activeEffects.size()));
+                        }
+                    }
+                }
+
+                if (rects == null) {
+                    rects = new ArrayList<>(2);
+                }
+
+                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.buttonStyle();
+                IntIntPair buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
+
+                rects.add(new Rect2i(
+                        screen.leftPos + buttonPosition.firstInt(),
+                        screen.topPos + buttonPosition.secondInt(),
+                        buttonStyle.width,
+                        buttonStyle.height));
+                rects.add(new Rect2i(
+                        screen.leftPos + AccessoryScreenExtensions.getAccessoryExtensionX(accessoryScreen),
+                        screen.topPos + AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen),
+                        extension.getWidth(),
+                        extension.getHeight()));
+                return rects;
+            }
+        }
+
+        return List.of();
     }
 
     public static void onClientConfigReload() {
@@ -249,18 +309,19 @@ public final class ClientCallbacks {
         loadFunction.run();
     }
 
-    public static void preventRender(LivingEntityRenderState state, CallbackInfo ci) {
+    public static boolean preventRender(LivingEntityRenderState state) {
         AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
         if (data != null) {
             for (ItemStack stack : data.stacks()) {
                 // todo: optimise this by caching it somehow
                 if (AccessoryRenderers.isNoRender(Accessories.get(stack.getItem()), state.entityType)) {
-                    ci.cancel();
-                    return;
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
     public static void reloadRegisteredKeybinds(Runnable loadFunction) {

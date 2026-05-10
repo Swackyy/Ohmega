@@ -1,5 +1,7 @@
 package com.swacky.ohmega.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.event.CommonCallbacks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -14,7 +16,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 
@@ -38,13 +39,12 @@ abstract class LivingEntityMixin extends Entity implements Attackable, WaypointT
         }
     }
 
-    @Inject(
+    @ModifyReturnValue(
             method = "getVisibilityPercent",
             at = @At(
-                    value = "RETURN"),
-            cancellable = true)
-    private void getVisibilityPercent(Entity targetingEntity, CallbackInfoReturnable<Double> cir) {
-        cir.setReturnValue(cir.getReturnValue() * CommonCallbacks.getVisibilityPercentModifier((LivingEntity) (Object) this, targetingEntity));
+                    value = "RETURN"))
+    private double getVisibilityPercent(double original, @Local(argsOnly = true) Entity targetingEntity) {
+        return CommonCallbacks.getVisibilityPercentModifier((LivingEntity) (Object) this, targetingEntity);
     }
 
     @Inject(

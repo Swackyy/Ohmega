@@ -1,5 +1,7 @@
 package com.swacky.ohmega.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
@@ -15,7 +17,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractRecipeBookScreen.class)
 abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> extends AbstractContainerScreen<T> implements RecipeUpdateListener {
@@ -41,20 +42,21 @@ abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> extends A
     }
 
     // todo: maybe use a different injector?
-    @Inject(
+    @ModifyReturnValue(
             method = "hasClickedOutside",
             at = @At(
-                    value = "RETURN"),
-            cancellable = true)
-    private void hasClickedOutside(double mx, double my, int xo, int yo, CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValue() && this instanceof IAccessoryScreen accessoryScreen) {
+                    value = "RETURN"))
+    private boolean hasClickedOutside(boolean original, @Local(name = "mx") double mx, @Local(name = "my") double my) {
+        if (original && this instanceof IAccessoryScreen accessoryScreen) {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
-                cir.setReturnValue(extension.hasClickedOutside(
+                return extension.hasClickedOutside(
                         mx - AccessoryScreenExtensions.getAccessoryExtensionX(accessoryScreen) - leftPos,
-                        my - AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen) - topPos));
+                        my - AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen) - topPos);
             }
         }
+
+        return original;
     }
 }

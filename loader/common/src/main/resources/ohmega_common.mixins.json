@@ -16,6 +16,7 @@
     "client.AbstractContainerScreenMixin",
     "client.AbstractRecipeBookScreenMixin",
     "client.CreativeModeInventoryScreenMixin",
+    "client.EffectsInInventoryMixin",
     "client.InventoryScreenMixin",
     "client.ItemPickerMenuMixin",
     "client.MinecraftMixin",

@@ -1,9 +1,6 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
-import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
@@ -11,9 +8,6 @@ import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.NonNullList;
@@ -27,34 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.Collection;
-import java.util.List;
 
 public final class CommonCallbacks {
-    public static List<Rect2i> getJeiAvoidRects(AbstractContainerScreen<?> screen) {
-        if (screen instanceof IAccessoryScreen accessoryScreen) {
-            AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
-
-            if (extension != null && extension.isVisible()) {
-                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.buttonStyle();
-                IntIntPair buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
-
-                return List.of(
-                        new Rect2i(
-                                screen.leftPos + buttonPosition.firstInt(),
-                                screen.topPos + buttonPosition.secondInt(),
-                                buttonStyle.width,
-                                buttonStyle.height),
-                        new Rect2i(
-                                screen.leftPos + AccessoryScreenExtensions.getAccessoryExtensionX(accessoryScreen),
-                                screen.topPos + AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen),
-                                extension.getWidth(),
-                                extension.getHeight()));
-            }
-        }
-
-        return List.of();
-    }
-
     public static double getVisibilityPercentModifier(LivingEntity entity, Entity targetingEntity) {
         NonNullList<ItemStack> stacks = AccessoryHelper.getData(entity).getStacks();
         double multiplier = 1;

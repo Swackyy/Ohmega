@@ -330,7 +330,13 @@ public final class AccessoryHelper {
             }
         }
 
-        KeyMapping mapping = OhmegaBinds.getMapping(type, typeIndex);
+        KeyMapping mapping;
+
+        if (type == null) {
+            mapping = null;
+        } else {
+            mapping = OhmegaBinds.getMapping(type, typeIndex);
+        }
 
         if (slot < 0 || !flag || mapping == null) {
             return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);

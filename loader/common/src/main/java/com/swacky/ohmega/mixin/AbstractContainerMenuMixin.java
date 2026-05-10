@@ -24,7 +24,6 @@ public class AbstractContainerMenuMixin {
     @Final
     public NonNullList<Slot> slots;
 
-    // todo: fix slot syncing here
     @Inject(
             method = "synchronizeSlotToRemote",
             at = @At(

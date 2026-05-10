@@ -47,6 +47,8 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
                     value = "HEAD"),
             cancellable = true)
     public void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState, CallbackInfo ci) {
-        ClientCallbacks.preventRender((LivingEntityRenderState) state, ci);
+        if (ClientCallbacks.preventRender((LivingEntityRenderState) state)) {
+            ci.cancel();
+        }
     }
 }

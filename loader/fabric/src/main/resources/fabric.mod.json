@@ -26,7 +26,7 @@
       "com.swacky.${modId}.datagen.OhmegaDataGenerationMain"
     ],
     "jei_mod_plugin": [
-      "com.swacky.${modId}.compatibility.OhmegaJeiMain"
+      "com.swacky.${modId}.compatibility.jei.OhmegaJeiMain"
     ]
   },
   "mixins": [

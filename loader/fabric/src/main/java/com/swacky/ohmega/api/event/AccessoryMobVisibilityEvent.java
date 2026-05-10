@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public interface AccessoryMobVisibilityEvent {
     Event<AccessoryMobVisibilityEvent> EVENT = EventFactory.createArrayBacked(AccessoryMobVisibilityEvent.class,
@@ -16,5 +17,5 @@ public interface AccessoryMobVisibilityEvent {
         }
     );
 
-    double process(ItemStack stack, Entity targetingEntity, double original);
+    double process(ItemStack stack, @Nullable Entity targetingEntity, double original);
 }

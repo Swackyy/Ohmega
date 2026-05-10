@@ -1,6 +1,7 @@
-package com.swacky.ohmega.compatibility;
+package com.swacky.ohmega.compatibility.jei;
 
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.event.CommonCallbacks;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -25,7 +26,7 @@ public class OhmegaJeiMain implements IModPlugin {
         register.addGenericGuiContainerHandler(AbstractContainerScreen.class, new IGuiContainerHandler<>() {
             @Override
             public @NonNull List<Rect2i> getGuiExtraAreas(@NonNull AbstractContainerScreen<?> screen) {
-                return CommonCallbacks.getJeiAvoidRects(screen);
+                return ClientCallbacks.getJeiAvoidRects(screen);
             }
         });
     }

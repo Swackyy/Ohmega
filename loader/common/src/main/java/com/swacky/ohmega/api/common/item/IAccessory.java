@@ -185,7 +185,7 @@ public interface IAccessory {
      * @param targetingEntity the entity being targeted.
      * @return the multiplier to submit, a value of {@code 1} will mean no change, and {@code 0} will prevent visibility at all
      */
-    default double getMobVisibilityMultiplier(@NonNull ItemStack stack, @NonNull Entity targetingEntity) {
+    default double getMobVisibilityMultiplier(@NonNull ItemStack stack, @Nullable Entity targetingEntity) {
         return 1;
     }
 

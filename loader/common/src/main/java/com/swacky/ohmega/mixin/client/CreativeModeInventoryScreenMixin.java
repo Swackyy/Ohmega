@@ -1,7 +1,9 @@
 package com.swacky.ohmega.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
@@ -28,7 +30,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -114,13 +115,12 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
     }
 
     // todo: maybe use a different injector?
-    @Inject(
+    @ModifyReturnValue(
             method = "hasClickedOutside",
             at = @At(
-                    value = "RETURN"),
-            cancellable = true)
-    private void hasClickedOutside(double mx, double my, int xo, int yo, CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValue()) {
+                    value = "RETURN"))
+    private boolean hasClickedOutside(boolean original, @Local(name = "mx") double mx, @Local(name = "my") double my) {
+        if (original) {
             AccessoryScreenExtension extension = getAccessoryExtension();
 
             if (extension != null) {
@@ -128,9 +128,11 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
                         mx - AccessoryScreenExtensions.getAccessoryExtensionX(this) - leftPos,
                         my - AccessoryScreenExtensions.getAccessoryExtensionY(this) - topPos);
 
-                cir.setReturnValue(hasClickedOutside);
+                return hasClickedOutside;
             }
         }
+
+        return original;
     }
 
     @WrapOperation(

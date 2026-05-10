@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 
 // todo: clear added slots and replace with new ones on config change
 // todo: see if we can move client position related code to IAccessoryScreen completely
+// todo: if possible, instead move ALL of this to a client-based approach with only one registration needed
 /**
  * Implemented by {@link AbstractContainerMenu}s to allow them to have an accessory extension.
  * See {@link AccessoryMenuExtensions} for crucial implementation details

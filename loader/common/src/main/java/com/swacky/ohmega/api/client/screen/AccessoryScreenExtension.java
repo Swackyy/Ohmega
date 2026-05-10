@@ -57,19 +57,57 @@ public abstract class AccessoryScreenExtension {
     public abstract int getHeight();
 
     /**
-     * Get the actual, signed width added with the extension
-     * @return width that lies over the current screen's boundaries
+     * Get the actual width added with the extension on the left side
+     * @return total width that lies over the current screen's leftmost boundary
      */
-    public final int getExtraWidth() {
-        return getWidth(); // todo, maybe pair left and right
+    public final int getExtraWidthLeft() {
+        return Math.clamp(0, -menuExtension.getAccessoryMenu().getAccessoryExtensionX(), getWidth());
     }
 
     /**
-     * Get the actual, signed height added with the extension
-     * @return height that lies over the current screen's boundaries
+     * Get the actual width added with the extension on the right side
+     * @return total width that lies over the current screen's rightmost boundary
      */
+    public final int getExtraWidthRight() {
+        int width = getWidth();
+
+        return Math.clamp(menuExtension.getAccessoryMenu().getAccessoryExtensionX() + width - screen.imageWidth, 0, width);
+    }
+
+    /**
+     * Get the actual height added with the extension on the top side
+     * @return total height that lies over the current screen's topmost boundary
+     */
+    public final int getExtraHeightTop() {
+        return Math.clamp(0, -menuExtension.getAccessoryMenu().getAccessoryExtensionY(), getHeight());
+    }
+
+    /**
+     * Get the actual height added with the extension on the bottom side
+     * @return total height that lies over the current screen's bottommost boundary
+     */
+    public final int getExtraHeightBottom() {
+        int height = getHeight();
+
+        return Math.clamp(menuExtension.getAccessoryMenu().getAccessoryExtensionY() + height - screen.imageHeight, 0, height);
+    }
+
+    /**
+     * Get the actual width added with the extension
+     * @return total width that lies over the current screen's boundaries
+     */
+    // todo: some references to this are wrong
+    public final int getExtraWidth() {
+        return getExtraWidthLeft() + getExtraWidthRight();
+    }
+
+    /**
+     * Get the actual height added with the extension
+     * @return total height that lies over the current screen's boundaries
+     */
+    // todo: some references to this are wrong
     public final int getExtraHeight() {
-        return 0; // todo, maybe pair top and bottom
+        return getExtraHeightTop() + getExtraHeightBottom();
     }
 
     /**

@@ -110,7 +110,7 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
-    public double getMobVisibilityMultiplier(@NonNull ItemStack stack, @NonNull Entity targetingEntity) {
+    public double getMobVisibilityMultiplier(@NonNull ItemStack stack, @Nullable Entity targetingEntity) {
         return OhmegaHooks.mobVisibility(stack, targetingEntity, inner.getMobVisibilityMultiplier(stack, targetingEntity));
     }
 
