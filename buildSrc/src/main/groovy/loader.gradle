@@ -37,8 +37,8 @@ processResources {
     String modDesc = modSummary;
 
     if (project.name != "fabric") {
-        modDesc =
-                "\n"                                                       +
+        modDesc +=
+                "\n\n"                                                       +
                 "Help translate the mod here if possible: ${crowdinUrl}\n" +
                 "View the source code here: ${gitUrl}\n"                   +
                 "Or visit the wiki here: ${gitUrl}/wiki\n"                 +
@@ -63,7 +63,7 @@ processResources {
             modId                                : modId,
             modV                                 : modV,
             modAuthors                           : modAuthorsDisplay,
-            mcV                                  : mcVRangeMin,
+            mcVRangeMin                          : mcVRangeMin,
             mcVRangeMax                          : mcV,
             modName                              : modName,
             crowdinUrl                           : crowdinUrl,
