@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public final class OhmegaDataAttachments {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Ohmega.MODID);
 
-    public static final Supplier<AttachmentType<AccessoryData>> ACCESSORY_HANDLER = register("accessory_data",
+    public static final Supplier<AttachmentType<AccessoryData>> ACCESSORY = register("accessory_data",
             () -> AttachmentType.builder(AccessoryData::new)
                     .serialize(AccessoryData.MAP_CODEC)
                     .build());

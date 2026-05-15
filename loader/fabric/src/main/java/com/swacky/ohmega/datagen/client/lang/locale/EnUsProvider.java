@@ -56,7 +56,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
         builder.add(KEY_BIND_CATEGORY, "Ohmega");
-        builder.add(KEY_BIND_OPEN_ACC_INV, "Open/Close Accessories Inventory");
+        builder.add(KEY_BIND_OPEN_ACC_INV, "Open/Close Accessory Inventory");
 
         // Commands
         // Misc

@@ -39,11 +39,9 @@ public final class CommandHelper {
     }
 
     private static Builder builder() {
-        Builder builder = new Builder();
-
-        builder.add(Ohmega.MODID);
-        builder.add("command");
-        return builder;
+        return new Builder()
+                .add("command")
+                .add(Ohmega.MODID);
     }
 
     public static String context(String suffix) {

@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import java.util.function.Consumer;
 
 public final class OhmegaDataAttachments {
-    public static final AttachmentType<AccessoryData> ACCESSORY_HANDLER = register("accessory_data", builder -> builder
+    public static final AttachmentType<AccessoryData> ACCESSORY = register("accessory_data", builder -> builder
             .initializer(AccessoryData::new)
             .persistent(AccessoryData.CODEC));
 

@@ -7,6 +7,6 @@ import net.minecraft.world.entity.LivingEntity;
 public final class AccessoryHelperImpl implements AccessoryHelper.Service {
     @Override
     public AccessoryData getData(LivingEntity entity) {
-        return entity.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY_HANDLER);
+        return entity.getAttachedOrCreate(OhmegaDataAttachments.ACCESSORY);
     }
 }
