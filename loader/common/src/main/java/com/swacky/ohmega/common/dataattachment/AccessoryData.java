@@ -21,6 +21,7 @@ import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
@@ -97,7 +98,7 @@ public final class AccessoryData {
 
         if (accessory != null) {
             accessory.onUnequip(entity, stack);
-            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getModifiers(stack).getPassive(), true);
+            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
             AccessoryHelper.setNoSlot(stack);
         }
     }
@@ -108,7 +109,7 @@ public final class AccessoryData {
         if (accessory != null) {
             AccessoryHelper.setSlot(stack, index);
             AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
-            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getModifiers(stack).getPassive(), true);
+            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
             accessory.onEquip(entity, stack, context);
 
             if (context == EquipContext.USE_HELD) {

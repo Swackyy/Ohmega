@@ -1,7 +1,8 @@
-package com.swacky.ohmega.api.common.item;
+package com.swacky.ohmega.api.common.item.datacomponent;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -12,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 /**
- * A class for adding default {@link AttributeModifier}s to accessory items
+ * A class for adding default {@link AttributeModifier}s to accessory slots to apply when items are in them
  * <p>
- * Supports attributes added when equipped (passive), and when equipped but also active ({@link AccessoryHelper#isActive(ItemStack)}
+ * Supports attributes added when an item is in the slot (passive), and when in the slot but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
 // todo: allow for other conditions here
 public final class AccessoryModifiers {

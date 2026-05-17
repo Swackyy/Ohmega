@@ -1,11 +1,10 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.common.item.AccessoryModifiers;
-import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
-import com.swacky.ohmega.api.event.AccessoryAttributeModifiersEvent;
 import com.swacky.ohmega.api.event.AccessoryAutoSyncEventEvent;
 import com.swacky.ohmega.api.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
@@ -23,7 +22,6 @@ import com.swacky.ohmega.api.event.AccessoryRenderPreEvent;
 import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
-import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -60,12 +58,6 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean allowWalkOnPowderSnow(ItemStack stack, boolean original) {
         return NeoForge.EVENT_BUS.post(new AccessoryAllowWalkOnPowderSnowEvent(stack, original)).returnValue;
-    }
-
-    @Override
-    public AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder) {
-        NeoForge.EVENT_BUS.post(new AccessoryAttributeModifiersEvent(stack, builder));
-        return builder.build();
     }
 
     @Override

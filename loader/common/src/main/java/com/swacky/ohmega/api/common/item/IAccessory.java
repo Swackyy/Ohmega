@@ -132,13 +132,6 @@ public interface IAccessory {
     }
 
     /**
-     * Add attribute modifiers to be applied under certain conditions using the provided {@link AccessoryModifiers.Builder}
-     * @param stack the {@link ItemStack} of this accessory item being worn
-     * @param builder the builder provided
-     */
-    default void addAttributeModifiers(@NonNull ItemStack stack, AccessoryModifiers.@NonNull Builder builder) {}
-
-    /**
      * Determines if the vanilla {@link Item#use(Level, Player, InteractionHand)} will be preferred over Ohmega's built-in
      * right-click to equip behaviour ({@link AccessoryHelper#tryEquip(LivingEntity, ItemStack)})
      * @param stack the {@link ItemStack} of this accessory item which is right-clicked

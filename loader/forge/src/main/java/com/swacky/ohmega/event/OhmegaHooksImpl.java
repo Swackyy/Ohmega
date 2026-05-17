@@ -1,11 +1,28 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
-import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
-import com.swacky.ohmega.api.event.*;
+import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
+import com.swacky.ohmega.api.event.AccessoryAutoSyncEvent;
+import com.swacky.ohmega.api.event.AccessoryBindEvent;
+import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
+import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
+import com.swacky.ohmega.api.event.AccessoryCompatibleWithEvent;
+import com.swacky.ohmega.api.event.AccessoryEquipEvent;
+import com.swacky.ohmega.api.event.AccessoryEquipSoundEvent;
+import com.swacky.ohmega.api.event.AccessoryIsPiglinSafeEvent;
+import com.swacky.ohmega.api.event.AccessoryMobVisibilityEvent;
+import com.swacky.ohmega.api.event.AccessoryOverrideTypesEvent;
+import com.swacky.ohmega.api.event.AccessoryPreferInventoryTickEvent;
+import com.swacky.ohmega.api.event.AccessoryPreferVanillaUseEvent;
+import com.swacky.ohmega.api.event.AccessoryRenderEvent;
+import com.swacky.ohmega.api.event.AccessoryRenderPreEvent;
+import com.swacky.ohmega.api.event.AccessoryTickEvent;
+import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
+import com.swacky.ohmega.api.event.AccessoryUseEvent;
+import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
@@ -43,14 +60,6 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
         AccessoryAllowWalkOnPowderSnowEvent.BUS.post(event);
         return event.returnValue;
-    }
-
-    @Override
-    public AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder) {
-        AccessoryAttributeModifiersEvent event = new AccessoryAttributeModifiersEvent(stack, builder);
-
-        AccessoryAttributeModifiersEvent.BUS.post(event);
-        return builder.build();
     }
 
     @Override

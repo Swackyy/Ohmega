@@ -144,19 +144,16 @@ public final class AccessoryHelper {
         stack.set(OhmegaDataComponents.getActive(), value);
 
         if (value) {
-            ItemAttributeModifiers activeModifiers = getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive();
+            ItemAttributeModifiers modifiers = getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive();
 
-            stack.set(OhmegaDataComponents.getSlotActiveModifiers(), activeModifiers);
-            changeModifiers(entity, activeModifiers, true);
+            stack.set(OhmegaDataComponents.getSlotActiveModifiers(), modifiers);
+            changeModifiers(entity, modifiers, true);
         } else {
-            ItemAttributeModifiers activeModifiers = stack.get(OhmegaDataComponents.getSlotActiveModifiers());
-
-            if (activeModifiers != null) {
-                changeModifiers(entity, activeModifiers, false);
-            }
+            // This separate approach is needed, prevents a strange crash
+            changeModifiers(entity, stack.get(OhmegaDataComponents.getSlotActiveModifiers()), false);
         }
 
-        changeModifiers(entity, getModifiers(stack).getActive(), value);
+        changeModifiers(entity, stack.get(OhmegaDataComponents.getAccessoryActiveModifiers()), value);
     }
 
     /**
@@ -203,42 +200,25 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the {@link AccessoryModifiers} from an accessory
-     * @param stack {@link ItemStack} of an accessory to find the modifiers of
-     * @return the {@link AccessoryModifiers} to apply when accessory equipped
-     */
-    public static AccessoryModifiers getModifiers(ItemStack stack) {
-        Accessory accessory = Accessories.get(stack.getItem());
-
-        if (accessory != null) {
-            AccessoryModifiers.Builder builder = new AccessoryModifiers.Builder();
-
-            // todo: cache this
-            accessory.addAttributeModifiers(stack, builder);
-            return builder.build();
-        }
-
-        return AccessoryModifiers.EMPTY;
-    }
-
-    /**
-     * Utility function to add attribute modifiers to a {@link LivingEntity} from {@link AccessoryModifiers}
+     * Utility function to add attribute modifiers to a {@link LivingEntity}
      * @param entity {@link LivingEntity} to add/remove modifiers to/from
      * @param modifiers to add or remove
      * @param add if {@code true}, will add the attribute modifiers to the {@link LivingEntity},
      * if {@code false} existing ones will be removed
      */
-    public static void changeModifiers(LivingEntity entity, ItemAttributeModifiers modifiers, boolean add) {
-        for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            AttributeInstance attribute = entity.getAttribute(entry.attribute());
+    public static void changeModifiers(LivingEntity entity, @Nullable ItemAttributeModifiers modifiers, boolean add) {
+        if (modifiers != null) {
+            for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
+                AttributeInstance attribute = entity.getAttribute(entry.attribute());
 
-            if (attribute != null) {
-                if (add) {
-                    if (!attribute.hasModifier(entry.modifier().id())) {
-                        attribute.addTransientModifier(entry.modifier());
+                if (attribute != null) {
+                    if (add) {
+                        if (!attribute.hasModifier(entry.modifier().id())) {
+                            attribute.addTransientModifier(entry.modifier());
+                        }
+                    } else {
+                        attribute.removeModifier(entry.modifier());
                     }
-                } else {
-                    attribute.removeModifier(entry.modifier());
                 }
             }
         }

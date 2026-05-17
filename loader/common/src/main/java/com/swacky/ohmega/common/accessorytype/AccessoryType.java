@@ -12,7 +12,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.JsonOps;
-import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.common.item.datacomponent.AccessoryModifiers;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.RegistryFriendlyByteBuf;

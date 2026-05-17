@@ -8,10 +8,17 @@ import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,6 +31,8 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
+import net.neoforged.neoforge.common.util.AttributeTooltipContext;
+import net.neoforged.neoforge.event.AddAttributeTooltipsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
@@ -91,8 +100,31 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onRegisterRenderStateModifiers(RegisterRenderStateModifiersEvent event) {
-        event.registerEntityModifier(new TypeToken<LivingEntityRenderer<?, ?, ?>>() {}, (entity, state) -> {
-            state.setRenderData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
-        });
+        event.registerEntityModifier(new TypeToken<LivingEntityRenderer<?, ?, ?>>() {}, (entity, state) ->
+                state.setRenderData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity)));
+    }
+
+    @SubscribeEvent
+    public static void ee(AddAttributeTooltipsEvent event) {
+        AttributeTooltipContext context = event.getContext();
+        DataComponentType<ItemAttributeModifiers> type = OhmegaDataComponents.getAccessoryActiveModifiers();
+
+        if (context.tooltipDisplay().shows(type)) {
+            final boolean[] flag = {true};
+
+            event.getStack().getOrDefault(type, ItemAttributeModifiers.EMPTY).forEach(EquipmentSlotGroup.ANY, (attribute, modifier, tooltip) -> {
+                if (tooltip != ItemAttributeModifiers.Display.hidden()) {
+                    if (flag[0]) {
+                        flag[0] = false;
+
+                        event.addTooltipLines(
+                                CommonComponents.EMPTY,
+                                Component.translatable(Ohmega.MODID + ".item.modifiers.accessory_active").withStyle(ChatFormatting.GRAY));
+                    }
+
+                    tooltip.apply(event::addTooltipLines, context.player(), attribute, modifier);
+                }
+            });
+        }
     }
 }

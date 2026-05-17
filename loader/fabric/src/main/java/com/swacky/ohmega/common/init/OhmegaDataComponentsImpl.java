@@ -7,12 +7,18 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public final class OhmegaDataComponentsImpl implements OhmegaDataComponents.Service {
+    private static final DataComponentType<ItemAttributeModifiers> ACCESSORY_ACTIVE_MODIFIERS = register(ACCESSORY_ACTIVE_MODIFIERS_KEY, OhmegaDataComponents.createItemAttributeModifiers());
     private static final DataComponentType<Boolean> ACTIVE = register(ACTIVE_KEY, OhmegaDataComponents.createActive());
     private static final DataComponentType<Integer> SLOT_INDEX = register(SLOT_INDEX_KEY, OhmegaDataComponents.createSlotIndex());
-    private static final DataComponentType<ItemAttributeModifiers> SLOT_ACTIVE_MODIFIERS = register(SLOT_ACTIVE_MODIFIERS_KEY, OhmegaDataComponents.createSlotActiveModifiers());
+    private static final DataComponentType<ItemAttributeModifiers> SLOT_ACTIVE_MODIFIERS = register(SLOT_ACTIVE_MODIFIERS_KEY, OhmegaDataComponents.createItemAttributeModifiers());
 
     private static <T> DataComponentType<T> register(String id, DataComponentType<T> object) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Ohmega.id(id), object);
+    }
+
+    @Override
+    public DataComponentType<ItemAttributeModifiers> getAccessoryActiveModifiers() {
+        return ACCESSORY_ACTIVE_MODIFIERS;
     }
 
     @Override

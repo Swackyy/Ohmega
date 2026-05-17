@@ -11,6 +11,10 @@ public final class OhmegaDataComponents {
 
     public static void bootstrap() {}
 
+    public static DataComponentType<ItemAttributeModifiers> getAccessoryActiveModifiers() {
+        return IMPL.getAccessoryActiveModifiers();
+    }
+
     public static DataComponentType<Boolean> getActive() {
         return IMPL.getActive();
     }
@@ -33,6 +37,15 @@ public final class OhmegaDataComponents {
     }
 
     @SuppressWarnings("ProtectedMemberInFinalClass")
+    protected static DataComponentType<ItemAttributeModifiers> createItemAttributeModifiers() {
+        return DataComponentType.<ItemAttributeModifiers>builder()
+                .persistent(ItemAttributeModifiers.CODEC)
+                .networkSynchronized(ItemAttributeModifiers.STREAM_CODEC)
+                .cacheEncoding()
+                .build();
+    }
+
+    @SuppressWarnings("ProtectedMemberInFinalClass")
     protected static DataComponentType<Integer> createSlotIndex() {
         return DataComponentType.<Integer>builder()
                 .persistent(Codec.INT)
@@ -41,19 +54,13 @@ public final class OhmegaDataComponents {
                 .build();
     }
 
-    @SuppressWarnings("ProtectedMemberInFinalClass")
-    protected static DataComponentType<ItemAttributeModifiers> createSlotActiveModifiers() {
-        return DataComponentType.<ItemAttributeModifiers>builder()
-                .persistent(ItemAttributeModifiers.CODEC)
-                .networkSynchronized(ItemAttributeModifiers.STREAM_CODEC)
-                .cacheEncoding()
-                .build();
-    }
-
     public interface Service {
+        String ACCESSORY_ACTIVE_MODIFIERS_KEY = "accessory_active_modifiers";
         String ACTIVE_KEY = "active";
         String SLOT_INDEX_KEY = "slot_index";
         String SLOT_ACTIVE_MODIFIERS_KEY = "slot_active_modifiers";
+
+        DataComponentType<ItemAttributeModifiers> getAccessoryActiveModifiers();
 
         DataComponentType<Boolean> getActive();
 

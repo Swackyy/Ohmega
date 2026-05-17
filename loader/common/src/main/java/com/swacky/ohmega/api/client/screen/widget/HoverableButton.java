@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
@@ -12,8 +13,8 @@ public abstract class HoverableButton extends AbstractButton {
     private final Identifier textureLocation;
 
     public HoverableButton(int x, int y, int width, int height, Identifier textureLocation) {
-        // todo: change Component.empty() to supplying one for narration
-        super(x, y, width, height, Component.empty());
+        // todo: change empty component to supplying one for narration
+        super(x, y, width, height, CommonComponents.EMPTY);
 
         this.textureLocation = textureLocation;
     }

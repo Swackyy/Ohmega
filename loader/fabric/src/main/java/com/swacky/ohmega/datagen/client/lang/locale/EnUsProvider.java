@@ -44,6 +44,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 "Angel Ring",
                 "Allows the wearer to fly",
                 "Press %s to toggle flight");
+        builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When active:");
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Accessory Type: %s");

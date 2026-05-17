@@ -1,10 +1,9 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.common.item.AccessoryModifiers;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
-import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -37,10 +36,6 @@ public final class OhmegaHooks {
 
     public static boolean allowWalkOnPowderSnow(ItemStack stack, boolean original) {
         return IMPL.allowWalkOnPowderSnow(stack, original);
-    }
-
-    public static AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder) {
-        return IMPL.attributeModifiers(stack, builder);
     }
 
     public static boolean autoSync(ItemStack stack, boolean original) {
@@ -119,10 +114,6 @@ public final class OhmegaHooks {
         boolean accessoryTickPre(LivingEntity entity, ItemStack stack);
 
         boolean allowWalkOnPowderSnow(ItemStack stack, boolean original);
-
-        // todo: possibly change this to be cancellable?
-        // todo: return value is no longer used with decorator approach
-        AccessoryModifiers attributeModifiers(ItemStack stack, AccessoryModifiers.Builder builder);
 
         boolean autoSync(ItemStack stack, boolean original);
 

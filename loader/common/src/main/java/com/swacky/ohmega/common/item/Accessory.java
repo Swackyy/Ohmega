@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.item;
 
-import com.swacky.ohmega.api.common.item.AccessoryModifiers;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
@@ -86,12 +85,6 @@ public final class Accessory implements IAccessory {
     @Override
     public boolean autoSync(@NonNull ItemStack stack) {
         return OhmegaHooks.autoSync(stack, inner.autoSync(stack));
-    }
-
-    @Override
-    public void addAttributeModifiers(@NonNull ItemStack stack, AccessoryModifiers.@NonNull Builder builder) {
-        inner.addAttributeModifiers(stack, builder);
-        OhmegaHooks.attributeModifiers(stack, builder);
     }
 
     @Override
