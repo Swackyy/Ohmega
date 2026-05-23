@@ -1,12 +1,9 @@
 package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtensions;
+import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.api.common.menu.IAccessorySlotContainer;
 import com.swacky.ohmega.api.common.menu.IMixinAccessoryMenu;
-import com.swacky.ohmega.common.menu.AccessorySlot;
-import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -21,15 +18,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
 @Mixin(CreativeModeInventoryScreen.ItemPickerMenu.class)
-abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMixinAccessoryMenu, IAccessorySlotContainer {
+abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMixinAccessoryMenu {
     @Unique
     private @Nullable AccessoryMenuExtension ohmega$extension = null;
-
-    @Unique
-    private @Nullable List<AccessorySlot> ohmega$accessorySlots = null;
 
     @Shadow
     @Final
@@ -53,18 +45,6 @@ abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMix
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public int getAccessoryExtensionX() {
-        return OhmegaConfig.Client.creativeExtensionX();
-    }
-
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    @Override
-    public int getAccessoryExtensionY() {
-        return OhmegaConfig.Client.creativeExtensionY();
-    }
-
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    @Override
     public boolean isAccessoryExtensionVisible() {
         return ((IAccessoryMenu) inventoryMenu).isAccessoryExtensionVisible();
     }
@@ -75,19 +55,15 @@ abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMix
         ((IAccessoryMenu) inventoryMenu).setAccessoryExtensionVisible(value);
     }
 
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    @Override
-    public List<AccessorySlot> getAccessoryExtensionSlots() {
-        return ohmega$accessorySlots;
-    }
-
     @Inject(
             method = "<init>",
             at = @At(
                     value = "RETURN"))
     private void init(Player owner, CallbackInfo ci) {
-        AccessoryMenuExtensions.setExtension(this, owner);
+        AccessoryMenuExtension extension = AccessoryMenus.setExtension(this, owner);
 
-        ohmega$accessorySlots = AccessoryMenuExtensions.getAccessorySlots(this, owner);
+        if (extension != null) {
+            extension.setSlots(AccessoryMenus.getAccessorySlots(this, owner));
+        }
     }
 }

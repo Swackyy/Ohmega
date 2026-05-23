@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.node.OhmegaCommandNode;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtensions;
+import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -28,7 +28,7 @@ public final class ExtensionsCommand extends OhmegaCommandNode {
 
     private static int extensions(CommandContext<CommandSourceStack> context) {
         List<Component> components = new ArrayList<>();
-        Set<Identifier> extensions = AccessoryMenuExtensions.getKeys();
+        Set<Identifier> extensions = AccessoryMenus.getExtensionKeys();
 
         for (Identifier id : extensions) {
             components.add(Component.literal('[' + id.toString() + ']').withStyle(ChatFormatting.GREEN));

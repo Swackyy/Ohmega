@@ -2,7 +2,7 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtensions;
+import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ExtensionsCommand;
 import com.swacky.ohmega.common.command.node.HelpCommand;
@@ -62,7 +62,7 @@ public final class Ohmega {
             OhmegaCommandNodes.register(TypesCommand.ELEMENT_ROOT, TypesCommand::new);
 
             // Register menu extension
-            AccessoryMenuExtensions.register(INTERFACE_ID, DefaultMenuExtension::new);
+            AccessoryMenus.registerExtension(INTERFACE_ID, DefaultMenuExtension::new);
 
             bootstrapped = true;
         } else {

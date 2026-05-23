@@ -9,7 +9,7 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtensions;
+import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.common.menu.TemporarySlot;
@@ -333,7 +333,7 @@ public final class AccessoryData {
             slots.remove(slot);
         }
 
-        AccessoryMenuExtensions.onConstruct(menu, player);
+        AccessoryMenus.onConstruct(menu, player);
         menu.sendAllDataToRemote();
     }
 
@@ -341,9 +341,15 @@ public final class AccessoryData {
         int size = size();
 
         // Server only variables
-        ServerLevel level = entity.level() instanceof ServerLevel serverLevel ? serverLevel : null;
+        ServerLevel level;
         IntList indexes = null;
         List<ItemStack> stacks = null;
+
+        if (entity.level() instanceof ServerLevel serverLevel) {
+            level = serverLevel;
+        } else {
+            level = null;
+        }
 
         for (int i = 0; i < size; i++) {
             ItemStack stack = getStackInSlot(i);

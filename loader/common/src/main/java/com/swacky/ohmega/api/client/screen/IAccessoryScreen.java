@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 // todo: move all defaulted methods that aren't meant to be changed to a final helper class or something
 /**
  * Implemented by {@link AbstractContainerScreen}s to allow them to have an accessory extension.
- * See {@link AccessoryScreenExtensions} for crucial implementation details
+ * See {@link AccessoryScreens} for crucial implementation details
  * <p>
  * This also contains some utility methods which you <strong>should</strong> call to implement complete functionality
  * failing to call them may cause your screen to not have an extension applied
@@ -33,10 +33,22 @@ public interface IAccessoryScreen {
 
     /**
      * Set the accessory extension bound to this screen.
-     * This is called in {@link AccessoryScreenExtensions#onConstruct(AbstractContainerScreen)} (which you should be calling) for you
+     * This is called in {@link AccessoryScreens#onConstruct(AbstractContainerScreen)} (which you should be calling) for you
      * @param extension accessory extension to set to
      */
     void setAccessoryExtension(@NonNull AccessoryScreenExtension extension);
+
+    /**
+     * The x-coordinate, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed
+     * @return relative x-coordinate to place the extension
+     */
+    int getAccessoryExtensionX();
+
+    /**
+     * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed
+     * @return relative y-coordinate to place the extension
+     */
+    int getAccessoryExtensionY();
 
     /**
      * The (x, y) position the {@link ToggleExtensionButton} will be added.

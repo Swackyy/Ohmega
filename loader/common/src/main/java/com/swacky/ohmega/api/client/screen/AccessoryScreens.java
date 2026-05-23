@@ -1,9 +1,11 @@
 package com.swacky.ohmega.api.client.screen;
 
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtensions;
+import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,17 +22,17 @@ import java.util.Map;
  *     <li>{@link #onConstruct(AbstractContainerScreen)}</li>
  * </ul>
  */
-public final class AccessoryScreenExtensions {
+public final class AccessoryScreens {
     private static final Map<Identifier, AccessoryScreenExtension.Factory> SCREEN_EXTENSIONS = new HashMap<>();
 
     /**
      * Use this to bind a screen extension type to a menu extension type.
-     * This must be done after calling {@link AccessoryMenuExtensions#register(Identifier, AccessoryMenuExtension.Factory)}
+     * This must be done after calling {@link AccessoryMenus#registerExtension(Identifier, AccessoryMenuExtension.Factory)}
      * @param id identifier matching the menu extension registered
      * @param factory factory for the extension, will be constructed later
      */
-    public static void register(Identifier id, AccessoryScreenExtension.Factory factory) {
-        if (AccessoryMenuExtensions.exists(id)) {
+    public static void registerExtension(Identifier id, AccessoryScreenExtension.Factory factory) {
+        if (AccessoryMenus.extensionExists(id)) {
             if (!SCREEN_EXTENSIONS.containsKey(id)) {
                 SCREEN_EXTENSIONS.put(id, factory);
             }
@@ -59,6 +61,10 @@ public final class AccessoryScreenExtensions {
                 AccessoryMenuExtension menuExtension = accessoryMenu.getAccessoryExtension();
 
                 if (menuExtension != null) {
+                    for (AccessorySlot slot : menuExtension.getSlots()) {
+                        slot.applyOffset(accessoryScreen.getAccessoryExtensionX(), accessoryScreen.getAccessoryExtensionY());
+                    }
+
                     AccessoryScreenExtension.Factory factory = getActiveFactory();
 
                     if (factory != null) {
@@ -81,32 +87,15 @@ public final class AccessoryScreenExtensions {
     }
 
     /**
-     * A shortcut to {@link IAccessoryMenu#getAccessoryExtensionX()}
-     * @param screen the accessory extension screen to query
-     * @return relative x-coordinate to place the extension
+     * Check whether the current screen is both an accessory screen and its widgets are visible.
+     * This is here as to defer loading to prevent logical side load errors when running on a dedicated server
+     * @return {@code true} if we should render accessory related widgets, {@code false} otherwise
      */
-    public static int getAccessoryExtensionX(IAccessoryScreen screen) {
-        AccessoryScreenExtension extension = screen.getAccessoryExtension();
-
-        if (extension != null) {
-            return extension.getMenuExtension().getAccessoryMenu().getAccessoryExtensionX();
+    public static boolean areExtensionWidgetsVisible() {
+        if (Minecraft.getInstance().screen instanceof IAccessoryScreen accessoryScreen) {
+            return accessoryScreen.areAccessoryExtensionWidgetsVisible();
         }
 
-        return 0;
-    }
-
-    /**
-     * A shortcut to {@link IAccessoryMenu#getAccessoryExtensionY()}
-     * @param screen the accessory extension screen to query
-     * @return relative y-coordinate to place the extension
-     */
-    public static int getAccessoryExtensionY(IAccessoryScreen screen) {
-        AccessoryScreenExtension extension = screen.getAccessoryExtension();
-
-        if (extension != null) {
-            return extension.getMenuExtension().getAccessoryMenu().getAccessoryExtensionY();
-        }
-
-        return 0;
+        return false;
     }
 }

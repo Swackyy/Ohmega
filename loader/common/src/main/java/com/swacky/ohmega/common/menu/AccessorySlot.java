@@ -1,5 +1,6 @@
 package com.swacky.ohmega.common.menu;
 
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
@@ -27,6 +28,8 @@ public final class AccessorySlot extends Slot {
     private final Player player;
     private final AccessoryData handler;
     private final AccessoryType type;
+    private final int originalX;
+    private final int originalY;
 
     public AccessorySlot(Player player, int index, int x, int y, AccessoryType type) {
         super(EMPTY_CONTAINER, index, x, y);
@@ -34,10 +37,17 @@ public final class AccessorySlot extends Slot {
         this.player = player;
         this.handler = AccessoryHelper.getData(player);
         this.type = type;
+        this.originalX = x;
+        this.originalY = y;
     }
 
     public AccessoryType getType() {
         return type;
+    }
+
+    public void applyOffset(int xo, int yo) {
+        this.x = originalX + xo;
+        this.y = originalY + yo;
     }
 
     @Override
@@ -49,7 +59,7 @@ public final class AccessorySlot extends Slot {
         }
 
         if (player.level().isClientSide()) {
-            return Client.areAccessoryExtensionWidgetsVisible();
+            return AccessoryScreens.areExtensionWidgetsVisible();
         }
 
         return true;

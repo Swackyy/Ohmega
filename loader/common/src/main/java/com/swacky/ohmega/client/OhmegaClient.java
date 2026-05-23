@@ -1,6 +1,6 @@
 package com.swacky.ohmega.client;
 
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.DefaultScreenExtension;
 import com.swacky.ohmega.common.Ohmega;
@@ -37,7 +37,7 @@ public final class OhmegaClient {
             LOGGER.info("Successfully loaded {} client services", NUM_SERVICES);
 
             // Register screen extension
-            AccessoryScreenExtensions.register(Ohmega.INTERFACE_ID, DefaultScreenExtension::new);
+            AccessoryScreens.registerExtension(Ohmega.INTERFACE_ID, DefaultScreenExtension::new);
 
             bootstrapped = true;
         } else {

@@ -5,11 +5,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
-import com.swacky.ohmega.api.common.menu.IAccessorySlotContainer;
+import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -30,8 +31,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 @Mixin(CreativeModeInventoryScreen.class)
 abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<CreativeModeInventoryScreen.ItemPickerMenu> implements IMixinAccessoryScreen, IMixinEntityRenderingScreen {
@@ -58,6 +57,18 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
     @Override
     public void setAccessoryExtension(@NonNull AccessoryScreenExtension extension) {
         ohmega$extension = extension;
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public int getAccessoryExtensionX() {
+        return OhmegaConfig.Client.creativeExtensionX();
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public int getAccessoryExtensionY() {
+        return OhmegaConfig.Client.creativeExtensionY();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -96,7 +107,7 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
             at = @At(
                     value = "RETURN"))
     private void init(LocalPlayer owner, FeatureFlagSet flags, boolean displayOperatorTab, CallbackInfo ci) {
-        AccessoryScreenExtensions.onConstruct(this);
+        AccessoryScreens.onConstruct(this);
     }
 
     @ModifyArg(
@@ -114,7 +125,6 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
         return size;
     }
 
-    // todo: maybe use a different injector?
     @ModifyReturnValue(
             method = "hasClickedOutside",
             at = @At(
@@ -125,8 +135,8 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
 
             if (extension != null) {
                 hasClickedOutside = extension.hasClickedOutside(
-                        mx - AccessoryScreenExtensions.getAccessoryExtensionX(this) - leftPos,
-                        my - AccessoryScreenExtensions.getAccessoryExtensionY(this) - topPos);
+                        mx - getAccessoryExtensionX() - leftPos,
+                        my - getAccessoryExtensionY() - topPos);
 
                 return hasClickedOutside;
             }
@@ -141,14 +151,16 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
                     value = "NEW",
                     target = "(Lnet/minecraft/world/inventory/Slot;III)Lnet/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper;"))
     private CreativeModeInventoryScreen.SlotWrapper selectTab(Slot slot, int index, int x, int y, Operation<CreativeModeInventoryScreen.SlotWrapper> handle) {
-        if (slot instanceof AccessorySlot) {
-            List<AccessorySlot> itemPickerMenuSlots = ((IAccessorySlotContainer) menu).getAccessoryExtensionSlots();
+        if (menu instanceof IAccessoryMenu accessoryMenu) {
+            AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
 
-            if (itemPickerMenuSlots != null) {
-                AccessorySlot itemPickerMenuSlot = itemPickerMenuSlots.get(slot.getContainerSlot());
+            if (extension != null) {
+                if (slot instanceof AccessorySlot) {
+                    AccessorySlot itemPickerMenuSlot = extension.getSlots().get(slot.getContainerSlot());
 
-                x = itemPickerMenuSlot.x;
-                y = itemPickerMenuSlot.y;
+                    x = itemPickerMenuSlot.x;
+                    y = itemPickerMenuSlot.y;
+                }
             }
         }
 

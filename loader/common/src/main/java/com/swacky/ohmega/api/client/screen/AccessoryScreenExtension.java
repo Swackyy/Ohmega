@@ -61,7 +61,7 @@ public abstract class AccessoryScreenExtension {
      * @return total width that lies over the current screen's leftmost boundary
      */
     public final int getExtraWidthLeft() {
-        return Math.clamp(0, -menuExtension.getAccessoryMenu().getAccessoryExtensionX(), getWidth());
+        return Math.clamp(0, -accessoryScreen.getAccessoryExtensionX(), getWidth());
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class AccessoryScreenExtension {
     public final int getExtraWidthRight() {
         int width = getWidth();
 
-        return Math.clamp(menuExtension.getAccessoryMenu().getAccessoryExtensionX() + width - screen.imageWidth, 0, width);
+        return Math.clamp(accessoryScreen.getAccessoryExtensionX() + width - screen.imageWidth, 0, width);
     }
 
     /**
@@ -79,7 +79,7 @@ public abstract class AccessoryScreenExtension {
      * @return total height that lies over the current screen's topmost boundary
      */
     public final int getExtraHeightTop() {
-        return Math.clamp(0, -menuExtension.getAccessoryMenu().getAccessoryExtensionY(), getHeight());
+        return Math.clamp(0, -accessoryScreen.getAccessoryExtensionY(), getHeight());
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AccessoryScreenExtension {
     public final int getExtraHeightBottom() {
         int height = getHeight();
 
-        return Math.clamp(menuExtension.getAccessoryMenu().getAccessoryExtensionY() + height - screen.imageHeight, 0, height);
+        return Math.clamp(accessoryScreen.getAccessoryExtensionY() + height - screen.imageHeight, 0, height);
     }
 
     /**

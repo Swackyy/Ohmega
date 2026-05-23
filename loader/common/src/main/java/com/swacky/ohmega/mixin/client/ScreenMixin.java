@@ -1,7 +1,6 @@
 package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
@@ -30,8 +29,8 @@ abstract class ScreenMixin extends AbstractContainerEventHandler implements Rend
 
                 pose.pushMatrix();
                 pose.translate(
-                        AccessoryScreenExtensions.getAccessoryExtensionX(accessoryScreen) + screen.leftPos,
-                        AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen) + screen.topPos);
+                        accessoryScreen.getAccessoryExtensionX() + screen.leftPos,
+                        accessoryScreen.getAccessoryExtensionY() + screen.topPos);
                 extension.extractExtension(gui);
 
                 pose.popMatrix();

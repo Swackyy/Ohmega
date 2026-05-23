@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.common.menu;
 
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.menu.AccessorySlot;
@@ -29,18 +29,18 @@ import java.util.Set;
  *     <li>{@link #onQuickMoveStack(AbstractContainerMenu, Player, int)}</li>
  * </ul>
  */
-public final class AccessoryMenuExtensions {
+public final class AccessoryMenus {
     private static final Map<Identifier, AccessoryMenuExtension.Factory> MENU_EXTENSIONS = new HashMap<>();
 
     /**
      * Use this to register a menu extension type, this will then be an available option to choose from in the server config,
      * allowing you to pick which menu extension to use.
      * <p>
-     * You must also register a corresponding screen extension with {@link AccessoryScreenExtensions#register(Identifier, AccessoryScreenExtension.Factory)}
+     * You must also register a corresponding screen extension with {@link AccessoryScreens#registerExtension(Identifier, AccessoryScreenExtension.Factory)}
      * @param id identifier corresponding to the type in the server config
      * @param factory factory for the extension, will be constructed later
      */
-    public static void register(Identifier id, AccessoryMenuExtension.Factory factory) {
+    public static void registerExtension(Identifier id, AccessoryMenuExtension.Factory factory) {
         if (!MENU_EXTENSIONS.containsKey(id)) {
             MENU_EXTENSIONS.put(id, factory);
         }
@@ -48,14 +48,18 @@ public final class AccessoryMenuExtensions {
 
     /**
      * Check if a menu extension with the given {@link Identifier} has been registered
-     * @param id first parameter passed to {@link #register(Identifier, AccessoryMenuExtension.Factory)} to search for
+     * @param id first parameter passed to {@link #registerExtension(Identifier, AccessoryMenuExtension.Factory)} to search for
      * @return {@code true} if a menu extension with the given {@link Identifier} exists, {@code false} otherwise
      */
-    public static boolean exists(Identifier id) {
+    public static boolean extensionExists(Identifier id) {
         return MENU_EXTENSIONS.containsKey(id);
     }
 
-    public static Set<Identifier> getKeys() {
+    /**
+     * Get a set of known menu extensions through their {@link Identifier} keys
+     * @return the extensions map keyset
+     */
+    public static Set<Identifier> getExtensionKeys() {
         return MENU_EXTENSIONS.keySet();
     }
 
@@ -71,17 +75,23 @@ public final class AccessoryMenuExtensions {
      * Sets the accessory extension to the target menu
      * @param menu parent menu
      * @param owner player which this menu belongs
+     * @return the set accessory menu extension, or {@code null} if it has not been set. This should only happen if the set accessory extension is invalid
      */
-    public static void setExtension(AbstractContainerMenu menu, Player owner) {
+    public static AccessoryMenuExtension setExtension(AbstractContainerMenu menu, Player owner) {
         if (menu instanceof IAccessoryMenu accessoryMenu) {
             AccessoryMenuExtension.Factory factory = getActiveFactory();
 
             if (factory != null) {
-                accessoryMenu.setAccessoryExtension(factory.construct(menu, owner));
+                AccessoryMenuExtension extension = factory.construct(menu, owner);
+
+                accessoryMenu.setAccessoryExtension(extension);
+                return extension;
             }
         } else {
             throw new IllegalArgumentException("Menu " + menu + " does not implement " + IAccessoryMenu.class);
         }
+
+        return null;
     }
 
     /**
@@ -97,28 +107,30 @@ public final class AccessoryMenuExtensions {
             if (extension != null) {
                 ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
                 int requiredCount = types.size();
-                List<AccessorySlot> addedSlots = new ArrayList<>(requiredCount);
+                List<AccessorySlot> slots = new ArrayList<>(requiredCount);
 
                 if (owner.level().isClientSide()) {
-                    extension.addSlotsClient((index, x, y) -> addedSlots.add(new AccessorySlot(
-                            owner,
-                            index,
-                            x + accessoryMenu.getAccessoryExtensionX(),
-                            y + accessoryMenu.getAccessoryExtensionY(),
-                            types.get(index))));
+                    extension.addSlotsClient((index, x, y) -> {
+                        slots.add(new AccessorySlot(
+                                owner,
+                                index,
+                                x,
+                                y,
+                                types.get(index)));
+                    });
 
-                    int actualCount = addedSlots.size();
+                    int actualCount = slots.size();
 
                     if (actualCount != requiredCount) {
                         throw new IllegalStateException("Slots added by extension '" + extension + "' (" + actualCount + ") differ in length from expected " + requiredCount);
                     }
                 } else {
                     for (int i = 0; i < requiredCount; i++) {
-                        addedSlots.add(new AccessorySlot(owner, i, 0, 0, types.get(i)));
+                        slots.add(new AccessorySlot(owner, i, 0, 0, types.get(i)));
                     }
                 }
 
-                return addedSlots;
+                return slots;
             }
         } else {
             throw new IllegalArgumentException("Menu " + menu + " does not implement " + IAccessoryMenu.class);
@@ -132,15 +144,21 @@ public final class AccessoryMenuExtensions {
      * Technically, you can instead call {@link #setExtension(AbstractContainerMenu, Player)} independently,
      * but only do this if you have good reason and know what you are doing
      * <p>
-     * Ohmega calls this in another place internally, do not replicate -- it is to fix an annoying edge case
+     * Ohmega calls this in another place internally, do not replicate. It is to fix an annoying edge case
      * @param menu parent menu
      * @param owner player which this menu belongs
      */
     public static void onConstruct(AbstractContainerMenu menu, Player owner) {
-        setExtension(menu, owner);
+        AccessoryMenuExtension extension = setExtension(menu, owner);
 
-        for (AccessorySlot slot : getAccessorySlots(menu, owner)) {
-            menu.addSlot(slot);
+        if (extension != null) {
+            List<AccessorySlot> slots = getAccessorySlots(menu, owner);
+
+            for (AccessorySlot slot : slots) {
+                menu.addSlot(slot);
+            }
+
+            extension.setSlots(slots);
         }
     }
 

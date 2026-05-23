@@ -21,14 +21,4 @@ public interface IMixinAccessoryMenu extends IAccessoryMenu {
     default void setAccessoryExtension(@NonNull AccessoryMenuExtension extension) {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
-
-    @Override
-    default int getAccessoryExtensionX() {
-        throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
-    }
-
-    @Override
-    default int getAccessoryExtensionY() {
-        throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
-    }
 }

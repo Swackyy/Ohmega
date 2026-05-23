@@ -1,9 +1,10 @@
 package com.swacky.ohmega.api.common.menu;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -14,6 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
+import java.util.List;
+
 /**
  * A way to add extra slots and functionality to the default inventory.
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
@@ -23,6 +26,7 @@ public abstract class AccessoryMenuExtension {
     private final IAccessoryMenu accessoryMenu;
     private final Player owner;
 
+    private List<AccessorySlot> slots = null;
     private boolean visible = false;
 
     public AccessoryMenuExtension(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
@@ -53,6 +57,28 @@ public abstract class AccessoryMenuExtension {
      */
     public Player getOwner() {
         return owner;
+    }
+
+    /**
+     * Get a list of the accessory slots added to the extension's parent menu.
+     * This is stored as to eliminate the need for looping through all the slots just to perform operations on our custom ones
+     * @return a list of strictly {@link AccessorySlot}s added with the accessory extension
+     */
+    public List<AccessorySlot> getSlots() {
+        return slots;
+    }
+
+    /**
+     * Initially sets the list for added slots in the accessory extension.
+     * This is called internally and should most likely not be replicated
+     * @param slots added slots
+     */
+    public void setSlots(List<AccessorySlot> slots) {
+        if (this.slots == null) {
+            this.slots = slots;
+        } else {
+            throw new IllegalStateException("Slot list cannot be set as it has already been initialised");
+        }
     }
 
     /**

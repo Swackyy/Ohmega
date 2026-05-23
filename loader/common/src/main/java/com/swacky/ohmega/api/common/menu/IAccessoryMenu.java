@@ -1,6 +1,5 @@
 package com.swacky.ohmega.api.common.menu;
 
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -9,11 +8,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 // todo: clear added slots and replace with new ones on config change
-// todo: see if we can move client position related code to IAccessoryScreen completely
 // todo: if possible, instead move ALL of this to a client-based approach with only one registration needed
 /**
  * Implemented by {@link AbstractContainerMenu}s to allow them to have an accessory extension.
- * See {@link AccessoryMenuExtensions} for crucial implementation details
+ * See {@link AccessoryMenus} for crucial implementation details
  * <p>
  * This also contains some utility methods which you <strong>should</strong> call to implement complete functionality,
  * failing to call them may cause your menu to not have an extension applied
@@ -34,22 +32,10 @@ public interface IAccessoryMenu {
 
     /**
      * Set the accessory extension bound to this menu.
-     * This is called in {@link AccessoryMenuExtensions#onConstruct(AbstractContainerMenu, Player)} (which you should be calling) for you
+     * This is called in {@link AccessoryMenus#onConstruct(AbstractContainerMenu, Player)} (which you should be calling) for you
      * @param extension accessory extension to set to
      */
     void setAccessoryExtension(@NonNull AccessoryMenuExtension extension);
-
-    /**
-     * The x-coordinate, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed
-     * @return relative x-coordinate to place the extension
-     */
-    int getAccessoryExtensionX();
-
-    /**
-     * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed
-     * @return relative y-coordinate to place the extension
-     */
-    int getAccessoryExtensionY();
 
     /**
      * Determines whether the extension should be shown

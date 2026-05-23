@@ -110,7 +110,7 @@ public final class ClientEvents {
         DataComponentType<ItemAttributeModifiers> type = OhmegaDataComponents.getAccessoryActiveModifiers();
 
         if (context.tooltipDisplay().shows(type)) {
-            final boolean[] flag = {true};
+            boolean[] flag = {true};
 
             event.getStack().getOrDefault(type, ItemAttributeModifiers.EMPTY).forEach(EquipmentSlotGroup.ANY, (attribute, modifier, tooltip) -> {
                 if (tooltip != ItemAttributeModifiers.Display.hidden()) {

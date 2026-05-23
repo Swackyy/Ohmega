@@ -3,7 +3,6 @@ package com.swacky.ohmega.event;
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
@@ -103,8 +102,8 @@ public final class ClientCallbacks {
                         buttonStyle.width,
                         buttonStyle.height));
                 rects.add(new Rect2i(
-                        screen.leftPos + AccessoryScreenExtensions.getAccessoryExtensionX(accessoryScreen),
-                        screen.topPos + AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen),
+                        screen.leftPos + accessoryScreen.getAccessoryExtensionX(),
+                        screen.topPos + accessoryScreen.getAccessoryExtensionY(),
                         extension.getWidth(),
                         extension.getHeight()));
                 return rects;

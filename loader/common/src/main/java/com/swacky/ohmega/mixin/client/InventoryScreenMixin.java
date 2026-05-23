@@ -3,7 +3,7 @@ package com.swacky.ohmega.mixin.client;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
@@ -53,6 +53,18 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
+    public int getAccessoryExtensionX() {
+        return OhmegaConfig.Client.survivalExtensionX();
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public int getAccessoryExtensionY() {
+        return OhmegaConfig.Client.survivalExtensionY();
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
     public IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
         return switch (style) {
             case DEFAULT -> IntIntPair.of(132, 61);
@@ -74,7 +86,7 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
             at = @At(
                     value = "RETURN"))
     private void init(Player player, CallbackInfo ci) {
-        AccessoryScreenExtensions.onConstruct(this);
+        AccessoryScreens.onConstruct(this);
     }
 
     @ModifyArg(

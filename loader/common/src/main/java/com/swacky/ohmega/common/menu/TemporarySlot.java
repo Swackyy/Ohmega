@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Temporary dummy slot to fix an annoying edge case.
+ * Temporary minimal overhead dummy slot to fix an annoying edge case.
  * These slots are not retained as the extension slots for long and are quickly swapped out when they are no longer needed
  */
 // todo: this may not be needed after some refactoring, but works for now

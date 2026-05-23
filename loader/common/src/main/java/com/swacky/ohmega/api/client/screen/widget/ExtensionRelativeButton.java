@@ -1,6 +1,5 @@
 package com.swacky.ohmega.api.client.screen.widget;
 
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtensions;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.resources.Identifier;
 
@@ -10,10 +9,10 @@ public abstract class ExtensionRelativeButton extends ExtensionContainerScreenBu
     }
 
     public int getAdjustedX() {
-        return super.getAdjustedX() + AccessoryScreenExtensions.getAccessoryExtensionX(accessoryScreen);
+        return super.getAdjustedX() + accessoryScreen.getAccessoryExtensionX();
     }
 
     public int getAdjustedY() {
-        return super.getAdjustedY() + AccessoryScreenExtensions.getAccessoryExtensionY(accessoryScreen);
+        return super.getAdjustedY() + accessoryScreen.getAccessoryExtensionY();
     }
 }

@@ -31,7 +31,7 @@ abstract class ItemStackMixin implements DataComponentHolder, ItemInstance {
         DataComponentType<ItemAttributeModifiers> type = OhmegaDataComponents.getAccessoryActiveModifiers();
 
         if (display.shows(type)) {
-            final boolean[] flag = {true};
+            boolean[] flag = {true};
 
             getOrDefault(type, ItemAttributeModifiers.EMPTY).forEach(EquipmentSlotGroup.ANY, (attribute, modifier, tooltip) -> {
                 if (tooltip != ItemAttributeModifiers.Display.hidden()) {

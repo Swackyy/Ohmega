@@ -78,7 +78,7 @@ public final class OhmegaConfig {
         public interface Service {
             String COMPATIBILITY_MODE_KEY = "compatibilityMode";
             String COMPATIBILITY_MODE_DESCRIPTION = """
-                    Disables some useful yet mostly unnoticeable features that may improve mod compatibility in rare cases""";
+                    Disables or reworks some useful yet mostly unnoticeable features that may improve mod compatibility in rare cases""";
             boolean COMPATIBILITY_MODE_DEFAULT = false;
             // - - -
             String BUTTON_STYLE_KEY = "buttonStyle";
