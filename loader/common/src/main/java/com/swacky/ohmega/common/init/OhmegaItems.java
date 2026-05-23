@@ -1,6 +1,5 @@
 package com.swacky.ohmega.common.init;
 
-import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -9,7 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public final class OhmegaItems {
-    private static final Service IMPL = OhmegaClient.loadService(Service.class);
+    private static final Service IMPL = Ohmega.loadService(Service.class);
 
     public static void bootstrap() {}
 

@@ -88,7 +88,7 @@ public final class AccessoryMenus {
                 return extension;
             }
         } else {
-            throw new IllegalArgumentException("Menu " + menu + " does not implement " + IAccessoryMenu.class);
+            throw new IllegalArgumentException("Menu " + menu.getClass().getCanonicalName() + " does not implement " + IAccessoryMenu.class.getCanonicalName());
         }
 
         return null;

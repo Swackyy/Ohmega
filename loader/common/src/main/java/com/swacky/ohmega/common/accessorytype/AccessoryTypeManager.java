@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public final class AccessoryTypeManager extends SimplePreparableReloadListener<Map<Identifier, AccessoryType>> {
     private static final AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
@@ -43,8 +44,13 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     @Override
     protected @NonNull Map<Identifier, AccessoryType> prepare(@NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
         Map<Identifier, AccessoryType> map = new HashMap<>(5);
+        Set<String> namespaces = manager.getNamespaces();
 
-        for (String namespace : manager.getNamespaces()) {
+        int namespaceCount = 0;
+
+        for (String namespace : namespaces) {
+            int typeCount = 0;
+
             for (Resource resource : manager.getResourceStack(Identifier.fromNamespaceAndPath(namespace, LOCATION))) {
                 try (Reader reader = resource.openAsReader()) {
                     Map<String, AccessoryType.Builder> jsonMap = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
@@ -53,13 +59,22 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
                         AccessoryType type = entry.getValue().build(namespace, entry.getKey());
 
                         map.put(type.getId(), type);
+
+                        if (typeCount++ == 0) {
+                            namespaceCount++;
+                        }
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);
                 }
             }
+
+            if (typeCount > 0) {
+                LOGGER.debug("Loaded {} accessory type(s) from namespace '{}'", typeCount, namespace);
+            }
         }
 
+        LOGGER.info("Loaded {} accessory type(s) from {} namespace(s)", map.size(), namespaceCount);
         return map;
     }
 
