@@ -36,19 +36,19 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
     }
 
     @Inject(
-            method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
-            at = @At(
-                    value = "TAIL"))
-    private void extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTicks, CallbackInfo ci) {
-        ((LivingEntityRenderStateExtension) state).ohmega$setData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
-    }
-
-    @Inject(
             method = "<init>",
             at = @At(
                     value = "TAIL"))
     private void init(EntityRendererProvider.Context context, V model, float shadow, CallbackInfo ci) {
         layers.add(new AccessoryRenderLayer<>(context, this));
+    }
+
+    @Inject(
+            method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
+            at = @At(
+                    value = "TAIL"))
+    private void extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTicks, CallbackInfo ci) {
+        ((LivingEntityRenderStateExtension) state).ohmega$setData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
     }
 
     @Inject(

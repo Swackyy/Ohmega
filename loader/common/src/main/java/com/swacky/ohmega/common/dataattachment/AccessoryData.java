@@ -269,7 +269,7 @@ public final class AccessoryData {
 
     // Use in client toggling
     public void toggleHidden(LivingEntity entity, int index) {
-        if (OhmegaConfig.Server.allowHideAccessories()) {
+        if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
             boolean value = !isHidden(index);
 
             setHidden(index, value);

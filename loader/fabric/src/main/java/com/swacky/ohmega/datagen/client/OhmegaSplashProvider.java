@@ -48,7 +48,7 @@ public class OhmegaSplashProvider implements DataProvider {
         add("A proud creation of Duk Developments");
         add("if (bugs) fixBugs();");
         add("Java has the best lambda syntax");
-        add("Jump up, kick back, whip around and spin");
+        add("api/ package goes hard");
     }
 
     @Override

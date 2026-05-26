@@ -59,7 +59,7 @@ public final class AccessoryHelper {
     public static ImmutableSet<AccessoryType> getTypes(Item item) {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
-        if (OhmegaConfig.Server.disableAccessoryTypes()) {
+        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
             builder.add(AccessoryType.GENERIC.get());
         }
 
@@ -93,7 +93,7 @@ public final class AccessoryHelper {
      */
     @SuppressWarnings("deprecation")
     public static AccessoryType getType(Item item) {
-        if (OhmegaConfig.Server.disableAccessoryTypes()) {
+        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
             return AccessoryType.GENERIC.get();
         }
 
@@ -231,11 +231,11 @@ public final class AccessoryHelper {
     // todo: cache
     // todo: make a cached "getUniqueSlotTypes" that returns a Set
     public static ImmutableList<AccessoryType> getSlotTypes() {
-        List<String> slotTypes = OhmegaConfig.Server.slotTypes();
+        List<? extends String> slotTypes = OhmegaConfig.Server.getData().slotTypes().get();
         int size = slotTypes.size();
         ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
 
-        if (OhmegaConfig.Server.disableAccessoryTypes()) {
+        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
             for (int i = 0; i < size; i++) {
                 builder.add(AccessoryType.GENERIC.get());
             }
@@ -258,7 +258,7 @@ public final class AccessoryHelper {
     public static ImmutableSet<AccessoryType> getKeyboundSlotTypes() {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
-        for (String id : OhmegaConfig.Server.keyboundSlotTypes()) {
+        for (String id : OhmegaConfig.Server.getData().keyboundSlotTypes().get()) {
             builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
         }
 

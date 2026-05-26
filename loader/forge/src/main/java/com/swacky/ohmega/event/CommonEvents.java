@@ -9,6 +9,7 @@ import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.core.Direction;
@@ -38,6 +39,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.jspecify.annotations.NonNull;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID)
@@ -59,6 +61,13 @@ public final class CommonEvents {
             oldPlayer.reviveCaps();
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
             oldPlayer.invalidateCaps();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onConfigReload(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+            CommonCallbacks.onServerConfigReload();
         }
     }
 

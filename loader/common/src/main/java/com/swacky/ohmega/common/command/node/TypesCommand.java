@@ -8,7 +8,7 @@ import com.swacky.ohmega.api.common.command.node.OhmegaCommandNode;
 import com.swacky.ohmega.api.common.item.datacomponent.AccessoryModifiers;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
+import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;

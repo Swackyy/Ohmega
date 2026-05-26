@@ -34,6 +34,15 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
         super(context);
     }
 
+    // todo: move to a common mixin
+    @Inject(
+            method = "<init>",
+            at = @At(
+                    value = "TAIL"))
+    private void init(EntityRendererProvider.Context context, V model, float shadow, CallbackInfo ci) {
+        layers.add(new AccessoryRenderLayer<>(context, this));
+    }
+
     @Inject(
             method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
             at = @At(
@@ -44,20 +53,13 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
 
     // todo: move to a common mixin
     @Inject(
-            method = "<init>",
-            at = @At(
-                    value = "TAIL"))
-    private void init(EntityRendererProvider.Context context, V model, float shadow, CallbackInfo ci) {
-        layers.add(new AccessoryRenderLayer<>(context, this));
-    }
-
-    // todo: move to a common mixin
-    @Inject(
             method = "submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
             at = @At(
                     value = "HEAD"),
             cancellable = true)
     private void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState, CallbackInfo ci) {
-        ClientCallbacks.preventRender((LivingEntityRenderState) state);
+        if (ClientCallbacks.preventRender((LivingEntityRenderState) state)) {
+            ci.cancel();
+        }
     }
 }

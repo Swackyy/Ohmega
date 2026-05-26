@@ -9,8 +9,11 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
 
 /**
  * Ohmega's default screen implementation of the accessory extension.
@@ -30,9 +33,10 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
         super(screen, menuExtension);
 
         int size = AccessoryHelper.getSlotTypes().size();
-        int maxRenderSlots = OhmegaConfig.Client.maxColumnRenderSlots();
-        int maxColumnSlots = OhmegaConfig.Client.maxColumnSlots();
-        int maxColumns = OhmegaConfig.Client.maxColumns();
+        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+        int maxRenderSlots = data.maxColumnRenderSlots().get();
+        int maxColumnSlots = data.maxColumnSlots().get();
+        int maxColumns = data.maxColumns().get();
         int renderSlots = Math.min(maxColumnSlots, maxRenderSlots);
         this.renderColumns = (int) Math.min(Math.ceil((double) size / renderSlots), maxColumns);
         // 2px buffer, 2 * 4px extension borders, 18 * number of columns
@@ -43,7 +47,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public void initExtension(WidgetAdder adder) {
-        if (OhmegaConfig.Server.allowHideAccessories()) {
+        if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
             int index = 0;
 
             for (int i = 0; i < renderColumns; i++) {
@@ -58,6 +62,22 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
                 }
             }
         }
+    }
+
+    @Override
+    public List<Rect2i> getRects() {
+        // todo: check for fill direction
+        return List.of(
+                new Rect2i(
+                        0,
+                        0,
+                        (renderColumns - 1) * 18 + 4,
+                        mostSlotsPerColumn * 18 + 8),
+                new Rect2i(
+                        (renderColumns - 1) * 18 + 4,
+                        0,
+                        22,
+                        lastColumnSlots * 18 + 8));
     }
 
     @Override
@@ -151,7 +171,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public boolean hasClickedOutside(double mx, double my) {
-        if (OhmegaConfig.Client.fillDirection() == OhmegaConfig.Client.Service.FillDirection.LEFT) {
+        if (OhmegaConfig.Client.getData().fillDirection().get() == OhmegaConfig.Client.Service.FillDirection.LEFT) {
             // todo
         } else {
             // Left border

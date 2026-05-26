@@ -1,4 +1,4 @@
-package com.swacky.ohmega.common.command.node;
+package com.swacky.ohmega.client.command.node;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

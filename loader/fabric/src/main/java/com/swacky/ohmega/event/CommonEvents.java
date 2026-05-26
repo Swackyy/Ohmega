@@ -1,12 +1,15 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTabOutput;
@@ -29,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.fml.config.ModConfig;
 
 public final class CommonEvents {
     private static boolean bootstrapped = false;
@@ -38,6 +42,7 @@ public final class CommonEvents {
             bootstrapped = true;
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
+            ModConfigEvents.reloading(Ohmega.MODID).register(CommonEvents::onConfigReload);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onLivingTrack);
             CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(CommonEvents::onModifyCreativeOpBlocksTab);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
@@ -54,6 +59,12 @@ public final class CommonEvents {
     private static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
         if (alive || CommonCallbacks.shouldKeepInventory(oldPlayer)) {
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
+        }
+    }
+
+    private static void onConfigReload(ModConfig config) {
+        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+            CommonCallbacks.onServerConfigReload();
         }
     }
 

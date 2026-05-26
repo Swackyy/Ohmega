@@ -1,5 +1,6 @@
 package com.swacky.ohmega.config;
 
+import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -7,68 +8,17 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 
 // todo: order elements alphabetically
-// Descriptions written in the config file are all in English
 public final class OhmegaConfig {
     public static final class Client {
         private static final Service IMPL = OhmegaClient.loadService(Service.class);
 
-        public static void bootstrap() {
-        }
+        public static void bootstrap() {}
 
-        public static boolean compatibilityMode() {
-            return IMPL.compatibilityMode();
-        }
-
-        public static Service.ButtonStyle buttonStyle() {
-            return IMPL.buttonStyle();
-        }
-
-        public static Service.FillDirection fillDirection() {
-            return IMPL.fillDirection();
-        }
-
-        public static boolean showHoverTooltip() {
-            return IMPL.showHoverTooltip();
-        }
-
-        public static int maxColumns() {
-            return IMPL.maxColumns();
-        }
-
-        public static int maxColumnSlots() {
-            return IMPL.maxColumnSlots();
-        }
-
-        public static int maxColumnRenderSlots() {
-            return IMPL.maxColumnRenderSlots();
-        }
-
-        public static boolean showTranslationToast() {
-            return IMPL.showTranslationToast();
-        }
-
-        public static void setShowTranslationToast(boolean value) {
-            IMPL.setShowTranslationToast(value);
-        }
-
-        public static int survivalExtensionX() {
-            return IMPL.survivalExtensionX();
-        }
-
-        public static int survivalExtensionY() {
-            return IMPL.survivalExtensionY();
-        }
-
-        public static int creativeExtensionX() {
-            return IMPL.creativeExtensionX();
-        }
-
-        public static int creativeExtensionY() {
-            return IMPL.creativeExtensionY();
+        public static Service.Data getData() {
+            return IMPL.getData();
         }
 
         public static boolean isLoaded() {
@@ -138,50 +88,61 @@ public final class OhmegaConfig {
             String SURVIVAL_EXTENSION_Y_KEY = "survivalExtensionY";
             String SURVIVAL_EXTENSION_Y_DESCRIPTION = """
                     The y-coordinate of the accessory extension in the survival inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
-            int SURVIVAL_EXTENSION_Y_DEFAULT = 24;
+            int SURVIVAL_EXTENSION_Y_DEFAULT = 25;
             int SURVIVAL_EXTENSION_Y_MIN = -2048;
             int SURVIVAL_EXTENSION_Y_MAX = 2048;
             // - - -
             String CREATIVE_EXTENSION_X_KEY = "creativeExtensionX";
             String CREATIVE_EXTENSION_X_DESCRIPTION = """
                     The x-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with left and right being negative and positive X respectively""";
-            int CREATIVE_EXTENSION_X_DEFAULT = 196;
+            int CREATIVE_EXTENSION_X_DEFAULT = 197;
             int CREATIVE_EXTENSION_X_MIN = -2048;
             int CREATIVE_EXTENSION_X_MAX = 2048;
             // - - -
             String CREATIVE_EXTENSION_Y_KEY = "creativeExtensionY";
             String CREATIVE_EXTENSION_Y_DESCRIPTION = """
                     The y-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
-            int CREATIVE_EXTENSION_Y_DEFAULT = 8;
+            int CREATIVE_EXTENSION_Y_DEFAULT = 10;
             int CREATIVE_EXTENSION_Y_MIN = -2048;
             int CREATIVE_EXTENSION_Y_MAX = 2048;
             // - - -
+            String ACCESSORY_EXTENSION_ID_KEY = "accessoryExtensionId";
+            String ACCESSORY_EXTENSION_ID_DESCRIPTION = """
+                    The accessory extension type to use, other mods can register custom accessory extensions, which can be chosen here""";
+            String ACCESSORY_EXTENSION_ID_DEFAULT = Ohmega.INTERFACE_ID.toString();
+            // - - -
 
-            boolean compatibilityMode();
+            record Data(
+                    LazySavedValue<Boolean> compatibilityMode,
+                    LazySavedValue<ButtonStyle> buttonStyle,
+                    LazySavedValue<FillDirection> fillDirection,
+                    LazySavedValue<Boolean> showHoverTooltip,
+                    LazySavedValue<Integer> maxColumns,
+                    LazySavedValue<Integer> maxColumnSlots,
+                    LazySavedValue<Integer> maxColumnRenderSlots,
+                    LazySavedValue<Boolean> showTranslationToast,
+                    LazySavedValue<Integer> survivalExtensionX,
+                    LazySavedValue<Integer> survivalExtensionY,
+                    LazySavedValue<Integer> creativeExtensionX,
+                    LazySavedValue<Integer> creativeExtensionY,
+                    LazySavedValue<String> accessoryExtensionId) {
+                public void pull() {
+                    compatibilityMode.pull();
+                    buttonStyle.pull();
+                    showHoverTooltip.pull();
+                    maxColumns.pull();
+                    maxColumnSlots.pull();
+                    maxColumnRenderSlots.pull();
+                    showTranslationToast.pull();
+                    survivalExtensionX.pull();
+                    survivalExtensionY.pull();
+                    creativeExtensionX.pull();
+                    creativeExtensionY.pull();
+                    accessoryExtensionId.pull();
+                }
+            }
 
-            ButtonStyle buttonStyle();
-
-            FillDirection fillDirection();
-
-            boolean showHoverTooltip();
-
-            int maxColumns();
-
-            int maxColumnSlots();
-
-            int maxColumnRenderSlots();
-
-            boolean showTranslationToast();
-
-            void setShowTranslationToast(boolean value);
-
-            int survivalExtensionX();
-
-            int survivalExtensionY();
-
-            int creativeExtensionX();
-
-            int creativeExtensionY();
+            Data getData();
 
             boolean isLoaded();
 
@@ -217,30 +178,8 @@ public final class OhmegaConfig {
 
         public static void bootstrap() {}
 
-        @SuppressWarnings("unchecked")
-        public static List<String> slotTypes() {
-            return (List<String>) IMPL.slotTypes();
-        }
-
-        @SuppressWarnings("unchecked")
-        public static Set<String> keyboundSlotTypes() {
-            return (Set<String>) IMPL.keyboundSlotTypes();
-        }
-
-        public static Service.KeepAccessoriesBehaviour keepAccessoriesBehaviour() {
-            return IMPL.keepAccessoriesBehaviour();
-        }
-
-        public static boolean disableAccessoryTypes() {
-            return IMPL.disableAccessoryTypes();
-        }
-
-        public static boolean allowHideAccessories() {
-            return IMPL.allowHideAccessories();
-        }
-
-        public static String menuExtensionId() {
-            return IMPL.menuExtensionId();
+        public static Service.Data getData() {
+            return IMPL.getData();
         }
 
         public static boolean isLoaded() {
@@ -293,23 +232,23 @@ public final class OhmegaConfig {
                     Will prevent players from toggling visibility on their accessories if false, so that they always render""";
             boolean ALLOW_HIDE_ACCESSORIES_DEFAULT = true;
             // - - -
-            String MENU_EXTENSION_ID_KEY = "menuExtensionId";
-            String MENU_EXTENSION_ID_DESCRIPTION = """
-                    The menu extension type to use, other mods can register custom accessory menu extensions, which can be chosen here""";
-            String MENU_EXTENSION_ID_DEFAULT = Ohmega.INTERFACE_ID.toString();
-            // - - -
 
-            List<? extends String> slotTypes();
+            record Data(
+                    LazySavedValue<List<? extends String>> slotTypes,
+                    LazySavedValue<List<? extends String>> keyboundSlotTypes,
+                    LazySavedValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour,
+                    LazySavedValue<Boolean> disableAccessoryTypes,
+                    LazySavedValue<Boolean> allowHideAccessories) {
+                public void pull() {
+                    slotTypes.pull();
+                    keyboundSlotTypes.pull();
+                    keepAccessoriesBehaviour.pull();
+                    disableAccessoryTypes.pull();
+                    allowHideAccessories.pull();
+                }
+            }
 
-            Set<? extends String> keyboundSlotTypes();
-
-            KeepAccessoriesBehaviour keepAccessoriesBehaviour();
-
-            boolean disableAccessoryTypes();
-
-            boolean allowHideAccessories();
-
-            String menuExtensionId();
+            Data getData();
 
             boolean isLoaded();
 

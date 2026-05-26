@@ -2,12 +2,13 @@ package com.swacky.ohmega.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.config.OhmegaConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,11 +20,15 @@ abstract class RecipeBookComponentMixin implements GuiEventListener, Renderable,
             at = @At(
                     value = "RETURN"))
     private int updateScreenPosition(int original) {
-        if (OhmegaConfig.Client.compatibilityMode() && Minecraft.getInstance().screen instanceof IAccessoryScreen screen) {
-            AccessoryScreenExtension extension = screen.getAccessoryExtension();
+        if (OhmegaConfig.Client.getData().compatibilityMode().get()) {
+            Screen screen = AccessoryScreens.getEffectiveScreen();
 
-            if (extension != null && screen.isAccessoryExtensionVisible()) {
-                return original + extension.getExtraWidth() / 2;
+            if (screen instanceof IAccessoryScreen accessoryScreen) {
+                AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
+
+                if (extension != null && accessoryScreen.isAccessoryExtensionVisible()) {
+                    return original + extension.getExtraWidth() / 2;
+                }
             }
         }
 

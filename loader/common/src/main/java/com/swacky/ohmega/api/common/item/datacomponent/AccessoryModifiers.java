@@ -17,7 +17,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * <p>
  * Supports attributes added when an item is in the slot (passive), and when in the slot but also active ({@link AccessoryHelper#isActive(ItemStack)}
  */
-// todo: allow for other conditions here
+// todo: refactor uses of this and reevaluate the existence of this class
 public final class AccessoryModifiers {
     public static final AccessoryModifiers EMPTY = Builder.EMPTY.build();
 

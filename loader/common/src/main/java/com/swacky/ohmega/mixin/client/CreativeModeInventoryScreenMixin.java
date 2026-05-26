@@ -11,6 +11,7 @@ import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -61,14 +62,14 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public int getAccessoryExtensionX() {
-        return OhmegaConfig.Client.creativeExtensionX();
+    public LazySavedValue<Integer> getAccessoryExtensionX() {
+        return OhmegaConfig.Client.getData().creativeExtensionX();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public int getAccessoryExtensionY() {
-        return OhmegaConfig.Client.creativeExtensionY();
+    public LazySavedValue<Integer> getAccessoryExtensionY() {
+        return OhmegaConfig.Client.getData().creativeExtensionY();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -135,8 +136,8 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
 
             if (extension != null) {
                 hasClickedOutside = extension.hasClickedOutside(
-                        mx - getAccessoryExtensionX() - leftPos,
-                        my - getAccessoryExtensionY() - topPos);
+                        mx - getAccessoryExtensionX().get() - leftPos,
+                        my - getAccessoryExtensionY().get() - topPos);
 
                 return hasClickedOutside;
             }
@@ -154,13 +155,11 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
         if (menu instanceof IAccessoryMenu accessoryMenu) {
             AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
 
-            if (extension != null) {
-                if (slot instanceof AccessorySlot) {
-                    AccessorySlot itemPickerMenuSlot = extension.getSlots().get(slot.getContainerSlot());
-
-                    x = itemPickerMenuSlot.x;
-                    y = itemPickerMenuSlot.y;
-                }
+            if (extension != null && slot instanceof AccessorySlot) {
+                slot = extension.getSlots().get(slot.getContainerSlot());
+                slot.index = index;
+                x = slot.x;
+                y = slot.y;
             }
         }
 

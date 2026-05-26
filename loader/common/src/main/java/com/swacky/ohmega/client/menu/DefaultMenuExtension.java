@@ -1,4 +1,4 @@
-package com.swacky.ohmega.common.menu;
+package com.swacky.ohmega.client.menu;
 
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
@@ -19,11 +19,12 @@ public final class DefaultMenuExtension extends AccessoryMenuExtension {
     }
 
     @Override
-    public void addSlotsClient(@NonNull SlotAdder adder) {
+    public void addSlots(@NonNull SlotAdder adder) {
         ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
 
-        int renderSlots = Math.min(OhmegaConfig.Client.maxColumnSlots(), OhmegaConfig.Client.maxColumnRenderSlots());
-        int renderColumns = (int) Math.min(Math.ceil((double) slotTypes.size() / renderSlots), OhmegaConfig.Client.maxColumns());
+        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+        int renderSlots = Math.min(data.maxColumnSlots().get(), data.maxColumnRenderSlots().get());
+        int renderColumns = (int) Math.min(Math.ceil((double) slotTypes.size() / renderSlots), data.maxColumns().get());
         int slotsAvailable = Math.min(renderColumns * renderSlots, slotTypes.size());
 
         boolean stop = false;

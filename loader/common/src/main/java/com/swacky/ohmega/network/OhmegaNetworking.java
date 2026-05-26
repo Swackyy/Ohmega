@@ -27,7 +27,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-// todo: will probably need to add entityIds to a lot of packets for allowing entities to have accessory inventories
 // todo: reorder packet registration on forge and neoforge to be alphabetical
 public final class OhmegaNetworking {
     public static void bootstrap() {
@@ -59,7 +58,7 @@ public final class OhmegaNetworking {
         }
 
         public static void handleSetHidden(SetHiddenPacket packet, ServerPlayer player) {
-            if (OhmegaConfig.Server.allowHideAccessories()) {
+            if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
                 int index = packet.index();
                 boolean value = packet.value();
 

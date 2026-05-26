@@ -1,54 +1,24 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.ui.AccessoryUIs;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.jspecify.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Holds known screen extension factories and common methods related to screen extensions
+ * Holds methods related to screen extensions that implement correct functionality
  * <p>
- * In order for your extension to function properly, you should call:
+ * In order for the extension to function properly, you should call:
  * <ul>
  *     <li>{@link #onConstruct(AbstractContainerScreen)}</li>
  * </ul>
  */
 public final class AccessoryScreens {
-    private static final Map<Identifier, AccessoryScreenExtension.Factory> SCREEN_EXTENSIONS = new HashMap<>();
-
-    /**
-     * Use this to bind a screen extension type to a menu extension type.
-     * This must be done after calling {@link AccessoryMenus#registerExtension(Identifier, AccessoryMenuExtension.Factory)}
-     * @param id identifier matching the menu extension registered
-     * @param factory factory for the extension, will be constructed later
-     */
-    public static void registerExtension(Identifier id, AccessoryScreenExtension.Factory factory) {
-        if (AccessoryMenus.extensionExists(id)) {
-            if (!SCREEN_EXTENSIONS.containsKey(id)) {
-                SCREEN_EXTENSIONS.put(id, factory);
-            }
-        } else {
-            throw new IllegalStateException("Failed to register accessory screen extension with identifier '" + id + "' as a corresponding accessory menu extension has not been registered");
-        }
-    }
-
-    /**
-     * Retrieve the active screen extension factory by parsing the server config value to an {@link Identifier}
-     * @return the currently in-use screen extension factory
-     */
-    public static AccessoryScreenExtension.@Nullable Factory getActiveFactory() {
-        return SCREEN_EXTENSIONS.get(Identifier.tryParse(OhmegaConfig.Server.menuExtensionId()));
-    }
-
     /**
      * This must be called at the end of your target screen's constructor to assign the accessory extension and add slots
      * @param screen parent screen
@@ -62,17 +32,17 @@ public final class AccessoryScreens {
 
                 if (menuExtension != null) {
                     for (AccessorySlot slot : menuExtension.getSlots()) {
-                        slot.applyOffset(accessoryScreen.getAccessoryExtensionX(), accessoryScreen.getAccessoryExtensionY());
+                        slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
                     }
 
-                    AccessoryScreenExtension.Factory factory = getActiveFactory();
+                    AccessoryScreenExtension.Factory factory = AccessoryUIs.getActiveScreenFactory();
 
                     if (factory != null) {
                         AccessoryScreenExtension extension = factory.construct(screen, menuExtension);
 
                         accessoryScreen.setAccessoryExtension(extension);
 
-                        if (OhmegaConfig.Client.compatibilityMode() && accessoryScreen.isAccessoryExtensionVisible()) {
+                        if (OhmegaConfig.Client.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
                             screen.imageWidth += extension.getExtraWidth();
                             screen.imageHeight += extension.getExtraHeight();
                         }
@@ -87,12 +57,30 @@ public final class AccessoryScreens {
     }
 
     /**
-     * Check whether the current screen is both an accessory screen and its widgets are visible.
+     * Retrieve the "effective" screen if possible.
+     * In more detail, if the current forefront screen is an {@link IEmbeddingScreen}, will return {@link IEmbeddingScreen#getEmbeddedScreen()},
+     * however if that fails, it will simply return {@link Minecraft#screen}
+     * @return the use-effective accessory screen
+     */
+    public static Screen getEffectiveScreen() {
+        Screen screen = Minecraft.getInstance().screen;
+
+        if (screen instanceof IEmbeddingScreen embeddedScreen) {
+            return embeddedScreen.getEmbeddedScreen();
+        }
+
+        return screen;
+    }
+
+    /**
+     * Check whether the current effective screen is both an accessory screen and its widgets are visible.
      * This is here as to defer loading to prevent logical side load errors when running on a dedicated server
      * @return {@code true} if we should render accessory related widgets, {@code false} otherwise
      */
     public static boolean areExtensionWidgetsVisible() {
-        if (Minecraft.getInstance().screen instanceof IAccessoryScreen accessoryScreen) {
+        Screen screen = getEffectiveScreen();
+
+        if (screen instanceof IAccessoryScreen accessoryScreen) {
             return accessoryScreen.areAccessoryExtensionWidgetsVisible();
         }
 

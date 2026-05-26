@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
+import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -24,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractContainerScreen.class)
 abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
@@ -101,7 +103,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
                 return;
             }
 
-            if (OhmegaConfig.Client.showHoverTooltip() && hoveredSlot instanceof AccessorySlot slot && !slot.hasItem() && menu.getCarried().isEmpty()) {
+            if (OhmegaConfig.Client.getData().showHoverTooltip().get() && hoveredSlot instanceof AccessorySlot slot && !slot.hasItem() && menu.getCarried().isEmpty()) {
                 gui.setTooltipForNextFrame(slot.getType().getTranslation(), mx, my);
             }
         }
@@ -117,8 +119,8 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
 
             if (extension != null) {
                 return extension.hasClickedOutside(
-                        mx - accessoryScreen.getAccessoryExtensionX() - leftPos,
-                        my - accessoryScreen.getAccessoryExtensionY() - topPos);
+                        mx - accessoryScreen.getAccessoryExtensionX().get() - leftPos,
+                        my - accessoryScreen.getAccessoryExtensionY().get() - topPos);
             }
         }
 
@@ -131,7 +133,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
             at = @At(
                     value = "INVOKE", target = "Ljava/util/List;clear()V"))
     private void init(CallbackInfo ci) {
-        if (OhmegaConfig.Client.compatibilityMode() && this instanceof IAccessoryScreen screen) {
+        if (OhmegaConfig.Client.getData().compatibilityMode().get() && this instanceof IAccessoryScreen screen) {
             AccessoryScreenExtension extension = screen.getAccessoryExtension();
 
             if (extension != null && screen.isAccessoryExtensionVisible()) {
@@ -141,6 +143,17 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
 
                 topPos += extension.getExtraHeight() / 2;
             }
+        }
+    }
+
+    @Inject(
+            method = "isHovering(IIIIDD)Z",
+            at = @At(
+                    value = "HEAD"),
+            cancellable = true)
+    public void isHovering(int x, int y, int width, int height, double mx, double my, CallbackInfoReturnable<Boolean> cir) {
+        if (minecraft.screen instanceof IEmbeddingScreen && !(this instanceof IEmbeddingScreen)) {
+            cir.setReturnValue(false);
         }
     }
 

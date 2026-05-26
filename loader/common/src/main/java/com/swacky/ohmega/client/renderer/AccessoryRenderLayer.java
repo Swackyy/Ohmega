@@ -41,7 +41,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
         if (data != null && !OhmegaHooks.renderPre(state, poseStack)) {
             SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
             NonNullList<ItemStack> stacks = data.stacks();
-            boolean flag = OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.allowHideAccessories();
+            boolean flag = OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.getData().allowHideAccessories().get();
 
             for (int i = 0; i < stacks.size(); i++) {
                 ItemStack stack = stacks.get(i);

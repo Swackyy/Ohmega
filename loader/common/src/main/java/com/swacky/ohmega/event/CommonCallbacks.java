@@ -87,10 +87,14 @@ public final class CommonCallbacks {
         OhmegaRootCommand.register(dispatcher, context);
     }
 
+    public static void onServerConfigReload() {
+        OhmegaConfig.Server.getData().pull();
+    }
+
     // Not an event callback in itself
     public static boolean shouldKeepInventory(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
-            return switch (OhmegaConfig.Server.keepAccessoriesBehaviour()) {
+            return switch (OhmegaConfig.Server.getData().keepAccessoriesBehaviour().get()) {
                 case ALWAYS_ON -> true;
                 case ALWAYS_OFF -> false;
                 case DEFAULT -> player.level().getGameRules().get(GameRules.KEEP_INVENTORY);

@@ -65,7 +65,7 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
-        ClientCallbacks.onKeyInput();
+        ClientCallbacks.onKeyInput(event.getInfo());
     }
 
     @SubscribeEvent

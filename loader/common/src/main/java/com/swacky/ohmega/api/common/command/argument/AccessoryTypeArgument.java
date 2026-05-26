@@ -1,4 +1,4 @@
-package com.swacky.ohmega.common.command.argument;
+package com.swacky.ohmega.api.common.command.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;

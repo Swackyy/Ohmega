@@ -7,6 +7,7 @@ import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -45,6 +47,13 @@ public final class CommonEvents {
             Player newPlayer = event.getEntity();
 
             CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onConfigReload(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+            CommonCallbacks.onServerConfigReload();
         }
     }
 

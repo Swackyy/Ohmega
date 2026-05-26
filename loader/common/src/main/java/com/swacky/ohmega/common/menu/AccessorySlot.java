@@ -1,16 +1,13 @@
 package com.swacky.ohmega.common.menu;
 
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
-import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.Accessory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -43,6 +40,14 @@ public final class AccessorySlot extends Slot {
 
     public AccessoryType getType() {
         return type;
+    }
+
+    public int getOriginalX() {
+        return originalX;
+    }
+
+    public int getOriginalY() {
+        return originalY;
     }
 
     public void applyOffset(int xo, int yo) {
@@ -141,17 +146,5 @@ public final class AccessorySlot extends Slot {
     @Override
     public Identifier getNoItemIcon() {
         return type.getEmptySlotLocation();
-    }
-
-    private static class Client {
-        private static boolean areAccessoryExtensionWidgetsVisible() {
-            Screen screen = Minecraft.getInstance().screen;
-
-            if (screen instanceof IAccessoryScreen accessoryScreen) {
-                return accessoryScreen.areAccessoryExtensionWidgetsVisible();
-            }
-
-            return false;
-        }
     }
 }

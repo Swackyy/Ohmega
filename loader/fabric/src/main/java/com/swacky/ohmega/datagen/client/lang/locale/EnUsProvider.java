@@ -3,13 +3,13 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.command.node.ClearCommand;
-import com.swacky.ohmega.common.command.node.ExtensionsCommand;
-import com.swacky.ohmega.common.command.node.InfoCommand;
+import com.swacky.ohmega.client.command.node.ExtensionsCommand;
+import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.common.command.node.TypesCommand;
-import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
+import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
@@ -71,7 +71,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Removed %s item(s) from %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Removed %s item(s) from entity %s's accessory inventory");
         // Extensions
-        builder.add(ExtensionsCommand.ROOT_FEEDBACK, "There are %s accessory extensions recognised by Ohmega: %s");
+        builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmega recognises the following %s accessory extension(s): %s");
         // Info
         builder.add(InfoCommand.CROWDIN_FEEDBACK, "Consider translating Ohmega on Crowdin by clicking this message!");
         builder.add(InfoCommand.DISCORD_FEEDBACK, "If you need help with the API or want to send feedback, click this message to join Ohmega's Discord server");

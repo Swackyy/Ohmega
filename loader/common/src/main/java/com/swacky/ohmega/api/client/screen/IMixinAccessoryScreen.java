@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -25,12 +26,12 @@ public interface IMixinAccessoryScreen extends IAccessoryScreen {
     }
 
     @Override
-    default int getAccessoryExtensionX() {
+    default LazySavedValue<Integer> getAccessoryExtensionX() {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 
     @Override
-    default int getAccessoryExtensionY() {
+    default LazySavedValue<Integer> getAccessoryExtensionY() {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 

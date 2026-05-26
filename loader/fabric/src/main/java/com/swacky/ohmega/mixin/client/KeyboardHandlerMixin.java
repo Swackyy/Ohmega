@@ -21,7 +21,7 @@ abstract class KeyboardHandlerMixin {
                     value = "TAIL"))
     private void keyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
         if (window == minecraft.getWindow().handle()) {
-            ClientCallbacks.onKeyInput();
+            ClientCallbacks.onKeyInput(event);
         }
     }
 }

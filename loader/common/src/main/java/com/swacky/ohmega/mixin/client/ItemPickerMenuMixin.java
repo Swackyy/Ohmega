@@ -60,10 +60,6 @@ abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMix
             at = @At(
                     value = "RETURN"))
     private void init(Player owner, CallbackInfo ci) {
-        AccessoryMenuExtension extension = AccessoryMenus.setExtension(this, owner);
-
-        if (extension != null) {
-            extension.setSlots(AccessoryMenus.getAccessorySlots(this, owner));
-        }
+        AccessoryMenus.onConstruct(this, owner);
     }
 }

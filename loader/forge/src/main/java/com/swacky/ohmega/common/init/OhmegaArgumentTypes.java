@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.command.argument.AccessoryTypeArgument;
+import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;

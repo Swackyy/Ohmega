@@ -11,7 +11,10 @@ accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScr
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen topPos I
 accessible field net/minecraft/client/gui/screens/inventory/AbstractRecipeBookScreen recipeBookComponent Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;
 accessible class net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper
+accessible field net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen selectedTab Lnet/minecraft/world/item/CreativeModeTab;
+accessible method net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen selectTab (Lnet/minecraft/world/item/CreativeModeTab;)V
 accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/List;
+accessible method net/minecraft/client/gui/screens/Screen init ()V
 accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraft/client/Minecraft;
 accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;

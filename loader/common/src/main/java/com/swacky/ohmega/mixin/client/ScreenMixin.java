@@ -1,6 +1,7 @@
 package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
@@ -15,22 +16,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Screen.class)
 abstract class ScreenMixin extends AbstractContainerEventHandler implements Renderable {
-    @SuppressWarnings("ConstantValue")
     @Inject(
-            method = "extractBackground",
+            method = "extractRenderStateWithTooltipAndSubtitles",
             at = @At(
-                    value = "TAIL"))
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;nextStratum()V",
+                    ordinal = 1))
     private void extractBackground(GuiGraphicsExtractor gui, int mx, int my, float partialTicks, CallbackInfo ci) {
-        if (this instanceof IAccessoryScreen accessoryScreen) {
+        Screen screen = AccessoryScreens.getEffectiveScreen();
+
+        if (screen instanceof IAccessoryScreen accessoryScreen) {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
-            if (extension != null && accessoryScreen.isAccessoryExtensionVisible() && (Object) this instanceof AbstractContainerScreen<?> screen) {
+            if (extension != null && accessoryScreen.isAccessoryExtensionVisible() && (Object) screen instanceof AbstractContainerScreen<?> containerScreen) {
                 Matrix3x2fStack pose = gui.pose();
 
                 pose.pushMatrix();
                 pose.translate(
-                        accessoryScreen.getAccessoryExtensionX() + screen.leftPos,
-                        accessoryScreen.getAccessoryExtensionY() + screen.topPos);
+                        accessoryScreen.getAccessoryExtensionX().get() + containerScreen.leftPos,
+                        accessoryScreen.getAccessoryExtensionY().get() + containerScreen.topPos);
                 extension.extractExtension(gui);
 
                 pose.popMatrix();

@@ -9,10 +9,10 @@ public abstract class ExtensionRelativeButton extends ExtensionContainerScreenBu
     }
 
     public int getAdjustedX() {
-        return super.getAdjustedX() + accessoryScreen.getAccessoryExtensionX();
+        return super.getAdjustedX() + accessoryScreen.getAccessoryExtensionX().get();
     }
 
     public int getAdjustedY() {
-        return super.getAdjustedY() + accessoryScreen.getAccessoryExtensionY();
+        return super.getAdjustedY() + accessoryScreen.getAccessoryExtensionY().get();
     }
 }

@@ -40,7 +40,6 @@ abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> extends A
         }
     }
 
-    // todo: maybe use a different injector?
     @ModifyReturnValue(
             method = "hasClickedOutside",
             at = @At(
@@ -51,8 +50,8 @@ abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> extends A
 
             if (extension != null) {
                 return extension.hasClickedOutside(
-                        mx - accessoryScreen.getAccessoryExtensionX() - leftPos,
-                        my - accessoryScreen.getAccessoryExtensionY() - topPos);
+                        mx - accessoryScreen.getAccessoryExtensionX().get() - leftPos,
+                        my - accessoryScreen.getAccessoryExtensionY().get() - topPos);
             }
         }
 

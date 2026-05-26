@@ -2,17 +2,15 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.common.command.node.ClearCommand;
-import com.swacky.ohmega.common.command.node.ExtensionsCommand;
-import com.swacky.ohmega.common.command.node.HelpCommand;
-import com.swacky.ohmega.common.command.node.InfoCommand;
+import com.swacky.ohmega.client.command.node.ExtensionsCommand;
+import com.swacky.ohmega.client.command.node.HelpCommand;
+import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.common.menu.DefaultMenuExtension;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -43,6 +41,8 @@ public final class Ohmega {
 
     public static void bootstrap() {
         if (!bootstrapped) {
+            bootstrapped = true;
+
             // Bootstrap services
             AccessoryHelper.bootstrap();
             OhmegaDataComponents.bootstrap();
@@ -60,11 +60,6 @@ public final class Ohmega {
             OhmegaCommandNodes.register(ItemCommand.ELEMENT_ROOT, ItemCommand::new);
             OhmegaCommandNodes.register(ItemsCommand.ELEMENT_ROOT, ItemsCommand::new);
             OhmegaCommandNodes.register(TypesCommand.ELEMENT_ROOT, TypesCommand::new);
-
-            // Register menu extension
-            AccessoryMenus.registerExtension(INTERFACE_ID, DefaultMenuExtension::new);
-
-            bootstrapped = true;
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + Ohmega.class + " multiple times");
         }

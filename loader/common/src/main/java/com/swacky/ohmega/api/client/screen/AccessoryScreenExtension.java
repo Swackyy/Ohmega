@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.client.renderer.Rect2i;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -45,6 +46,13 @@ public abstract class AccessoryScreenExtension {
     }
 
     /**
+     * The list of regions where the extension is present, used for checking whether the mouse is hovering over the extension.
+     * The origin position will be relative to the position of the accessory extension
+     * @return a list of clickable accessory extension regions as {@link Rect2i}s
+     */
+    public abstract List<Rect2i> getRects();
+
+    /**
      * Get the width of the extension
      * @return width of this accessory extension
      */
@@ -61,7 +69,7 @@ public abstract class AccessoryScreenExtension {
      * @return total width that lies over the current screen's leftmost boundary
      */
     public final int getExtraWidthLeft() {
-        return Math.clamp(0, -accessoryScreen.getAccessoryExtensionX(), getWidth());
+        return Math.clamp(-accessoryScreen.getAccessoryExtensionX().get(), 0, getWidth());
     }
 
     /**
@@ -71,7 +79,7 @@ public abstract class AccessoryScreenExtension {
     public final int getExtraWidthRight() {
         int width = getWidth();
 
-        return Math.clamp(accessoryScreen.getAccessoryExtensionX() + width - screen.imageWidth, 0, width);
+        return Math.clamp(accessoryScreen.getAccessoryExtensionX().get() + width - screen.imageWidth, 0, width);
     }
 
     /**
@@ -79,7 +87,7 @@ public abstract class AccessoryScreenExtension {
      * @return total height that lies over the current screen's topmost boundary
      */
     public final int getExtraHeightTop() {
-        return Math.clamp(0, -accessoryScreen.getAccessoryExtensionY(), getHeight());
+        return Math.clamp(-accessoryScreen.getAccessoryExtensionY().get(), 0, getHeight());
     }
 
     /**
@@ -89,7 +97,7 @@ public abstract class AccessoryScreenExtension {
     public final int getExtraHeightBottom() {
         int height = getHeight();
 
-        return Math.clamp(accessoryScreen.getAccessoryExtensionY() + height - screen.imageHeight, 0, height);
+        return Math.clamp(accessoryScreen.getAccessoryExtensionY().get() + height - screen.imageHeight, 0, height);
     }
 
     /**
@@ -126,7 +134,7 @@ public abstract class AccessoryScreenExtension {
      * @param value {@code true} to make the extension visible, {@code false} to hide it
      */
     public final void setVisible(boolean value) {
-        if (OhmegaConfig.Client.compatibilityMode() && menuExtension.getAccessoryMenu().isAccessoryExtensionVisible() != value) {
+        if (OhmegaConfig.Client.getData().compatibilityMode().get() && menuExtension.getAccessoryMenu().isAccessoryExtensionVisible() != value) {
             if (value) {
                 screen.imageWidth += getExtraWidth();
                 screen.imageHeight += getExtraHeight();

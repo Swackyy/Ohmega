@@ -8,7 +8,9 @@ import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
+import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
@@ -25,6 +27,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -93,7 +96,7 @@ public final class ClientCallbacks {
                     rects = new ArrayList<>(2);
                 }
 
-                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.buttonStyle();
+                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().buttonStyle().get();
                 IntIntPair buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
 
                 rects.add(new Rect2i(
@@ -102,8 +105,8 @@ public final class ClientCallbacks {
                         buttonStyle.width,
                         buttonStyle.height));
                 rects.add(new Rect2i(
-                        screen.leftPos + accessoryScreen.getAccessoryExtensionX(),
-                        screen.topPos + accessoryScreen.getAccessoryExtensionY(),
+                        screen.leftPos + accessoryScreen.getAccessoryExtensionX().get(),
+                        screen.topPos + accessoryScreen.getAccessoryExtensionY().get(),
                         extension.getWidth(),
                         extension.getHeight()));
                 return rects;
@@ -114,7 +117,9 @@ public final class ClientCallbacks {
     }
 
     public static void onClientConfigReload() {
-        if (!OhmegaConfig.Client.compatibilityMode()) {
+        OhmegaConfig.Client.getData().pull();
+
+        if (!OhmegaConfig.Client.getData().compatibilityMode().get()) {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
 
@@ -157,7 +162,9 @@ public final class ClientCallbacks {
     }
 
     public static void onJoinWorld(Minecraft mc) {
-        if (OhmegaConfig.Client.showTranslationToast()) {
+        LazySavedValue<Boolean> option = OhmegaConfig.Client.getData().showTranslationToast();
+
+        if (option.get()) {
             mc.getToastManager().addToast(SystemToast.multiline(
                     mc,
                     new SystemToast.SystemToastId(7500),
@@ -165,24 +172,28 @@ public final class ClientCallbacks {
                     Component.translatable("toast.ohmega.translation.message")
             ));
 
-            OhmegaConfig.Client.setShowTranslationToast(false);
+            option.set(false);
+            option.serialise();
         }
     }
 
     @SuppressWarnings("DataFlowIssue")
-    public static void onKeyInput() {
+    public static void onKeyInput(KeyEvent event) {
         Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
 
-        if (mc.screen == null) {
-            LocalPlayer player = mc.player;
+        if (player != null) {
+            Screen screen = mc.screen;
 
-            if (player != null) {
+            if ((screen == null || !(screen.getFocused() instanceof EditBox)) && OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen instanceof EditUiScreen)) {
+                mc.setScreen(new EditUiScreen(screen, player));
+            }
+
+            if (screen == null) {
                 while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && (player.portalProcess == null || !player.portalProcess.isInsidePortalThisTick())) {
                     if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                         player.sendOpenInventory();
                     } else {
-                        Screen screen;
-
                         if (player.hasInfiniteMaterials()) {
                             screen = new CreativeModeInventoryScreen(player, player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
                         } else {
@@ -243,10 +254,11 @@ public final class ClientCallbacks {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
+                OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().buttonStyle().get();
                 AbstractContainerScreen<?> containerScreen = extension.getScreen();
 
-                if (OhmegaConfig.Client.buttonStyle() != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN ) {
-                    consumer.accept(new ToggleExtensionButton(containerScreen, extension, OhmegaConfig.Client.buttonStyle()));
+                if (style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
+                    consumer.accept(new ToggleExtensionButton(containerScreen, extension, style));
                 }
 
                 if (screen instanceof IEntityRenderingScreen entityRenderingScreen && extension instanceof IEntityRenderingExtension entityRenderingExtension) {

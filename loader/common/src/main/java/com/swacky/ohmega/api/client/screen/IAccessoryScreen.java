@@ -1,5 +1,7 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -9,7 +11,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-// todo: move all defaulted methods that aren't meant to be changed to a final helper class or something
 /**
  * Implemented by {@link AbstractContainerScreen}s to allow them to have an accessory extension.
  * See {@link AccessoryScreens} for crucial implementation details
@@ -39,16 +40,18 @@ public interface IAccessoryScreen {
     void setAccessoryExtension(@NonNull AccessoryScreenExtension extension);
 
     /**
-     * The x-coordinate, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed
+     * The x-coordinate, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed.
+     * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
      * @return relative x-coordinate to place the extension
      */
-    int getAccessoryExtensionX();
+    LazySavedValue<Integer> getAccessoryExtensionX();
 
     /**
-     * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed
+     * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed.
+     * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
      * @return relative y-coordinate to place the extension
      */
-    int getAccessoryExtensionY();
+    LazySavedValue<Integer> getAccessoryExtensionY();
 
     /**
      * The (x, y) position the {@link ToggleExtensionButton} will be added.
