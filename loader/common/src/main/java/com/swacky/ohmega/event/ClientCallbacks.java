@@ -8,7 +8,7 @@ import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
@@ -96,7 +96,7 @@ public final class ClientCallbacks {
                     rects = new ArrayList<>(2);
                 }
 
-                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().buttonStyle().get();
+                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().buttonStyle().getObject();
                 IntIntPair buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
 
                 rects.add(new Rect2i(
@@ -162,7 +162,7 @@ public final class ClientCallbacks {
     }
 
     public static void onJoinWorld(Minecraft mc) {
-        LazySavedValue<Boolean> option = OhmegaConfig.Client.getData().showTranslationToast();
+        BooleanLazySavedValue option = OhmegaConfig.Client.getData().showTranslationToast();
 
         if (option.get()) {
             mc.getToastManager().addToast(SystemToast.multiline(
@@ -254,7 +254,7 @@ public final class ClientCallbacks {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
-                OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().buttonStyle().get();
+                OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().buttonStyle().getObject();
                 AbstractContainerScreen<?> containerScreen = extension.getScreen();
 
                 if (style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {

@@ -171,7 +171,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public boolean hasClickedOutside(double mx, double my) {
-        if (OhmegaConfig.Client.getData().fillDirection().get() == OhmegaConfig.Client.Service.FillDirection.LEFT) {
+        if (OhmegaConfig.Client.getData().fillDirection().getObject() == OhmegaConfig.Client.Service.FillDirection.LEFT) {
             // todo
         } else {
             // Left border

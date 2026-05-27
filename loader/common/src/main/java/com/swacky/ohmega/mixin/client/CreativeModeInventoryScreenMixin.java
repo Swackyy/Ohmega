@@ -11,7 +11,7 @@ import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -62,13 +62,13 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public LazySavedValue<Integer> getAccessoryExtensionX() {
+    public IntLazySavedValue getAccessoryExtensionX() {
         return OhmegaConfig.Client.getData().creativeExtensionX();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public LazySavedValue<Integer> getAccessoryExtensionY() {
+    public IntLazySavedValue getAccessoryExtensionY() {
         return OhmegaConfig.Client.getData().creativeExtensionY();
     }
 

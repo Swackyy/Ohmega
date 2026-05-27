@@ -43,7 +43,7 @@ public final class AccessoryUIs {
      * @return the currently in-use menu extension factory
      */
     public static AccessoryMenuExtension.@Nullable Factory getActiveMenuFactory() {
-        Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().get());
+        Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
 
         if (id != null) {
             return EXTENSIONS.get(id).getLeft();
@@ -57,7 +57,7 @@ public final class AccessoryUIs {
      * @return the currently in-use menu extension factory
      */
     public static AccessoryScreenExtension.@Nullable Factory getActiveScreenFactory() {
-        Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().get());
+        Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
 
         if (id != null) {
             return EXTENSIONS.get(id).getRight();

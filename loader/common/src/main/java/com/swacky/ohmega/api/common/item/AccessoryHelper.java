@@ -231,7 +231,7 @@ public final class AccessoryHelper {
     // todo: cache
     // todo: make a cached "getUniqueSlotTypes" that returns a Set
     public static ImmutableList<AccessoryType> getSlotTypes() {
-        List<? extends String> slotTypes = OhmegaConfig.Server.getData().slotTypes().get();
+        List<? extends String> slotTypes = OhmegaConfig.Server.getData().slotTypes().getObject();
         int size = slotTypes.size();
         ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
 
@@ -258,7 +258,7 @@ public final class AccessoryHelper {
     public static ImmutableSet<AccessoryType> getKeyboundSlotTypes() {
         ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
 
-        for (String id : OhmegaConfig.Server.getData().keyboundSlotTypes().get()) {
+        for (String id : OhmegaConfig.Server.getData().keyboundSlotTypes().getObject()) {
             builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
         }
 

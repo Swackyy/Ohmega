@@ -1,5 +1,7 @@
 package com.swacky.ohmega.config;
 
+import com.swacky.ohmega.api.util.BooleanLazySavedValue;
+import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
@@ -113,18 +115,18 @@ public final class OhmegaConfig {
             // - - -
 
             record Data(
-                    LazySavedValue<Boolean> compatibilityMode,
+                    BooleanLazySavedValue compatibilityMode,
                     LazySavedValue<ButtonStyle> buttonStyle,
                     LazySavedValue<FillDirection> fillDirection,
-                    LazySavedValue<Boolean> showHoverTooltip,
-                    LazySavedValue<Integer> maxColumns,
-                    LazySavedValue<Integer> maxColumnSlots,
-                    LazySavedValue<Integer> maxColumnRenderSlots,
-                    LazySavedValue<Boolean> showTranslationToast,
-                    LazySavedValue<Integer> survivalExtensionX,
-                    LazySavedValue<Integer> survivalExtensionY,
-                    LazySavedValue<Integer> creativeExtensionX,
-                    LazySavedValue<Integer> creativeExtensionY,
+                    BooleanLazySavedValue showHoverTooltip,
+                    IntLazySavedValue maxColumns,
+                    IntLazySavedValue maxColumnSlots,
+                    IntLazySavedValue maxColumnRenderSlots,
+                    BooleanLazySavedValue showTranslationToast,
+                    IntLazySavedValue survivalExtensionX,
+                    IntLazySavedValue survivalExtensionY,
+                    IntLazySavedValue creativeExtensionX,
+                    IntLazySavedValue creativeExtensionY,
                     LazySavedValue<String> accessoryExtensionId) {
                 public void pull() {
                     compatibilityMode.pull();
@@ -237,8 +239,8 @@ public final class OhmegaConfig {
                     LazySavedValue<List<? extends String>> slotTypes,
                     LazySavedValue<List<? extends String>> keyboundSlotTypes,
                     LazySavedValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour,
-                    LazySavedValue<Boolean> disableAccessoryTypes,
-                    LazySavedValue<Boolean> allowHideAccessories) {
+                    BooleanLazySavedValue disableAccessoryTypes,
+                    BooleanLazySavedValue allowHideAccessories) {
                 public void pull() {
                     slotTypes.pull();
                     keyboundSlotTypes.pull();

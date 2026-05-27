@@ -6,7 +6,7 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.menu.AccessorySlot;
@@ -35,8 +35,8 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     private final AccessoryScreenExtension screenExtension;
     private final AccessoryMenuExtension menuExtension;
     private final boolean originalVisibility;
-    private final LazySavedValue<Integer> xValue;
-    private final LazySavedValue<Integer> yValue;
+    private final IntLazySavedValue xValue;
+    private final IntLazySavedValue yValue;
 
     private boolean allowSetScreen = true;
     private CreativeModeTab previousTab = null;

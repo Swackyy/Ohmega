@@ -7,6 +7,7 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
+import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -54,13 +55,13 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public LazySavedValue<Integer> getAccessoryExtensionX() {
+    public IntLazySavedValue getAccessoryExtensionX() {
         return OhmegaConfig.Client.getData().survivalExtensionX();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public LazySavedValue<Integer> getAccessoryExtensionY() {
+    public IntLazySavedValue getAccessoryExtensionY() {
         return OhmegaConfig.Client.getData().survivalExtensionY();
     }
 

@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
@@ -44,14 +45,14 @@ public interface IAccessoryScreen {
      * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
      * @return relative x-coordinate to place the extension
      */
-    LazySavedValue<Integer> getAccessoryExtensionX();
+    IntLazySavedValue getAccessoryExtensionX();
 
     /**
      * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed.
      * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
      * @return relative y-coordinate to place the extension
      */
-    LazySavedValue<Integer> getAccessoryExtensionY();
+    IntLazySavedValue getAccessoryExtensionY();
 
     /**
      * The (x, y) position the {@link ToggleExtensionButton} will be added.
