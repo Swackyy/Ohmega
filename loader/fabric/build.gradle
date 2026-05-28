@@ -63,9 +63,9 @@ dependencies {
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 
     compileOnly "mezz.jei:jei-${mcV}-fabric-api:${jeiV}"
-    runtimeOnly "mezz.jei:jei-${mcV}-fabric:${jeiV}"
+    localRuntime "mezz.jei:jei-${mcV}-fabric:${jeiV}"
 
-    implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+    localRuntime "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
 }
 
 fabricApi {

@@ -44,6 +44,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly "mezz.jei:jei-${mcV}-fabric-api:${jeiV}"
-    runtimeOnly "mezz.jei:jei-${mcV}-fabric:${jeiV}"
+    compileOnly "mezz.jei:jei-${mcV}-neoforge-api:${jeiV}"
+    runtimeOnly "mezz.jei:jei-${mcV}-neoforge:${jeiV}"
 }

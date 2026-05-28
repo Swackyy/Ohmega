@@ -94,14 +94,32 @@ if (secretsFile.exists()) {
                     artifactId = "${modId}-${project.name}"
                     version = "${modV}-mc${mcV}"
 
-                    artifact tasks.named("jar")
-                    artifact tasks.named("javadocJar")
-                    artifact tasks.named("sourcesJar")
+                    from components.java
+                    //artifact tasks.named("javadocJar")
+                    //artifact tasks.named("sourcesJar")
 
                     pom {
                         name = "${modName} ${project.name}"
                         description = modSummary
                         url = gitUrl
+
+                        withXml {
+                            Object dependencies = asNode().dependencies[0]
+
+                            if (dependencies != null) {
+                                List targets = dependencies.dependency.findAll { dep ->
+                                    String groupId = dep.groupId.text()
+
+                                    groupId.contains("jei") ||
+                                    groupId.contains("minecraftforge") ||
+                                    dep.artifactId.text().contains("spark")
+                                }
+
+                                targets.each { dep ->
+                                    dependencies.remove(dep)
+                                }
+                            }
+                        }
 
                         licenses {
                             //noinspection GroovyAssignabilityCheck
