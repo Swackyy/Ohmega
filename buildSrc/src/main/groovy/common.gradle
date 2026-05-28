@@ -143,7 +143,9 @@ if (secretsFile.exists()) {
                     }
 
                     suppressPomMetadataWarningsFor("apiElements")
+                    suppressPomMetadataWarningsFor("javadocElements")
                     suppressPomMetadataWarningsFor("runtimeElements")
+                    suppressPomMetadataWarningsFor("sourcesElements")
                 }
             }
 
