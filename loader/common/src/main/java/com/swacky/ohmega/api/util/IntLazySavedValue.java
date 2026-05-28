@@ -25,11 +25,11 @@ public class IntLazySavedValue extends AbstractLazySavedValue<Integer> {
     }
 
     /**
-     * Construct a constant-value {@link IntLazySavedValue}
-     * @param value the constant value to set as
-     * @return newly constructed constant instance
+     * Construct a new variable-value {@link IntLazySavedValue}
+     * @param value the initial value to set as
+     * @return newly constructed instance
      */
-    public static IntLazySavedValue constant(int value) {
+    public static IntLazySavedValue of(int value) {
         IntLazySavedValue instance = new IntLazySavedValue(null, null);
         instance.value = value;
 

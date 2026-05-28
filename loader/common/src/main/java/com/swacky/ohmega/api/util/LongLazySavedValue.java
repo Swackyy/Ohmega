@@ -25,9 +25,9 @@ public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
     }
 
     /**
-     * Construct a constant-value {@link LongLazySavedValue}
-     * @param value the constant value to set as
-     * @return newly constructed constant instance
+     * Construct a new variable-value {@link LongLazySavedValue}
+     * @param value the initial value to set as
+     * @return newly constructed instance
      */
     public static LongLazySavedValue constant(long value) {
         LongLazySavedValue instance = new LongLazySavedValue(null, null);

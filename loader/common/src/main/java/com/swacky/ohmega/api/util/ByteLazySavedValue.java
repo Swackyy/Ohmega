@@ -24,11 +24,11 @@ public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
     }
 
     /**
-     * Construct a constant-value {@link ByteLazySavedValue}
-     * @param value the constant value to set as
-     * @return newly constructed constant instance
+     * Construct a new variable-value {@link ByteLazySavedValue}
+     * @param value the initial value to set as
+     * @return newly constructed instance
      */
-    public static ByteLazySavedValue constant(byte value) {
+    public static ByteLazySavedValue of(byte value) {
         ByteLazySavedValue instance = new ByteLazySavedValue(null, null);
         instance.value = value;
 

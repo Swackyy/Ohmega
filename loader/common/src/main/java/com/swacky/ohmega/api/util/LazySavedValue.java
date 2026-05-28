@@ -25,12 +25,11 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
     }
 
     /**
-     * Construct a constant-value {@link LazySavedValue}
-     * @param value the constant value to set as
-     * @return newly constructed constant instance
-     * @param <T> object type to hold as a value
+     * Construct a new variable-value {@link LazySavedValue}
+     * @param value the initial value to set as
+     * @return newly constructed instance
      */
-    public static <T> LazySavedValue<T> constant(T value) {
+    public static <T> LazySavedValue<T> of(T value) {
         LazySavedValue<T> instance = new LazySavedValue<>(null, null);
         instance.value = value;
 

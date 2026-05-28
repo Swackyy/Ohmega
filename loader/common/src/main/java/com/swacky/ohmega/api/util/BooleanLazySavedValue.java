@@ -25,11 +25,11 @@ public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
     }
 
     /**
-     * Construct a constant-value {@link BooleanLazySavedValue}
-     * @param value the constant value to set as
-     * @return newly constructed constant instance
+     * Construct a new variable-value {@link BooleanLazySavedValue}
+     * @param value the initial value to set as
+     * @return newly constructed instance
      */
-    public static BooleanLazySavedValue constant(boolean value) {
+    public static BooleanLazySavedValue of(boolean value) {
         BooleanLazySavedValue instance = new BooleanLazySavedValue(null, null);
         instance.value = value;
 

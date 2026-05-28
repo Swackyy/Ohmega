@@ -25,11 +25,11 @@ public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
     }
 
     /**
-     * Construct a constant-value {@link DoubleLazySavedValue}
-     * @param value the constant value to set as
-     * @return newly constructed constant instance
+     * Construct a new variable-value {@link DoubleLazySavedValue}
+     * @param value the initial value to set as
+     * @return newly constructed instance
      */
-    public static DoubleLazySavedValue constant(double value) {
+    public static DoubleLazySavedValue of(double value) {
         DoubleLazySavedValue instance = new DoubleLazySavedValue(null, null);
         instance.value = value;
 
