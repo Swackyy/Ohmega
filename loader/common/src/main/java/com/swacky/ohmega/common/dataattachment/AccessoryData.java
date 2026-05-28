@@ -154,6 +154,7 @@ public final class AccessoryData {
     }
 
     // todo fix: Syncing with this is bugged as it will always call Accessory#onEquip afaik
+    // todo update: confirmed, this happens because forceOnEquip = true from AccessorySlot#set, but its effects are only visible on Forge for some reason
     public boolean setStack(LivingEntity entity, int index, ItemStack stack, EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(entity, index, stack, context)) {
             doSetStack(entity, index, stack, context, forceOnEquip, true);
