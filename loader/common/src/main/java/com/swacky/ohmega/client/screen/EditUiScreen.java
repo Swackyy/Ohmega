@@ -496,8 +496,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     }
 
     @Override
-    protected void extractBlurredBackground(@NonNull GuiGraphicsExtractor gui) {
-    }
+    protected void extractBlurredBackground(@NonNull GuiGraphicsExtractor gui) {}
 
     @Override
     public void extractTransparentBackground(@NonNull GuiGraphicsExtractor gui) {

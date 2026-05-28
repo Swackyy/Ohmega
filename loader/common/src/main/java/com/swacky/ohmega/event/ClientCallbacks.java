@@ -185,8 +185,16 @@ public final class ClientCallbacks {
         if (player != null) {
             Screen screen = mc.screen;
 
-            if ((screen == null || !(screen.getFocused() instanceof EditBox)) && OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen instanceof EditUiScreen)) {
-                mc.setScreen(new EditUiScreen(screen, player));
+            if (!(screen instanceof EditUiScreen)) {
+                if (screen != null) {
+                    if (OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen.getFocused() instanceof EditBox)) {
+                        mc.setScreen(new EditUiScreen(screen, player));
+                    }
+                } else {
+                    if (OhmegaBinds.OPEN_EDIT_UI.consumeClick()) {
+                        mc.setScreen(new EditUiScreen(null, player));
+                    }
+                }
             }
 
             if (screen == null) {
