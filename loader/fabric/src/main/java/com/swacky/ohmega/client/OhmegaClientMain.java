@@ -52,14 +52,14 @@ public final class OhmegaClientMain implements ClientModInitializer {
                 OhmegaNetworking.S2C.handleSyncUse(packet));
 
         // Registration
-        KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACC_INV);
-        KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_EDIT_UI);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_MAGNETICS);
-        KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_UP);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_DOWN);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_LEFT);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_RIGHT);
+        KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_UP);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_SHOW_LINES);
+        KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACCESSORY_INVENTORY);
+        KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_EDIT_UI);
 
         // Rendering
         AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new);

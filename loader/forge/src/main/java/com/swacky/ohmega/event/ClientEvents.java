@@ -60,7 +60,14 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onKeybindRegistration(RegisterKeyMappingsEvent event) {
-        event.register(OhmegaBinds.OPEN_ACC_INV);
+        event.register(OhmegaBinds.EDIT_MAGNETICS);
+        event.register(OhmegaBinds.EDIT_NUDGE_DOWN);
+        event.register(OhmegaBinds.EDIT_NUDGE_LEFT);
+        event.register(OhmegaBinds.EDIT_NUDGE_RIGHT);
+        event.register(OhmegaBinds.EDIT_NUDGE_UP);
+        event.register(OhmegaBinds.EDIT_SHOW_LINES);
+        event.register(OhmegaBinds.OPEN_ACCESSORY_INVENTORY);
+        event.register(OhmegaBinds.OPEN_EDIT_UI);
     }
 
     @SubscribeEvent

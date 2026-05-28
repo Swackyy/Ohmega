@@ -136,7 +136,7 @@ public final class ClientCallbacks {
     }
 
     public static boolean onKeyPressedInMenu(AbstractContainerScreen<?> screen, KeyEvent event) {
-        if (OhmegaBinds.OPEN_ACC_INV.matches(event)) {
+        if (OhmegaBinds.OPEN_ACCESSORY_INVENTORY.matches(event)) {
             if (screen instanceof IAccessoryScreen accessoryScreen) {
                 AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
@@ -190,7 +190,7 @@ public final class ClientCallbacks {
             }
 
             if (screen == null) {
-                while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && (player.portalProcess == null || !player.portalProcess.isInsidePortalThisTick())) {
+                while (OhmegaBinds.OPEN_ACCESSORY_INVENTORY.consumeClick() && (player.portalProcess == null || !player.portalProcess.isInsidePortalThisTick())) {
                     if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                         player.sendOpenInventory();
                     } else {
