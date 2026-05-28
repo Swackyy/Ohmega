@@ -65,7 +65,7 @@ public final class OhmegaConfigImpl {
                             .defineInRange(CREATIVE_EXTENSION_Y_KEY, CREATIVE_EXTENSION_Y_DEFAULT, CREATIVE_EXTENSION_Y_MIN, CREATIVE_EXTENSION_Y_MAX)),
                     wrapObject(builder
                             .comment(ACCESSORY_EXTENSION_ID_DESCRIPTION)
-                            .define(ACCESSORY_EXTENSION_ID_KEY, ACCESSORY_EXTENSION_ID_DEFAULT)));
+                            .define(ACCESSORY_EXTENSION_ID_KEY, ACCESSORY_EXTENSION_ID_DEFAULT, ACCESSORY_EXTENSION_ID_VALIDATOR)));
             Client.spec = builder.build();
         }
 

@@ -1,5 +1,6 @@
 package com.swacky.ohmega.config;
 
+import com.swacky.ohmega.api.client.ui.AccessoryUIs;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
@@ -112,6 +113,7 @@ public final class OhmegaConfig {
             String ACCESSORY_EXTENSION_ID_DESCRIPTION = """
                     The accessory extension type to use, other mods can register custom accessory extensions, which can be chosen here""";
             String ACCESSORY_EXTENSION_ID_DEFAULT = Ohmega.INTERFACE_ID.toString();
+            Predicate<Object> ACCESSORY_EXTENSION_ID_VALIDATOR = object -> object instanceof String string && AccessoryUIs.exists(Identifier.tryParse(string));
             // - - -
 
             record Data(
@@ -193,7 +195,7 @@ public final class OhmegaConfig {
             String NORMAL  = AccessoryType.NORMAL_ID.toString();
             String UTILITY = AccessoryType.UTILITY_ID.toString();
             String SPECIAL = AccessoryType.SPECIAL_ID.toString();
-            Predicate<Object> ACCESSORY_TYPE_VALIDATOR = v -> AccessoryTypeManager.getTypes().isEmpty() || (v instanceof String str && AccessoryTypeManager.exists(Identifier.tryParse(str)));
+            Predicate<Object> ACCESSORY_TYPE_VALIDATOR = object -> AccessoryTypeManager.getTypes().isEmpty() || (object instanceof String string && AccessoryTypeManager.exists(Identifier.tryParse(string)));
             // - - -
 
             String SLOT_TYPES_KEY = "slotTypes";

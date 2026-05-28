@@ -145,12 +145,12 @@ public final class AccessoryType {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
+    public boolean equals(Object object) {
+        if (super.equals(object)) {
             return true;
         }
 
-        if (obj instanceof AccessoryType other) {
+        if (object instanceof AccessoryType other) {
             // The Identifier is really the only one which matters here
             return id.equals(other.id);
         }

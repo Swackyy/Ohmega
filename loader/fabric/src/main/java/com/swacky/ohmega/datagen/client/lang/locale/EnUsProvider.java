@@ -1,21 +1,23 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
+import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
-import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
+import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
-import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.common.command.node.TypesCommand;
-import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
+import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
 import com.swacky.ohmega.datagen.client.lang.OhmegaLangProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -56,8 +58,15 @@ public final class EnUsProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        builder.add(KEY_BIND_CATEGORY, "Ohmega");
-        builder.add(KEY_BIND_OPEN_ACC_INV, "Open/Close Accessory Inventory");
+        builder.add(((TranslatableContents) OhmegaBinds.CATEGORY.label().getContents()).getKey(), "Ohmega");
+        builder.add(OhmegaBinds.EDIT_MAGNETICS.getName(), "Edit UI Magnetics");
+        builder.add(OhmegaBinds.EDIT_NUDGE_DOWN.getName(), "Edit UI Nudge Down");
+        builder.add(OhmegaBinds.EDIT_NUDGE_LEFT.getName(), "Edit UI Nudge Left");
+        builder.add(OhmegaBinds.EDIT_NUDGE_RIGHT.getName(), "Edit UI Nudge Right");
+        builder.add(OhmegaBinds.EDIT_NUDGE_UP.getName(), "Edit UI Nudge Up");
+        builder.add(OhmegaBinds.EDIT_SHOW_LINES.getName(), "Edit UI Show Distance Lines");
+        builder.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY.getName(), "Open/Close Accessory Inventory");
+        builder.add(OhmegaBinds.OPEN_EDIT_UI.getName(), "Open/Close Extension Edit UI");
 
         // Commands
         // Misc
@@ -126,6 +135,26 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_KEY,
                 "Show Translation Toast",
                 OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_KEY,
+                "Survival Extension X",
+                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_Y_KEY,
+                "Survival Extension Y",
+                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_Y_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_KEY,
+                "Creative Extension X",
+                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_Y_KEY,
+                "Creative Extension Y",
+                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_Y_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
+                "Creative Extension X",
+                OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_DESCRIPTION);
 
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Config");

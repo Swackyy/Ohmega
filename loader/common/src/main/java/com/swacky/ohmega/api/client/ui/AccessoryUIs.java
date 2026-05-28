@@ -38,6 +38,14 @@ public final class AccessoryUIs {
         return EXTENSIONS.keySet();
     }
 
+    public static boolean exists(Identifier id) {
+        if (id != null) {
+            return EXTENSIONS.containsKey(id);
+        }
+
+        return false;
+    }
+
     /**
      * Retrieve the active menu extension factory by parsing the client config value to an {@link Identifier}
      * @return the currently in-use menu extension factory

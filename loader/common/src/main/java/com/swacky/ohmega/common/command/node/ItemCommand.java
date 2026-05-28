@@ -43,8 +43,8 @@ public final class ItemCommand extends OhmegaCommandNode {
     public static final String SET_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
 
     @SuppressWarnings("unchecked")
-    private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(obj -> {
-        Pair<Integer, Integer> pair = (Pair<Integer, Integer>) obj;
+    private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(object -> {
+        Pair<Integer, Integer> pair = (Pair<Integer, Integer>) object;
 
         return Component.translatable(
                 ROOT_FEEDBACK,
