@@ -6,12 +6,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryAllowWalkOnPowderSnowEvent {
     Event<AccessoryAllowWalkOnPowderSnowEvent> EVENT = EventFactory.createArrayBacked(AccessoryAllowWalkOnPowderSnowEvent.class,
-        listeners -> (stack, ret) -> {
+        listeners -> (stack, returnValue) -> {
             for (AccessoryAllowWalkOnPowderSnowEvent listener : listeners) {
-                ret = listener.process(stack, ret);
+                returnValue = listener.process(stack, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

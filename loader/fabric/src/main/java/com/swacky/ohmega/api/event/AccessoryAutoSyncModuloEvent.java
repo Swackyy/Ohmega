@@ -4,10 +4,10 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.ItemStack;
 
-public interface AccessoryPreferInventoryTickEvent {
-    Event<AccessoryPreferInventoryTickEvent> EVENT = EventFactory.createArrayBacked(AccessoryPreferInventoryTickEvent.class,
+public interface AccessoryAutoSyncModuloEvent {
+    Event<AccessoryAutoSyncModuloEvent> EVENT = EventFactory.createArrayBacked(AccessoryAutoSyncModuloEvent.class,
         listeners -> (stack, returnValue) -> {
-            for (AccessoryPreferInventoryTickEvent listener : listeners) {
+            for (AccessoryAutoSyncModuloEvent listener : listeners) {
                 returnValue = listener.process(stack, returnValue);
             }
 
@@ -15,5 +15,5 @@ public interface AccessoryPreferInventoryTickEvent {
         }
     );
 
-    boolean process(ItemStack stack, boolean original);
+    byte process(ItemStack stack, byte original);
 }

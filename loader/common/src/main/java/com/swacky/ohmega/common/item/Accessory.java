@@ -88,6 +88,11 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
+    public byte autoSyncModulo(@NonNull ItemStack stack) {
+        return OhmegaHooks.autoSyncModulo(stack, inner.autoSyncModulo(stack));
+    }
+
+    @Override
     public boolean preferVanillaUse(@NonNull ItemStack stack) {
         return OhmegaHooks.preferVanillaUse(stack, inner.preferVanillaUse(stack));
     }

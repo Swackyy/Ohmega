@@ -52,6 +52,7 @@ public final class AccessoryData {
 
     private NonNullList<ItemStack> stacks;
     private boolean[] hidden;
+    private long tickIndex = 0;
 
     private AccessoryData(NonNullList<ItemStack> stacks, boolean[] hidden) {
         this.stacks = stacks;
@@ -357,14 +358,18 @@ public final class AccessoryData {
             Accessory accessory = Accessories.get(item);
 
             if (accessory != null) {
-                if (!accessory.preferInventoryTick(stack)) {
+                if (accessory.preferInventoryTick(stack)) {
+                    if (level != null) {
+                        item.inventoryTick(stack, level, entity, null);
+                    }
+                } else {
                     accessory.accessoryTick(entity, stack);
                 }
 
-                if (level != null) {
-                    item.inventoryTick(stack, level, entity, null);
+                if (level != null && accessory.autoSync(stack) && tickIndex > 0) {
+                    byte operand = accessory.autoSyncModulo(stack);
 
-                    if (accessory.autoSync(stack)) {
+                    if (operand != 0 && tickIndex % operand == 0) {
                         if (indexes == null) {
                             indexes = new IntArrayList(size);
                             stacks = new ArrayList<>(size);
@@ -378,10 +383,14 @@ public final class AccessoryData {
         }
 
         if (indexes != null) {
+            int[] indexesArray = indexes.toIntArray();
+
             for (ServerPlayer receiver : level.players()) {
-                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes.toIntArray(), stacks, true));
+                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexesArray, stacks, true));
             }
         }
+
+        tickIndex++;
     }
 
     public void reload(LivingEntity entity) {

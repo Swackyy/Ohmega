@@ -7,12 +7,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryEquipSoundEvent {
     Event<AccessoryEquipSoundEvent> EVENT = EventFactory.createArrayBacked(AccessoryEquipSoundEvent.class,
-        listeners -> (stack, ret) -> {
+        listeners -> (stack, returnValue) -> {
             for (AccessoryEquipSoundEvent listener : listeners) {
-                ret = listener.process(stack, ret);
+                returnValue = listener.process(stack, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

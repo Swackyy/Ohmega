@@ -42,6 +42,10 @@ public final class OhmegaHooks {
         return IMPL.autoSync(stack, original);
     }
 
+    public static byte autoSyncModulo(ItemStack stack, byte original) {
+        return IMPL.autoSyncModulo(stack, original);
+    }
+
     public static boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
         return IMPL.canEquip(entity, stack, context, original);
     }
@@ -116,6 +120,8 @@ public final class OhmegaHooks {
         boolean allowWalkOnPowderSnow(ItemStack stack, boolean original);
 
         boolean autoSync(ItemStack stack, boolean original);
+
+        byte autoSyncModulo(ItemStack stack, byte original);
 
         boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original);
 

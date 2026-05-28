@@ -8,12 +8,12 @@ import org.jspecify.annotations.Nullable;
 
 public interface AccessoryMobVisibilityEvent {
     Event<AccessoryMobVisibilityEvent> EVENT = EventFactory.createArrayBacked(AccessoryMobVisibilityEvent.class,
-        listeners -> (stack, targetingEntity, ret) -> {
+        listeners -> (stack, targetingEntity, returnValue) -> {
             for (AccessoryMobVisibilityEvent listener : listeners) {
-                ret = listener.process(stack, targetingEntity, ret);
+                returnValue = listener.process(stack, targetingEntity, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

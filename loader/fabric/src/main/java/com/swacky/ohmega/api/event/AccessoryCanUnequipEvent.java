@@ -7,12 +7,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryCanUnequipEvent {
     Event<AccessoryCanUnequipEvent> EVENT = EventFactory.createArrayBacked(AccessoryCanUnequipEvent.class,
-        listeners -> (entity, stack, ret) -> {
+        listeners -> (entity, stack, returnValue) -> {
             for (AccessoryCanUnequipEvent listener : listeners) {
-                ret = listener.process(entity, stack, ret);
+                returnValue = listener.process(entity, stack, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

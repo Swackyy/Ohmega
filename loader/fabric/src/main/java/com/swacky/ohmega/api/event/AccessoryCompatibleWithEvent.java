@@ -6,12 +6,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryCompatibleWithEvent {
     Event<AccessoryCompatibleWithEvent> EVENT = EventFactory.createArrayBacked(AccessoryCompatibleWithEvent.class,
-        listeners -> (stack, other, ret) -> {
+        listeners -> (stack, other, returnValue) -> {
             for (AccessoryCompatibleWithEvent listener : listeners) {
-                ret = listener.process(stack, other, ret);
+                returnValue = listener.process(stack, other, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

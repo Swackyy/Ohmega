@@ -5,7 +5,8 @@ import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
-import com.swacky.ohmega.api.event.AccessoryAutoSyncEventEvent;
+import com.swacky.ohmega.api.event.AccessoryAutoSyncEvent;
+import com.swacky.ohmega.api.event.AccessoryAutoSyncModuloEvent;
 import com.swacky.ohmega.api.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
@@ -62,7 +63,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public boolean autoSync(ItemStack stack, boolean original) {
-        return NeoForge.EVENT_BUS.post(new AccessoryAutoSyncEventEvent(stack, original)).returnValue;
+        return NeoForge.EVENT_BUS.post(new AccessoryAutoSyncEvent(stack, original)).returnValue;
+    }
+
+    @Override
+    public byte autoSyncModulo(ItemStack stack, byte original) {
+        return NeoForge.EVENT_BUS.post(new AccessoryAutoSyncModuloEvent(stack, original)).returnValue;
+
     }
 
     @Override

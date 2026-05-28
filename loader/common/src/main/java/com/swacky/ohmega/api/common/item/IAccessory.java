@@ -132,6 +132,22 @@ public interface IAccessory {
     }
 
     /**
+     * Allows you to choose on which 'n' ticks that the server state of accessories of this type will be updated to clients,
+     * <strong>this never includes the zeroth tick, and returning {@code 0} will never sync at all</strong>
+     * <p>
+     * This will only have an effect if {@link #autoSync(ItemStack)} returns {@code true}.
+     * Higher values may have more noticeable lag on clients, but will incur less network overhead
+     * <p>
+     * This has a {@code byte} return type as to discourage using particularly large numbers, as they shouldn't have any use in the first place.
+     * A consequence of this choice is that slightly less memory is used per tick, of course, which is always good
+     * @param stack the {@link ItemStack} of this accessory item being worn
+     * @return the modulo operand to use checking for which 'n' ticks the {@link ItemStack} should be updated
+     */
+    default byte autoSyncModulo(@NonNull ItemStack stack) {
+        return 5;
+    }
+
+    /**
      * Determines if the vanilla {@link Item#use(Level, Player, InteractionHand)} will be preferred over Ohmega's built-in
      * right-click to equip behaviour ({@link AccessoryHelper#tryEquip(LivingEntity, ItemStack)})
      * @param stack the {@link ItemStack} of this accessory item which is right-clicked

@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
 import com.swacky.ohmega.api.event.AccessoryAutoSyncEvent;
+import com.swacky.ohmega.api.event.AccessoryAutoSyncModuloEvent;
 import com.swacky.ohmega.api.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.event.AccessoryCanEquipEvent;
 import com.swacky.ohmega.api.event.AccessoryCanUnequipEvent;
@@ -67,6 +68,14 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
         AccessoryAutoSyncEvent event = new AccessoryAutoSyncEvent(stack, original);
 
         AccessoryAutoSyncEvent.BUS.post(event);
+        return event.returnValue;
+    }
+
+    @Override
+    public byte autoSyncModulo(ItemStack stack, byte original) {
+        AccessoryAutoSyncModuloEvent event = new AccessoryAutoSyncModuloEvent(stack, original);
+
+        AccessoryAutoSyncModuloEvent.BUS.post(event);
         return event.returnValue;
     }
 

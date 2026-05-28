@@ -8,12 +8,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryCanEquipEvent {
     Event<AccessoryCanEquipEvent> EVENT = EventFactory.createArrayBacked(AccessoryCanEquipEvent.class,
-        listeners -> (entity, stack, context, ret) -> {
+        listeners -> (entity, stack, context, returnValue) -> {
             for (AccessoryCanEquipEvent listener : listeners) {
-                ret = listener.process(entity, stack, context, ret);
+                returnValue = listener.process(entity, stack, context, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

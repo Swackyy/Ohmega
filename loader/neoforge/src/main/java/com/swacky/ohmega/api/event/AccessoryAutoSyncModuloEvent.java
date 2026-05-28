@@ -6,11 +6,11 @@ import net.neoforged.bus.api.Event;
 /**
  * Not fired upon auto-syncing, but instead fired to determine whether to auto-sync
  */
-public final class AccessoryAutoSyncEventEvent extends Event {
+public final class AccessoryAutoSyncModuloEvent extends Event {
     public final ItemStack stack;
-    public boolean returnValue;
+    public byte returnValue;
 
-    public AccessoryAutoSyncEventEvent(ItemStack stack, boolean original) {
+    public AccessoryAutoSyncModuloEvent(ItemStack stack, byte original) {
         this.stack = stack;
         this.returnValue = original;
     }

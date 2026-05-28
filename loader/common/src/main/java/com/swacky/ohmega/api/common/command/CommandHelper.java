@@ -25,17 +25,17 @@ public final class CommandHelper {
     }
 
     public static List<LivingEntity> convertLiving(List<Entity> targets) throws CommandSyntaxException {
-        List<LivingEntity> ret = new ArrayList<>(targets.size());
+        List<LivingEntity> list = new ArrayList<>(targets.size());
 
         for (Entity target : targets) {
             if (target instanceof LivingEntity entity) {
-                ret.add(entity);
+                list.add(entity);
             } else {
                 throw EXCEPTION_LIVING.create();
             }
         }
 
-        return ret;
+        return list;
     }
 
     private static Builder builder() {

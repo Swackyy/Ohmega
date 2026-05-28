@@ -6,12 +6,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryIsPiglinSafeEvent {
     Event<AccessoryIsPiglinSafeEvent> EVENT = EventFactory.createArrayBacked(AccessoryIsPiglinSafeEvent.class,
-        listeners -> (stack, ret) -> {
+        listeners -> (stack, returnValue) -> {
             for (AccessoryIsPiglinSafeEvent listener : listeners) {
-                ret = listener.process(stack, ret);
+                returnValue = listener.process(stack, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 

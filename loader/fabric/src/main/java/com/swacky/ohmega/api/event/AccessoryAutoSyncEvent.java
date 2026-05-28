@@ -6,12 +6,12 @@ import net.minecraft.world.item.ItemStack;
 
 public interface AccessoryAutoSyncEvent {
     Event<AccessoryAutoSyncEvent> EVENT = EventFactory.createArrayBacked(AccessoryAutoSyncEvent.class,
-        listeners -> (stack, ret) -> {
+        listeners -> (stack, returnValue) -> {
             for (AccessoryAutoSyncEvent listener : listeners) {
-                ret = listener.process(stack, ret);
+                returnValue = listener.process(stack, returnValue);
             }
 
-            return ret;
+            return returnValue;
         }
     );
 
