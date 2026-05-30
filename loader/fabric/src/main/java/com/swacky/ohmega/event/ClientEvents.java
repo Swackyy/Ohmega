@@ -1,9 +1,13 @@
 package com.swacky.ohmega.event;
 
+import com.mojang.brigadier.CommandDispatcher;
+import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -11,6 +15,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +42,7 @@ public final class ClientEvents {
             ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
             ClientPlayConnectionEvents.JOIN.register(ClientEvents::onJoinWorld);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
+            ClientCommandRegistrationCallback.EVENT.register(ClientEvents::onRegisterCommands);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + ClientEvents.class + " multiple times");
         }
@@ -77,5 +84,28 @@ public final class ClientEvents {
 
     private static void onPostScreenInit(Minecraft mc, Screen screen, int width, int height) {
         ClientCallbacks.onPostScreenInit(screen, screen::addRenderableWidget);
+    }
+
+    private static void onRegisterCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext context) {
+        ClientCallbacks.onRegisterCommands(dispatcher, context, cmdContext -> {
+            FabricClientCommandSource source = cmdContext.getSource();
+
+            return new IClientCommandSource() {
+                @Override
+                public void sendSuccess(Component message) {
+                    source.sendFeedback(message);
+                }
+
+                @Override
+                public void sendError(Component message) {
+                    source.sendError(message);
+                }
+
+                @Override
+                public LocalPlayer getPlayer() {
+                    return source.getPlayer();
+                }
+            };
+        });
     }
 }

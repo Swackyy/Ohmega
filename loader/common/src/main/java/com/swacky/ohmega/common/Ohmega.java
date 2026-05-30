@@ -2,9 +2,6 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.client.command.node.ExtensionsCommand;
-import com.swacky.ohmega.client.command.node.HelpCommand;
-import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
@@ -43,9 +40,6 @@ public final class Ohmega {
 
             // Register command nodes
             OhmegaCommandNodes.register(ClearCommand.ELEMENT_ROOT, ClearCommand::new);
-            OhmegaCommandNodes.register(ExtensionsCommand.ELEMENT_ROOT, ExtensionsCommand::new);
-            OhmegaCommandNodes.register(HelpCommand.ELEMENT_ROOT, HelpCommand::new);
-            OhmegaCommandNodes.register(InfoCommand.ELEMENT_ROOT, InfoCommand::new);
             OhmegaCommandNodes.register(ItemCommand.ELEMENT_ROOT, ItemCommand::new);
             OhmegaCommandNodes.register(ItemsCommand.ELEMENT_ROOT, ItemsCommand::new);
             OhmegaCommandNodes.register(TypesCommand.ELEMENT_ROOT, TypesCommand::new);

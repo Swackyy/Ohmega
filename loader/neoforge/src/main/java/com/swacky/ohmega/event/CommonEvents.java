@@ -4,7 +4,6 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.command.OhmegaRootCommand;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -13,9 +12,9 @@ import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
 import net.minecraft.server.level.ServerPlayer;
@@ -112,7 +111,7 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
-        OhmegaRootCommand.register(event.getDispatcher(), event.getBuildContext());
+        CommonCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext());
     }
 
     @SubscribeEvent

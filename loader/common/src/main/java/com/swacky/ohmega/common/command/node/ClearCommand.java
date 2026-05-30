@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.common.command.CommandHelper;
-import com.swacky.ohmega.api.common.command.node.OhmegaCommandNode;
+import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.function.Predicate;
 
-public final class ClearCommand extends OhmegaCommandNode {
+public final class ClearCommand implements ICommandNode {
     public static final String ELEMENT_ROOT = "clear";
 
     private static final String ARGUMENT_TARGETS = "targets";

@@ -1,6 +1,7 @@
 package com.swacky.ohmega.event;
 
 import com.google.common.reflect.TypeToken;
+import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
@@ -13,7 +14,9 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -28,6 +31,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
@@ -124,6 +128,30 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onPostScreenInit(ScreenEvent.Init.Post event) {
         ClientCallbacks.onPostScreenInit(event.getScreen(), event::addListener);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterClientCommandsEvent event) {
+        ClientCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext(), context -> {
+            CommandSourceStack source = context.getSource();
+
+            return new IClientCommandSource() {
+                @Override
+                public void sendSuccess(Component message) {
+                    source.sendSuccess(() -> message, false);
+                }
+
+                @Override
+                public void sendError(Component message) {
+                    source.sendFailure(message);
+                }
+
+                @Override
+                public LocalPlayer getPlayer() {
+                    return Minecraft.getInstance().player;
+                }
+            };
+        });
     }
 
     @SubscribeEvent

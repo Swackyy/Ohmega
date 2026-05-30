@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.swacky.ohmega.api.common.command.CommandHelper;
-import com.swacky.ohmega.api.common.command.node.OhmegaCommandNode;
+import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ItemsCommand extends OhmegaCommandNode {
+public final class ItemsCommand implements ICommandNode {
     public static final String ELEMENT_ROOT = "items";
 
     private static final String ARGUMENT_TARGET = "target";

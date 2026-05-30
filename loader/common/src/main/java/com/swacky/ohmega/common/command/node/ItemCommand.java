@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.common.command.CommandHelper;
-import com.swacky.ohmega.api.common.command.node.OhmegaCommandNode;
+import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
@@ -26,7 +26,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-public final class ItemCommand extends OhmegaCommandNode {
+public final class ItemCommand implements ICommandNode {
     public static final String ELEMENT_ROOT = "item";
     public static final String ELEMENT_GET = "get";
     public static final String ELEMENT_SET = "set";

@@ -1,6 +1,8 @@
 package com.swacky.ohmega.event;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.brigadier.CommandDispatcher;
+import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
@@ -9,6 +11,7 @@ import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
+import com.swacky.ohmega.client.command.OhmegaClientRootCommand;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
@@ -38,6 +41,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -308,6 +313,10 @@ public final class ClientCallbacks {
                 }
             }
         }
+    }
+
+    public static <T extends SharedSuggestionProvider> void onRegisterCommands(CommandDispatcher<T> dispatcher, CommandBuildContext context, IClientCommandSource.Factory<T> sourceFactory) {
+        OhmegaClientRootCommand.register(dispatcher, context, sourceFactory);
     }
 
     public static void onServerConfigReload(Runnable loadFunction) {

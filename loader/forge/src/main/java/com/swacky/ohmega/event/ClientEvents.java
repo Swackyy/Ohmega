@@ -1,5 +1,6 @@
 package com.swacky.ohmega.event;
 
+import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.common.Ohmega;
@@ -8,9 +9,13 @@ import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -85,5 +90,29 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onPostScreenInit(ScreenEvent.Init.Post event) {
         ClientCallbacks.onPostScreenInit(event.getScreen(), event::addListener);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterClientCommandsEvent event) {
+        ClientCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext(), context -> {
+            CommandSourceStack source = context.getSource();
+
+            return new IClientCommandSource() {
+                @Override
+                public void sendSuccess(Component message) {
+                    source.sendSuccess(() -> message, false);
+                }
+
+                @Override
+                public void sendError(Component message) {
+                    source.sendFailure(message);
+                }
+
+                @Override
+                public LocalPlayer getPlayer() {
+                    return Minecraft.getInstance().player;
+                }
+            };
+        });
     }
 }

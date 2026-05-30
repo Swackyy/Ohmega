@@ -1,6 +1,10 @@
 package com.swacky.ohmega.client;
 
+import com.swacky.ohmega.api.client.command.OhmegaClientCommandNodes;
 import com.swacky.ohmega.api.client.ui.AccessoryUIs;
+import com.swacky.ohmega.client.command.node.ExtensionsCommand;
+import com.swacky.ohmega.client.command.node.HelpCommand;
+import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.menu.DefaultMenuExtension;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.DefaultScreenExtension;
@@ -35,6 +39,11 @@ public final class OhmegaClient {
 
             // Register extension
             AccessoryUIs.registerExtension(DEFAULT_EXTENSION_ID, DefaultMenuExtension::new, DefaultScreenExtension::new);
+
+            // Register command nodes
+            OhmegaClientCommandNodes.register(ExtensionsCommand.ELEMENT_ROOT, ExtensionsCommand::new);
+            OhmegaClientCommandNodes.register(HelpCommand.ELEMENT_ROOT, HelpCommand::new);
+            OhmegaClientCommandNodes.register(InfoCommand.ELEMENT_ROOT, InfoCommand::new);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + OhmegaClient.class + " multiple times");
         }
