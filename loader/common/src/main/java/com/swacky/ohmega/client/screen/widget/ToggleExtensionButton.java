@@ -2,7 +2,7 @@ package com.swacky.ohmega.client.screen.widget;
 
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
-import com.swacky.ohmega.api.client.screen.widget.ExtensionContainerScreenButton;
+import com.swacky.ohmega.api.client.screen.widget.ExtensionScreenButton;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
@@ -11,7 +11,7 @@ import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.player.LocalPlayer;
 import org.jspecify.annotations.NonNull;
 
-public final class ToggleExtensionButton extends ExtensionContainerScreenButton {
+public final class ToggleExtensionButton extends ExtensionScreenButton {
     private final AccessoryScreenExtension extension;
     private final boolean highlightWhenHovered;
 

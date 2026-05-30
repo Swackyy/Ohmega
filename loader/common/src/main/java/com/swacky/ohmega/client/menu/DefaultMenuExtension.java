@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Ohmega's default menu implementation of the accessory extension.
+ * Ohmega's default accessory menu extension implementation
  */
 // todo: implement fill direction capability
 public final class DefaultMenuExtension extends AccessoryMenuExtension {
@@ -51,6 +51,4 @@ public final class DefaultMenuExtension extends AccessoryMenuExtension {
             }
         }
     }
-
-
 }

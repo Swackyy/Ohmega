@@ -1,14 +1,14 @@
 package com.swacky.ohmega.client.screen.widget;
 
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
-import com.swacky.ohmega.api.client.screen.widget.ExtensionContainerScreenButton;
+import com.swacky.ohmega.api.client.screen.widget.ExtensionScreenButton;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
-public final class FlipEntityButton extends ExtensionContainerScreenButton {
+public final class FlipEntityButton extends ExtensionScreenButton {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/flip_entity_button.png");
 
     private final IEntityRenderingExtension extension;

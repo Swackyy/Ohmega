@@ -110,7 +110,7 @@ public abstract class AccessoryMenuExtension {
     public abstract void addSlots(@NonNull SlotAdder adder);
 
     /**
-     * A simple interface to add slots to the extension
+     * A simple interface to add slots to the extension, where other operations have been abstracted away to be handled internally
      */
     public interface SlotAdder {
         /**

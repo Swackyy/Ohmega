@@ -28,6 +28,9 @@ public abstract class AccessoryTypeProvider implements DataProvider {
         this.namespace = namespace;
     }
 
+    /**
+     * Override and call {@link #add(String, AccessoryType.Builder)}
+     */
     protected abstract void addTypes();
 
     @Override

@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Holds known extension factories for both menus and screens, and common related methods
+ * A unified registration and data holder for accessory extension menus and screens, and some common related methods
  */
 public final class AccessoryUIs {
     private static final Map<Identifier, Pair<AccessoryMenuExtension.Factory, AccessoryScreenExtension.Factory>> EXTENSIONS = new HashMap<>();

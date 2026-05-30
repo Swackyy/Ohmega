@@ -5,10 +5,12 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
+/**
+ * A button that will change texture by offsetting by the provided height when {@link #shouldOffsetY()} returns {@code true}
+ */
 public abstract class HoverableButton extends AbstractButton {
     private final Identifier textureLocation;
 

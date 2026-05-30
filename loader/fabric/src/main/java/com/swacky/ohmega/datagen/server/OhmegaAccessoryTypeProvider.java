@@ -17,15 +17,12 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
                 .emptySlotPath("accessory_slot_generic")
                 .noFallback(true)
                 .priority(Integer.MAX_VALUE));
-
         add(AccessoryType.NORMAL_ID, new AccessoryType.Builder()
                 .emptySlotPath("accessory_slot_normal")
                 .priority(Integer.MAX_VALUE));
-
         add(AccessoryType.UTILITY_ID, new AccessoryType.Builder()
                 .emptySlotPath("accessory_slot_utility")
                 .priority(Integer.MAX_VALUE - 1));
-
         add(AccessoryType.SPECIAL_ID, new AccessoryType.Builder()
                 .emptySlotPath("accessory_slot_special")
                 .priority(Integer.MAX_VALUE - 2));

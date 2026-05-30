@@ -6,13 +6,16 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
-public abstract class ExtensionContainerScreenButton extends HoverableButton {
+/**
+ * A button that will only appear visible if the accessory extension is visible
+ */
+public abstract class ExtensionScreenButton extends HoverableButton {
     protected final AbstractContainerScreen<?> screen;
     protected final IAccessoryScreen accessoryScreen;
     private final int desiredX;
     private final int desiredY;
 
-    public ExtensionContainerScreenButton(AbstractContainerScreen<?> screen, int x, int y, int width, int height, Identifier textureLocation) {
+    public ExtensionScreenButton(AbstractContainerScreen<?> screen, int x, int y, int width, int height, Identifier textureLocation) {
         super(x, y, width, height, textureLocation);
 
         this.screen = screen;
