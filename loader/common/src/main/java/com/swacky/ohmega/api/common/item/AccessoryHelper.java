@@ -244,7 +244,11 @@ public final class AccessoryHelper {
         }
 
         for (String id : slotTypes) {
-            builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
+            AccessoryType type = AccessoryTypeManager.get(Identifier.parse(id));
+
+            if (type != AccessoryType.NONE) {
+                builder.add(type);
+            }
         }
 
         return builder.build();

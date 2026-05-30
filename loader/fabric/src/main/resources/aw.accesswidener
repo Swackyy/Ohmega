@@ -20,6 +20,7 @@ accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraf
 accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
+accessible field net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl receivedRegistries Lnet/minecraft/core/RegistryAccess$Frozen;
 mutable field net/minecraft/client/Options keyMappings [Lnet/minecraft/client/KeyMapping;
 accessible method net/minecraft/world/entity/LivingEntity createItemStackToDrop (Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;
 accessible method net/minecraft/world/entity/LivingEntity shouldDropLoot (Lnet/minecraft/server/level/ServerLevel;)Z

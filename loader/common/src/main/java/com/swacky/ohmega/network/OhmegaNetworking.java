@@ -4,6 +4,7 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.dataattachment.AccessoryData;
@@ -13,13 +14,16 @@ import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,11 +33,6 @@ import net.minecraft.world.item.ItemStack;
 
 // todo: reorder packet registration on forge and neoforge to be alphabetical
 public final class OhmegaNetworking {
-    public static void bootstrap() {
-        C2S.bootstrap();
-        S2C.bootstrap();
-    }
-
     public static final class C2S {
         private static final Service IMPL = Ohmega.loadService(Service.class);
 
@@ -96,7 +95,7 @@ public final class OhmegaNetworking {
     }
 
     public static final class S2C {
-        private static final Service IMPL = Ohmega.loadService(Service.class);
+        private static final Service IMPL = OhmegaClient.loadService(Service.class);
 
         public static void bootstrap() {}
 
@@ -140,8 +139,11 @@ public final class OhmegaNetworking {
             }
         }
 
-        public static void handleSyncTypes(SyncTypesPacket packet) {
-            AccessoryTypeManager.apply(packet.types);
+        public static void handleSyncTypes(SyncTypesPacket packet, RegistryAccess lookup) {
+            RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), lookup);
+
+            buf.writeBytes(packet.data());
+            AccessoryTypeManager.apply(OhmegaByteBufCodecs.ACCESSORY_TYPE_COLLECTION.decode(buf));
             AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfig.Server.isLoaded());
         }
 

@@ -20,8 +20,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,9 +33,10 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     public static final String LOCATION = Ohmega.MODID + "/accessory_types.json";
     private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
     private static final Map<Identifier, AccessoryType> TYPES = new HashMap<>();
+    private static final List<Runnable> DEFERRED_APPLY = new ArrayList<>();
+    private static final List<Runnable> DEFERRED_CONFIG_LOAD = new ArrayList<>();
+
     private static Map<Item, Pair<AccessoryType, Boolean>> ACCESSORY_TYPE_OVERRIDES;
-    private static Runnable DEFERRED_APPLY = null;
-    private static Runnable DEFERRED_CONFIG_LOAD = null;
 
     private AccessoryTypeManager() {}
 
@@ -86,14 +89,14 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
 
         ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.overrideTypes();
 
-        if (DEFERRED_APPLY != null) {
+        if (!DEFERRED_APPLY.isEmpty()) {
             if (OhmegaConfig.Server.isLoaded()) {
-                DEFERRED_APPLY.run();
+                DEFERRED_APPLY.forEach(Runnable::run);
             } else {
-                DEFERRED_CONFIG_LOAD = DEFERRED_APPLY;
+                DEFERRED_CONFIG_LOAD.addAll(DEFERRED_APPLY);
             }
 
-            DEFERRED_APPLY = null;
+            DEFERRED_APPLY.clear();
         }
 
         OhmegaTags.refresh();
@@ -117,7 +120,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
 
     public static void applyClient(Runnable onConfigLoad, boolean shouldDefer) {
         if (shouldDefer) {
-            DEFERRED_CONFIG_LOAD = onConfigLoad;
+            DEFERRED_CONFIG_LOAD.add(onConfigLoad);
         } else {
             onConfigLoad.run();
         }
@@ -129,13 +132,13 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     }
 
     public static void deferApply(Runnable runnable) {
-        DEFERRED_APPLY = runnable;
+        DEFERRED_APPLY.add(runnable);
     }
 
     public static void runDeferredAwaitingConfigLoad() {
         if (DEFERRED_CONFIG_LOAD != null) {
-            DEFERRED_CONFIG_LOAD.run();
-            DEFERRED_CONFIG_LOAD = null;
+            DEFERRED_CONFIG_LOAD.forEach(Runnable::run);
+            DEFERRED_CONFIG_LOAD.clear();
         }
     }
 

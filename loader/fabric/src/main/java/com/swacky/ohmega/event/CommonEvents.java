@@ -7,7 +7,6 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
-import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -18,12 +17,15 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -43,6 +45,7 @@ public final class CommonEvents {
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
             ModConfigEvents.reloading(Ohmega.MODID).register(CommonEvents::onConfigReload);
+            ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onConnectionConfigure);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onLivingTrack);
             CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(CommonEvents::onModifyCreativeOpBlocksTab);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
@@ -68,6 +71,10 @@ public final class CommonEvents {
         }
     }
 
+    private static void onConnectionConfigure(ServerConfigurationPacketListenerImpl listener, MinecraftServer server) {
+        ServerConfigurationNetworking.send(listener, new SyncTypesPacket(server.registryAccess()));
+    }
+
     private static void onLivingTrack(Entity entity, ServerPlayer tracker) {
         if (entity instanceof LivingEntity tracked) {
             CommonCallbacks.onLivingTrack(tracker, tracked);
@@ -85,7 +92,6 @@ public final class CommonEvents {
     }
 
     private static void onPlayerJoin(ServerPlayer player) {
-        OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
         AccessoryHelper.getData(player).onAttach(player);
     }
 

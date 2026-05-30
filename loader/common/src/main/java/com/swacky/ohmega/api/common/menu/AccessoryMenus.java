@@ -43,34 +43,30 @@ public final class AccessoryMenus {
             int requiredCount = types.size();
 
             if (owner.level().isClientSide()) {
-                AccessoryMenuExtension.Factory factory = AccessoryUIs.getActiveMenuFactory();
+                AccessoryMenuExtension extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
+                List<AccessorySlot> slots = new ArrayList<>(requiredCount);
 
-                if (factory != null) {
-                    AccessoryMenuExtension extension = factory.construct(menu, owner);
-                    List<AccessorySlot> slots = new ArrayList<>(requiredCount);
+                accessoryMenu.setAccessoryExtension(extension);
 
-                    accessoryMenu.setAccessoryExtension(extension);
+                extension.addSlots((index, x, y) -> {
+                    AccessorySlot slot = new AccessorySlot(
+                            owner,
+                            index,
+                            x,
+                            y,
+                            types.get(index));
 
-                    extension.addSlots((index, x, y) -> {
-                        AccessorySlot slot = new AccessorySlot(
-                                owner,
-                                index,
-                                x,
-                                y,
-                                types.get(index));
+                    menu.addSlot(slot);
+                    slots.add(slot);
+                });
 
-                        menu.addSlot(slot);
-                        slots.add(slot);
-                    });
+                int actualCount = slots.size();
 
-                    int actualCount = slots.size();
-
-                    if (actualCount != requiredCount) {
-                        throw new IllegalStateException("Slots added by extension '" + extension + "' (" + actualCount + ") differ in length from required " + requiredCount);
-                    }
-
-                    extension.setSlots(slots);
+                if (actualCount != requiredCount) {
+                    throw new IllegalStateException("Slots added by extension '" + extension + "' (" + actualCount + ") differ in length from required " + requiredCount);
                 }
+
+                extension.setSlots(slots);
             } else {
                 accessoryMenu.setAccessoryExtension(new ServerAccessoryMenuExtension(menu, owner));
 

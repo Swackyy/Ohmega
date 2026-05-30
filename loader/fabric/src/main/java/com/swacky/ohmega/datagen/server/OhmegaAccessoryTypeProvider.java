@@ -1,9 +1,12 @@
 package com.swacky.ohmega.datagen.server;
 
+import com.swacky.ohmega.api.common.item.datacomponent.AccessoryModifiers;
 import com.swacky.ohmega.api.datagen.server.AccessoryTypeProvider;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
     public OhmegaAccessoryTypeProvider(PackOutput output) {
@@ -19,6 +22,7 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
                 .priority(Integer.MAX_VALUE));
 
         add(AccessoryType.NORMAL_ID, new AccessoryType.Builder()
+                .attributeModifiers(new AccessoryModifiers.Builder().addActive(Attributes.JUMP_STRENGTH, new AttributeModifier(Ohmega.id("hl"), 0, AttributeModifier.Operation.ADD_VALUE)).build())
                 .emptySlotPath("accessory_slot_normal")
                 .priority(Integer.MAX_VALUE));
 

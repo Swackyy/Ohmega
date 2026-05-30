@@ -35,17 +35,13 @@ public final class AccessoryScreens {
                         slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
                     }
 
-                    AccessoryScreenExtension.Factory factory = AccessoryUIs.getActiveScreenFactory();
+                    AccessoryScreenExtension extension = AccessoryUIs.getActiveScreenFactory().construct(screen, menuExtension);
 
-                    if (factory != null) {
-                        AccessoryScreenExtension extension = factory.construct(screen, menuExtension);
+                    accessoryScreen.setAccessoryExtension(extension);
 
-                        accessoryScreen.setAccessoryExtension(extension);
-
-                        if (OhmegaConfig.Client.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
-                            screen.imageWidth += extension.getExtraWidth();
-                            screen.imageHeight += extension.getExtraHeight();
-                        }
+                    if (OhmegaConfig.Client.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
+                        screen.imageWidth += extension.getExtraWidth();
+                        screen.imageHeight += extension.getExtraHeight();
                     }
                 }
             } else {

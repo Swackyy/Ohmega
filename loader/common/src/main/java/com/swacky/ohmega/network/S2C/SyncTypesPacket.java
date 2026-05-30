@@ -1,34 +1,37 @@
 package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.network.OhmegaByteBufCodecs;
+import io.netty.buffer.Unpooled;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
-
-public final class SyncTypesPacket implements CustomPacketPayload {
+// todo: clean up these (and other related) codec shenanigans if possible
+public record SyncTypesPacket(byte[] data) implements CustomPacketPayload {
     public static final Type<@NonNull SyncTypesPacket> TYPE = new Type<>(Ohmega.id("sync_types"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncTypesPacket> CODEC = StreamCodec.composite(
-            OhmegaByteBufCodecs.ACCESSORY_TYPE_COLLECTION, inst -> inst.types,
-            SyncTypesPacket::new);
+    public static final StreamCodec<FriendlyByteBuf, SyncTypesPacket> CODEC = CustomPacketPayload.codec(
+            (packet, buf) -> buf.writeByteArray(packet.data),
+            buf -> new SyncTypesPacket(buf.readByteArray())
+    );
 
-    public final Collection<AccessoryType> types;
+    public SyncTypesPacket(RegistryAccess lookup) {
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), lookup);
 
-    private SyncTypesPacket(Collection<AccessoryType> types) {
-        this.types = types;
-    }
+        OhmegaByteBufCodecs.ACCESSORY_TYPE_COLLECTION.encode(buf, AccessoryTypeManager.getTypes());
 
-    public SyncTypesPacket() {
-        this(AccessoryTypeManager.getTypes());
+        byte[] data = new byte[buf.readableBytes()];
+
+        buf.readBytes(data);
+        this(data);
     }
 
     @Override
-    public @NonNull Type<? extends @NonNull CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

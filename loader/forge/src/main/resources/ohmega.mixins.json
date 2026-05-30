@@ -5,9 +5,11 @@
   "mixins": [
     "ItemStackMixin",
     "LivingEntityMixin",
-    "MinecraftServerMixin"
+    "MinecraftServerMixin",
+    "ServerConfigurationPacketListenerImplMixin"
   ],
   "client": [
+    "client.ClientPacketListenerMixin",
     "client.Forge_AbstractContainerScreenMixin",
     "client.KeyBindsList$KeyEntryMixin",
     "client.LayerDefinitionsMixin",

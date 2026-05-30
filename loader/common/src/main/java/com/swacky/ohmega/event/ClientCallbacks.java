@@ -135,6 +135,11 @@ public final class ClientCallbacks {
         }
     }
 
+    public static void onDisconnect(Runnable loadFunction) {
+        AccessoryTypeManager.clear();
+        AccessoryTypeManager.applyClient(() -> reloadRegisteredKeybinds(loadFunction), !OhmegaConfig.Server.isLoaded());
+    }
+
     public static boolean onKeyPressedInMenu(AbstractContainerScreen<?> screen, KeyEvent event) {
         if (OhmegaBinds.OPEN_ACCESSORY_INVENTORY.matches(event)) {
             if (screen instanceof IAccessoryScreen accessoryScreen) {

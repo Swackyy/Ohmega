@@ -2,10 +2,10 @@ package com.swacky.ohmega.api.client.ui;
 
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,27 +50,27 @@ public final class AccessoryUIs {
      * Retrieve the active menu extension factory by parsing the client config value to an {@link Identifier}
      * @return the currently in-use menu extension factory
      */
-    public static AccessoryMenuExtension.@Nullable Factory getActiveMenuFactory() {
+    public static AccessoryMenuExtension.Factory getActiveMenuFactory() {
         Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
 
         if (id != null) {
             return EXTENSIONS.get(id).getLeft();
         }
 
-        return null;
+        return EXTENSIONS.get(OhmegaClient.DEFAULT_EXTENSION_ID).getLeft();
     }
 
     /**
      * Retrieve the active menu extension factory by parsing the client config value to an {@link Identifier}
      * @return the currently in-use menu extension factory
      */
-    public static AccessoryScreenExtension.@Nullable Factory getActiveScreenFactory() {
+    public static AccessoryScreenExtension.Factory getActiveScreenFactory() {
         Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
 
         if (id != null) {
             return EXTENSIONS.get(id).getRight();
         }
 
-        return null;
+        return EXTENSIONS.get(OhmegaClient.DEFAULT_EXTENSION_ID).getRight();
     }
 }

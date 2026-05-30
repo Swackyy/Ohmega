@@ -112,7 +112,7 @@ public final class OhmegaConfig {
             String ACCESSORY_EXTENSION_ID_KEY = "accessoryExtensionId";
             String ACCESSORY_EXTENSION_ID_DESCRIPTION = """
                     The accessory extension type to use, other mods can register custom accessory extensions, which can be chosen here""";
-            String ACCESSORY_EXTENSION_ID_DEFAULT = Ohmega.INTERFACE_ID.toString();
+            String ACCESSORY_EXTENSION_ID_DEFAULT = OhmegaClient.DEFAULT_EXTENSION_ID.toString();
             Predicate<Object> ACCESSORY_EXTENSION_ID_VALIDATOR = object -> object instanceof String string && AccessoryUIs.exists(Identifier.tryParse(string));
             // - - -
 

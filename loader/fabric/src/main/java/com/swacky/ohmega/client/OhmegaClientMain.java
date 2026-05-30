@@ -10,14 +10,15 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientEvents;
 import com.swacky.ohmega.network.OhmegaNetworking;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.neoforged.fml.config.ModConfig;
@@ -44,10 +45,10 @@ public final class OhmegaClientMain implements ClientModInitializer {
         // Receive
         ClientPlayNetworking.registerGlobalReceiver(SyncHiddenPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
-        ClientPlayNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, _) ->
-                OhmegaNetworking.S2C.handleSyncTypes(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
+        ClientConfigurationNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, context) ->
+                OhmegaNetworking.S2C.handleSyncTypes(packet, context.packetListener().receivedRegistries));
         ClientPlayNetworking.registerGlobalReceiver(SyncUsePacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncUse(packet));
 

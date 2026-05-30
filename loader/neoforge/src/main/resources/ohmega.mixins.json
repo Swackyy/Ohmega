@@ -3,9 +3,11 @@
   "package": "com.swacky.ohmega.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MinecraftServerMixin"
+    "MinecraftServerMixin",
+    "ServerConfigurationPacketListenerImplMixin"
   ],
   "client": [
+    "client.ClientPacketListenerMixin",
     "client.LivingEntityRendererMixin",
     "client.NeoForge_AbstractContainerScreenMixin"
   ],

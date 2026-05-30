@@ -13,10 +13,11 @@ import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
+import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -91,7 +92,6 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            OhmegaNetworking.S2C.send(player, new SyncTypesPacket());
             AccessoryHelper.getData(player).onAttach(player);
         }
     }
@@ -148,11 +148,14 @@ public final class CommonEvents {
                         SyncStacksPacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, _) ->
                                 OhmegaNetworking.S2C.handleSyncStacks(packet)))
-                .playToClient(
+                .configurationToClient(
                         SyncTypesPacket.TYPE,
                         SyncTypesPacket.CODEC,
-                        new MainThreadPayloadHandler<>((packet, _) ->
-                                OhmegaNetworking.S2C.handleSyncTypes(packet)))
+                        new MainThreadPayloadHandler<>((packet, context) -> {
+                            if (context.connection().getPacketListener() instanceof ClientConfigurationPacketListenerImpl listener) {
+                                OhmegaNetworking.S2C.handleSyncTypes(packet, listener.receivedRegistries);
+                            }
+                        }))
                 .playToClient(
                         SyncUsePacket.TYPE,
                         SyncUsePacket.CODEC,

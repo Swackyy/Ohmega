@@ -152,7 +152,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.CREATIVE_EXTENSION_Y_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
-                "Creative Extension X",
+                "Accessory Extension Id",
                 OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_DESCRIPTION);
 
         // Server config

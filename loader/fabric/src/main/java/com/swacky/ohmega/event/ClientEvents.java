@@ -21,6 +21,8 @@ import net.neoforged.fml.config.ModConfig;
 import java.util.List;
 
 public final class ClientEvents {
+    private static final Runnable LOAD_FUNCTION = () -> Minecraft.getInstance().options.load();
+
     private static boolean bootstrapped = false;
 
     public static void bootstrap() {
@@ -30,6 +32,7 @@ public final class ClientEvents {
             ModConfigEvents.loading(Ohmega.MODID).register(ClientEvents::onConfigLoad);
             ModConfigEvents.reloading(Ohmega.MODID).register(ClientEvents::onConfigReload);
             ModConfigEvents.unloading(Ohmega.MODID).register(ClientEvents::onConfigUnload);
+            ClientPlayConnectionEvents.DISCONNECT.register(ClientEvents::onDisconnect);
             ItemTooltipCallback.EVENT.register(ClientEvents::onItemTooltip);
             ClientPlayConnectionEvents.JOIN.register(ClientEvents::onJoinWorld);
             ScreenEvents.AFTER_INIT.register(ClientEvents::onPostScreenInit);
@@ -50,14 +53,18 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigReload(LOAD_FUNCTION);
         }
     }
 
     private static void onConfigUnload(ModConfig config) {
         if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigUnload(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigUnload(LOAD_FUNCTION);
         }
+    }
+
+    private static void onDisconnect(ClientPacketListener listener, Minecraft mc) {
+        ClientCallbacks.onDisconnect(LOAD_FUNCTION);
     }
 
     private static void onItemTooltip(ItemStack stack, Item.TooltipContext context, TooltipFlag flag, List<Component> tooltip) {

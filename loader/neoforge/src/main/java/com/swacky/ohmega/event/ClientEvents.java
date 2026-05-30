@@ -37,6 +37,32 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
+    private static final Runnable LOAD_FUNCTION = () -> Minecraft.getInstance().options.load();
+
+    @SubscribeEvent
+    public static void onAddAttributeTooltips(AddAttributeTooltipsEvent event) {
+        AttributeTooltipContext context = event.getContext();
+        DataComponentType<ItemAttributeModifiers> type = OhmegaDataComponents.getAccessoryActiveModifiers();
+
+        if (context.tooltipDisplay().shows(type)) {
+            boolean[] flag = {true};
+
+            event.getStack().getOrDefault(type, ItemAttributeModifiers.EMPTY).forEach(EquipmentSlotGroup.ANY, (attribute, modifier, tooltip) -> {
+                if (tooltip != ItemAttributeModifiers.Display.hidden()) {
+                    if (flag[0]) {
+                        flag[0] = false;
+
+                        event.addTooltipLines(
+                                CommonComponents.EMPTY,
+                                Component.translatable(Ohmega.MODID + ".item.modifiers.accessory_active").withStyle(ChatFormatting.GRAY));
+                    }
+
+                    tooltip.apply(event::addTooltipLines, context.player(), attribute, modifier);
+                }
+            });
+        }
+    }
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new));
@@ -56,14 +82,14 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigReload(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigReload(LOAD_FUNCTION);
         }
     }
 
     @SubscribeEvent
     public static void onConfigUnload(ModConfigEvent.Unloading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigUnload(Minecraft.getInstance().options::load);
+            ClientCallbacks.onServerConfigUnload(LOAD_FUNCTION);
         }
     }
 
@@ -109,29 +135,5 @@ public final class ClientEvents {
     public static void onRegisterRenderStateModifiers(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<LivingEntityRenderer<?, ?, ?>>() {}, (entity, state) ->
                 state.setRenderData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity)));
-    }
-
-    @SubscribeEvent
-    public static void ee(AddAttributeTooltipsEvent event) {
-        AttributeTooltipContext context = event.getContext();
-        DataComponentType<ItemAttributeModifiers> type = OhmegaDataComponents.getAccessoryActiveModifiers();
-
-        if (context.tooltipDisplay().shows(type)) {
-            boolean[] flag = {true};
-
-            event.getStack().getOrDefault(type, ItemAttributeModifiers.EMPTY).forEach(EquipmentSlotGroup.ANY, (attribute, modifier, tooltip) -> {
-                if (tooltip != ItemAttributeModifiers.Display.hidden()) {
-                    if (flag[0]) {
-                        flag[0] = false;
-
-                        event.addTooltipLines(
-                                CommonComponents.EMPTY,
-                                Component.translatable(Ohmega.MODID + ".item.modifiers.accessory_active").withStyle(ChatFormatting.GRAY));
-                    }
-
-                    tooltip.apply(event::addTooltipLines, context.player(), attribute, modifier);
-                }
-            });
-        }
     }
 }

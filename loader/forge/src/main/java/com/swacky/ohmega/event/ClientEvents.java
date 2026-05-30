@@ -23,6 +23,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
+    private static final Runnable LOAD_FUNCTION = () -> Minecraft.getInstance().options.load(true);
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new));
@@ -42,14 +44,14 @@ public final class ClientEvents {
         if (spec == OhmegaConfigImpl.Client.getSpec()) {
             ClientCallbacks.onClientConfigReload();
         } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigReload(() -> Minecraft.getInstance().options.load(true));
+            ClientCallbacks.onServerConfigReload(LOAD_FUNCTION);
         }
     }
 
     @SubscribeEvent
     public static void onConfigUnload(ModConfigEvent.Unloading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            ClientCallbacks.onServerConfigUnload(() -> Minecraft.getInstance().options.load(true));
+            ClientCallbacks.onServerConfigUnload(LOAD_FUNCTION);
         }
     }
 

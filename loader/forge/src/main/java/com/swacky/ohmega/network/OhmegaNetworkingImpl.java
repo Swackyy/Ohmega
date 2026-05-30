@@ -1,14 +1,15 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
+import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
+import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,8 +45,11 @@ public final class OhmegaNetworkingImpl {
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
         net.play().clientbound().addMain(SyncStacksPacket.class, SyncStacksPacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
-        net.play().clientbound().addMain(SyncTypesPacket.class, SyncTypesPacket.CODEC, (packet, _) ->
-                OhmegaNetworking.S2C.handleSyncTypes(packet));
+        net.configuration().clientbound().addMain(SyncTypesPacket.class, SyncTypesPacket.CODEC, (packet, context) -> {
+            if (context.getConnection().getPacketListener() instanceof ClientConfigurationPacketListenerImpl listener) {
+                OhmegaNetworking.S2C.handleSyncTypes(packet, listener.receivedRegistries);
+            }
+        });
         net.play().clientbound().addMain(SyncUsePacket.class, SyncUsePacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncUse(packet));
 
