@@ -2,6 +2,7 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
@@ -43,8 +44,8 @@ public final class ItItProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        builder.add(KEY_BIND_CATEGORY, "Ohmega");
-        builder.add(KEY_BIND_OPEN_ACC_INV, "Apri/Chiudi Inventario Accessori");
+        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Apri/Chiudi Inventario Accessori");
 
         // Config
         internalHelper.addConfigTitle("Configurazione Ohmega");

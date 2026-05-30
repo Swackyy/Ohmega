@@ -21,8 +21,6 @@ public abstract class OhmegaLangProvider extends FabricLanguageProvider {
     protected static final String KEY_ACCESSORY_TYPE_UTILITY = AccessoryType.UTILITY_ID.getPath();
     protected static final String KEY_ACCESSORY_TYPE_SPECIAL = AccessoryType.SPECIAL_ID.getPath();
     protected static final String KEY_BIND_ACCESSORY_TYPE = "key." + Ohmega.MODID + ".accessory_type";
-    protected static final String KEY_BIND_CATEGORY = "key.category." + Ohmega.MODID + '.' + Ohmega.MODID;
-    protected static final String KEY_BIND_OPEN_ACC_INV = "key." + Ohmega.MODID + ".open_acc_inv";
     protected static final String KEY_CONFIG_SECTION_CLIENT = "client.toml";
     protected static final String KEY_CONFIG_SECTION_SERVER = "server.toml";
 

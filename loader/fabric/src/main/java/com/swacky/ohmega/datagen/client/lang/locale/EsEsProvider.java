@@ -2,6 +2,7 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
@@ -43,8 +44,8 @@ public final class EsEsProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        builder.add(KEY_BIND_CATEGORY, "Ohmega");
-        builder.add(KEY_BIND_OPEN_ACC_INV, "Abrir/Cerrar Inventario de Accesorios");
+        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Abrir/Cerrar Inventario de Accesorios");
 
         // Config
         internalHelper.addConfigTitle("Configuración de Ohmega");
@@ -111,5 +112,9 @@ public final class EsEsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Deshabilitar Tipos de Accesorios",
                 "Si es verdadero, no se usarán tipos de accesorios, y serán reemplazados, cambiándolos todos a \"ohmega:generic\"");
+
+        // ConfigurationScreen Forge port UI translations
+        // Misc
+        internalHelper.addConfigPort("notonline", "Los ajustes aquí están determinados por el servidor y no se pueden cambiar mientras estén en línea.");
     }
 }

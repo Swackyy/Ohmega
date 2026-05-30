@@ -2,6 +2,8 @@ package com.swacky.ohmega.datagen.client.lang;
 
 import com.swacky.ohmega.common.Ohmega;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -19,16 +21,12 @@ public final class InternalLangHelper {
         builder.add("dataPack." + Ohmega.MODID + ".description", translation);
     }
 
-    public void addConfigPort(String key, String translation) {
-        builder.add(Ohmega.MODID + ".port.neoforge.configuration.uitext." + key, translation);
+    public void add(KeyMapping.Category category, String translation) {
+        builder.add(((TranslatableContents) category.label().getContents()).getKey(), translation);
     }
 
-    public void addConfigPortTitle(String key, String translation) {
-        addConfigPort("title." + key, translation);
-    }
-
-    public void addConfigPortType(String key, String translation) {
-        addConfigPort("type." + key, translation);
+    public void add(KeyMapping mapping, String translation) {
+        builder.add(mapping.getName(), translation);
     }
 
     public void addConfig(String key, String translation) {
@@ -53,5 +51,17 @@ public final class InternalLangHelper {
 
     public void addConfigButton(String key, String translation) {
         addConfig(key + ".button", translation);
+    }
+
+    public void addConfigPort(String key, String translation) {
+        builder.add(Ohmega.MODID + ".port.neoforge.configuration.uitext." + key, translation);
+    }
+
+    public void addConfigPortTitle(String key, String translation) {
+        addConfigPort("title." + key, translation);
+    }
+
+    public void addConfigPortType(String key, String translation) {
+        addConfigPort("type." + key, translation);
     }
 }

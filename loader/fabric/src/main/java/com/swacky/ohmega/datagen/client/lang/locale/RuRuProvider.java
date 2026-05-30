@@ -2,6 +2,7 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
@@ -42,8 +43,8 @@ public final class RuRuProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        builder.add(KEY_BIND_CATEGORY, "Ohmega");
-        builder.add(KEY_BIND_OPEN_ACC_INV, "Открыть/Закрыть Панель Аксессуаров");
+        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Открыть/Закрыть Панель Аксессуаров");
 
         // Config
         internalHelper.addConfigTitle("Конфигурация Ohmega");
@@ -110,5 +111,46 @@ public final class RuRuProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Не Использовать Типы Аксессуаров",
                 "Если включено, типы аксессуаров не будут использоваться, и все они будут перезаписаны с заменой на \"ohmega:generic\"");
+
+        // ConfigurationScreen Forge port UI translations
+        // Titles
+        internalHelper.addConfigPort("title", "Настройки %s");
+        internalHelper.addConfigPortTitle("client", "Клиентские настройки %s");
+        internalHelper.addConfigPortTitle("server", "Серверные настройки %s");
+        internalHelper.addConfigPortTitle("common", "Общие настройки %s");
+        // Types
+        internalHelper.addConfigPortType("client", "Настройки клиента");
+        internalHelper.addConfigPortType("server", "Настройки сервера");
+        internalHelper.addConfigPortType("common", "Общие настройки");
+        // Misc
+        internalHelper.addConfigPort("notonline", "Настройки здесь определяются сервером и не могут быть изменены в режиме онлайн.");
+        internalHelper.addConfigPort("notlan", "Настройки в этом разделе нельзя редактировать, пока игра открыта для LAN. Пожалуйста, вернитесь в главное меню и загрузите мир заново.");
+        internalHelper.addConfigPort("notloaded", "Эти настройки становятся доступны только после генерации мира.");
+        internalHelper.addConfigPort("unsupportedelement", "Это значение нельзя редактировать в пользовательском интерфейсе. Пожалуйста, свяжитесь с автором мода для создания своего пользовательского интерфейса.");
+        internalHelper.addConfigPort("longstring", "Это значение слишком длинное, чтобы его можно было редактировать в пользовательском интерфейсе. Пожалуйста, отредактируйте его в файле конфигурации.");
+        internalHelper.addConfigPort("section", "%s...");
+        internalHelper.addConfigPort("sectiontext", "Редактировать");
+        internalHelper.addConfigPort("breadcrumb.order", "%1$s %2$s %3$s");
+        internalHelper.addConfigPort("breadcrumb.separator", ">");
+        internalHelper.addConfigPort("listelement", "%s:");
+        internalHelper.addConfigPort("undo", "Отменить");
+        internalHelper.addConfigPort("undo.tooltip", "Возвращает изменения только на этом экране.");
+        internalHelper.addConfigPort("reset", "Сброс");
+        internalHelper.addConfigPort("reset.tooltip", "Возвращает всё на этом экране к значениям по умолчанию.");
+        internalHelper.addConfigPort("newlistelement", "+");
+        internalHelper.addConfigPort("listelementup", "\u23f6");
+        internalHelper.addConfigPort("listelementdown", "\u23f7");
+        internalHelper.addConfigPort("listelementremove", "\u274c");
+        internalHelper.addConfigPort("rangetooltip", "Диапазон: %s");
+        internalHelper.addConfigPort("filenametooltip", "Файл: «%s»");
+        internalHelper.addConfigPort("common", "Общие настройки");
+        internalHelper.addConfigPort("client", "Настройки клиента");
+        internalHelper.addConfigPort("server", "Настройки сервера");
+        internalHelper.addConfigPort("restart.game.title", "Требуется перезапуск Minecraft");
+        internalHelper.addConfigPort("restart.game.text", "Один или несколько измененных параметров конфигурации вступят в силу только после перезапуска игры.");
+        internalHelper.addConfigPort("restart.server.title", "Мир должен быть перезагружен");
+        internalHelper.addConfigPort("restart.server.text", "Один или несколько измененных параметров конфигурации вступят в силу только после перезагрузки мира.");
+        internalHelper.addConfigPort("restart.return", "Потом перезапущу");
+        internalHelper.addConfigPort("restart.return.tooltip", "Ваши изменения не вступят в силу до перезапуска!");
     }
 }
