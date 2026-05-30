@@ -9,7 +9,8 @@
   "client": [
     "client.ClientPacketListenerMixin",
     "client.LivingEntityRendererMixin",
-    "client.NeoForge_AbstractContainerScreenMixin"
+    "client.NeoForge_AbstractContainerScreenMixin",
+    "client.NeoForge_InventoryScreenMixin"
   ],
   "minVersion": "0.8.5"
 }

@@ -8,6 +8,7 @@
   ],
   "client": [
     "client.Fabric_AbstractContainerScreenMixin",
+    "client.Fabric_InventoryScreenMixin",
     "client.KeyBindsList$KeyEntryMixin",
     "client.KeyboardHandlerMixin",
     "client.LivingEntityRendererMixin"

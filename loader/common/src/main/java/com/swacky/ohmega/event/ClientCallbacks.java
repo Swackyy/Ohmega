@@ -36,6 +36,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
@@ -44,6 +45,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
+import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +55,20 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public final class ClientCallbacks {
+    public static float applyEntityInInventoryTranslation(EntityRenderState state, float scale, Quaternionf rotation) {
+        // Hacky thing, shouldn't cause issues
+        if (state instanceof LivingEntityRenderState livingState && scale < 0) {
+            livingState.bodyRot = -livingState.bodyRot;
+            livingState.yRot = -livingState.yRot;
+
+            rotation.rotationX((float) Math.PI);
+
+            return -scale;
+        }
+
+        return scale;
+    }
+
     public static AccessoryRenderStateData createRenderStateData(LivingEntity entity) {
         AccessoryData data = AccessoryHelper.getData(entity);
 
