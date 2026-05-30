@@ -211,19 +211,11 @@ public final class ClientCallbacks {
         if (player != null) {
             Screen screen = mc.screen;
 
-            if (!(screen instanceof EditUiScreen)) {
-                if (screen != null) {
-                    if (OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen.getFocused() instanceof EditBox)) {
-                        mc.setScreen(new EditUiScreen(screen, player));
-                    }
-                } else {
-                    if (OhmegaBinds.OPEN_EDIT_UI.consumeClick()) {
-                        mc.setScreen(new EditUiScreen(null, player));
-                    }
-                }
-            }
-
             if (screen == null) {
+                if (OhmegaBinds.OPEN_EDIT_UI.consumeClick()) {
+                    mc.setScreen(new EditUiScreen(null, player));
+                }
+
                 while (OhmegaBinds.OPEN_ACCESSORY_INVENTORY.consumeClick() && (player.portalProcess == null || !player.portalProcess.isInsidePortalThisTick())) {
                     if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
                         player.sendOpenInventory();
@@ -277,6 +269,10 @@ public final class ClientCallbacks {
                             OhmegaNetworking.C2S.send(new UseAccessoryPacket(j));
                         }
                     }
+                }
+            } else {
+                if (!(screen instanceof EditUiScreen) && OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen.getFocused() instanceof EditBox)) {
+                    mc.setScreen(new EditUiScreen(screen, player));
                 }
             }
         }

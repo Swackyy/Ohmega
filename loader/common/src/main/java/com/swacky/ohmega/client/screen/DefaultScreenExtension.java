@@ -16,7 +16,7 @@ import net.minecraft.resources.Identifier;
 import java.util.List;
 
 /**
- * Ohmega's default screen implementation of the accessory extension.
+ * Ohmega's default accessory screen extension implementation
  */
 public final class DefaultScreenExtension extends AccessoryScreenExtension implements IEntityRenderingExtension {
     private static final Identifier SLOT_LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/slot.png");
