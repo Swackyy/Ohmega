@@ -45,14 +45,14 @@ public interface IAccessoryScreen {
      * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
      * @return relative x-coordinate to place the extension
      */
-    IntLazySavedValue getAccessoryExtensionX();
+    @NonNull IntLazySavedValue getAccessoryExtensionX();
 
     /**
      * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed.
      * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
      * @return relative y-coordinate to place the extension
      */
-    IntLazySavedValue getAccessoryExtensionY();
+    @NonNull IntLazySavedValue getAccessoryExtensionY();
 
     /**
      * The (x, y) position the {@link ToggleExtensionButton} will be added.
@@ -63,7 +63,8 @@ public interface IAccessoryScreen {
      * @param style the button style currently in use
      * @return the position to add the {@link ToggleExtensionButton}
      */
-    IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
+    // todo: implement UiScreen move capability for this
+    @NonNull IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
 
     /**
      * A per-screen function that determines whether the extension should be shown.

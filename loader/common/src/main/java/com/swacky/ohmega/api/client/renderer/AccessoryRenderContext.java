@@ -26,21 +26,22 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Some common variables you can use in your renderers.
  * Also contains a few shortcuts to the most common methods to reduce verbosity
  */
 public abstract sealed class AccessoryRenderContext<T extends LivingEntityRenderState, U extends EntityModel<? super T>> permits HumanoidRenderContext, LivingRenderContext {
-    public final PoseStack poseStack;
-    public final SubmitNodeCollectorWrapper collector;
-    public final ItemStack stack;
-    public final T state;
-    public final U parentModel;
-    public final ModelManager modelManager;
+    public final @NonNull PoseStack poseStack;
+    public final @NonNull SubmitNodeCollectorWrapper collector;
+    public final @NonNull ItemStack stack;
+    public final @NonNull T state;
+    public final @NonNull U parentModel;
+    public final @NonNull ModelManager modelManager;
     public final int packedLight;
 
-    public AccessoryRenderContext(PoseStack poseStack, SubmitNodeCollectorWrapper collector, ItemStack stack, T state, U parentModel, ModelManager modelManager, int packedLight) {
+    public AccessoryRenderContext(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollectorWrapper collector, @NonNull ItemStack stack, @NonNull T state, @NonNull U parentModel, @NonNull ModelManager modelManager, int packedLight) {
         this.poseStack = poseStack;
         this.collector = collector;
         this.stack = stack;
@@ -73,7 +74,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * Sets coordinates to the origin of the provided {@link ModelPart} and follows its relative rotation
      * @param part piece of the model to lock onto
      */
-    public void lockToPart(ModelPart part) {
+    public void lockToPart(@NonNull ModelPart part) {
         part.translateAndRotate(poseStack);
     }
 
@@ -82,7 +83,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * This should be called after calling {@link #lockToPart(ModelPart)} on the same part, as it is only a relative offset
      * @param part piece of the model to offset to its centre
      */
-    public void offsetToPartCentre(ModelPart part) {
+    public void offsetToPartCentre(@NonNull ModelPart part) {
         if (!part.cubes.isEmpty()) {
             float minX = Float.MAX_VALUE;
             float minY = Float.MAX_VALUE;
@@ -113,7 +114,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param part piece of the model to offset to its given face
      * @param face cube face of the {@link ModelPart} to offset to
      */
-    public void offsetToPartFace(ModelPart part, Direction face) {
+    public void offsetToPartFace(@NonNull ModelPart part, @NonNull Direction face) {
         if (!part.cubes.isEmpty()) {
             float minX = Float.MAX_VALUE;
             float minY = Float.MAX_VALUE;
@@ -153,7 +154,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param blockState the block's in-world {@link BlockState} providing state data to render with
      * @param displayContext should be stored as a member variable in your renderer
      */
-    public void submitBlock(BlockModelResolver modelResolver, BlockModelRenderState renderState, BlockState blockState, BlockDisplayContext displayContext) {
+    public void submitBlock(@NonNull BlockModelResolver modelResolver, @NonNull BlockModelRenderState renderState, @NonNull BlockState blockState, @NonNull BlockDisplayContext displayContext) {
         modelResolver.update(renderState, blockState, displayContext);
         renderState.submit(poseStack, collector.unwrap(), packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor);
     }
@@ -163,7 +164,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param renderType render pipeline to use
      * @param renderer actual renderer for the geometry
      */
-    public void submitCustomGeometry(RenderType renderType, SubmitNodeCollector.CustomGeometryRenderer renderer) {
+    public void submitCustomGeometry(@NonNull RenderType renderType, SubmitNodeCollector.@NonNull CustomGeometryRenderer renderer) {
         collector.next().submitCustomGeometry(poseStack, renderType, renderer);
     }
 
@@ -171,7 +172,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * Apply enchantment glint on the provided model
      * @param model model to apply glint to
      */
-    public void submitGlint(Model<LivingEntityRenderState> model) {
+    public void submitGlint(@NonNull Model<LivingEntityRenderState> model) {
         if (stack.hasFoil()) {
             submitModel(model, RenderTypes.entityGlint());
         }
@@ -183,7 +184,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param renderState data holder for your model state. Should be stored as a member variable in your renderer
      * @param stack the item's in-world {@link ItemStack} providing component data to render with
      */
-    public void submitItem(ItemModelResolver modelResolver, ItemStackRenderState renderState, ItemStack stack) {
+    public void submitItem(@NonNull ItemModelResolver modelResolver, @NonNull ItemStackRenderState renderState, @NonNull ItemStack stack) {
         modelResolver.updateForTopItem(renderState, stack, ItemDisplayContext.NONE, Minecraft.getInstance().level, null, 0);
         renderState.submit(poseStack, collector.unwrap(), packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor);
     }
@@ -193,7 +194,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param model model to render
      * @param renderType render pipeline to use
      */
-    public void submitModel(Model<LivingEntityRenderState> model, RenderType renderType) {
+    public void submitModel(@NonNull Model<LivingEntityRenderState> model, @NonNull RenderType renderType) {
         collector.next().submitModel(
                 model,
                 state,
@@ -210,7 +211,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param model model to render
      * @param textureLocation resource location for the texture. Should be something like {@code "textures/accessory/my_model.png"}
      */
-    public void submitModel(Model<LivingEntityRenderState> model, Identifier textureLocation) {
+    public void submitModel(@NonNull Model<LivingEntityRenderState> model, @NonNull Identifier textureLocation) {
         collector.next().submitModel(
                 model,
                 state,
@@ -230,7 +231,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param sprite identifier for the sprite to use
      * @param sprites lookup for sprites
      */
-    public void submitModel(Model<LivingEntityRenderState> model, int tintedColor, SpriteId sprite, SpriteGetter sprites) {
+    public void submitModel(@NonNull Model<LivingEntityRenderState> model, int tintedColor, @NonNull SpriteId sprite, @NonNull SpriteGetter sprites) {
         collector.next().submitModel(
                 model,
                 state,
@@ -248,7 +249,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * Attempts to call {@link #lockToPart(ModelPart)} by lookup of the {@link ModelPart} through the root's immediate children by name
      * @param partName serialised name of the part to lookup. Searching in {@link PartNames} may be useful
      */
-    public void tryLockToPart(String partName) {
+    public void tryLockToPart(@NonNull String partName) {
         ModelPart root = parentModel.root();
 
         if (root.hasChild(partName)) {
@@ -260,7 +261,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * Attempts to call {@link #offsetToPartCentre(ModelPart)} by lookup of the {@link ModelPart} through the root's immediate children by name
      * @param partName serialised name of the part to lookup. Searching in {@link PartNames} may be useful
      */
-    public void tryOffsetToPartCentre(String partName) {
+    public void tryOffsetToPartCentre(@NonNull String partName) {
         ModelPart root = parentModel.root();
 
         if (root.hasChild(partName)) {
@@ -273,7 +274,7 @@ public abstract sealed class AccessoryRenderContext<T extends LivingEntityRender
      * @param partName serialised name of the part to lookup. Searching in {@link PartNames} may be useful
      * @param face cube face of the {@link ModelPart} to offset to
      */
-    public void tryOffsetToPartFace(String partName, Direction face) {
+    public void tryOffsetToPartFace(@NonNull String partName, @NonNull Direction face) {
         ModelPart root = parentModel.root();
 
         if (root.hasChild(partName)) {

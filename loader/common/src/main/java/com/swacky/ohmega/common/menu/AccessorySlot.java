@@ -5,9 +5,9 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.item.Accessory;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -127,7 +127,7 @@ public final class AccessorySlot extends Slot {
 
     @Override
     public @NonNull ItemStack remove(int amount) {
-        return handler.remove(player, getContainerSlot(), amount);
+        return handler.remove(player, getContainerSlot(), amount, EquipContext.SLOT);
     }
 
     @Override

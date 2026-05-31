@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.util;
 
 import org.apache.commons.lang3.function.BooleanConsumer;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
@@ -9,8 +10,8 @@ import java.util.function.BooleanSupplier;
  * Non-boxing boolean implementation of {@link AbstractLazySavedValue}
  */
 public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
-    private final BooleanSupplier getter;
-    private final BooleanConsumer setter;
+    private final @Nullable BooleanSupplier getter;
+    private final @Nullable BooleanConsumer setter;
 
     private boolean value;
 
@@ -29,7 +30,7 @@ public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static BooleanLazySavedValue of(boolean value) {
+    public static @NonNull BooleanLazySavedValue of(boolean value) {
         BooleanLazySavedValue instance = new BooleanLazySavedValue(null, null);
         instance.value = value;
 
@@ -37,13 +38,15 @@ public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
     }
 
     @Override
-    public Boolean getObject() {
+    public @NonNull Boolean getObject() {
         return get();
     }
 
     @Override
-    public void setObject(Boolean value) {
-        set(value);
+    public void setObject(@Nullable Boolean value) {
+        if (value != null) {
+            set(value);
+        }
     }
 
     /**

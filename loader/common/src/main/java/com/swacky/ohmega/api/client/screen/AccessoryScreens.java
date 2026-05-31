@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Holds methods related to screen extensions that implement correct functionality
@@ -23,7 +25,7 @@ public final class AccessoryScreens {
      * This must be called at the end of your target screen's constructor to assign the accessory extension and add slots
      * @param screen parent screen
      */
-    public static void onConstruct(AbstractContainerScreen<?> screen) {
+    public static void onConstruct(@NonNull AbstractContainerScreen<?> screen) {
         if (screen instanceof IAccessoryScreen accessoryScreen) {
             AbstractContainerMenu menu = screen.getMenu();
 
@@ -58,7 +60,7 @@ public final class AccessoryScreens {
      * however if that fails, it will simply return {@link Minecraft#screen}
      * @return the use-effective accessory screen
      */
-    public static Screen getEffectiveScreen() {
+    public static @Nullable Screen getEffectiveScreen() {
         Screen screen = Minecraft.getInstance().screen;
 
         if (screen instanceof IEmbeddingScreen embeddedScreen) {

@@ -6,6 +6,8 @@ import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +17,7 @@ import java.util.Set;
  * A unified registration and data holder for accessory extension menus and screens, and some common related methods
  */
 public final class AccessoryUIs {
-    private static final Map<Identifier, Pair<AccessoryMenuExtension.Factory, AccessoryScreenExtension.Factory>> EXTENSIONS = new HashMap<>();
+    private static final @NonNull Map<Identifier, Pair<AccessoryMenuExtension.Factory, AccessoryScreenExtension.Factory>> EXTENSIONS = new HashMap<>();
 
     /**
      * Use this to register an extension type, this will then be an available option to choose from in the client config,
@@ -24,7 +26,7 @@ public final class AccessoryUIs {
      * @param menuFactory factory for the menu extension, will be constructed later
      * @param screenFactory factory for the screen extension, will be constructed later
      */
-    public static void registerExtension(Identifier id, AccessoryMenuExtension.Factory menuFactory, AccessoryScreenExtension.Factory screenFactory) {
+    public static void registerExtension(@NonNull Identifier id, AccessoryMenuExtension.@NonNull Factory menuFactory, AccessoryScreenExtension.@NonNull Factory screenFactory) {
         if (!EXTENSIONS.containsKey(id)) {
             EXTENSIONS.put(id, Pair.of(menuFactory, screenFactory));
         }
@@ -34,11 +36,11 @@ public final class AccessoryUIs {
      * Get a set of known extensions through their {@link Identifier} keys
      * @return the extensions map keyset
      */
-    public static Set<Identifier> getExtensionKeys() {
+    public static @NonNull Set<Identifier> getExtensionKeys() {
         return EXTENSIONS.keySet();
     }
 
-    public static boolean exists(Identifier id) {
+    public static boolean exists(@Nullable Identifier id) {
         if (id != null) {
             return EXTENSIONS.containsKey(id);
         }
@@ -50,7 +52,7 @@ public final class AccessoryUIs {
      * Retrieve the active menu extension factory by parsing the client config value to an {@link Identifier}
      * @return the currently in-use menu extension factory
      */
-    public static AccessoryMenuExtension.Factory getActiveMenuFactory() {
+    public static AccessoryMenuExtension.@NonNull Factory getActiveMenuFactory() {
         Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
 
         if (id != null) {
@@ -64,7 +66,7 @@ public final class AccessoryUIs {
      * Retrieve the active menu extension factory by parsing the client config value to an {@link Identifier}
      * @return the currently in-use menu extension factory
      */
-    public static AccessoryScreenExtension.Factory getActiveScreenFactory() {
+    public static AccessoryScreenExtension.@NonNull Factory getActiveScreenFactory() {
         Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
 
         if (id != null) {

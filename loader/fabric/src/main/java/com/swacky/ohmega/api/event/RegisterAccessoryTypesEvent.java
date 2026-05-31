@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.event;
 
 import com.google.common.collect.ImmutableMap;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.Identifier;

@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import org.jspecify.annotations.NonNull;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
  * Class for registering {@code /ohmega} command nodes
  */
 public final class OhmegaCommandNodes {
-    private static final Map<String, ICommandNode.Factory> NODES = new IdentityHashMap<>();
+    private static final @NonNull Map<String, ICommandNode.Factory> NODES = new IdentityHashMap<>();
 
     /**
      * Register a command node
@@ -21,7 +22,7 @@ public final class OhmegaCommandNodes {
      * @param factory a function reference, usually to your {@link ICommandNode} constructor
      * @return {@code true} if registered successfully, {@code false} otherwise
      */
-    public static boolean register(String key, ICommandNode.Factory factory) {
+    public static boolean register(@NonNull String key, ICommandNode.@NonNull Factory factory) {
         if (!NODES.containsKey(key)) {
             NODES.put(key, factory);
             return true;
@@ -35,7 +36,7 @@ public final class OhmegaCommandNodes {
      * @param context build context supplied by command registration
      * @param builder the root {@code /ohmega} literal to build on
      */
-    public static void registerNodes(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
+    public static void registerNodes(@NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<CommandSourceStack> builder) {
         for (Map.Entry<String, ICommandNode.Factory> entry : NODES.entrySet()) {
             LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(entry.getKey());
 

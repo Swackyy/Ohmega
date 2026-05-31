@@ -7,7 +7,7 @@ import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -38,6 +38,7 @@ import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEve
 import net.neoforged.neoforge.common.util.AttributeTooltipContext;
 import net.neoforged.neoforge.event.AddAttributeTooltipsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import org.jspecify.annotations.NonNull;
 
 @EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
@@ -137,17 +138,17 @@ public final class ClientEvents {
 
             return new IClientCommandSource() {
                 @Override
-                public void sendSuccess(Component message) {
+                public void sendSuccess(@NonNull Component message) {
                     source.sendSuccess(() -> message, false);
                 }
 
                 @Override
-                public void sendError(Component message) {
+                public void sendError(@NonNull Component message) {
                     source.sendFailure(message);
                 }
 
                 @Override
-                public LocalPlayer getPlayer() {
+                public @NonNull LocalPlayer getPlayer() {
                     return Minecraft.getInstance().player;
                 }
             };

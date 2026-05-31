@@ -1,10 +1,10 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.Item;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
@@ -20,5 +20,5 @@ public interface AccessoryOverrideTypesEvent {
     // The boolean part is to represent a state of hard/soft
     // If true, it will always override the type.
     // If false, it will only override the type if it does not already have one
-    void process(Map<Item, Pair<AccessoryType, Boolean>> map);
+    void process(Map<Item, BooleanObjectPair<AccessoryType>> map);
 }

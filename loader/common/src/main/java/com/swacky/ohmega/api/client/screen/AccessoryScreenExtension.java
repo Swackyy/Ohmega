@@ -18,10 +18,10 @@ import java.util.function.Consumer;
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
  */
 public abstract class AccessoryScreenExtension {
-    private final AbstractContainerScreen<?> screen;
-    private final IAccessoryScreen accessoryScreen;
-    private final AccessoryMenuExtension menuExtension;
-    private final List<AbstractWidget> overlayWidgets = new ArrayList<>();
+    private final @NonNull AbstractContainerScreen<?> screen;
+    private final @NonNull IAccessoryScreen accessoryScreen;
+    private final @NonNull AccessoryMenuExtension menuExtension;
+    private final @NonNull List<AbstractWidget> overlayWidgets = new ArrayList<>();
 
     public AccessoryScreenExtension(@NonNull AbstractContainerScreen<?> screen, @NonNull AccessoryMenuExtension menuExtension) {
         this.screen = screen;
@@ -29,19 +29,19 @@ public abstract class AccessoryScreenExtension {
         this.menuExtension = menuExtension;
     }
 
-    public AbstractContainerScreen<?> getScreen() {
+    public @NonNull AbstractContainerScreen<?> getScreen() {
         return screen;
     }
 
-    public IAccessoryScreen getAccessoryScreen() {
+    public @NonNull IAccessoryScreen getAccessoryScreen() {
         return accessoryScreen;
     }
 
-    public AccessoryMenuExtension getMenuExtension() {
+    public @NonNull AccessoryMenuExtension getMenuExtension() {
         return menuExtension;
     }
 
-    public final List<AbstractWidget> getOverlayWidgets() {
+    public final @NonNull List<AbstractWidget> getOverlayWidgets() {
         return overlayWidgets;
     }
 
@@ -50,7 +50,7 @@ public abstract class AccessoryScreenExtension {
      * The origin position will be relative to the position of the accessory extension
      * @return a list of clickable accessory extension regions as {@link Rect2i}s
      */
-    public abstract List<Rect2i> getRects();
+    public abstract @NonNull List<Rect2i> getRects();
 
     /**
      * Get the width of the extension
@@ -184,10 +184,10 @@ public abstract class AccessoryScreenExtension {
     public abstract boolean hasClickedOutside(double mx, double my);
 
     public static final class WidgetAdder {
-        private final Consumer<AbstractWidget> consumer;
-        private final List<AbstractWidget> overlayWidgets;
+        private final @NonNull Consumer<AbstractWidget> consumer;
+        private final @NonNull List<AbstractWidget> overlayWidgets;
 
-        public WidgetAdder(Consumer<AbstractWidget> consumer, List<AbstractWidget> overlayWidgets) {
+        public WidgetAdder(@NonNull Consumer<AbstractWidget> consumer, @NonNull List<AbstractWidget> overlayWidgets) {
             this.consumer = consumer;
             this.overlayWidgets = overlayWidgets;
         }
@@ -196,7 +196,7 @@ public abstract class AccessoryScreenExtension {
          * Simply add a widget to the screen
          * @param widget generic widget to add
          */
-        public void add(AbstractWidget widget) {
+        public void add(@NonNull AbstractWidget widget) {
             consumer.accept(widget);
         }
 
@@ -204,7 +204,7 @@ public abstract class AccessoryScreenExtension {
          * Simply add a widget to the screen that will be rendered after everything else
          * @param widget generic widget to add
          */
-        public void addOverlay(AbstractWidget widget) {
+        public void addOverlay(@NonNull AbstractWidget widget) {
             overlayWidgets.add(widget);
         }
     }

@@ -2,10 +2,11 @@ package com.swacky.ohmega.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +14,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public final class OhmegaHooks {
         return IMPL.mobVisibility(stack, targetingEntity, original);
     }
 
-    public static Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
+    public static Map<Item, BooleanObjectPair<AccessoryType>> overrideTypes() {
         return IMPL.overrideTypes();
     }
 
@@ -106,8 +106,8 @@ public final class OhmegaHooks {
         return IMPL.renderPre(state, stack);
     }
 
-    public static boolean unequip(LivingEntity entity, ItemStack stack) {
-        return IMPL.unequip(entity, stack);
+    public static boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
+        return IMPL.unequip(entity, stack, context);
     }
 
     public interface Service {
@@ -139,7 +139,7 @@ public final class OhmegaHooks {
 
         double mobVisibility(ItemStack stack, Entity targetingEntity, double original);
 
-        Map<Item, Pair<AccessoryType, Boolean>> overrideTypes();
+        Map<Item, BooleanObjectPair<AccessoryType>> overrideTypes();
 
         boolean preferInventoryTick(ItemStack stack, boolean original);
 
@@ -153,6 +153,6 @@ public final class OhmegaHooks {
 
         boolean renderPre(LivingEntityRenderState state, PoseStack stack);
 
-        boolean unequip(LivingEntity entity, ItemStack stack);
+        boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context);
     }
 }

@@ -3,7 +3,7 @@ package com.swacky.ohmega.event;
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -92,17 +93,17 @@ public final class ClientEvents {
 
             return new IClientCommandSource() {
                 @Override
-                public void sendSuccess(Component message) {
+                public void sendSuccess(@NonNull Component message) {
                     source.sendFeedback(message);
                 }
 
                 @Override
-                public void sendError(Component message) {
+                public void sendError(@NonNull Component message) {
                     source.sendError(message);
                 }
 
                 @Override
-                public LocalPlayer getPlayer() {
+                public @NonNull LocalPlayer getPlayer() {
                     return source.getPlayer();
                 }
             };

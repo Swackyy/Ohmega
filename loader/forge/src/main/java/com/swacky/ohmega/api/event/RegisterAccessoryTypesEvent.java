@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.event;
 
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;

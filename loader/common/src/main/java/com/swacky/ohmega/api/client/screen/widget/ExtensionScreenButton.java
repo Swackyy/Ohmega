@@ -10,12 +10,12 @@ import org.jspecify.annotations.NonNull;
  * A button that will only appear visible if the accessory extension is visible
  */
 public abstract class ExtensionScreenButton extends HoverableButton {
-    protected final AbstractContainerScreen<?> screen;
-    protected final IAccessoryScreen accessoryScreen;
+    protected final @NonNull AbstractContainerScreen<?> screen;
+    protected final @NonNull IAccessoryScreen accessoryScreen;
     private final int desiredX;
     private final int desiredY;
 
-    public ExtensionScreenButton(AbstractContainerScreen<?> screen, int x, int y, int width, int height, Identifier textureLocation) {
+    public ExtensionScreenButton(@NonNull AbstractContainerScreen<?> screen, int x, int y, int width, int height, @NonNull Identifier textureLocation) {
         super(x, y, width, height, textureLocation);
 
         this.screen = screen;

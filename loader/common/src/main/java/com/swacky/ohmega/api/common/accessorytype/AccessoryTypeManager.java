@@ -1,11 +1,11 @@
-package com.swacky.ohmega.common.accessorytype;
+package com.swacky.ohmega.api.common.accessorytype;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.reflect.TypeToken;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
+import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -13,7 +13,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NonNull;
@@ -27,20 +26,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Data holder class for {@link AccessoryType}s, a resource listener that will fetch types from found JSONs
+ * <p>
+ * Types are stored as a {@link HashMap} with their {@link Identifier}s as the keys to reduce fetch time
+ */
 public final class AccessoryTypeManager extends SimplePreparableReloadListener<Map<Identifier, AccessoryType>> {
-    private static final AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
-    private static final Logger LOGGER = LogManager.getLogger();
-    public static final String LOCATION = Ohmega.MODID + "/accessory_types.json";
-    private static final TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
-    private static final Map<Identifier, AccessoryType> TYPES = new HashMap<>();
-    private static final List<Runnable> DEFERRED_APPLY = new ArrayList<>();
-    private static final List<Runnable> DEFERRED_CONFIG_LOAD = new ArrayList<>();
+    private static final @NonNull AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
+    private static final @NonNull Logger LOGGER = LogManager.getLogger();
+    public static final @NonNull String LOCATION = Ohmega.MODID + "/accessory_types.json";
+    private static final @NonNull TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
+    private static final @NonNull Map<Identifier, AccessoryType> TYPES = new HashMap<>();
+    private static final @NonNull List<Runnable> DEFERRED_APPLY = new ArrayList<>();
+    private static final @NonNull List<Runnable> DEFERRED_CONFIG_LOAD = new ArrayList<>();
 
-    private static Map<Item, Pair<AccessoryType, Boolean>> ACCESSORY_TYPE_OVERRIDES;
+    private static @Nullable Map<Item, BooleanObjectPair<AccessoryType>> ACCESSORY_TYPE_OVERRIDES;
 
     private AccessoryTypeManager() {}
 
-    public static AccessoryTypeManager getInstance() {
+    /**
+     * Retrieve the singleton instance of the accessory type manager.
+     * You shouldn't need to use this as all methods are {@code static}
+     * @return the singleton {@link AccessoryTypeManager} instance
+     */
+    public static @NonNull AccessoryTypeManager getInstance() {
         return INSTANCE;
     }
 
@@ -81,7 +90,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         return map;
     }
 
-    private static void apply(Map<Identifier, AccessoryType> types) {
+    private static void apply(@NonNull Map<Identifier, AccessoryType> types) {
         TYPES.clear();
         TYPES.put(AccessoryType.NONE.getId(), AccessoryType.NONE);
         TYPES.putAll(types);
@@ -102,7 +111,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         OhmegaTags.refresh();
     }
 
-    public static void apply(Collection<AccessoryType> types) {
+    public static void apply(@NonNull Collection<AccessoryType> types) {
         Map<Identifier, AccessoryType> map = new HashMap<>(types.size());
 
         for (AccessoryType type : types) {
@@ -131,18 +140,22 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         ACCESSORY_TYPE_OVERRIDES = null;
     }
 
-    public static void deferApply(Runnable runnable) {
+    public static void deferApply(@NonNull Runnable runnable) {
         DEFERRED_APPLY.add(runnable);
     }
 
     public static void runDeferredAwaitingConfigLoad() {
-        if (DEFERRED_CONFIG_LOAD != null) {
-            DEFERRED_CONFIG_LOAD.forEach(Runnable::run);
-            DEFERRED_CONFIG_LOAD.clear();
-        }
+        DEFERRED_CONFIG_LOAD.forEach(Runnable::run);
+        DEFERRED_CONFIG_LOAD.clear();
     }
 
-    public static @Nullable Pair<AccessoryType, Boolean> getTypeOverride(Item item) {
+    /**
+     * Retrieve the possible type override on an item
+     * @param item the item to query
+     * @return the override data as a pair of boolean hard ({@code true}) or soft ({@code false}) override and {@link AccessoryType},
+     * or {@code null} if no override is present for the provided {@link Item}
+     */
+    public static @Nullable BooleanObjectPair<AccessoryType> getTypeOverride(@NonNull Item item) {
         if (ACCESSORY_TYPE_OVERRIDES != null) {
             return ACCESSORY_TYPE_OVERRIDES.get(item);
         }
@@ -150,15 +163,29 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         return null;
     }
 
-    public static Collection<AccessoryType> getTypes() {
+    /**
+     * Retrieve all known {@link AccessoryType}s
+     * @return all accessory types located and stored by the {@link AccessoryTypeManager} at the given instant.
+     * It is data-based and so should be empty when not in-world
+     */
+    public static @NonNull Collection<AccessoryType> getTypes() {
         return TYPES.values();
     }
 
-    public static ImmutableSet<Identifier> getTypeIdentifiers() {
-        return ImmutableSet.copyOf(TYPES.keySet());
+    /**
+     * Get the {@link AccessoryType} identifier keyset
+     * @return the backing keyset for the type map
+     */
+    public static @NonNull Set<Identifier> getTypeIdentifiers() {
+        return TYPES.keySet();
     }
 
-    public static @NonNull AccessoryType get(Identifier id) {
+    /**
+     * Attempt to find the known accessory type with the given unique ID
+     * @param id unique identifier for the type
+     * @return the {@link AccessoryType} if found, {@link AccessoryType#NONE} if no type is present with the given ID
+     */
+    public static @NonNull AccessoryType get(@NonNull Identifier id) {
         AccessoryType candidate = TYPES.get(id);
 
         if (candidate != null) {
@@ -168,7 +195,12 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         return AccessoryType.NONE;
     }
 
-    public static boolean exists(Identifier id) {
+    /**
+     * Check whether a type with the specified {@link Identifier} key exists
+     * @param id unique identifier for the type
+     * @return {@code true} if found, {@code false} otherwise
+     */
+    public static boolean exists(@Nullable Identifier id) {
         if (id != null) {
             return TYPES.containsKey(id);
         }

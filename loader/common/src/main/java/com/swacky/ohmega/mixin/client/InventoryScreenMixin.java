@@ -47,19 +47,19 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public IntLazySavedValue getAccessoryExtensionX() {
+    public @NonNull IntLazySavedValue getAccessoryExtensionX() {
         return OhmegaConfig.Client.getData().survivalExtensionX();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public IntLazySavedValue getAccessoryExtensionY() {
+    public @NonNull IntLazySavedValue getAccessoryExtensionY() {
         return OhmegaConfig.Client.getData().survivalExtensionY();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
+    public @NonNull IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
         return switch (style) {
             case DEFAULT -> IntIntPair.of(132, 61);
             case LEGACY -> IntIntPair.of(27, 9);

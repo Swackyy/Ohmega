@@ -27,22 +27,23 @@ public class AngelRing extends Item implements IAccessory {
         super(properties);
     }
 
-    // This method uses the utility class to easily add tooltips onto the accessory
+    // This method uses the utility class to easily add tooltips onto the accessory.
+    // The accessory type tooltip is added internally by Ohmega
     @SuppressWarnings("deprecation")
     @Override
     public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, @NonNull TooltipFlag flag) {
         tooltip.accept(AccessoryHelper.getBindTooltip(stack));
     }
 
-    // Activates the accessory when you equip it
+    // Activates the accessory upon equipping
     @Override
     public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
         AccessoryHelper.setActive(entity, stack, true);
     }
 
-    // Deactivates when unequipped, also this makes it not force a creative player to stop flying when taking off the accessory
+    // Deactivates and prevents a player in survival from flying upon un-equipping
     @Override
-    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
+    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
         if (entity instanceof Player player && !(player.isCreative() || player.isSpectator())) {
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;
@@ -70,7 +71,7 @@ public class AngelRing extends Item implements IAccessory {
         AccessoryHelper.toggleActive(player, stack);
     }
 
-    // Makes the accessory have the enchanted glint when equipped
+    // Makes the accessory have the enchanted glint when equipped.
     // No super() call as it may be confusing if active when enchanted, and is not intended to be enchantable.
     @Override
     public boolean isFoil(@NonNull ItemStack stack) {

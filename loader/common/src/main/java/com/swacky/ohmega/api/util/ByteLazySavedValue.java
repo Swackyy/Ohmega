@@ -2,14 +2,15 @@ package com.swacky.ohmega.api.util;
 
 import org.apache.commons.lang3.function.ByteConsumer;
 import org.apache.commons.lang3.function.ByteSupplier;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Non-boxing byte implementation of {@link AbstractLazySavedValue}
  */
 public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
-    private final ByteSupplier getter;
-    private final ByteConsumer setter;
+    private final @Nullable ByteSupplier getter;
+    private final @Nullable ByteConsumer setter;
 
     private byte value;
 
@@ -28,7 +29,7 @@ public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static ByteLazySavedValue of(byte value) {
+    public static @NonNull ByteLazySavedValue of(byte value) {
         ByteLazySavedValue instance = new ByteLazySavedValue(null, null);
         instance.value = value;
 
@@ -36,13 +37,15 @@ public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
     }
 
     @Override
-    public Byte getObject() {
+    public @NonNull Byte getObject() {
         return get();
     }
 
     @Override
-    public void setObject(Byte value) {
-        set(value);
+    public void setObject(@Nullable Byte value) {
+        if (value != null) {
+            set(value);
+        }
     }
 
     /**

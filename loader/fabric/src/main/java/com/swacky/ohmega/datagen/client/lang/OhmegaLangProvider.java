@@ -1,7 +1,7 @@
 package com.swacky.ohmega.datagen.client.lang;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;

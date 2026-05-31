@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.util;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.DoubleConsumer;
@@ -9,8 +10,8 @@ import java.util.function.DoubleSupplier;
  * Non-boxing double implementation of {@link AbstractLazySavedValue}
  */
 public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
-    private final DoubleSupplier getter;
-    private final DoubleConsumer setter;
+    private final @Nullable DoubleSupplier getter;
+    private final @Nullable DoubleConsumer setter;
 
     private double value;
 
@@ -29,7 +30,7 @@ public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static DoubleLazySavedValue of(double value) {
+    public static @NonNull DoubleLazySavedValue of(double value) {
         DoubleLazySavedValue instance = new DoubleLazySavedValue(null, null);
         instance.value = value;
 
@@ -37,13 +38,15 @@ public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
     }
 
     @Override
-    public Double getObject() {
+    public @NonNull Double getObject() {
         return get();
     }
 
     @Override
-    public void setObject(Double value) {
-        set(value);
+    public void setObject(@Nullable Double value) {
+        if (value != null) {
+            set(value);
+        }
     }
 
     /**

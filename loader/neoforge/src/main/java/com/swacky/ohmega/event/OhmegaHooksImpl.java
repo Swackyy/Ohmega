@@ -24,7 +24,8 @@ import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -113,8 +114,8 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public Map<Item, Pair<AccessoryType, Boolean>> overrideTypes() {
-        Map<Item, Pair<AccessoryType, Boolean>> map = new IdentityHashMap<>();
+    public Map<Item, BooleanObjectPair<AccessoryType>> overrideTypes() {
+        Map<Item, BooleanObjectPair<AccessoryType>> map = new IdentityHashMap<>();
 
         ModLoader.postEvent(new AccessoryOverrideTypesEvent(map));
         return map;
@@ -154,7 +155,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean unequip(LivingEntity entity, ItemStack stack) {
-        return NeoForge.EVENT_BUS.post(new AccessoryUnequipEvent(entity, stack)).isCanceled();
+    public boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
+        return NeoForge.EVENT_BUS.post(new AccessoryUnequipEvent(entity, stack, context)).isCanceled();
     }
 }

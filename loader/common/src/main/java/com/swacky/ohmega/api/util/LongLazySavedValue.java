@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.util;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.LongConsumer;
@@ -9,8 +10,8 @@ import java.util.function.LongSupplier;
  * Non-boxing long implementation of {@link AbstractLazySavedValue}
  */
 public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
-    private final LongSupplier getter;
-    private final LongConsumer setter;
+    private final @Nullable LongSupplier getter;
+    private final @Nullable LongConsumer setter;
 
     private long value;
 
@@ -29,7 +30,7 @@ public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static LongLazySavedValue constant(long value) {
+    public static @NonNull LongLazySavedValue constant(long value) {
         LongLazySavedValue instance = new LongLazySavedValue(null, null);
         instance.value = value;
 
@@ -37,13 +38,15 @@ public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
     }
 
     @Override
-    public Long getObject() {
+    public @NonNull Long getObject() {
         return get();
     }
 
     @Override
-    public void setObject(Long value) {
-        set(value);
+    public void setObject(@Nullable Long value) {
+        if (value != null) {
+            set(value);
+        }
     }
 
     /**

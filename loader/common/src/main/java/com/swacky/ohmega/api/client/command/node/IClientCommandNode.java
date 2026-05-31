@@ -30,6 +30,6 @@ public interface IClientCommandNode {
     }
 
     interface Factory {
-        <T extends SharedSuggestionProvider> @NonNull IClientCommandNode construct(@NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<T> builder, IClientCommandSource.Factory<T> sourceFactory);
+        <T extends SharedSuggestionProvider> @NonNull IClientCommandNode construct(@NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<T> builder, IClientCommandSource.@NonNull Factory<T> sourceFactory);
     }
 }

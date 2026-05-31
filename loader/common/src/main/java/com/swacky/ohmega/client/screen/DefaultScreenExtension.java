@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
     }
 
     @Override
-    public List<Rect2i> getRects() {
+    public @NonNull List<Rect2i> getRects() {
         // todo: check for fill direction
         return List.of(
                 new Rect2i(

@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.client.screen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Implement this on your {@link IAccessoryScreen} if you want to be able to render a flippable entity in it
@@ -16,5 +17,5 @@ public interface IEntityRenderingScreen {
      * Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      * @return the position to add the {@link FlipEntityButton}
      */
-    IntIntPair getFlipEntityButtonPosition();
+    @NonNull IntIntPair getFlipEntityButtonPosition();
 }

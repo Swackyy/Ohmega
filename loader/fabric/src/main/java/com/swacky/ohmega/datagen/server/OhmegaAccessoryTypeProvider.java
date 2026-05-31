@@ -2,7 +2,7 @@ package com.swacky.ohmega.datagen.server;
 
 import com.swacky.ohmega.api.datagen.server.AccessoryTypeProvider;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import net.minecraft.data.PackOutput;
 
 public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {

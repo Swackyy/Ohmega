@@ -9,6 +9,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.EquipContext;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -52,7 +53,7 @@ public final class ClearCommand implements ICommandNode {
         int rollingCount = 0;
 
         for (LivingEntity target : CommandHelper.convertLiving(targets)) {
-            rollingCount += AccessoryHelper.getData(target).clearMatchingItems(target, filter, max);
+            rollingCount += AccessoryHelper.getData(target).clearMatchingItems(target, filter, max, EquipContext.COMMAND);
         }
 
         if (rollingCount == 0) {

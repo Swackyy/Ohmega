@@ -4,6 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.swacky.ohmega.api.client.command.node.IClientCommandNode;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
+import org.jspecify.annotations.NonNull;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
  * These are only available on the client
  */
 public final class OhmegaClientCommandNodes {
-    private static final Map<String, IClientCommandNode.Factory> NODES = new IdentityHashMap<>();
+    private static final @NonNull Map<String, IClientCommandNode.Factory> NODES = new IdentityHashMap<>();
 
     /**
      * Register a client command node
@@ -21,7 +22,7 @@ public final class OhmegaClientCommandNodes {
      * @param factory a function reference, usually to your {@link IClientCommandNode} constructor
      * @return {@code true} if registered successfully, {@code false} otherwise
      */
-    public static boolean register(String key, IClientCommandNode.Factory factory) {
+    public static boolean register(@NonNull String key, IClientCommandNode.@NonNull Factory factory) {
         if (!NODES.containsKey(key)) {
             NODES.put(key, factory);
             return true;
@@ -35,7 +36,7 @@ public final class OhmegaClientCommandNodes {
      * @param context build context supplied by command registration
      * @param builder the root {@code /ohmegac} literal to build on
      */
-    public static <T extends SharedSuggestionProvider> void registerNodes(CommandBuildContext context, LiteralArgumentBuilder<T> builder, IClientCommandSource.Factory<T> sourceFactory) {
+    public static <T extends SharedSuggestionProvider> void registerNodes(@NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<T> builder, IClientCommandSource.@NonNull Factory<T> sourceFactory) {
         for (Map.Entry<String, IClientCommandNode.Factory> entry : NODES.entrySet()) {
             LiteralArgumentBuilder<T> node = LiteralArgumentBuilder.literal(entry.getKey());
 

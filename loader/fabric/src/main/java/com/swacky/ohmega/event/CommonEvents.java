@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;

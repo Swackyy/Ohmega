@@ -26,17 +26,17 @@ public interface IMixinAccessoryScreen extends IAccessoryScreen {
     }
 
     @Override
-    default IntLazySavedValue getAccessoryExtensionX() {
+    default @NonNull IntLazySavedValue getAccessoryExtensionX() {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 
     @Override
-    default IntLazySavedValue getAccessoryExtensionY() {
+    default @NonNull IntLazySavedValue getAccessoryExtensionY() {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 
     @Override
-    default IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
+    default @NonNull IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 }

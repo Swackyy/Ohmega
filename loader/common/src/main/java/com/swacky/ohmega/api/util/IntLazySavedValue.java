@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.util;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.IntConsumer;
@@ -9,8 +10,8 @@ import java.util.function.IntSupplier;
  * Non-boxing integer implementation of {@link AbstractLazySavedValue}
  */
 public class IntLazySavedValue extends AbstractLazySavedValue<Integer> {
-    private final IntSupplier getter;
-    private final IntConsumer setter;
+    private final @Nullable IntSupplier getter;
+    private final @Nullable IntConsumer setter;
 
     private int value;
 
@@ -29,7 +30,7 @@ public class IntLazySavedValue extends AbstractLazySavedValue<Integer> {
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static IntLazySavedValue of(int value) {
+    public static @NonNull IntLazySavedValue of(int value) {
         IntLazySavedValue instance = new IntLazySavedValue(null, null);
         instance.value = value;
 
@@ -37,13 +38,15 @@ public class IntLazySavedValue extends AbstractLazySavedValue<Integer> {
     }
 
     @Override
-    public Integer getObject() {
+    public @NonNull Integer getObject() {
         return get();
     }
 
     @Override
-    public void setObject(Integer value) {
-        set(value);
+    public void setObject(@Nullable Integer value) {
+        if (value != null) {
+            set(value);
+        }
     }
 
     /**

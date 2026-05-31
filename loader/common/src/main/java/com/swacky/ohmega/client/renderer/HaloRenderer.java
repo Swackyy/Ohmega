@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A renderer for the {@link AngelRing} item.
@@ -30,7 +31,7 @@ public class HaloRenderer implements ILivingAccessoryRenderer {
     }
 
     @Override
-    public void submit(LivingRenderContext context) {
+    public void submit(@NonNull LivingRenderContext context) {
         if (!context.state.isInvisible) {
             ModelPart root = context.parentModel.root();
 

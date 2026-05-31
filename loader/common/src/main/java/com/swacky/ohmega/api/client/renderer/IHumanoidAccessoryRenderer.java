@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Accessory renderer interface for humanoid entities
@@ -11,6 +12,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
  */
 public interface IHumanoidAccessoryRenderer extends IAccessoryRenderer<HumanoidRenderContext> {
     interface Factory {
-        IHumanoidAccessoryRenderer construct(EntityRendererProvider.Context providerContext);
+        @NonNull IHumanoidAccessoryRenderer construct(EntityRendererProvider.@NonNull Context providerContext);
     }
 }

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;

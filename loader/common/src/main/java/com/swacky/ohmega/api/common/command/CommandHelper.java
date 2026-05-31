@@ -6,17 +6,18 @@ import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class CommandHelper {
-    public static final String CONTEXT_HOVER = context("hover");
-    public static final String EXCEPTION_ARGUMENT_LIVING_ONLY = exceptionArgument("living");
+    public static final @NonNull String CONTEXT_HOVER = context("hover");
+    public static final @NonNull String EXCEPTION_ARGUMENT_LIVING_ONLY = exceptionArgument("living");
 
-    public static final SimpleCommandExceptionType EXCEPTION_LIVING = new SimpleCommandExceptionType(Component.translatable(EXCEPTION_ARGUMENT_LIVING_ONLY));
+    public static final @NonNull SimpleCommandExceptionType EXCEPTION_LIVING = new SimpleCommandExceptionType(Component.translatable(EXCEPTION_ARGUMENT_LIVING_ONLY));
 
-    public static LivingEntity convertLiving(Entity target) throws CommandSyntaxException {
+    public static @NonNull LivingEntity convertLiving(@NonNull Entity target) throws CommandSyntaxException {
         if (target instanceof LivingEntity entity) {
             return entity;
         }
@@ -24,7 +25,7 @@ public final class CommandHelper {
         throw EXCEPTION_LIVING.create();
     }
 
-    public static List<LivingEntity> convertLiving(List<Entity> targets) throws CommandSyntaxException {
+    public static @NonNull List<LivingEntity> convertLiving(@NonNull List<Entity> targets) throws CommandSyntaxException {
         List<LivingEntity> list = new ArrayList<>(targets.size());
 
         for (Entity target : targets) {
@@ -38,54 +39,54 @@ public final class CommandHelper {
         return list;
     }
 
-    private static Builder builder() {
+    private static @NonNull Builder builder() {
         return new Builder()
                 .add("command")
                 .add(Ohmega.MODID);
     }
 
-    public static String context(String suffix) {
+    public static @NonNull String context(@NonNull String suffix) {
         return builder().add("context").add(suffix).toString();
     }
 
-    public static String exception(String suffix) {
+    public static @NonNull String exception(@NonNull String suffix) {
         return builder().add("exception").add(suffix).toString();
     }
 
-    public static String exceptionArgument(String suffix) {
+    public static @NonNull String exceptionArgument(@NonNull String suffix) {
         return exception("argument." + suffix);
     }
 
-    public static Builder command(String command) {
+    public static @NonNull Builder command(@NonNull String command) {
         return builder().add(command);
     }
 
     public static final class Builder {
-        private final List<String> components = new ArrayList<>(2);
+        private final @NonNull List<String> components = new ArrayList<>(2);
 
-        public Builder add(String component) {
+        public @NonNull Builder add(@NonNull String component) {
             components.add(component);
             return this;
         }
 
-        public String feedback(String suffix) {
+        public @NonNull String feedback(@NonNull String suffix) {
             return add("feedback").add(suffix).toString();
         }
 
-        public String feedback() {
+        public @NonNull String feedback() {
             return add("feedback").toString();
         }
 
-        public String exception(String suffix) {
+        public @NonNull String exception(@NonNull String suffix) {
             return add("exception").add(suffix).toString();
         }
 
-        public String exception() {
+        public @NonNull String exception() {
             return add("exception").toString();
         }
 
         @Override
-        public String toString() {
+        public @NonNull String toString() {
             return String.join(".", components);
         }
     }

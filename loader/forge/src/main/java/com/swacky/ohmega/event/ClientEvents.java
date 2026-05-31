@@ -4,7 +4,7 @@ import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import org.jspecify.annotations.NonNull;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
@@ -99,17 +100,17 @@ public final class ClientEvents {
 
             return new IClientCommandSource() {
                 @Override
-                public void sendSuccess(Component message) {
+                public void sendSuccess(@NonNull Component message) {
                     source.sendSuccess(() -> message, false);
                 }
 
                 @Override
-                public void sendError(Component message) {
+                public void sendError(@NonNull Component message) {
                     source.sendFailure(message);
                 }
 
                 @Override
-                public LocalPlayer getPlayer() {
+                public @NonNull LocalPlayer getPlayer() {
                     return Minecraft.getInstance().player;
                 }
             };

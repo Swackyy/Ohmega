@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.util;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -12,7 +13,7 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
     private final @Nullable Supplier<T> getter;
     private final @Nullable Consumer<T> setter;
 
-    private T value = null;
+    private @Nullable T value = null;
 
     /**
      * Construct a new {@link LazySavedValue}
@@ -29,7 +30,7 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static <T> LazySavedValue<T> of(T value) {
+    public static <T> @NonNull LazySavedValue<T> of(T value) {
         LazySavedValue<T> instance = new LazySavedValue<>(null, null);
         instance.value = value;
 
@@ -37,7 +38,7 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
     }
 
     @Override
-    public T getObject() {
+    public @Nullable T getObject() {
         if (!initialised) {
             initialised = true;
 
@@ -50,7 +51,7 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
     }
 
     @Override
-    public void setObject(T value) {
+    public void setObject(@Nullable T value) {
         initialised = true;
         this.value = value;
     }

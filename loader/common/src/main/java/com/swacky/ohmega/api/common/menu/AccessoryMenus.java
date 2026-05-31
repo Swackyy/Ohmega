@@ -4,8 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.client.ui.AccessoryUIs;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.common.item.Accessory;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.common.menu.ServerAccessoryMenuExtension;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,7 +38,7 @@ public final class AccessoryMenus {
      * @param menu parent menu
      * @param owner player which this menu belongs
      */
-    public static void onConstruct(AbstractContainerMenu menu, Player owner) {
+    public static void onConstruct(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
         if (menu instanceof IAccessoryMenu accessoryMenu) {
             ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
             int requiredCount = types.size();
@@ -206,7 +207,7 @@ public final class AccessoryMenus {
                         ItemStack stack1 = tryMoveItemStackTo(menu, stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) {
-                            AccessoryHelper.getData(player).doUnequip(player, stack1);
+                            AccessoryHelper.getData(player).doUnequip(player, stack1, EquipContext.SLOT);
                             slot.setChanged();
                         }
                     } else {
@@ -266,7 +267,7 @@ public final class AccessoryMenus {
      * @param index supplied by method override: slot index we are moving from
      * @return {@link ItemStack} after moving, or {@code null} on failing, at which point you should rely on a fallback
      */
-    public static @NonNull ItemStack onQuickMoveStack(AbstractContainerMenu menu, Player player, int index) {
+    public static @NonNull ItemStack onQuickMoveStack(@NonNull AbstractContainerMenu menu, @NonNull Player player, int index) {
         if (menu instanceof IAccessoryMenu accessoryMenu) {
             return quickMoveStack(menu, player, index, accessoryMenu.isAccessoryExtensionVisible());
         } else {

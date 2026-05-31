@@ -62,19 +62,19 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public IntLazySavedValue getAccessoryExtensionX() {
+    public @NonNull IntLazySavedValue getAccessoryExtensionX() {
         return OhmegaConfig.Client.getData().creativeExtensionX();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public IntLazySavedValue getAccessoryExtensionY() {
+    public @NonNull IntLazySavedValue getAccessoryExtensionY() {
         return OhmegaConfig.Client.getData().creativeExtensionY();
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
+    public @NonNull IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
         return switch (style) {
             case DEFAULT -> IntIntPair.of(137, 19);
             case LEGACY -> IntIntPair.of(74, 7);

@@ -1,24 +1,30 @@
-package com.swacky.ohmega.common.item;
+package com.swacky.ohmega.api.common.item;
 
-import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.common.item.IAccessory;
-import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
+ * This is not the accessory interface, but a wrapper class for it that is mostly handled internally by Ohmega,
+ * you'll want to use {@link IAccessory} instead if creating an accessory,
+ * however this wrapper may be stored as the return type of {@link Accessories#get(Item)}, hence its place in the {@code api} package
+ * <p>
  * An immutable decorator class for {@link IAccessory} that wraps functions with corresponding event invocations.
  * Every accessory will be wrapped with this class.
  */
 public final class Accessory implements IAccessory {
-    private final IAccessory inner;
+    private final @NonNull IAccessory inner;
 
-    public Accessory(IAccessory inner) {
+    /**
+     * Wrap an {@link IAccessory} instance
+     * @param inner the wrapped instance
+     */
+    public Accessory(@NonNull IAccessory inner) {
         this.inner = inner;
     }
 
@@ -29,7 +35,7 @@ public final class Accessory implements IAccessory {
      * more versatility with the API, such as for checking if other accessories are subclasses of this (wrapped) one
      * @return the wrapped {@link IAccessory} instance stored within this class
      */
-    public IAccessory unwrap() {
+    public @NonNull IAccessory unwrap() {
         return inner;
     }
 
@@ -54,9 +60,9 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
-    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
-        if (!OhmegaHooks.unequip(entity, stack)) {
-            inner.onUnequip(entity, stack);
+    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+        if (!OhmegaHooks.unequip(entity, stack, context)) {
+            inner.onUnequip(entity, stack, context);
         }
     }
 

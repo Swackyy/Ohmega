@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.client.OhmegaClientMain;
-import com.swacky.ohmega.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;

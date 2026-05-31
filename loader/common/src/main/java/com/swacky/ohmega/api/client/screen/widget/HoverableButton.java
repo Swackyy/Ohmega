@@ -12,9 +12,9 @@ import org.jspecify.annotations.NonNull;
  * A button that will change texture by offsetting by the provided height when {@link #shouldOffsetY()} returns {@code true}
  */
 public abstract class HoverableButton extends AbstractButton {
-    private final Identifier textureLocation;
+    private final @NonNull Identifier textureLocation;
 
-    public HoverableButton(int x, int y, int width, int height, Identifier textureLocation) {
+    public HoverableButton(int x, int y, int width, int height, @NonNull Identifier textureLocation) {
         // todo: change empty component to supplying one for narration
         super(x, y, width, height, CommonComponents.EMPTY);
 

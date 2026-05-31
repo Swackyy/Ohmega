@@ -1,8 +1,8 @@
 package com.swacky.ohmega.api.datagen.server;
 
 import com.google.gson.JsonObject;
-import com.swacky.ohmega.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -19,11 +19,11 @@ import java.util.concurrent.CompletableFuture;
  * Extend this, override {@link #addTypes()} and use {@link #add(String, AccessoryType.Builder)} or equivalent to add your accessory types
  */
 public abstract class AccessoryTypeProvider implements DataProvider {
-    private final PackOutput output;
-    private final String namespace;
-    private final Map<String, AccessoryType.Builder> data = new TreeMap<>();
+    private final @NonNull PackOutput output;
+    private final @NonNull String namespace;
+    private final @NonNull Map<String, AccessoryType.Builder> data = new TreeMap<>();
 
-    public AccessoryTypeProvider(PackOutput output, String namespace) {
+    public AccessoryTypeProvider(@NonNull PackOutput output, @NonNull String namespace) {
         this.output = output;
         this.namespace = namespace;
     }
@@ -57,7 +57,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
      * @param name name of this type, e.g: "normal", "utility"
      * @param builder contains the data pertaining to the accessory type
      */
-    protected void add(String name, AccessoryType.Builder builder) {
+    protected void add(@NonNull String name, AccessoryType.@NonNull Builder builder) {
         data.put(name, builder);
     }
 
@@ -65,7 +65,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
      * Same as the above method, does not differentiate by namespace. If you wish to add accessory types for another namespace,
      * use another instance of {@link AccessoryTypeProvider} passing in a different namespace to the {@code super}
      */
-    protected void add(Identifier id, AccessoryType.Builder builder) {
+    protected void add(@NonNull Identifier id, AccessoryType.@NonNull Builder builder) {
         add(id.getPath(), builder);
     }
 }

@@ -1,7 +1,7 @@
 package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.network.OhmegaByteBufCodecs;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;

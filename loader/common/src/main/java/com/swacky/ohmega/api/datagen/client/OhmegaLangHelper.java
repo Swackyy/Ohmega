@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.datagen.client;
 
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.BiConsumer;
 
@@ -8,14 +9,14 @@ import java.util.function.BiConsumer;
  * Use this to easily add translations for your own accessory types in data generation
  */
 public final class OhmegaLangHelper {
-    private final BiConsumer<String, String> adder;
-    private final String namespace;
+    private final @NonNull BiConsumer<String, String> adder;
+    private final @NonNull String namespace;
 
     /**
      * @param adder a function reference, usually to (pseudo) {@code this.add("key", "translation")}
      * @param namespace usually your mod ID, but can be whatever desired
      */
-    public OhmegaLangHelper(BiConsumer<String, String> adder, String namespace) {
+    public OhmegaLangHelper(@NonNull BiConsumer<String, String> adder, @NonNull String namespace) {
         this.adder = adder;
         this.namespace = namespace;
     }
@@ -26,7 +27,7 @@ public final class OhmegaLangHelper {
      * @param typeKey accessory type key, e.g: "normal", "utility"
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */
-    public void addType(String namespace, String typeKey, String translation) {
+    public void addType(@NonNull String namespace, @NonNull String typeKey, @NonNull String translation) {
         adder.accept("accessory_type." + namespace + '.' + typeKey, translation);
         adder.accept("tag.item." + namespace + '.' + typeKey, translation);
     }
@@ -36,7 +37,7 @@ public final class OhmegaLangHelper {
      * @param typeKey accessory type key, e.g: "normal", "utility"
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */
-    public void addType(String typeKey, String translation) {
+    public void addType(@NonNull String typeKey, @NonNull String translation) {
         addType(namespace, typeKey, translation);
     }
 
@@ -45,7 +46,7 @@ public final class OhmegaLangHelper {
      * @param item accessory item
      * @param translation translation shown when hovered, e.g: "Allows the wearer to fly"
      */
-    public void addItemTooltip(Item item, String translation) {
+    public void addItemTooltip(@NonNull Item item, @NonNull String translation) {
         adder.accept(item.getDescriptionId() + ".tooltip", translation);
     }
 
@@ -54,7 +55,7 @@ public final class OhmegaLangHelper {
      * @param item accessory item
      * @param translation translation shown when hovered, allows for '%s' replacement by the key-bind, e.g: "Press %s to toggle flight"
      */
-    public void addItemKeybindTooltip(Item item, String translation) {
+    public void addItemKeybindTooltip(@NonNull Item item, @NonNull String translation) {
         adder.accept(item.getDescriptionId() + ".tooltip.keybind", translation);
     }
 
@@ -65,7 +66,7 @@ public final class OhmegaLangHelper {
      * @param tooltipTranslation translation shown when hovered, e.g: "Allows the wearer to fly"
      * @param tooltipKeyboundTranslation translation shown when hovered, allows for '%s' replacement by the key-bind, e.g: "Press %s to toggle flight"
      */
-    public void addKeyboundItem(Item item, String translation, String tooltipTranslation, String tooltipKeyboundTranslation) {
+    public void addKeyboundItem(@NonNull Item item, @NonNull String translation, @NonNull String tooltipTranslation, @NonNull String tooltipKeyboundTranslation) {
         adder.accept(item.getDescriptionId(), translation);
         addItemTooltip(item, tooltipTranslation);
         addItemKeybindTooltip(item, tooltipKeyboundTranslation);

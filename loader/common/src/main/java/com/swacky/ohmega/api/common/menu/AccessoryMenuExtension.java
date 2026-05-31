@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -17,11 +18,11 @@ import java.util.List;
  * This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server
  */
 public abstract class AccessoryMenuExtension {
-    private final AbstractContainerMenu menu;
-    private final IAccessoryMenu accessoryMenu;
-    private final Player owner;
+    private final @NonNull AbstractContainerMenu menu;
+    private final @NonNull IAccessoryMenu accessoryMenu;
+    private final @NonNull Player owner;
 
-    private List<AccessorySlot> slots = null;
+    private @Nullable List<AccessorySlot> slots = null;
     private boolean visible = false;
 
     public AccessoryMenuExtension(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
@@ -34,7 +35,7 @@ public abstract class AccessoryMenuExtension {
      * Retrieve the actual {@link AbstractContainerMenu} instance which is also {@link #getAccessoryMenu()}
      * @return container menu bound to the extension interface holding this extension
      */
-    public AbstractContainerMenu getMenu() {
+    public @NonNull AbstractContainerMenu getMenu() {
         return menu;
     }
 
@@ -42,7 +43,7 @@ public abstract class AccessoryMenuExtension {
      * Retrieve the {@link IAccessoryMenu} which holds this as the active accessory menu extension
      * @return accessory menu interface holding this extension
      */
-    public IAccessoryMenu getAccessoryMenu() {
+    public @NonNull IAccessoryMenu getAccessoryMenu() {
         return accessoryMenu;
     }
 
@@ -50,7 +51,7 @@ public abstract class AccessoryMenuExtension {
      * Retrieve the owner of this accessory inventory
      * @return owner of the menu linked to the accessory extension
      */
-    public Player getOwner() {
+    public @NonNull Player getOwner() {
         return owner;
     }
 
@@ -59,7 +60,7 @@ public abstract class AccessoryMenuExtension {
      * This is stored as to eliminate the need for looping through all the slots just to perform operations on our custom ones
      * @return a list of strictly {@link AccessorySlot}s added with the accessory extension
      */
-    public List<AccessorySlot> getSlots() {
+    public @NonNull List<AccessorySlot> getSlots() {
         return slots;
     }
 
@@ -68,7 +69,7 @@ public abstract class AccessoryMenuExtension {
      * This is called internally and should most likely not be replicated
      * @param slots added slots
      */
-    public void setSlots(List<AccessorySlot> slots) {
+    public void setSlots(@NonNull List<AccessorySlot> slots) {
         if (this.slots == null) {
             this.slots = slots;
         } else {

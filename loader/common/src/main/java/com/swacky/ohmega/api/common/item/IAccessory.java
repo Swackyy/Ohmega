@@ -1,6 +1,5 @@
 package com.swacky.ohmega.api.common.item;
 
-import com.swacky.ohmega.common.item.Accessory;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -67,7 +66,7 @@ public interface IAccessory {
      * @param entity the {@link LivingEntity} un-equipping this accessory
      * @param stack the {@link ItemStack} of this accessory item being un-equipped
      */
-    default void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {}
+    default void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {}
 
     /**
      * Dictates if the entity can wear the accessory
@@ -117,6 +116,7 @@ public interface IAccessory {
      * @param player the {@link Player} wearing this accessory
      * @param stack {@link ItemStack} instance of the accessory in the slot which key-bind has been pressed
      */
+    // todo: split into 'onKeybindPress', 'onKeybindHold' and 'onKeybindRelease' or similar
     default void onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {}
 
     /**
