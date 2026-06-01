@@ -165,8 +165,8 @@ public final class EnUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigPortTitle("common", "%s Common Configuration");
         // Types
         internalHelper.addConfigPortType("client", "Client Settings");
-        internalHelper.addConfigPortType("server", "Common Settings");
-        internalHelper.addConfigPortType("common", "Server Settings");
+        internalHelper.addConfigPortType("server", "Server Settings");
+        internalHelper.addConfigPortType("common", "Common Settings");
         // Misc
         internalHelper.addConfigPort("notonline", "Settings in here are determined by the server and cannot be changed while online.");
         internalHelper.addConfigPort("notlan", "Settings in here cannot be edited while your game is open to LAN. Please return to the main menu and load the world again.");
@@ -209,7 +209,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
         builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When active:");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%1$s %2$s");
         internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Edit UI Magnetics");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Edit UI Nudge Down");

@@ -44,7 +44,7 @@ public final class NlNlProvider extends OhmegaLangProvider {
         helper.addType(KEY_ACCESSORY_TYPE_SPECIAL, "Speciaal");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%1$s %2$s");
         internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
         internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Open/Sluit Accessoires Inventaris");
 

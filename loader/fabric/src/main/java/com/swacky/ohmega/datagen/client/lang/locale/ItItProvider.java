@@ -43,7 +43,7 @@ public final class ItItProvider extends OhmegaLangProvider {
         helper.addType(KEY_ACCESSORY_TYPE_SPECIAL, "Speciale");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%1$s %2$s");
         internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
         internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Apri/Chiudi Inventario Accessori");
 
