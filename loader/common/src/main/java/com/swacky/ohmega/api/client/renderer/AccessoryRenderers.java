@@ -61,7 +61,7 @@ public final class AccessoryRenderers {
         return LIVING_RENDERERS.get(key);
     }
 
-    public static boolean isNoRender(@NonNull Accessory key, @NonNull EntityType<?> type) {
+    public static boolean isNoRender(@Nullable Accessory key, @NonNull EntityType<?> type) {
         if (NO_RENDERS.containsKey(key)) {
             return NO_RENDERS.get(key).test(type);
         }

@@ -17,10 +17,6 @@ public final class InternalLangHelper {
         this.builder = builder;
     }
 
-    public void addDataPackDescription(String translation) {
-        builder.add("dataPack." + Ohmega.MODID + ".description", translation);
-    }
-
     public void add(KeyMapping.Category category, String translation) {
         builder.add(((TranslatableContents) category.label().getContents()).getKey(), translation);
     }
@@ -63,5 +59,13 @@ public final class InternalLangHelper {
 
     public void addConfigPortType(String key, String translation) {
         addConfigPort("type." + key, translation);
+    }
+
+    public void addDataPackDescription(String translation) {
+        builder.add("dataPack." + Ohmega.MODID + ".description", translation);
+    }
+
+    public void addToast(String key, String translation) {
+        builder.add(Ohmega.MODID + ".toast." + key, translation);
     }
 }

@@ -12,9 +12,9 @@
     "client.ClientPacketListenerMixin",
     "client.Forge_AbstractContainerScreenMixin",
     "client.Forge_InventoryScreenMixin",
+    "client.Forge_LivingEntityRendererMixin",
     "client.KeyBindsList$KeyEntryMixin",
     "client.LayerDefinitionsMixin",
-    "client.LivingEntityRendererMixin",
     "client.LivingEntityRenderStateMixin",
     "client.ModelLayersMixin"
   ],

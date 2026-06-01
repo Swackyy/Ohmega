@@ -145,7 +145,6 @@ public final class AccessoryData {
      * Called internally when attaching this data storage to the target entity, only necessary for players
      * @param player the {@link ServerPlayer} the data is being attached to
      */
-    // todo: call on neoforge player respawn
     public void onAttach(@NonNull ServerPlayer player) {
         // If the server config gets de-synced, this fixes it instead of throwing
         reload(player);
@@ -166,6 +165,7 @@ public final class AccessoryData {
         // Initial load syncing
         syncAllData(player, player.getId(), allIndexes);
 
+        // todo: see if this can be avoided
         // Rebuild slots for InventoryMenu
         InventoryMenu menu = player.inventoryMenu;
         NonNullList<Slot> slots = menu.slots;

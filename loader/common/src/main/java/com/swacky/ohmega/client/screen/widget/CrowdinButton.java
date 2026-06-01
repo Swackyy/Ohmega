@@ -8,17 +8,19 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import org.jspecify.annotations.NonNull;
 
 public final class CrowdinButton extends HoverableButton {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/crowdin_button.png");
+    public static final String TRANSLATION_KEY = Ohmega.MODID + ".widget.crowdin";
 
     private final Screen parentScreen;
 
     public CrowdinButton(Screen parentScreen) {
-        super(6, parentScreen.height - 26, 20, 20, LOCATION);
+        super(6, parentScreen.height - 26, 20, 20, LOCATION, Component.translatable(TRANSLATION_KEY));
 
         this.parentScreen = parentScreen;
     }

@@ -31,10 +31,10 @@ public final class OhmegaNetworkingImpl {
                 .simpleChannel();
 
         // C2S
-        net.play().serverbound().addMain(SetExtensionVisiblePacket.class, SetExtensionVisiblePacket.CODEC, (packet, context) ->
-                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(ReloadDataPacket.class, ReloadDataPacket.CODEC, (_, context) ->
                 OhmegaNetworking.C2S.handleReloadContainer(Objects.requireNonNull(context.getSender())));
+        net.play().serverbound().addMain(SetExtensionVisiblePacket.class, SetExtensionVisiblePacket.CODEC, (packet, context) ->
+                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(SetHiddenPacket.class, SetHiddenPacket.CODEC, (packet, context) ->
                 OhmegaNetworking.C2S.handleSetHidden(packet, Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(UseAccessoryPacket.class, UseAccessoryPacket.CODEC, (packet, context) ->

@@ -118,15 +118,15 @@ public final class CommonEvents {
     public static void onRegisterNetwork(RegisterPayloadHandlersEvent event) {
         event.registrar("1.0")
                 .playToServer(
-                        SetExtensionVisiblePacket.TYPE,
-                        SetExtensionVisiblePacket.CODEC,
-                        new MainThreadPayloadHandler<>((packet, context) ->
-                                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, (ServerPlayer) context.player())))
-                .playToServer(
                         ReloadDataPacket.TYPE,
                         ReloadDataPacket.CODEC,
                         new MainThreadPayloadHandler<>((_, context) ->
                                 OhmegaNetworking.C2S.handleReloadContainer((ServerPlayer) context.player())))
+                .playToServer(
+                        SetExtensionVisiblePacket.TYPE,
+                        SetExtensionVisiblePacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, context) ->
+                                OhmegaNetworking.C2S.handleSetExtensionVisible(packet, (ServerPlayer) context.player())))
                 .playToServer(
                         SetHiddenPacket.TYPE,
                         SetHiddenPacket.CODEC,

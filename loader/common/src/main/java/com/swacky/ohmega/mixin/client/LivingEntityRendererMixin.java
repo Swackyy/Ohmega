@@ -2,8 +2,6 @@ package com.swacky.ohmega.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.client.renderer.AccessoryRenderLayer;
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
-import com.swacky.ohmega.client.renderer.LivingEntityRenderStateExtension;
 import com.swacky.ohmega.event.ClientCallbacks;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -31,7 +29,7 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
     @Final
     protected List<RenderLayer<U, V>> layers;
 
-    private LivingEntityRendererMixin(EntityRendererProvider.Context context) {
+    protected LivingEntityRendererMixin(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -44,19 +42,11 @@ abstract class LivingEntityRendererMixin<T extends LivingEntity, U extends Livin
     }
 
     @Inject(
-            method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
-            at = @At(
-                    value = "TAIL"))
-    private void extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTicks, CallbackInfo ci) {
-        ((LivingEntityRenderStateExtension) state).ohmega$setData(AccessoryRenderStateDataImpl.KEY, ClientCallbacks.createRenderStateData(entity));
-    }
-
-    @Inject(
             method = "submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
             at = @At(
                     value = "HEAD"),
             cancellable = true)
-    public void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState, CallbackInfo ci) {
+    private void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState, CallbackInfo ci) {
         if (ClientCallbacks.preventRender((LivingEntityRenderState) state)) {
             ci.cancel();
         }

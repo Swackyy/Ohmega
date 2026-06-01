@@ -5,6 +5,10 @@ import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
+import com.swacky.ohmega.client.screen.widget.CrowdinButton;
+import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
+import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
+import com.swacky.ohmega.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
@@ -30,22 +34,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
         InternalLangHelper internalHelper = new InternalLangHelper(builder);
-
-        // Datapack
-        internalHelper.addDataPackDescription("Mod resources for Ohmega");
-
-        // Toast
-        builder.add("toast." + Ohmega.MODID + ".translation.title", "Ohmega translations");
-        builder.add("toast." + Ohmega.MODID + ".translation.message", "Consider translating Ohmega on Crowdin through the config menu");
-
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
-
-        // Item
-        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
-                "Angel Ring",
-                "Allows the wearer to fly",
-                "Press %s to toggle flight");
-        builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When active:");
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Accessory Type: %s");
@@ -54,18 +43,6 @@ public final class EnUsProvider extends OhmegaLangProvider {
         helper.addType(KEY_ACCESSORY_TYPE_NORMAL, "Normal");
         helper.addType(KEY_ACCESSORY_TYPE_UTILITY, "Utility");
         helper.addType(KEY_ACCESSORY_TYPE_SPECIAL, "Special");
-
-        // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
-        internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Edit UI Magnetics");
-        internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Edit UI Nudge Down");
-        internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Edit UI Nudge Left");
-        internalHelper.add(OhmegaBinds.EDIT_NUDGE_RIGHT, "Edit UI Nudge Right");
-        internalHelper.add(OhmegaBinds.EDIT_NUDGE_UP, "Edit UI Nudge Up");
-        internalHelper.add(OhmegaBinds.EDIT_SHOW_LINES, "Edit UI Show Distance Lines");
-        internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Open/Close Accessory Inventory");
-        internalHelper.add(OhmegaBinds.OPEN_EDIT_UI, "Open/Close Extension Edit UI");
 
         // Commands
         // Misc
@@ -220,5 +197,37 @@ public final class EnUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigPort("restart.server.text", "One or more of the configuration option that were changed will only take effect when the world is reloaded.");
         internalHelper.addConfigPort("restart.return", "Ignore");
         internalHelper.addConfigPort("restart.return.tooltip", "Your changes will have no effect until you restart!");
+
+        // Datapack
+        internalHelper.addDataPackDescription("Mod resources for Ohmega");
+
+        // Item
+        helper.addKeyboundItem(OhmegaItems.getAngelRing(),
+                "Angel Ring",
+                "Allows the wearer to fly",
+                "Press %s to toggle flight");
+        builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When active:");
+
+        // Key-binds (type binds handled in OhmegaLangHelper)
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
+        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Edit UI Magnetics");
+        internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Edit UI Nudge Down");
+        internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Edit UI Nudge Left");
+        internalHelper.add(OhmegaBinds.EDIT_NUDGE_RIGHT, "Edit UI Nudge Right");
+        internalHelper.add(OhmegaBinds.EDIT_NUDGE_UP, "Edit UI Nudge Up");
+        internalHelper.add(OhmegaBinds.EDIT_SHOW_LINES, "Edit UI Show Distance Lines");
+        internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Open/Close Accessory Inventory");
+        internalHelper.add(OhmegaBinds.OPEN_EDIT_UI, "Open/Close Extension Edit UI");
+
+        // Toast
+        internalHelper.addToast("translation.title", "Ohmega translations");
+        internalHelper.addToast("translation.message", "Consider translating Ohmega on Crowdin through the config menu");
+
+        // Widget
+        builder.add(CrowdinButton.TRANSLATION_KEY, "Crowdin");
+        builder.add(FlipEntityButton.TRANSLATION_KEY, "Flip Entity");
+        builder.add(ToggleExtensionButton.TRANSLATION_KEY, "Toggle Extension");
+        builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Toggle Visibility");
     }
 }

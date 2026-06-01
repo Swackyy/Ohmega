@@ -19,6 +19,7 @@
     "client.EffectsInInventoryMixin",
     "client.InventoryScreenMixin",
     "client.ItemPickerMenuMixin",
+    "client.LivingEntityRendererMixin",
     "client.MinecraftMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RecipeBookComponentMixin",

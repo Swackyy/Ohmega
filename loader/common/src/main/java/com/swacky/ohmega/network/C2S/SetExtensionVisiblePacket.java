@@ -7,7 +7,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
-// todo: reorder on forge and neo
 public record SetExtensionVisiblePacket(boolean value) implements CustomPacketPayload {
     public static final Type<@NonNull SetExtensionVisiblePacket> TYPE = new Type<>(Ohmega.id("set_extension_visible"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SetExtensionVisiblePacket> CODEC = StreamCodec.composite(

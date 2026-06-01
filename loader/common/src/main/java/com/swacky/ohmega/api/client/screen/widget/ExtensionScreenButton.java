@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.client.screen.widget;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
@@ -15,8 +16,8 @@ public abstract class ExtensionScreenButton extends HoverableButton {
     private final int desiredX;
     private final int desiredY;
 
-    public ExtensionScreenButton(@NonNull AbstractContainerScreen<?> screen, int x, int y, int width, int height, @NonNull Identifier textureLocation) {
-        super(x, y, width, height, textureLocation);
+    public ExtensionScreenButton(@NonNull AbstractContainerScreen<?> screen, int x, int y, int width, int height, @NonNull Identifier textureLocation, @NonNull Component component) {
+        super(x, y, width, height, textureLocation, component);
 
         this.screen = screen;
         this.accessoryScreen = (IAccessoryScreen) screen;

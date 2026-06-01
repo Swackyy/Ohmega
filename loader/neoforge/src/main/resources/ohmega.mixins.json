@@ -8,7 +8,6 @@
   ],
   "client": [
     "client.ClientPacketListenerMixin",
-    "client.LivingEntityRendererMixin",
     "client.NeoForge_AbstractContainerScreenMixin",
     "client.NeoForge_InventoryScreenMixin"
   ],

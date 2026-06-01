@@ -120,16 +120,19 @@ public final class ClientCallbacks {
                 OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().buttonStyle().getObject();
                 IntIntPair buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
 
-                rects.add(new Rect2i(
-                        screen.leftPos + buttonPosition.firstInt(),
-                        screen.topPos + buttonPosition.secondInt(),
-                        buttonStyle.width,
-                        buttonStyle.height));
-                rects.add(new Rect2i(
-                        screen.leftPos + accessoryScreen.getAccessoryExtensionX().get(),
-                        screen.topPos + accessoryScreen.getAccessoryExtensionY().get(),
-                        extension.getWidth(),
-                        extension.getHeight()));
+                if (buttonStyle != null) {
+                    rects.add(new Rect2i(
+                            screen.leftPos + buttonPosition.firstInt(),
+                            screen.topPos + buttonPosition.secondInt(),
+                            buttonStyle.width,
+                            buttonStyle.height));
+                    rects.add(new Rect2i(
+                            screen.leftPos + accessoryScreen.getAccessoryExtensionX().get(),
+                            screen.topPos + accessoryScreen.getAccessoryExtensionY().get(),
+                            extension.getWidth(),
+                            extension.getHeight()));
+                }
+
                 return rects;
             }
         }
