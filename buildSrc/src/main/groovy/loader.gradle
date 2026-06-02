@@ -55,11 +55,11 @@ processResources {
 
     var replaceProperties = [
             license                              : license,
+            loaderFabricVRange                   : loaderFabricVRange,
             loaderForgeV                         : loaderForgeV,
             loaderForgeVRange                    : loaderForgeVRange,
             loaderNeoV                           : loaderNeoV,
             loaderNeoVRange                      : loaderNeoVRange,
-            loaderFabricVRange                   : loaderFabricVRange,
             modId                                : modId,
             modV                                 : modV,
             modAuthors                           : modAuthorsDisplay,

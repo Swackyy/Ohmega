@@ -206,7 +206,7 @@ public final class ClientCallbacks {
         }
     }
 
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "ConditionCoveredByFurtherCondition"})
     public static void onKeyInput(KeyEvent event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
@@ -274,7 +274,7 @@ public final class ClientCallbacks {
                     }
                 }
             } else {
-                if (!(screen instanceof EditUiScreen) && OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen.getFocused() instanceof EditBox)) {
+                if (!(screen instanceof EditUiScreen) && screen instanceof IAccessoryScreen && OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen.getFocused() instanceof EditBox)) {
                     mc.setScreen(new EditUiScreen(screen, player));
                 }
             }
