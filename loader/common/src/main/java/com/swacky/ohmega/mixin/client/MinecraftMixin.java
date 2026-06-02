@@ -2,10 +2,8 @@ package com.swacky.ohmega.mixin.client;
 
 import com.mojang.blaze3d.platform.WindowEventHandler;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
-import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.main.GameConfig;
 import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -23,14 +21,6 @@ abstract class MinecraftMixin extends ReentrantBlockableEventLoop<Runnable> impl
 
     private MinecraftMixin(String name, boolean propagatesCrashes) {
         super(name, propagatesCrashes);
-    }
-
-    @Inject(
-            method = "<init>",
-            at = @At(
-                    value = "RETURN"))
-    private void init(GameConfig config, CallbackInfo ci) {
-        OhmegaHooks.accessoryBind();
     }
 
     @Inject(
