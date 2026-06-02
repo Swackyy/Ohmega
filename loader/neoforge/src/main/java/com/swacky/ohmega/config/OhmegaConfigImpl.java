@@ -7,15 +7,24 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class OhmegaConfigImpl {
     private static BooleanLazySavedValue wrapBoolean(ModConfigSpec.ConfigValue<Boolean> nativeValue) {
-        return new BooleanLazySavedValue(nativeValue::get, nativeValue::set);
+        return new BooleanLazySavedValue(nativeValue::get, value -> {
+            nativeValue.set(value);
+            nativeValue.save();
+        });
     }
 
     private static IntLazySavedValue wrapInt(ModConfigSpec.ConfigValue<Integer> nativeValue) {
-        return new IntLazySavedValue(nativeValue::get, nativeValue::set);
+        return new IntLazySavedValue(nativeValue::get, value -> {
+            nativeValue.set(value);
+            nativeValue.save();
+        });
     }
 
     private static <T> LazySavedValue<T> wrapObject(ModConfigSpec.ConfigValue<T> nativeValue) {
-        return new LazySavedValue<>(nativeValue, nativeValue::set);
+        return new LazySavedValue<>(nativeValue, value -> {
+            nativeValue.set(value);
+            nativeValue.save();
+        });
     }
 
     public static final class Client implements OhmegaConfig.Client.Service {

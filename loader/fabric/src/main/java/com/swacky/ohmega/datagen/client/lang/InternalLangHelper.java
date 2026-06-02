@@ -66,6 +66,6 @@ public final class InternalLangHelper {
     }
 
     public void addToast(String key, String translation) {
-        builder.add(Ohmega.MODID + ".toast." + key, translation);
+        builder.add("toast." + Ohmega.MODID + '.' + key, translation);
     }
 }
