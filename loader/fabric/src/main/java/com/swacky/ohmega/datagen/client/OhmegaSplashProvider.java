@@ -10,7 +10,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +47,7 @@ public class OhmegaSplashProvider implements DataProvider {
         add("A proud creation of Duk Developments");
         add("if (bugs) fixBugs();");
         add("Java has the best lambda syntax");
-        add("api/ package goes hard");
+        add("ohmega/api/ package goes hard");
     }
 
     @Override
@@ -63,23 +62,19 @@ public class OhmegaSplashProvider implements DataProvider {
                     .resolve("splashes.txt");
 
             return CompletableFuture.runAsync(() -> {
+                StringBuilder builder = new StringBuilder();
+
                 if (container.isPresent()) {
                     Optional<Path> vanilla = container.get().findPath("assets/" + Identifier.DEFAULT_NAMESPACE + "/texts/splashes.txt");
 
                     if (vanilla.isPresent()) {
                         try {
-                            BufferedReader reader = Files.newBufferedReader(vanilla.get());
-
-                            while (reader.ready()) {
-                                data.add(reader.readLine());
-                            }
+                            builder.append(Files.readString(vanilla.get()));
                         } catch (IOException e) {
                             throw new RuntimeException("Could not merge vanilla splashes.txt file", e);
                         }
                     }
                 }
-
-                StringBuilder builder = new StringBuilder();
 
                 data.forEach(entry -> builder.append(entry).append('\n'));
 
