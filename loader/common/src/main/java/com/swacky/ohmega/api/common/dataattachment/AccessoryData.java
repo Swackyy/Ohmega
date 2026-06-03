@@ -329,12 +329,31 @@ public final class AccessoryData {
     }
 
     /**
-     * Synchronise the data stored on the server with this instance with all clients
+     * Synchronise the requested data stored on the server with this instance with all clients
+     * @param entity the entity that this data instance belongs to
+     * @param index the index to synchronise
+     */
+    public void sendSync(@NonNull LivingEntity entity, int index) {
+        sendSync(entity, new int[]{index}, List.of(getStackInSlot(index)));
+    }
+
+    /**
+     * Synchronise the requested data stored on the server with this instance with all clients
+     * @param entity the entity that this data instance belongs to
+     * @param index the index to synchronise
+     * @param stack the matching {@link ItemStack} to synchronise as, corresponding to the {@code index}
+     */
+    public void sendSync(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack) {
+        sendSync(entity, new int[]{index}, List.of(stack));
+    }
+
+    /**
+     * Synchronise the requested data stored on the server with this instance with all clients
      * @param entity the entity that this data instance belongs to
      * @param indexes the indexes to synchronise
      * @param stacks the matching {@link ItemStack}s to synchronise as, corresponding to the {@code indexes}
      */
-    private void syncWithPlayers(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks) {
+    public void sendSync(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks) {
         if (entity.level() instanceof ServerLevel level) {
             for (ServerPlayer receiver : level.players()) {
                 OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes, stacks, true));
@@ -368,7 +387,7 @@ public final class AccessoryData {
             }
 
             if (sync) {
-                syncWithPlayers(entity, new int[]{index}, List.of(stack));
+                sendSync(entity, index, stack);
             }
         }
     }
@@ -421,7 +440,7 @@ public final class AccessoryData {
             doSetStack(entity, indexes[i], stacks.get(i), context, forceOnEquip, false);
         }
 
-        syncWithPlayers(entity, indexes, stacks);
+        sendSync(entity, indexes, stacks);
     }
 
     /**
@@ -527,7 +546,7 @@ public final class AccessoryData {
             }
         }
 
-        syncWithPlayers(entity, indexes.toIntArray(), NonNullList.withSize(indexes.size(), ItemStack.EMPTY));
+        sendSync(entity, indexes.toIntArray(), NonNullList.withSize(indexes.size(), ItemStack.EMPTY));
         return removed;
     }
 

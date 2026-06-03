@@ -39,11 +39,6 @@ repositories {
     minecraft.mavenizer it
     maven fg.forgeMaven
     maven fg.minecraftLibsMaven
-
-    maven {
-        name = "Forge"
-        url = "https://maven.minecraftforge.net"
-    }
 }
 
 dependencies {
