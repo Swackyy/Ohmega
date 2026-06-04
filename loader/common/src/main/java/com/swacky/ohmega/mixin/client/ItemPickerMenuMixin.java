@@ -55,10 +55,12 @@ abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMix
         ((IAccessoryMenu) inventoryMenu).setAccessoryExtensionVisible(value);
     }
 
+    // Order specifying shouldn't be needed here, but it is just to be safe
     @Inject(
             method = "<init>",
             at = @At(
-                    value = "RETURN"))
+                    value = "RETURN"),
+            order = -7777)
     private void init(Player owner, CallbackInfo ci) {
         AccessoryMenus.onConstruct(this, owner);
     }

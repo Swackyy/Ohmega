@@ -39,7 +39,7 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
     private @Nullable AccessoryScreenExtension ohmega$extension = null;
 
     @Shadow
-    private static CreativeModeTab selectedTab;
+    public static CreativeModeTab selectedTab;
 
     @Shadow
     private boolean hasClickedOutside;

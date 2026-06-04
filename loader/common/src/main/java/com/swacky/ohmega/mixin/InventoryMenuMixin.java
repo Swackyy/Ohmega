@@ -1,10 +1,8 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IMixinAccessoryMenu;
-import com.swacky.ohmega.common.menu.TemporarySlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractCraftingMenu;
@@ -41,18 +39,14 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
         ohmega$extension = extension;
     }
 
+    // Uses a custom order to ensure this mixin is applied in the same order on client and server
     @Inject(
             method = "<init>",
             at = @At(
-                    value = "RETURN"))
+                    value = "TAIL"),
+            order = -7777)
     private void init(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
-        if (owner.level().isClientSide()) {
-            AccessoryMenus.onConstruct(this, owner);
-        } else {
-            for (int i = 0; i < AccessoryHelper.getSlotTypes().size(); i++) {
-                addSlot(new TemporarySlot());
-            }
-        }
+        AccessoryMenus.onConstruct(this, owner);
     }
 
     @Inject(
@@ -61,10 +55,6 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
                     value = "HEAD"),
             cancellable = true)
     private void quickMoveStack(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
-        ItemStack stack = AccessoryMenus.onQuickMoveStack(this, player, index);
-
-        if (stack != null) {
-            cir.setReturnValue(stack);
-        }
+        cir.setReturnValue(AccessoryMenus.onQuickMoveStack(this, player, index));
     }
 }

@@ -24,7 +24,7 @@ public final class Accessory implements IAccessory {
      * Wrap an {@link IAccessory} instance
      * @param inner the wrapped instance
      */
-    public Accessory(@NonNull IAccessory inner) {
+    Accessory(@NonNull IAccessory inner) {
         this.inner = inner;
     }
 

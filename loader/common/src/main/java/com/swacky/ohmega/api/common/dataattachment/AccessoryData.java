@@ -7,13 +7,11 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
-import com.swacky.ohmega.api.common.menu.AccessoryMenus;
-import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.common.menu.TemporarySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -29,8 +27,6 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
@@ -164,26 +160,6 @@ public final class AccessoryData {
 
         // Initial load syncing
         syncAllData(player, player.getId(), allIndexes);
-
-        // todo: see if this can be avoided
-        // Rebuild slots for InventoryMenu
-        InventoryMenu menu = player.inventoryMenu;
-        NonNullList<Slot> slots = menu.slots;
-        Slot[] toRemove = new Slot[AccessoryHelper.getSlotTypes().size()];
-        int cursor = 0;
-
-        for (Slot slot : slots) {
-            if (slot instanceof TemporarySlot) {
-                toRemove[cursor++] = slot;
-            }
-        }
-
-        for (Slot slot : toRemove) {
-            slots.remove(slot);
-        }
-
-        AccessoryMenus.onConstruct(menu, player);
-        menu.sendAllDataToRemote();
     }
 
     /**

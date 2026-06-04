@@ -196,7 +196,7 @@ public final class AccessoryHelper {
      * @param stack {@link ItemStack} to set index of
      */
     public static void setNoSlot(@NonNull ItemStack stack) {
-        setSlot(stack, -1);
+        stack.remove(OhmegaDataComponents.getSlotIndex());
     }
 
     /**

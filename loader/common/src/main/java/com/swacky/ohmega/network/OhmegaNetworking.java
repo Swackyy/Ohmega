@@ -1,22 +1,21 @@
 package com.swacky.ohmega.network;
 
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -94,7 +93,7 @@ public final class OhmegaNetworking {
     }
 
     public static final class S2C {
-        private static final Service IMPL = OhmegaClient.loadService(Service.class);
+        private static final Service IMPL = Ohmega.loadService(Service.class);
 
         public static void bootstrap() {}
 
