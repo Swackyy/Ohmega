@@ -413,7 +413,11 @@ public final class AccessoryData {
      */
     public void setStacks(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks, @NonNull EquipContext context, boolean forceOnEquip) {
         for (int i = 0; i < indexes.length; i++) {
-            doSetStack(entity, indexes[i], stacks.get(i), context, forceOnEquip, false);
+            int index = indexes[i];
+
+            if (index < size()) {
+                doSetStack(entity, index, stacks.get(i), context, forceOnEquip, false);
+            }
         }
 
         sendSync(entity, indexes, stacks);

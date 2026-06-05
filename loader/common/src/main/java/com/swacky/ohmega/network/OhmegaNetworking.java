@@ -115,7 +115,11 @@ public final class OhmegaNetworking {
                     AccessoryData data = AccessoryHelper.getData(entity);
 
                     for (int i = 0; i < indexes.length; i++) {
-                        data.setHidden(indexes[i], packet.values()[i]);
+                        int index = indexes[i];
+
+                        if (index < data.size()) {
+                            data.setHidden(index, packet.values()[i]);
+                        }
                     }
                 }
             }

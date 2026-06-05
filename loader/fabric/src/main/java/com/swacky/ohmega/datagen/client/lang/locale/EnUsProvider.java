@@ -89,7 +89,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.BUTTON_STYLE_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
-                "Inventory Side",
+                "Fill direction",
                 OhmegaConfig.Client.Service.FILL_DIRECTION_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
