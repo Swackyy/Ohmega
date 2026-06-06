@@ -2,11 +2,12 @@ package com.swacky.ohmega.api.common.menu;
 
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.client.ui.AccessoryUIs;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.common.menu.ServerAccessoryMenuExtension;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -91,7 +92,7 @@ public final class AccessoryMenus {
      * @param reverseDirection move back to front, starting from the end index -1 (to retain exclusivity)
      * @return the {@link ItemStack} that has been moved, or {@link ItemStack#EMPTY} if nothing changed
      */
-    public static @NonNull ItemStack tryMoveItemStackTo(@NonNull AbstractContainerMenu menu, @NonNull ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+    public static @NonNull ItemStack tryMoveItemStackTo(@NonNull Player player, @NonNull AbstractContainerMenu menu, @NonNull AccessoryData data, @NonNull ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
         int i = startIndex;
 
         if (reverseDirection) {
@@ -99,20 +100,36 @@ public final class AccessoryMenus {
         }
 
         if (stack.isStackable()) {
-            while (!stack.isEmpty() && (reverseDirection ? i >= startIndex : i < endIndex)) {
+            while (!stack.isEmpty()) {
+                if (reverseDirection) {
+                    if (i < startIndex) {
+                        break;
+                    }
+                } else if (i >= endIndex) {
+                    break;
+                }
+
                 Slot slot = menu.getSlot(i);
                 ItemStack stack0 = slot.getItem();
 
-                if (!stack0.isEmpty() && ItemStack.isSameItemSameComponents(stack, stack0)) {
-                    int j = stack0.getCount() + stack.getCount();
-                    if (j <= stack.getMaxStackSize()) {
-                        stack.setCount(0);
-                        stack0.setCount(j);
-                        slot.setChanged();
-                    } else if (stack0.getCount() < stack.getMaxStackSize()) {
-                        stack.shrink(stack.getMaxStackSize() - stack0.getCount());
-                        stack0.setCount(stack.getMaxStackSize());
-                        slot.setChanged();
+                if (!stack0.isEmpty()) {
+                    ItemStack stack1 = stack.copy();
+
+                    data.doUnequip(player, stack1, EquipContext.SLOT);
+
+                    if (ItemStack.isSameItemSameComponents(stack1, stack0)) {
+                        int j = stack0.getCount() + stack.getCount();
+                        int maxSize = slot.getMaxStackSize(stack0);
+
+                        if (j <= maxSize) {
+                            stack.setCount(0);
+                            stack0.setCount(j);
+                            slot.setChanged();
+                        } else if (stack0.getCount() < maxSize) {
+                            stack.shrink(maxSize - stack0.getCount());
+                            stack0.setCount(maxSize);
+                            slot.setChanged();
+                        }
                     }
                 }
 
@@ -133,18 +150,22 @@ public final class AccessoryMenus {
                 i = startIndex;
             }
 
-            while (reverseDirection ? i >= startIndex : i < endIndex) {
+            while (true) {
+                if (reverseDirection) {
+                    if (i < startIndex) {
+                        break;
+                    }
+                } else if (i >= endIndex) {
+                    break;
+                }
+
                 Slot slot = menu.getSlot(i);
                 ItemStack stack1 = slot.getItem();
 
                 if (stack1.isEmpty() && slot.mayPlace(stack)) {
-                    if (stack.getCount() > slot.getMaxStackSize()) {
-                        stack0 = stack.split(slot.getMaxStackSize());
-                    } else {
-                        stack0 = stack.split(stack.getCount());
-                    }
+                    stack0 = stack.split(Math.min(stack.getCount(), slot.getMaxStackSize(stack)));
 
-                    slot.set(stack0);
+                    slot.setByPlayer(stack0);
                     slot.setChanged();
                     break;
                 }
@@ -204,10 +225,11 @@ public final class AccessoryMenus {
                     }
                 } else {
                     if (considerExtensionSlots && index > 45 && index < 52) { // Accessory -> inventory
-                        ItemStack stack1 = tryMoveItemStackTo(menu, stack, 9, 45, false);
+                        AccessoryData data = AccessoryHelper.getData(player);
+                        ItemStack stack1 = tryMoveItemStackTo(player, menu, data, stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) {
-                            AccessoryHelper.getData(player).doUnequip(player, stack1, EquipContext.SLOT);
+                            data.doUnequip(player, stack1, EquipContext.SLOT);
                             slot.setChanged();
                         }
                     } else {

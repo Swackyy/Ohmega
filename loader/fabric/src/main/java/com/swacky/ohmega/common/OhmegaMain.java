@@ -70,12 +70,5 @@ public final class OhmegaMain implements ModInitializer {
 
         // Resource loader
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ohmega.id(Ohmega.MODID), AccessoryTypeManager.getInstance());
-
-        Accessories.bind(Items.SUGAR, new IAccessory() {
-            @Override
-            public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
-                System.out.println("wsg");
-            }
-        });
     }
 }
