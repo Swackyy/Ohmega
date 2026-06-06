@@ -15,7 +15,8 @@ import java.util.List;
  * A way to add extra slots and functionality to the default inventory.
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
  * <p>
- * This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server
+ * This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server.
+ * The only reason this is in the {@code common} package is because Ohmega defines one singular server implementation for internal use
  */
 public abstract class AccessoryMenuExtension {
     private final @NonNull AbstractContainerMenu menu;

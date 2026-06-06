@@ -1,8 +1,10 @@
 package com.swacky.ohmega.mixin;
 
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IMixinAccessoryMenu;
+import com.swacky.ohmega.common.menu.TemporarySlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractCraftingMenu;
@@ -46,7 +48,13 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
                     value = "TAIL"),
             order = -7777)
     private void init(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
-        AccessoryMenus.onConstruct(this, owner);
+        if (owner.level().isClientSide()) {
+            AccessoryMenus.onConstruct(this, owner);
+        } else {
+            for (int i = 0; i < AccessoryHelper.getSlotTypes().size(); i++) {
+                addSlot(new TemporarySlot());
+            }
+        }
     }
 
     @Inject(

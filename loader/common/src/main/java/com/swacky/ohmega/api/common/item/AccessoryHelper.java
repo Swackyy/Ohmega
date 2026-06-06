@@ -232,26 +232,31 @@ public final class AccessoryHelper {
     // todo: make a cached "getUniqueSlotTypes" that returns a Set
     public static @NonNull ImmutableList<AccessoryType> getSlotTypes() {
         List<? extends String> slotTypes = OhmegaConfig.Server.getData().slotTypes().getObject();
-        int size = slotTypes.size();
-        ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
 
-        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
-            for (int i = 0; i < size; i++) {
-                builder.add(AccessoryType.GENERIC.get());
+        if (slotTypes != null) {
+            int size = slotTypes.size();
+            ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
+
+            if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
+                for (int i = 0; i < size; i++) {
+                    builder.add(AccessoryType.GENERIC.get());
+                }
+
+                return builder.build();
+            }
+
+            for (String id : slotTypes) {
+                AccessoryType type = AccessoryTypeManager.get(Identifier.parse(id));
+
+                if (type != AccessoryType.NONE) {
+                    builder.add(type);
+                }
             }
 
             return builder.build();
         }
 
-        for (String id : slotTypes) {
-            AccessoryType type = AccessoryTypeManager.get(Identifier.parse(id));
-
-            if (type != AccessoryType.NONE) {
-                builder.add(type);
-            }
-        }
-
-        return builder.build();
+        return ImmutableList.of();
     }
 
     /**
@@ -260,13 +265,19 @@ public final class AccessoryHelper {
      */
     // todo: cache
     public static @NonNull ImmutableSet<AccessoryType> getKeyboundSlotTypes() {
-        ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
+        List<? extends String> types = OhmegaConfig.Server.getData().keyboundSlotTypes().getObject();
 
-        for (String id : OhmegaConfig.Server.getData().keyboundSlotTypes().getObject()) {
-            builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
+        if (types != null) {
+            ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
+
+            for (String id : types) {
+                builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
+            }
+
+            return builder.build();
         }
 
-        return builder.build();
+        return ImmutableSet.of();
     }
 
     /**

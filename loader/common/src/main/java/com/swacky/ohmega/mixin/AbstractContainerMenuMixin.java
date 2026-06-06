@@ -30,7 +30,7 @@ public class AbstractContainerMenuMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/inventory/ContainerSynchronizer;sendSlotChange(Lnet/minecraft/world/inventory/AbstractContainerMenu;ILnet/minecraft/world/item/ItemStack;)V"),
             cancellable = true)
-    public void synchronizeSlotToRemote(int i, ItemStack current, Supplier<ItemStack> currentCopy, CallbackInfo ci) {
+    private void synchronizeSlotToRemote(int i, ItemStack current, Supplier<ItemStack> currentCopy, CallbackInfo ci) {
         if (slots.get(i) instanceof AccessorySlot) {
             ci.cancel();
         }
