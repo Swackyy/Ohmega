@@ -43,10 +43,10 @@ public final class AccessoryMenus {
         if (menu instanceof IAccessoryMenu accessoryMenu) {
             ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
             int requiredCount = types.size();
+            List<AccessorySlot> slots = new ArrayList<>(requiredCount);
 
             if (owner.level().isClientSide()) {
                 AccessoryMenuExtension extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
-                List<AccessorySlot> slots = new ArrayList<>(requiredCount);
 
                 accessoryMenu.setAccessoryExtension(extension);
 
@@ -70,11 +70,18 @@ public final class AccessoryMenus {
 
                 extension.setSlots(slots);
             } else {
-                accessoryMenu.setAccessoryExtension(new ServerAccessoryMenuExtension(menu, owner));
+                ServerAccessoryMenuExtension extension = new ServerAccessoryMenuExtension(menu, owner);
+
+                accessoryMenu.setAccessoryExtension(extension);
 
                 for (int i = 0; i < requiredCount; i++) {
-                    menu.addSlot(new AccessorySlot(owner, i, 0, 0, types.get(i)));
+                    AccessorySlot slot = new AccessorySlot(owner, i, 0, 0, types.get(i));
+
+                    menu.addSlot(slot);
+                    slots.add(slot);
                 }
+
+                extension.setSlots(slots);
             }
         } else {
             throw new IllegalArgumentException("Menu " + menu.getClass().getCanonicalName() + " does not implement " + IAccessoryMenu.class.getCanonicalName());

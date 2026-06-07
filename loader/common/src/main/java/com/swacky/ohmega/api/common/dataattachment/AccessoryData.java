@@ -12,7 +12,10 @@ import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
+import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.common.menu.TemporarySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
@@ -182,6 +185,29 @@ public final class AccessoryData {
         }
 
         AccessoryMenus.onConstruct(menu, player);
+
+        if (menu instanceof IAccessoryMenu accessoryMenu) {
+            AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
+
+            if (extension != null) {
+                List<AccessorySlot> accessorySlots = extension.getSlots();
+
+                for (int i = 0; i < toRemove.length; i++) {
+                    int newIndex = toRemove[i].index;
+                    AccessorySlot target = accessorySlots.get(i);
+
+                    if (target.index != newIndex) {
+                        Slot tempSlot = slots.get(newIndex);
+
+                        slots.set(newIndex, target);
+                        slots.set(target.index, tempSlot);
+
+                        target.index = newIndex;
+                    }
+                }
+            }
+        }
+
         menu.sendAllDataToRemote();
     }
 

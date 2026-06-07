@@ -2,9 +2,6 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.CommonEvents;
@@ -25,11 +22,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.fml.config.ModConfig;
-import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
 public final class OhmegaMain implements ModInitializer {
