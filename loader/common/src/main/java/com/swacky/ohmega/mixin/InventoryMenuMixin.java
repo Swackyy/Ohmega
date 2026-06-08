@@ -45,7 +45,7 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
     @Inject(
             method = "<init>",
             at = @At(
-                    value = "TAIL"),
+                    value = "RETURN"),
             order = -7777)
     private void init(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
         if (owner.level().isClientSide()) {

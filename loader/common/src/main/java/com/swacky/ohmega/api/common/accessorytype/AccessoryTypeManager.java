@@ -37,11 +37,15 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     public static final @NonNull String LOCATION = Ohmega.MODID + "/accessory_types.json";
     private static final @NonNull TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
     private static final @NonNull Map<Identifier, AccessoryType> TYPES = new HashMap<>();
-    private static final @NonNull List<Runnable> DEFERRED_APPLY = new ArrayList<>();
-    private static final @NonNull List<Runnable> DEFERRED_CONFIG_LOAD = new ArrayList<>();
+    private static final @NonNull List<Runnable> APPLY_TASKS = new ArrayList<>();
+    private static final @NonNull List<Runnable> CONFIG_LOAD_TASKS = new ArrayList<>();
+    private static final ThreadLocal<Boolean> ALLOW_POST_EVENTS = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     private static @Nullable Map<Item, BooleanObjectPair<AccessoryType>> ACCESSORY_TYPE_OVERRIDES;
 
+    /**
+     * Constructs the accessory manager singleton instance
+     */
     private AccessoryTypeManager() {}
 
     /**
@@ -53,6 +57,33 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         return INSTANCE;
     }
 
+    /**
+     * An internal function to control event posting, do not call this.
+     */
+    public static void lockEvents() {
+        ALLOW_POST_EVENTS.set(Boolean.FALSE);
+    }
+
+    /**
+     * An internal function to control event posting, do not call this.
+     */
+    public static void unlockEvents() {
+        ALLOW_POST_EVENTS.set(Boolean.TRUE);
+    }
+
+    /**
+     * Posts the override types event and binds its result to the accessory manager
+     */
+    public static void postOverrideTypes() {
+        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.overrideTypes();
+    }
+
+    /**
+     * Called by vanilla for reload listeners, searches {@code data/} directories for files matching {@link #LOCATION}
+     * @param manager holder for server resources, {@code data}
+     * @param profiler a telemetry filler
+     * @return a map of {@link Identifier}s to their corresponding {@link AccessoryType}s
+     */
     @Override
     protected @NonNull Map<Identifier, AccessoryType> prepare(@NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
         Map<Identifier, AccessoryType> map = new HashMap<>(5);
@@ -90,27 +121,37 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         return map;
     }
 
+    /**
+     * Reset the types and fill with the new data, performing important regulatory behaviour
+     * @param types the new types to set as
+     */
     private static void apply(@NonNull Map<Identifier, AccessoryType> types) {
         TYPES.clear();
         TYPES.put(AccessoryType.NONE.getId(), AccessoryType.NONE);
         TYPES.putAll(types);
         TYPES.putAll(OhmegaHooks.registerAccessoryTypes());
 
-        ACCESSORY_TYPE_OVERRIDES = OhmegaHooks.overrideTypes();
+        if (ALLOW_POST_EVENTS.get()) {
+            postOverrideTypes();
+        }
 
-        if (!DEFERRED_APPLY.isEmpty()) {
+        if (!APPLY_TASKS.isEmpty()) {
             if (OhmegaConfig.Server.isLoaded()) {
-                DEFERRED_APPLY.forEach(Runnable::run);
+                APPLY_TASKS.forEach(Runnable::run);
             } else {
-                DEFERRED_CONFIG_LOAD.addAll(DEFERRED_APPLY);
+                CONFIG_LOAD_TASKS.addAll(APPLY_TASKS);
             }
 
-            DEFERRED_APPLY.clear();
+            APPLY_TASKS.clear();
         }
 
         OhmegaTags.refresh();
     }
 
+    /**
+     * Publicly exposed method to apply new accessory types, used in syncing
+     * @param types the new types to set as
+     */
     public static void apply(@NonNull Collection<AccessoryType> types) {
         Map<Identifier, AccessoryType> map = new HashMap<>(types.size());
 
@@ -121,32 +162,54 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         apply(map);
     }
 
-
+    /**
+     * Vanilla apply, defers to {@link #apply(Map)}
+     * @param types new types to set
+     * @param manager holder for server resources, {@code data}
+     * @param profiler a telemetry filler
+     */
     @Override
-    protected void apply(@NonNull Map<Identifier, AccessoryType> types, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
+    protected void apply(@NonNull Map<Identifier, AccessoryType> types, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
         apply(types);
     }
 
+    /**
+     * Called on the client to finish type application
+     * @param onConfigLoad a task to either enqueue if {@code shouldDefer} is {@code true} or immediately execute otherwise
+     * @param shouldDefer decides whether we should defer or simply execute the passed {@link Runnable} task
+     */
     public static void applyClient(Runnable onConfigLoad, boolean shouldDefer) {
         if (shouldDefer) {
-            DEFERRED_CONFIG_LOAD.add(onConfigLoad);
+            CONFIG_LOAD_TASKS.add(onConfigLoad);
         } else {
             onConfigLoad.run();
         }
     }
 
+    /**
+     * Remove all known accessory types
+     */
     public static void clear() {
         TYPES.clear();
+        lockEvents();
+
         ACCESSORY_TYPE_OVERRIDES = null;
     }
 
+    /**
+     * Defer a task to be executed following type application
+     * @param runnable task to enqueue
+     */
     public static void deferApply(@NonNull Runnable runnable) {
-        DEFERRED_APPLY.add(runnable);
+        APPLY_TASKS.add(runnable);
     }
 
-    public static void runDeferredAwaitingConfigLoad() {
-        DEFERRED_CONFIG_LOAD.forEach(Runnable::run);
-        DEFERRED_CONFIG_LOAD.clear();
+    /**
+     * Execute config load tasks
+     */
+    public static void runConfigLoadTasks() {
+        CONFIG_LOAD_TASKS.forEach(Runnable::run);
+        CONFIG_LOAD_TASKS.clear();
     }
 
     /**

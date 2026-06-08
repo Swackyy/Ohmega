@@ -5,7 +5,6 @@
   "mixins": [
     "ItemStackMixin",
     "LivingEntityMixin",
-    "MinecraftServerMixin",
     "ServerConfigurationPacketListenerImplMixin"
   ],
   "client": [

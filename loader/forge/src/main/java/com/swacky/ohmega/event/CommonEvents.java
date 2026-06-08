@@ -34,6 +34,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -121,6 +122,11 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(AccessoryTypeManager.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void onServerStarting(ServerStartedEvent event) {
+        CommonCallbacks.onServerStarting();
     }
 
     @SubscribeEvent

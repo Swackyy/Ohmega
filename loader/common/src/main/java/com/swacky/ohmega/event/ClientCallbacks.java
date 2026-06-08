@@ -191,6 +191,10 @@ public final class ClientCallbacks {
     }
 
     public static void onJoinWorld(Minecraft mc) {
+        AccessoryTypeManager.unlockEvents();
+        OhmegaHooks.accessoryBind();
+        AccessoryTypeManager.postOverrideTypes();
+
         BooleanLazySavedValue option = OhmegaConfig.Client.getData().showTranslationToast();
 
         if (option.get()) {
@@ -319,7 +323,7 @@ public final class ClientCallbacks {
     }
 
     public static void onServerConfigReload(Runnable loadFunction) {
-        AccessoryTypeManager.runDeferredAwaitingConfigLoad();
+        AccessoryTypeManager.runConfigLoadTasks();
 
         if (OhmegaConfig.Client.isLoaded()) {
             if (AccessoryTypeManager.getTypes().isEmpty()) {

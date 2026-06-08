@@ -2,8 +2,8 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
-import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -51,7 +51,7 @@ public final class ClientEvents {
 
     private static void onConfigLoad(ModConfig config) {
         if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
+            AccessoryTypeManager.runConfigLoadTasks();
         }
     }
 

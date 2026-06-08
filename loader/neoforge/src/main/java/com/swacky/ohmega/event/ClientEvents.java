@@ -76,7 +76,7 @@ public final class ClientEvents {
     @SubscribeEvent
     private static void onConfigLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
-            AccessoryTypeManager.runDeferredAwaitingConfigLoad();
+            AccessoryTypeManager.runConfigLoadTasks();
         }
     }
 

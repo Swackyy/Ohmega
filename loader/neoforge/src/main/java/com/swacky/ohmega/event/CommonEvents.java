@@ -33,6 +33,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
@@ -165,6 +166,11 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterServerReloadListeners(AddServerReloadListenersEvent event) {
         event.addListener(Ohmega.id("accessory_type_manager"), AccessoryTypeManager.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void onServerStarting(ServerStartedEvent event) {
+        CommonCallbacks.onServerStarting();
     }
 
     @SubscribeEvent

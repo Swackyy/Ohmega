@@ -10,7 +10,8 @@
     "PiglinAiMixin",
     "PowderSnowBlockMixin",
     "ServerGamePacketListenerImplMixin",
-    "ServerPlayerGameModeMixin"
+    "ServerPlayerGameModeMixin",
+    "WorldLoaderMixin"
   ],
   "client": [
     "client.AbstractContainerScreenMixin",

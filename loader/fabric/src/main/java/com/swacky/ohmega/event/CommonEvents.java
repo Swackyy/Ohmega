@@ -2,10 +2,10 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
@@ -52,7 +52,7 @@ public final class CommonEvents {
             ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
             ServerPlayerEvents.AFTER_RESPAWN.register(CommonEvents::onPlayerRespawnPost);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
-            ServerLifecycleEvents.SERVER_STARTED.register(CommonEvents::onServerStarted);
+            ServerLifecycleEvents.SERVER_STARTING.register(CommonEvents::onServerStarting);
             ItemEvents.USE.register(CommonEvents::onUseItem);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + CommonEvents.class + " multiple times");
@@ -103,8 +103,8 @@ public final class CommonEvents {
         CommonCallbacks.onRegisterCommands(dispatcher, context);
     }
 
-    private static void onServerStarted(MinecraftServer server) {
-        OhmegaHooks.accessoryBind();
+    private static void onServerStarting(MinecraftServer server) {
+        CommonCallbacks.onServerStarting();
     }
 
     private static InteractionResult onUseItem(Level level, Player player, InteractionHand hand) {

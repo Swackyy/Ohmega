@@ -1,12 +1,13 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.common.command.OhmegaRootCommand;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -38,7 +39,6 @@ public final class CommonCallbacks {
         return multiplier;
     }
 
-    // Ensure alive or 'shouldKeepInventory' returns true before this
     public static void onClonePlayer(Player oldPlayer, Player newPlayer) {
         AccessoryData oldA = AccessoryHelper.getData(oldPlayer);
         AccessoryData newA = AccessoryHelper.getData(newPlayer);
@@ -87,18 +87,27 @@ public final class CommonCallbacks {
         OhmegaRootCommand.register(dispatcher, context);
     }
 
+    public static void onServerStarting() {
+        AccessoryTypeManager.unlockEvents();
+        OhmegaHooks.accessoryBind();
+        AccessoryTypeManager.postOverrideTypes();
+    }
+
     public static void onServerConfigReload() {
         OhmegaConfig.Server.getData().pull();
     }
 
-    // Not an event callback in itself
     public static boolean shouldKeepInventory(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
-            return switch (OhmegaConfig.Server.getData().keepAccessoriesBehaviour().getObject()) {
-                case ALWAYS_ON -> true;
-                case ALWAYS_OFF -> false;
-                case DEFAULT -> player.level().getGameRules().get(GameRules.KEEP_INVENTORY);
-            };
+            OhmegaConfig.Server.Service.KeepAccessoriesBehaviour behaviour = OhmegaConfig.Server.getData().keepAccessoriesBehaviour().getObject();
+
+            if (behaviour != null) {
+                return switch (behaviour) {
+                    case ALWAYS_ON -> true;
+                    case ALWAYS_OFF -> false;
+                    case DEFAULT -> player.level().getGameRules().get(GameRules.KEEP_INVENTORY);
+                };
+            }
         }
 
         return false;
