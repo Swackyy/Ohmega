@@ -12,9 +12,7 @@ import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
-import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.common.menu.TemporarySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -171,40 +169,17 @@ public final class AccessoryData {
         // Rebuild slots for InventoryMenu
         InventoryMenu menu = player.inventoryMenu;
         NonNullList<Slot> slots = menu.slots;
-        Slot[] toRemove = new Slot[AccessoryHelper.getSlotTypes().size()];
+        List<AccessorySlot> accessorySlots = AccessoryMenus.createSlots(menu, player, null);
         int cursor = 0;
 
-        for (Slot slot : slots) {
+        for (int i = 0; i < slots.size(); i++) {
+            Slot slot = slots.get(i);
+
             if (slot instanceof TemporarySlot) {
-                toRemove[cursor++] = slot;
-            }
-        }
+                AccessorySlot accessorySlot = accessorySlots.get(cursor++);
+                accessorySlot.index = slot.index;
 
-        for (Slot slot : toRemove) {
-            slots.remove(slot);
-        }
-
-        AccessoryMenus.onConstruct(menu, player);
-
-        if (menu instanceof IAccessoryMenu accessoryMenu) {
-            AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
-
-            if (extension != null) {
-                List<AccessorySlot> accessorySlots = extension.getSlots();
-
-                for (int i = 0; i < toRemove.length; i++) {
-                    int newIndex = toRemove[i].index;
-                    AccessorySlot target = accessorySlots.get(i);
-
-                    if (target.index != newIndex) {
-                        Slot tempSlot = slots.get(newIndex);
-
-                        slots.set(newIndex, target);
-                        slots.set(target.index, tempSlot);
-
-                        target.index = newIndex;
-                    }
-                }
+                slots.set(i, accessorySlot);
             }
         }
 

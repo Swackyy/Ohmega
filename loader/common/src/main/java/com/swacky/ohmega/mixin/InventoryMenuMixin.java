@@ -51,12 +51,15 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
         if (owner.level().isClientSide()) {
             AccessoryMenus.onConstruct(this, owner);
         } else {
+            AccessoryMenus.attachExtension(this, owner, AccessoryMenus.assertImplementation(this));
+
             for (int i = 0; i < AccessoryHelper.getSlotTypes().size(); i++) {
                 addSlot(new TemporarySlot());
             }
         }
     }
 
+    // todo: this bad
     @Inject(
             method = "quickMoveStack",
             at = @At(

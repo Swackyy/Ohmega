@@ -18,9 +18,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Holds methods related to menu extensions that implement correct functionality
@@ -33,59 +35,98 @@ import java.util.List;
  */
 public final class AccessoryMenus {
     /**
-     * This must be called at the end of your target menu's constructor to assign the accessory extension and add slots
+     * Asserts that the passed {@link AbstractContainerMenu} implements {@link IAccessoryMenu}, otherwise {@code throw}s
+     * @param menu vanilla menu instance to assert
+     * @return the cast {@link IAccessoryMenu}
+     */
+    public static @NonNull IAccessoryMenu assertImplementation(@NonNull AbstractContainerMenu menu) {
+        if (menu instanceof IAccessoryMenu accessoryMenu) {
+            return accessoryMenu;
+        } else {
+            throw new IllegalArgumentException("Menu " + menu.getClass().getCanonicalName() + " does not implement " + IAccessoryMenu.class.getCanonicalName());
+        }
+    }
+
+    /**
+     * Creates a list of pertaining to the accessory extension {@link AccessorySlot}s to (optionally) perform operations on through a callback
+     * Called by {@link #onConstruct(AbstractContainerMenu, Player)} and will usually not need to be invoked manually
+     * @param menu parent menu
+     * @param owner player which this menu belongs
+     * @return a list of {@link AccessorySlot}s to add with the accessory extension to the menu
+     */
+    public static List<AccessorySlot> createSlots(@NonNull AbstractContainerMenu menu, @NonNull Player owner, @Nullable Consumer<AccessorySlot> consumer) {
+        ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
+        int requiredCount = types.size();
+        List<AccessorySlot> slots = new ArrayList<>(requiredCount);
+
+        if (owner.level().isClientSide()) {
+            AccessoryMenuExtension extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
+
+            extension.addSlots((index, x, y) -> {
+                AccessorySlot slot = new AccessorySlot(
+                        owner,
+                        index,
+                        x,
+                        y,
+                        types.get(index));
+
+                slots.add(slot);
+
+                if (consumer != null) {
+                    consumer.accept(slot);
+                }
+            });
+
+            int actualCount = slots.size();
+
+            if (actualCount != requiredCount) {
+                throw new IllegalStateException("Slots added by extension '" + extension + "' (" + actualCount + ") differ in length from required " + requiredCount);
+            }
+        } else {
+            for (int i = 0; i < requiredCount; i++) {
+                AccessorySlot slot = new AccessorySlot(owner, i, 0, 0, types.get(i));
+
+                slots.add(slot);
+
+                if (consumer != null) {
+                    consumer.accept(slot);
+                }
+            }
+        }
+
+        return slots;
+    }
+
+    /**
+     * Called by {@link #onConstruct(AbstractContainerMenu, Player)} and will usually not need to be invoked manually
+     * @param menu parent menu
+     * @param owner player which this menu belongs
+     * @param accessoryMenu cast version of the {@code menu} to {@link IAccessoryMenu}
+     * @return the menu extension that has been attached to the given {@link IAccessoryMenu}
+     */
+    public static AccessoryMenuExtension attachExtension(@NonNull AbstractContainerMenu menu, @NonNull Player owner, @NonNull IAccessoryMenu accessoryMenu) {
+        AccessoryMenuExtension extension;
+
+        if (owner.level().isClientSide()) {
+            extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
+        } else {
+            extension = new ServerAccessoryMenuExtension(menu, owner);
+        }
+
+        accessoryMenu.setAccessoryExtension(extension);
+        return extension;
+    }
+
+    /**
+     * This must be called at the end of your target menu's constructor to assign the accessory extension and add slots.
+     * The logic handled here is split into separate functions above because it may be useful at times to only run parts of the construction
      * <p>
      * Ohmega calls this in another place internally, do not replicate. It is to fix an annoying edge case
      * @param menu parent menu
      * @param owner player which this menu belongs
      */
     public static void onConstruct(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
-        if (menu instanceof IAccessoryMenu accessoryMenu) {
-            ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
-            int requiredCount = types.size();
-            List<AccessorySlot> slots = new ArrayList<>(requiredCount);
-
-            if (owner.level().isClientSide()) {
-                AccessoryMenuExtension extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
-
-                accessoryMenu.setAccessoryExtension(extension);
-
-                extension.addSlots((index, x, y) -> {
-                    AccessorySlot slot = new AccessorySlot(
-                            owner,
-                            index,
-                            x,
-                            y,
-                            types.get(index));
-
-                    menu.addSlot(slot);
-                    slots.add(slot);
-                });
-
-                int actualCount = slots.size();
-
-                if (actualCount != requiredCount) {
-                    throw new IllegalStateException("Slots added by extension '" + extension + "' (" + actualCount + ") differ in length from required " + requiredCount);
-                }
-
-                extension.setSlots(slots);
-            } else {
-                ServerAccessoryMenuExtension extension = new ServerAccessoryMenuExtension(menu, owner);
-
-                accessoryMenu.setAccessoryExtension(extension);
-
-                for (int i = 0; i < requiredCount; i++) {
-                    AccessorySlot slot = new AccessorySlot(owner, i, 0, 0, types.get(i));
-
-                    menu.addSlot(slot);
-                    slots.add(slot);
-                }
-
-                extension.setSlots(slots);
-            }
-        } else {
-            throw new IllegalArgumentException("Menu " + menu.getClass().getCanonicalName() + " does not implement " + IAccessoryMenu.class.getCanonicalName());
-        }
+        attachExtension(menu, owner, assertImplementation(menu)).setSlots(createSlots(menu, owner, menu::addSlot));
     }
 
     /**
@@ -297,10 +338,6 @@ public final class AccessoryMenus {
      * @return {@link ItemStack} after moving, or {@code null} on failing, at which point you should rely on a fallback
      */
     public static @NonNull ItemStack onQuickMoveStack(@NonNull AbstractContainerMenu menu, @NonNull Player player, int index) {
-        if (menu instanceof IAccessoryMenu accessoryMenu) {
-            return quickMoveStack(menu, player, index, accessoryMenu.isAccessoryExtensionVisible());
-        } else {
-            throw new IllegalArgumentException("Menu " + menu + " does not implement " + IAccessoryMenu.class);
-        }
+        return quickMoveStack(menu, player, index, assertImplementation(menu).isAccessoryExtensionVisible());
     }
 }

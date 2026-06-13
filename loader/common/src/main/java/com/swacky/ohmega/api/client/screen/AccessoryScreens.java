@@ -2,13 +2,12 @@ package com.swacky.ohmega.api.client.screen;
 
 import com.swacky.ohmega.api.client.ui.AccessoryUIs;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -22,35 +21,39 @@ import org.jspecify.annotations.Nullable;
  */
 public final class AccessoryScreens {
     /**
+     * Asserts that the passed {@link AbstractContainerScreen} implements {@link IAccessoryScreen}, otherwise {@code throw}s
+     * @param screen vanilla screen instance to assert
+     * @return the cast {@link IAccessoryScreen}
+     */
+    public static @NonNull IAccessoryScreen assertImplementation(@NonNull AbstractContainerScreen<?> screen) {
+        if (screen instanceof IAccessoryScreen accessoryScreen) {
+            return accessoryScreen;
+        } else {
+            throw new IllegalArgumentException("Screen " + screen.getClass().getCanonicalName() + " does not implement " + IAccessoryScreen.class.getCanonicalName());
+        }
+    }
+
+    /**
      * This must be called at the end of your target screen's constructor to assign the accessory extension and add slots
      * @param screen parent screen
      */
     public static void onConstruct(@NonNull AbstractContainerScreen<?> screen) {
-        if (screen instanceof IAccessoryScreen accessoryScreen) {
-            AbstractContainerMenu menu = screen.getMenu();
+        AccessoryMenuExtension menuExtension = AccessoryMenus.assertImplementation(screen.getMenu()).getAccessoryExtension();
+        IAccessoryScreen accessoryScreen = assertImplementation(screen);
 
-            if (menu instanceof IAccessoryMenu accessoryMenu) {
-                AccessoryMenuExtension menuExtension = accessoryMenu.getAccessoryExtension();
-
-                if (menuExtension != null) {
-                    for (AccessorySlot slot : menuExtension.getSlots()) {
-                        slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
-                    }
-
-                    AccessoryScreenExtension extension = AccessoryUIs.getActiveScreenFactory().construct(screen, menuExtension);
-
-                    accessoryScreen.setAccessoryExtension(extension);
-
-                    if (OhmegaConfig.Client.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
-                        screen.imageWidth += extension.getExtraWidth();
-                        screen.imageHeight += extension.getExtraHeight();
-                    }
-                }
-            } else {
-                throw new IllegalArgumentException("Menu " + menu + " does not implement " + IAccessoryMenu.class);
+        if (menuExtension != null) {
+            for (AccessorySlot slot : menuExtension.getSlots()) {
+                slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
             }
-        } else {
-            throw new IllegalArgumentException("Screen " + screen + " does not implement " + IAccessoryScreen.class);
+
+            AccessoryScreenExtension extension = AccessoryUIs.getActiveScreenFactory().construct(screen, menuExtension);
+
+            accessoryScreen.setAccessoryExtension(extension);
+
+            if (OhmegaConfig.Client.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
+                screen.imageWidth += extension.getExtraWidth();
+                screen.imageHeight += extension.getExtraHeight();
+            }
         }
     }
 
