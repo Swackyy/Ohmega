@@ -1,0 +1,15 @@
+{
+  "pack": {
+    "description": {
+      "translate": "dataPack.${modId}_dark.description"
+    },
+    "pack_format": ${packFormatMaxV},
+    "min_format": ${packFormatMinV},
+    "max_format": ${packFormatMaxV},
+    "supported_formats": {
+      "min_inclusive": ${packFormatMinV},
+      "max_inclusive": ${packFormatMaxV}
+    }
+  }
+}
+

@@ -4,6 +4,7 @@ import com.swacky.ohmega.common.Ohmega;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -63,6 +64,10 @@ public final class InternalLangHelper {
 
     public void addDataPackDescription(String translation) {
         builder.add("dataPack." + Ohmega.MODID + ".description", translation);
+    }
+
+    public void addDataPackDescription(Identifier key, String translation) {
+        builder.add("dataPack." + key.toDebugFileName() + ".description", translation);
     }
 
     public void addToast(String key, String translation) {

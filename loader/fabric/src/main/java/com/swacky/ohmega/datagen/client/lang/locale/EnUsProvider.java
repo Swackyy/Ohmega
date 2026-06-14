@@ -3,6 +3,7 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
@@ -200,6 +201,7 @@ public final class EnUsProvider extends OhmegaLangProvider {
 
         // Datapack
         internalHelper.addDataPackDescription("Mod resources for Ohmega");
+        internalHelper.addDataPackDescription(OhmegaClient.PACK_DARK_ID, "Dark mode pack for Ohmega");
 
         // Item
         helper.addKeyboundItem(OhmegaItems.getAngelRing(),

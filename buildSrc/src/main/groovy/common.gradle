@@ -31,7 +31,7 @@ processResources {
 
     inputs.properties replaceProperties
 
-    filesMatching("pack.mcmeta") {
+    filesMatching(["pack.mcmeta", "resourcepacks/*/pack.mcmeta"]) {
         expand replaceProperties
     }
 }

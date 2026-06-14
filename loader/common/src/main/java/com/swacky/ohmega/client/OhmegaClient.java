@@ -22,6 +22,7 @@ public final class OhmegaClient {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Identifier DEFAULT_EXTENSION_ID = Ohmega.id("default");
     public static final String LINK_CROWDIN = "https://crowdin.com/project/ohmega";
+    public static final Identifier PACK_DARK_ID = Ohmega.id("dark");
 
     private static boolean bootstrapped = false;
     private static int servicesCount = 0;

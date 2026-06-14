@@ -21,6 +21,9 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
@@ -65,5 +68,11 @@ public final class OhmegaClientMain implements ClientModInitializer {
         // Rendering
         AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new);
         ModelLayerRegistry.registerModelLayer(HaloModel.LOCATION, HaloModel::createDefinition);
+
+        // Resource packs
+        ResourceLoader.registerBuiltinPack(
+                OhmegaClient.PACK_DARK_ID,
+                FabricLoader.getInstance().getModContainer(Ohmega.MODID).orElseThrow(),
+                PackActivationType.NORMAL);
     }
 }

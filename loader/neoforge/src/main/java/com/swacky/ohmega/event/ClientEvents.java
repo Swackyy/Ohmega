@@ -3,6 +3,7 @@ package com.swacky.ohmega.event;
 import com.google.common.reflect.TypeToken;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
@@ -20,6 +21,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.api.distmarker.Dist;
@@ -37,6 +41,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import net.neoforged.neoforge.common.util.AttributeTooltipContext;
 import net.neoforged.neoforge.event.AddAttributeTooltipsEvent;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jspecify.annotations.NonNull;
 
@@ -66,6 +71,17 @@ public final class ClientEvents {
                 }
             });
         }
+    }
+
+    @SubscribeEvent
+    public static void onAddPackFinders(AddPackFindersEvent event) {
+        event.addPackFinders(
+                OhmegaClient.PACK_DARK_ID.withPrefix("resourcepacks/"),
+                PackType.CLIENT_RESOURCES,
+                Component.literal(OhmegaClient.PACK_DARK_ID.getNamespace() + '/' + OhmegaClient.PACK_DARK_ID.getPath()),
+                PackSource.BUILT_IN,
+                false,
+                Pack.Position.BOTTOM);
     }
 
     @SubscribeEvent

@@ -2,7 +2,6 @@ package com.swacky.ohmega.datagen.client;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -55,7 +54,6 @@ public class OhmegaSplashProvider implements DataProvider {
         addSplashes();
 
         if (!data.isEmpty()) {
-            Optional<ModContainer> container = FabricLoader.getInstance().getModContainer(Identifier.DEFAULT_NAMESPACE);
             Path path = output.getOutputFolder(PackOutput.Target.RESOURCE_PACK)
                     .resolve(Identifier.DEFAULT_NAMESPACE)
                     .resolve("texts")
@@ -64,15 +62,14 @@ public class OhmegaSplashProvider implements DataProvider {
             return CompletableFuture.runAsync(() -> {
                 StringBuilder builder = new StringBuilder();
 
-                if (container.isPresent()) {
-                    Optional<Path> vanilla = container.get().findPath("assets/" + Identifier.DEFAULT_NAMESPACE + "/texts/splashes.txt");
+                Optional<Path> vanilla = FabricLoader.getInstance().getModContainer(Identifier.DEFAULT_NAMESPACE).orElseThrow()
+                        .findPath("assets/" + Identifier.DEFAULT_NAMESPACE + "/texts/splashes.txt");
 
-                    if (vanilla.isPresent()) {
-                        try {
-                            builder.append(Files.readString(vanilla.get()));
-                        } catch (IOException e) {
-                            throw new RuntimeException("Could not merge vanilla splashes.txt file", e);
-                        }
+                if (vanilla.isPresent()) {
+                    try {
+                        builder.append(Files.readString(vanilla.get()));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Could not merge vanilla splashes.txt file", e);
                     }
                 }
 
