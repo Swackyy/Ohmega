@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.common.item;
 
 import com.swacky.ohmega.event.OhmegaHooks;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -82,10 +83,14 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
-    public void onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
-        if (!OhmegaHooks.keybindUse(player, stack)) {
-            inner.onKeybindUse(player, stack);
+    public boolean onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
+        BooleanBooleanPair pair = OhmegaHooks.keybindUse(player, stack);
+
+        if (!pair.firstBoolean()) {
+            return inner.onKeybindUse(player, stack);
         }
+
+        return pair.secondBoolean();
     }
 
     @Override

@@ -104,7 +104,7 @@ public final class CommonEvents {
     }
 
     private static void onServerStarting(MinecraftServer server) {
-        CommonCallbacks.onServerStarting();
+        CommonCallbacks.onSetupAccessoryTypeManager();
     }
 
     private static InteractionResult onUseItem(Level level, Player player, InteractionHand hand) {

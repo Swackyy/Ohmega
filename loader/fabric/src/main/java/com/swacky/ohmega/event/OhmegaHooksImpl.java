@@ -26,6 +26,7 @@ import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
@@ -100,7 +101,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean keybindUse(Player player, ItemStack stack) {
+    public BooleanBooleanPair keybindUse(Player player, ItemStack stack) {
         return AccessoryUseEvent.EVENT.invoker().process(player, stack);
     }
 

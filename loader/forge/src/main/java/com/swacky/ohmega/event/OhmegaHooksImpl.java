@@ -25,6 +25,7 @@ import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModLoader;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -125,8 +127,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean keybindUse(Player player, ItemStack stack) {
-        return AccessoryUseEvent.BUS.post(new AccessoryUseEvent(player, stack));
+    public BooleanBooleanPair keybindUse(Player player, ItemStack stack) {
+        MutableBoolean shouldSynchronise = new MutableBoolean(false);
+
+        return BooleanBooleanPair.of(AccessoryUseEvent.BUS.post(new AccessoryUseEvent(player, stack, shouldSynchronise)), shouldSynchronise.booleanValue());
     }
 
     @Override

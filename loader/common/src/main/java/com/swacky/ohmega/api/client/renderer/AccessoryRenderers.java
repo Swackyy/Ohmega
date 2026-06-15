@@ -53,11 +53,11 @@ public final class AccessoryRenderers {
         return registerNoRender(item, _ -> true);
     }
 
-    public static IHumanoidAccessoryRenderer.@Nullable Factory getHumanoidFactory(@NonNull Accessory key) {
+    public static IHumanoidAccessoryRenderer.@Nullable Factory getHumanoidFactory(@Nullable Accessory key) {
         return HUMANOID_RENDERERS.get(key);
     }
 
-    public static ILivingAccessoryRenderer.@Nullable Factory getLivingFactory(@NonNull Accessory key) {
+    public static ILivingAccessoryRenderer.@Nullable Factory getLivingFactory(@Nullable Accessory key) {
         return LIVING_RENDERERS.get(key);
     }
 

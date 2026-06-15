@@ -67,8 +67,9 @@ public class AngelRing extends Item implements IAccessory {
 
     // Toggle the accessory being active when the keybind is pressed
     @Override
-    public void onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
+    public boolean onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
         AccessoryHelper.toggleActive(player, stack);
+        return true;
     }
 
     // Makes the accessory have the enchanted glint when equipped.

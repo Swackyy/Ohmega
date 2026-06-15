@@ -126,7 +126,7 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onServerStarting(ServerStartedEvent event) {
-        CommonCallbacks.onServerStarting();
+        CommonCallbacks.onSetupAccessoryTypeManager();
     }
 
     @SubscribeEvent

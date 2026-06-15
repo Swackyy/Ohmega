@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.common.Ohmega;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
@@ -70,7 +71,7 @@ public final class OhmegaHooks {
         return IMPL.isPiglinSafe(stack, original);
     }
 
-    public static boolean keybindUse(Player player, ItemStack stack) {
+    public static BooleanBooleanPair keybindUse(Player player, ItemStack stack) {
         return IMPL.keybindUse(player, stack);
     }
 
@@ -135,7 +136,7 @@ public final class OhmegaHooks {
 
         boolean isPiglinSafe(ItemStack stack, boolean original);
 
-        boolean keybindUse(Player player, ItemStack stack);
+        BooleanBooleanPair keybindUse(Player player, ItemStack stack);
 
         double mobVisibility(ItemStack stack, Entity targetingEntity, double original);
 

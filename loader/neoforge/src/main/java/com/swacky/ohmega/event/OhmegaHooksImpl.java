@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.event.AccessoryAllowWalkOnPowderSnowEvent;
@@ -24,7 +25,7 @@ import com.swacky.ohmega.api.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.event.RegisterAccessoryTypesEvent;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
@@ -35,7 +36,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.common.NeoForge;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -104,8 +105,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean keybindUse(Player player, ItemStack stack) {
-        return NeoForge.EVENT_BUS.post(new AccessoryUseEvent(player, stack)).isCanceled();
+    public BooleanBooleanPair keybindUse(Player player, ItemStack stack) {
+        MutableBoolean shouldSynchronise = new MutableBoolean(false);
+
+        return BooleanBooleanPair.of(NeoForge.EVENT_BUS.post(new AccessoryUseEvent(player, stack, shouldSynchronise)).isCanceled(), shouldSynchronise.booleanValue());
     }
 
     @Override

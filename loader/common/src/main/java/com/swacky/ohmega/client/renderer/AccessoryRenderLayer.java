@@ -8,6 +8,7 @@ import com.swacky.ohmega.api.client.renderer.ILivingAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.LivingRenderContext;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
@@ -47,8 +48,10 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
                 ItemStack stack = stacks.get(i);
 
                 if (!stack.isEmpty() && !(flag && data.hidden()[i])) {
+                    Accessory accessory = Accessories.get(stack.getItem());
+
                     if (state instanceof HumanoidRenderState humanoidState) {
-                        IHumanoidAccessoryRenderer.Factory factory = AccessoryRenderers.getHumanoidFactory(Accessories.get(stack.getItem()));
+                        IHumanoidAccessoryRenderer.Factory factory = AccessoryRenderers.getHumanoidFactory(accessory);
 
                         if (factory != null) {
                             HumanoidRenderContext context = new HumanoidRenderContext(
@@ -68,7 +71,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
                         }
                     }
 
-                    ILivingAccessoryRenderer.Factory factory = AccessoryRenderers.getLivingFactory(Accessories.get(stack.getItem()));
+                    ILivingAccessoryRenderer.Factory factory = AccessoryRenderers.getLivingFactory(accessory);
 
                     if (factory != null) {
                         LivingRenderContext context = new LivingRenderContext(

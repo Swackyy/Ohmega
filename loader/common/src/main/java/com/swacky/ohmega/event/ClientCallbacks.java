@@ -191,9 +191,7 @@ public final class ClientCallbacks {
     }
 
     public static void onJoinWorld(Minecraft mc) {
-        AccessoryTypeManager.unlockEvents();
-        OhmegaHooks.accessoryBind();
-        AccessoryTypeManager.postOverrideTypes();
+        CommonCallbacks.onSetupAccessoryTypeManager();
 
         BooleanLazySavedValue option = OhmegaConfig.Client.getData().showTranslationToast();
 
@@ -269,11 +267,11 @@ public final class ClientCallbacks {
                         Accessory accessory = Accessories.get(stack.getItem());
 
                         if (accessory != null) {
-                            // Client handling
-                            accessory.onKeybindUse(player, stack);
+                            boolean shouldNotifyServer = accessory.onKeybindUse(player, stack);
 
-                            // Server handling
-                            OhmegaNetworking.C2S.send(new UseAccessoryPacket(j));
+                            if (shouldNotifyServer) {
+                                OhmegaNetworking.C2S.send(new UseAccessoryPacket(j));
+                            }
                         }
                     }
                 }

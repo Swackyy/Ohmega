@@ -87,14 +87,14 @@ public final class CommonCallbacks {
         OhmegaRootCommand.register(dispatcher, context);
     }
 
-    public static void onServerStarting() {
+    public static void onServerConfigReload() {
+        OhmegaConfig.Server.getData().pull();
+    }
+
+    public static void onSetupAccessoryTypeManager() {
         AccessoryTypeManager.unlockEvents();
         OhmegaHooks.accessoryBind();
         AccessoryTypeManager.postOverrideTypes();
-    }
-
-    public static void onServerConfigReload() {
-        OhmegaConfig.Server.getData().pull();
     }
 
     public static boolean shouldKeepInventory(LivingEntity entity) {
