@@ -85,8 +85,11 @@ if (secretsFile.exists()) {
         group = "publishing"
 
         subprojects.each { sub ->
-            if (sub.name != "common") {
-                dependsOn sub.tasks.named("publishMods")
+            //noinspection ConfigurationAvoidance
+            Task publishTask = sub.tasks.findByName("publishMods")
+
+            if (publishTask != null) {
+                dependsOn publishTask
             }
         }
 
