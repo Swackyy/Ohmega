@@ -54,7 +54,10 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
-    implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+
+    if (loaderFabricModMenuEnabled.toBoolean()) {
+        implementation "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+    }
 }
 
 fabricApi {

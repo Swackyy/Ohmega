@@ -6,6 +6,7 @@ import com.swacky.ohmega.network.C2S.OpenAccessoryInventoryPacket;
 import com.swacky.ohmega.network.C2S.OpenInventoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -57,17 +58,19 @@ public final class AccessoryInventoryButton extends AbstractButton {
         LocalPlayer player = mc.player;
 
         if (player != null) {
+            Gui gui = mc.gui;
+
             if (!player.isCreative() && !player.isSpectator()) {
                 if (screen instanceof AccessoryInventoryScreen) {
                     player.containerMenu = player.inventoryMenu;
-                    mc.setScreen(new InventoryScreen(player));
+                    gui.setScreen(new InventoryScreen(player));
                     OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
                 } else {
                     OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
                 }
             } else {
                 player.containerMenu = player.inventoryMenu;
-                mc.setScreen(new InventoryScreen(player));
+                gui.setScreen(new InventoryScreen(player));
                 OhmegaNetworking.C2S.send(OpenInventoryPacket.INSTANCE);
             }
         }

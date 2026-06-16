@@ -17,6 +17,7 @@ import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -24,6 +25,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -55,15 +57,20 @@ public final class ClientCallbacks {
 
     public static void onKeyInput() {
         Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
 
-        if (mc.screen == null && mc.player != null) {
-            while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && (mc.player.portalProcess == null || !mc.player.portalProcess.isInsidePortalThisTick())) {
-                if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
-                    mc.player.sendOpenInventory();
-                } else if (!mc.player.isCreative() && !mc.player.isSpectator()) {
-                    OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
-                } else {
-                    mc.setScreen(new InventoryScreen(mc.player));
+        if (player != null) {
+            Gui gui = mc.gui;
+
+            if (gui.screen() == null) {
+                while (OhmegaBinds.OPEN_ACC_INV.consumeClick() && (player.portalProcess == null || !player.portalProcess.isInsidePortalThisTick())) {
+                    if (mc.gameMode != null && mc.gameMode.isServerControlledInventory()) {
+                        player.sendOpenInventory();
+                    } else if (!player.isCreative() && !player.isSpectator()) {
+                        OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
+                    } else {
+                        gui.setScreen(new InventoryScreen(player));
+                    }
                 }
             }
 
@@ -131,7 +138,7 @@ public final class ClientCallbacks {
             OhmegaNetworking.C2S.send(ResizeContainerPacket.INSTANCE);
 
             if (!OhmegaConfig.Client.compatibilityMode() && player.containerMenu instanceof AccessoryInventoryMenu) {
-                mc.screen = null;
+                mc.gui.screen = null;
 
                 player.connection.send(new ServerboundContainerClosePacket(player.containerMenu.containerId));
                 OhmegaNetworking.C2S.send(OpenAccessoryInventoryPacket.INSTANCE);
