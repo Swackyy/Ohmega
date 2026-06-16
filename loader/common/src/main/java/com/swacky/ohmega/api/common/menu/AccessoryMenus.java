@@ -52,6 +52,7 @@ public final class AccessoryMenus {
      * Called by {@link #onConstruct(AbstractContainerMenu, Player)} and will usually not need to be invoked manually
      * @param menu parent menu
      * @param owner player which this menu belongs
+     * @param consumer a callback to perform an operation for each generated {@link AccessorySlot}, supplying it
      * @return a list of {@link AccessorySlot}s to add with the accessory extension to the menu
      */
     public static List<AccessorySlot> createSlots(@NonNull AbstractContainerMenu menu, @NonNull Player owner, @Nullable Consumer<AccessorySlot> consumer) {

@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.jspecify.annotations.NonNull;
@@ -60,11 +61,11 @@ public final class AccessoryScreens {
     /**
      * Retrieve the "effective" screen if possible.
      * In more detail, if the current forefront screen is an {@link IEmbeddingScreen}, will return {@link IEmbeddingScreen#getEmbeddedScreen()},
-     * however if that fails, it will simply return {@link Minecraft#screen}
+     * however if that fails, it will simply return {@link Gui#screen()}
      * @return the use-effective accessory screen
      */
     public static @Nullable Screen getEffectiveScreen() {
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
 
         if (screen instanceof IEmbeddingScreen embeddedScreen) {
             return embeddedScreen.getEmbeddedScreen();

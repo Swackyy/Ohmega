@@ -41,6 +41,6 @@ if (moduleEnabledForge.toBoolean()) {
     include "loader:forge"
 }
 
-if (moduleEnabledFabric.toBoolean()) {
+if (moduleEnabledNeo.toBoolean()) {
     include "loader:neoforge"
 }

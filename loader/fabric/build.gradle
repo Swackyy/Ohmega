@@ -62,10 +62,14 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 
-    compileOnly "mezz.jei:jei-${mcV}-fabric-api:${jeiV}"
-    localRuntime "mezz.jei:jei-${mcV}-fabric:${jeiV}"
+    if (jeiEnabled.toBoolean()) {
+        compileOnly "mezz.jei:jei-${mcV}-fabric-api:${jeiV}"
+        localRuntime "mezz.jei:jei-${mcV}-fabric:${jeiV}"
+    }
 
-    localRuntime "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+    if (loaderFabricModMenuEnabled.toBoolean()) {
+        localRuntime "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+    }
 }
 
 fabricApi {

@@ -30,7 +30,9 @@ dependencies {
     commonJava project(path: ":loader:common", configuration: "commonJava")
     commonResources project(path: ":loader:common", configuration: "commonResources")
 
-    runtimeOnly "maven.modrinth:spark:${sparkV}-${project.name}"
+    if (sparkEnabled.toBoolean()) {
+        runtimeOnly "maven.modrinth:spark:${sparkV}-${project.name}"
+    }
 }
 
 processResources {

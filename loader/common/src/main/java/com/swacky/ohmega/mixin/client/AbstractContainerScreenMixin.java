@@ -152,7 +152,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
                     value = "HEAD"),
             cancellable = true)
     public void isHovering(int x, int y, int width, int height, double mx, double my, CallbackInfoReturnable<Boolean> cir) {
-        if (minecraft.screen instanceof IEmbeddingScreen && !(this instanceof IEmbeddingScreen)) {
+        if (minecraft.gui.screen() instanceof IEmbeddingScreen && !(this instanceof IEmbeddingScreen)) {
             cir.setReturnValue(false);
         }
     }

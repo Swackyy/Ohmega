@@ -458,7 +458,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
         if (parentScreen instanceof AbstractContainerScreen<?>) {
             super.onClose();
         } else {
-            minecraft.setScreen(parentScreen);
+            minecraft.gui.setScreen(parentScreen);
         }
     }
 

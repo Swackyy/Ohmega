@@ -3,7 +3,7 @@ package com.swacky.ohmega.client.screen.widget;
 import com.swacky.ohmega.api.client.screen.widget.HoverableButton;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -27,14 +27,14 @@ public final class CrowdinButton extends HoverableButton {
 
     @Override
     public void onPress(@NonNull InputWithModifiers input) {
-        Minecraft mc = parentScreen.minecraft;
+        Gui gui = parentScreen.minecraft.gui;
 
-        mc.setScreen(new ConfirmLinkScreen(result -> {
+        gui.setScreen(new ConfirmLinkScreen(result -> {
             if (result) {
                 Util.getPlatform().openUri(OhmegaClient.LINK_CROWDIN);
             }
 
-            mc.setScreen(parentScreen);
+            gui.setScreen(parentScreen);
         }, OhmegaClient.LINK_CROWDIN, false));
     }
 

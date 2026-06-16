@@ -44,6 +44,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "mezz.jei:jei-${mcV}-neoforge-api:${jeiV}"
-    runtimeOnly "mezz.jei:jei-${mcV}-neoforge:${jeiV}"
+    if (jeiEnabled.toBoolean()) {
+        compileOnly "mezz.jei:jei-${mcV}-neoforge-api:${jeiV}"
+        runtimeOnly "mezz.jei:jei-${mcV}-neoforge:${jeiV}"
+    }
 }

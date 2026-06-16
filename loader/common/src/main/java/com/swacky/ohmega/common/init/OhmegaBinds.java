@@ -35,7 +35,7 @@ public final class OhmegaBinds {
     public static final KeyMapping EDIT_NUDGE_UP = key("edit_nudge_up", GLFW.GLFW_KEY_UP);
     public static final KeyMapping EDIT_SHOW_LINES = key("edit_show_lines", GLFW.GLFW_KEY_LEFT_SHIFT);
     public static final KeyMapping OPEN_ACCESSORY_INVENTORY = key("open_accessory_inventory", GLFW.GLFW_KEY_UNKNOWN);
-    public static final KeyMapping OPEN_EDIT_UI = key("open_edit_ui", GLFW.GLFW_KEY_O);
+    public static final KeyMapping OPEN_EDIT_UI = key("open_edit_ui", GLFW.GLFW_KEY_LEFT_BRACKET);
 
     private static Map<AccessoryType, List<KeyMapping>> SLOT_KEYS = Map.of();
     private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();

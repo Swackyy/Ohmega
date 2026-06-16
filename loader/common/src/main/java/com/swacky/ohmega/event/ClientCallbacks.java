@@ -8,7 +8,11 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.client.command.OhmegaClientRootCommand;
@@ -16,11 +20,7 @@ import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.init.OhmegaBinds;
-import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
@@ -29,6 +29,7 @@ import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -146,9 +147,10 @@ public final class ClientCallbacks {
         if (!OhmegaConfig.Client.getData().compatibilityMode().get()) {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
+            Gui gui = mc.gui;
 
-            if (player != null && mc.screen instanceof IAccessoryScreen) {
-                mc.execute(() -> mc.setScreen(null));
+            if (player != null && gui.screen() instanceof IAccessoryScreen) {
+                mc.execute(() -> gui.setScreen(null));
 
                 AbstractContainerMenu menu = player.containerMenu;
 
@@ -196,8 +198,7 @@ public final class ClientCallbacks {
         BooleanLazySavedValue option = OhmegaConfig.Client.getData().showTranslationToast();
 
         if (option.get()) {
-            mc.getToastManager().addToast(SystemToast.multiline(
-                    mc,
+            mc.gui.toastManager().addToast(new SystemToast(
                     new SystemToast.SystemToastId(7500),
                     Component.translatable("toast.ohmega.translation.title"),
                     Component.translatable("toast.ohmega.translation.message")
@@ -214,11 +215,12 @@ public final class ClientCallbacks {
         LocalPlayer player = mc.player;
 
         if (player != null) {
-            Screen screen = mc.screen;
+            Gui gui = mc.gui;
+            Screen screen = gui.screen();
 
             if (screen == null) {
                 if (OhmegaBinds.OPEN_EDIT_UI.consumeClick()) {
-                    mc.setScreen(new EditUiScreen(null, player));
+                    gui.setScreen(new EditUiScreen(null, player));
                 }
 
                 while (OhmegaBinds.OPEN_ACCESSORY_INVENTORY.consumeClick() && (player.portalProcess == null || !player.portalProcess.isInsidePortalThisTick())) {
@@ -231,7 +233,7 @@ public final class ClientCallbacks {
                             screen = new InventoryScreen(player);
                         }
 
-                        mc.setScreen(screen);
+                        gui.setScreen(screen);
 
                         AccessoryScreenExtension extension = ((IAccessoryScreen) screen).getAccessoryExtension();
 
@@ -277,7 +279,7 @@ public final class ClientCallbacks {
                 }
             } else {
                 if (!(screen instanceof EditUiScreen) && screen instanceof IAccessoryScreen && OhmegaBinds.OPEN_EDIT_UI.matches(event) && !(screen.getFocused() instanceof EditBox)) {
-                    mc.setScreen(new EditUiScreen(screen, player));
+                    gui.setScreen(new EditUiScreen(screen, player));
                 }
             }
         }
@@ -334,8 +336,10 @@ public final class ClientCallbacks {
             LocalPlayer player = mc.player;
 
             if (player != null) {
-                if (mc.screen instanceof IAccessoryScreen) {
-                    mc.execute(() -> mc.setScreen(null));
+                Gui gui = mc.gui;
+
+                if (gui.screen() instanceof IAccessoryScreen) {
+                    mc.execute(() -> gui.setScreen(null));
 
                     AbstractContainerMenu menu = player.containerMenu;
 

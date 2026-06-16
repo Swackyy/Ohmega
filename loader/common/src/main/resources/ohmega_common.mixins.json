@@ -18,10 +18,10 @@
     "client.AbstractRecipeBookScreenMixin",
     "client.CreativeModeInventoryScreenMixin",
     "client.EffectsInInventoryMixin",
+    "client.GuiMixin",
     "client.InventoryScreenMixin",
     "client.ItemPickerMenuMixin",
     "client.LivingEntityRendererMixin",
-    "client.MinecraftMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RecipeBookComponentMixin",
     "client.ScreenMixin"
