@@ -93,11 +93,6 @@ tasks.withType(JavaCompile).configureEach {
     dependsOn configurations.commonJava
 }
 
-tasks.withType(Javadoc).configureEach {
-    dependsOn configurations.commonJava
-    source configurations.commonJava
-}
-
 jar {
     from configurations.commonResources
     exclude "**/common_aw.accesswidener"

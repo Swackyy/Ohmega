@@ -18,7 +18,6 @@ java {
     targetCompatibility = javaVersion
     toolchain.languageVersion = javaVersion
 
-    withJavadocJar()
     withSourcesJar()
 }
 
@@ -42,10 +41,6 @@ tasks.withType(JavaCompile).configureEach {
     options.release.set JavaLanguageVersion.of(javaV).asInt()
 }
 
-tasks.withType(Javadoc).configureEach {
-    options.quiet()
-}
-
 jar {
     exclude "**/.cache"
 }
@@ -66,7 +61,11 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
 }
 
-["apiElements", "runtimeElements", "sourcesElements", "javadocElements"].each { variant ->
+tasks.register("pseudoJavadocJar", Jar) {
+    archiveClassifier = "javadoc"
+}
+
+["apiElements", "runtimeElements", "sourcesElements"].each { variant ->
     configurations."${variant}".outgoing {
         capability "${group}:${base.archivesName.get()}:${version}"
         capability "${group}:${modId}-${project.name}-${mcV}:${version}"
@@ -96,8 +95,7 @@ if (secretsFile.exists()) {
                     version = "${modV}-mc${mcV}"
 
                     from components.java
-                    //artifact tasks.named("javadocJar")
-                    //artifact tasks.named("sourcesJar")
+                    artifact tasks.named("pseudoJavadocJar")
 
                     pom {
                         name = "${modName} ${project.name}"
