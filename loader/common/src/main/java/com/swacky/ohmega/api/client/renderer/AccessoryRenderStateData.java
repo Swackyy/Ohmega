@@ -1,4 +1,4 @@
-package com.swacky.ohmega.client.renderer;
+package com.swacky.ohmega.api.client.renderer;
 
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;

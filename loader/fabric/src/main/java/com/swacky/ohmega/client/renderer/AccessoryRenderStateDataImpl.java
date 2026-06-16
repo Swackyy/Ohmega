@@ -1,5 +1,6 @@
 package com.swacky.ohmega.client.renderer;
 
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 

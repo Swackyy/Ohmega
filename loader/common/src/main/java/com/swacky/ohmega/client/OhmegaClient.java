@@ -6,7 +6,7 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.HelpCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.menu.DefaultMenuExtension;
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.DefaultScreenExtension;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;

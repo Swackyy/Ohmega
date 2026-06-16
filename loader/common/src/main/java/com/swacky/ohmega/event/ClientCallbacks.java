@@ -16,7 +16,7 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.client.command.OhmegaClientRootCommand;
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateData;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;

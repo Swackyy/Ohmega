@@ -1,6 +1,7 @@
 package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.renderer.HumanoidRenderContext;
 import com.swacky.ohmega.api.client.renderer.IHumanoidAccessoryRenderer;
