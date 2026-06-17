@@ -66,13 +66,13 @@ if (secretsFile.exists()) {
                     if (uploadStatus == 200) {
                         println "Successfully published to Maven Central"
                     } else {
-                        System.err.println("Status code ${uploadStatus} -- Failed to flush and publish, reason:\n${uploadResponse.body()}")
+                        System.err.println("Status code ${uploadStatus} -- Failed to flush and publish, reason:${uploadResponse.body()}")
                     }
                 } else {
                     System.err.println("No open repository found for namespace: 'io.github.swackyy'")
                 }
             } else {
-                System.err.println("Status code ${getStatus} -- Failed to get repositories, reason:\n${getResponse.body()}")
+                System.err.println("Status code ${getStatus} -- Failed to get repositories, reason:${getResponse.body()}")
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.swacky.ohmega.client.renderer;
+package com.swacky.ohmega.api.client.renderer;
 
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;

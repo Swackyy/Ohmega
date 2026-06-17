@@ -1,6 +1,8 @@
 package com.swacky.ohmega.api.common.accessorytype;
 
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonElement;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.JsonOps;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -24,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -35,7 +38,6 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     private static final @NonNull AccessoryTypeManager INSTANCE = new AccessoryTypeManager();
     private static final @NonNull Logger LOGGER = LogManager.getLogger();
     public static final @NonNull String LOCATION = Ohmega.MODID + "/accessory_types.json";
-    private static final @NonNull TypeToken<Map<String, AccessoryType.Builder>> TOKEN = new TypeToken<>() {};
     private static final @NonNull Map<Identifier, AccessoryType> TYPES = new HashMap<>();
     private static final @NonNull List<Runnable> APPLY_TASKS = new ArrayList<>();
     private static final @NonNull List<Runnable> CONFIG_LOAD_TASKS = new ArrayList<>();
@@ -96,16 +98,26 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
 
             for (Resource resource : manager.getResourceStack(Identifier.fromNamespaceAndPath(namespace, LOCATION))) {
                 try (Reader reader = resource.openAsReader()) {
-                    Map<String, AccessoryType.Builder> jsonMap = GsonHelper.fromJson(AccessoryType.Deserializer.GSON, reader, TOKEN);
+                    Optional<Pair<Map<String, AccessoryType.Builder>, JsonElement>> opt = AccessoryType.Builder.MAP_CODEC.decode(
+                            JsonOps.INSTANCE,
+                            GsonHelper.parse(reader)
+                    ).resultOrPartial(message -> LOGGER.warn("Could not completely parse JSON '{}' in DataPack '{}', message:{}",
+                            LOCATION,
+                            resource.sourcePackId(),
+                            message));
 
-                    for (Map.Entry<String, AccessoryType.Builder> entry : jsonMap.entrySet()) {
-                        AccessoryType type = entry.getValue().build(namespace, entry.getKey());
+                    if (opt.isPresent()) {
+                        for (Map.Entry<String, AccessoryType.Builder> entry : opt.get().getFirst().entrySet()) {
+                            AccessoryType type = entry.getValue().build(namespace, entry.getKey());
 
-                        map.put(type.getId(), type);
+                            map.put(type.getId(), type);
 
-                        if (typeCount++ == 0) {
-                            namespaceCount++;
+                            if (typeCount++ == 0) {
+                                namespaceCount++;
+                            }
                         }
+                    } else {
+                        LOGGER.warn("Could not decode JSON '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId());
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Could not read '{}' in DataPack: '{}'", LOCATION, resource.sourcePackId(), e);

@@ -82,7 +82,7 @@ public final class AccessoryData {
     }
 
     /**
-     * {@code public}ly exposed constructor, used internally by Ohmega.
+     * Publicly exposed constructor, used internally by Ohmega.
      * Initialises {@link ItemStack}s as all empty and all {@code hidden} as {@code false}
      */
     public AccessoryData() {

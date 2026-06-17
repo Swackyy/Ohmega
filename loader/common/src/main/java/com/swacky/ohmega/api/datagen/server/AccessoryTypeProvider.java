@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.datagen.server;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.data.CachedOutput;
@@ -40,7 +41,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
         if (!data.isEmpty()) {
             JsonObject json = new JsonObject();
 
-            data.forEach((id, type) -> json.add(id, AccessoryType.Serializer.GSON.toJsonTree(type)));
+            data.forEach((id, type) -> json.add(id, AccessoryType.Builder.CODEC.encodeStart(JsonOps.INSTANCE, type).getPartialOrThrow()));
             return DataProvider.saveStable(cache, json, output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
         }
 

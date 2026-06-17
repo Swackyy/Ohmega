@@ -1,18 +1,9 @@
 package com.swacky.ohmega.api.common.accessorytype;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.JsonSyntaxException;
-import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.item.datacomponent.AccessoryModifiers;
+import com.swacky.ohmega.api.util.codec.OhmegaCodecs;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -23,12 +14,11 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import org.jspecify.annotations.NonNull;
 
-import java.lang.reflect.Type;
 import java.util.HexFormat;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -36,8 +26,27 @@ import java.util.function.Supplier;
  * <p>
  * View the <a href="https://github.com/Swackyy/Ohmega/wiki">wiki</a> to learn how to create your own unique accessory types
  */
-// todo: move JSON serialisation to just use codecs
 public final class AccessoryType {
+    // Keys
+    public static final @NonNull String ATTRIBUTE_MODIFIERS_KEY = "attributeModifiers";
+    public static final @NonNull String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
+    public static final @NonNull String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
+    public static final @NonNull String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
+    public static final @NonNull String NO_FALLBACK_KEY = "noFallback";
+    public static final @NonNull String NO_SPECIFY_KEY = "noSpecify";
+    public static final @NonNull String PRIORITY_KEY = "priority";
+
+    public static final @NonNull Codec<AccessoryType> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+            Identifier.CODEC.fieldOf("id").forGetter(AccessoryType::getId),
+            AccessoryModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(AccessoryType::getAttributeModifiers),
+            Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(AccessoryType::displayHoverText),
+            Identifier.CODEC.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(AccessoryType::getEmptySlotLocation),
+            OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(AccessoryType::getHoverTextColour),
+            Codec.BOOL.fieldOf(NO_FALLBACK_KEY).forGetter(AccessoryType::isNoFallback),
+            Codec.BOOL.fieldOf(NO_SPECIFY_KEY).forGetter(AccessoryType::isNoSpecify),
+            Codec.INT.fieldOf(PRIORITY_KEY).forGetter(AccessoryType::getPriority)
+    ).apply(builder, AccessoryType::new));
+
     public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryType> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC, AccessoryType::getId,
             AccessoryModifiers.STREAM_CODEC, AccessoryType::getAttributeModifiers,
@@ -45,16 +54,9 @@ public final class AccessoryType {
             Identifier.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
             ByteBufCodecs.BOOL, AccessoryType::isNoFallback,
+            ByteBufCodecs.BOOL, AccessoryType::isNoSpecify,
             ByteBufCodecs.INT, AccessoryType::getPriority,
             AccessoryType::new);
-
-    // JSON keys
-    public static final @NonNull String ATTRIBUTE_MODIFIERS_KEY = "attributeModifiers";
-    public static final @NonNull String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
-    public static final @NonNull String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
-    public static final @NonNull String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
-    public static final @NonNull String NO_FALLBACK_KEY = "noFallback";
-    public static final @NonNull String PRIORITY_KEY = "priority";
 
     // Use these for data generation
     public static final @NonNull Identifier NONE_ID    = Ohmega.id("none");
@@ -64,10 +66,11 @@ public final class AccessoryType {
     public static final @NonNull Identifier SPECIAL_ID = Ohmega.id("special");
 
     // A placeholder or "unknown" accessory type. Do not use this
-    public static final @NonNull AccessoryType NONE = new AccessoryType.Builder()
+    public static final @NonNull AccessoryType NONE = new Builder()
+            .noSpecify()
             .priority(Integer.MAX_VALUE)
             .build(NONE_ID);
-    // Deferred to ensure they are correct
+    // Deferred to ensure they are not 'ohmega:none'
     public static final @NonNull Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.get(GENERIC_ID);
     public static final @NonNull Supplier<AccessoryType> NORMAL  = () -> AccessoryTypeManager.get(NORMAL_ID);
     public static final @NonNull Supplier<AccessoryType> UTILITY = () -> AccessoryTypeManager.get(UTILITY_ID);
@@ -78,6 +81,7 @@ public final class AccessoryType {
     private final boolean displayHoverText;
     private final @NonNull Identifier emptySlotLocation;
     private final int hoverTextColour;
+    private final boolean noSpecify;
     private final boolean noFallback;
     private final int priority;
 
@@ -90,6 +94,7 @@ public final class AccessoryType {
      * @param emptySlotLocation the location of the texture to display when a slot of this type is empty
      * @param hoverTextColour the colour of the text displayed when hovering. Only for when {@code displayHoverText} is {@code true}
      * @param noFallback prevents accessories with this as the priority type from defaulting to a fallback type when no slots of this type are present
+     * @param noSpecify prevents items from being specifically tagged as this accessory type
      * @param priority the priority index for this type to use if an item is tagged with multiple different types.
      *                 Lower indexes technically mean higher priority
      */
@@ -100,6 +105,7 @@ public final class AccessoryType {
             @NonNull Identifier emptySlotLocation,
             int hoverTextColour,
             boolean noFallback,
+            boolean noSpecify,
             int priority) {
         this.id = id;
         this.attributeModifiers = attributeModifiers;
@@ -107,6 +113,7 @@ public final class AccessoryType {
         this.emptySlotLocation = emptySlotLocation;
         this.hoverTextColour = hoverTextColour;
         this.noFallback = noFallback;
+        this.noSpecify = noSpecify;
         this.priority = priority;
     }
 
@@ -148,6 +155,14 @@ public final class AccessoryType {
      */
     public int getHoverTextColour() {
         return hoverTextColour;
+    }
+
+    /**
+     * Check if this type should not be able to be defined specifically as an item's accessory type
+     * @return {@code true} to prevent items from being tagged as this type, {@code false} otherwise
+     */
+    public boolean isNoSpecify() {
+        return noSpecify;
     }
 
     /**
@@ -231,18 +246,58 @@ public final class AccessoryType {
     }
 
     /**
-     * Builder class to create accessory types, {@code public}ly exposed
+     * Builder class to create accessory types, publicly exposed
      */
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
+        public static final @NonNull Codec<Builder> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+                AccessoryModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(inst -> inst.attributeModifiers),
+                Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(inst -> inst.displayHoverText),
+                Codec.STRING.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(inst -> inst.emptySlotPath),
+                OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(inst -> inst.hoverTextColour),
+                Codec.BOOL.fieldOf(NO_FALLBACK_KEY).forGetter(inst -> inst.noFallback),
+                Codec.BOOL.fieldOf(NO_SPECIFY_KEY).forGetter(inst -> inst.noSpecify),
+                Codec.INT.fieldOf(PRIORITY_KEY).forGetter(inst -> inst.priority)
+        ).apply(builder, Builder::new));
+
+        public static final @NonNull Codec<Map<String, Builder>> MAP_CODEC = Codec.unboundedMap(Codec.STRING, CODEC);
+
         private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
 
-        private @NonNull AccessoryModifiers attributeModifiers = AccessoryModifiers.EMPTY;
-        private boolean displayHoverText = true;
-        private @NonNull String emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
-        private int hoverTextColour = 0xffffff;
-        private boolean noFallback = false;
-        private int priority = 0;
+        private @NonNull AccessoryModifiers attributeModifiers;
+        private boolean displayHoverText;
+        private @NonNull String emptySlotPath;
+        private int hoverTextColour;
+        private boolean noFallback;
+        private boolean noSpecify;
+        private int priority;
+
+        private Builder(
+                @NonNull AccessoryModifiers attributeModifiers,
+                boolean displayHoverText,
+                @NonNull String emptySlotPath,
+                int hoverTextColour,
+                boolean noFallback,
+                boolean noSpecify,
+                int priority) {
+            this.attributeModifiers = attributeModifiers;
+            this.displayHoverText = displayHoverText;
+            this.emptySlotPath = emptySlotPath;
+            this.hoverTextColour = hoverTextColour;
+            this.noFallback = noFallback;
+            this.noSpecify = noSpecify;
+            this.priority = priority;
+        }
+
+        public Builder() {
+            this.attributeModifiers = AccessoryModifiers.EMPTY;
+            this.displayHoverText = true;
+            this.emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
+            this.hoverTextColour = 0xffffff;
+            this.noFallback = false;
+            this.noSpecify = false;
+            this.priority = 0;
+        }
 
         /**
          * Add some attribute modifiers to apply when an item is in a slot of this type
@@ -251,17 +306,6 @@ public final class AccessoryType {
          */
         public @NonNull Builder attributeModifiers(@NonNull AccessoryModifiers modifiers) {
             attributeModifiers = modifiers;
-
-            return this;
-        }
-
-        /**
-         * Set the value of whether we should display text when hovering over an empty slot of this type
-         * @param value {@code true} if the text should be shown (default), {@code} false to hide it
-         * @return the current builder instance
-         */
-        public @NonNull Builder displayHoverText(boolean value) {
-            displayHoverText = value;
 
             return this;
         }
@@ -322,12 +366,21 @@ public final class AccessoryType {
         }
 
         /**
-         * Prevent accessories of this type from falling back to a different type if no slots of this type are present
-         * @param value {@code true} to prevent falling back, {@code false} to allow it (default)
+         * Prevents accessories of this type from falling back to a different type if no slots of this type are present
          * @return the current builder instance
          */
-        public @NonNull Builder noFallback(boolean value) {
-            noFallback = value;
+        public @NonNull Builder noFallback() {
+            noFallback = true;
+
+            return this;
+        }
+
+        /**
+         * Enabling this prevents tagging items with this accessory type
+         * @return the current builder instance
+         */
+        public @NonNull Builder noSpecify() {
+            this.noSpecify = true;
 
             return this;
         }
@@ -360,6 +413,7 @@ public final class AccessoryType {
                             Identifier.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath) :
                             Identifier.parse(emptySlotPath).withPrefix(LOCATION_PREFIX),
                     hoverTextColour,
+                    noSpecify,
                     noFallback,
                     priority);
         }
@@ -371,96 +425,6 @@ public final class AccessoryType {
          */
         public @NonNull AccessoryType build(@NonNull Identifier id) {
             return build(id.getNamespace(), id.getPath());
-        }
-    }
-
-    /**
-     * JSON deserialiser for accessory types, will possibly be moved purely to codecs
-     */
-    public static final class Deserializer implements JsonDeserializer<Builder> {
-        public static final @NonNull Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(AccessoryType.Builder.class, new Deserializer())
-                .create();
-
-        private Deserializer() {}
-
-        @Override
-        public @NonNull Builder deserialize(@NonNull JsonElement element, @NonNull Type type, @NonNull JsonDeserializationContext context) throws JsonParseException {
-            Builder builder = new Builder();
-            JsonObject json = GsonHelper.convertToJsonObject(element, "entry");
-
-            if (json.has(ATTRIBUTE_MODIFIERS_KEY)) {
-                builder.attributeModifiers(AccessoryModifiers.CODEC.parse(
-                        JsonOps.INSTANCE,
-                        json.get(ATTRIBUTE_MODIFIERS_KEY)
-                ).result().orElse(AccessoryModifiers.EMPTY));
-            }
-
-            if (json.has(DISPLAY_HOVER_TEXT_KEY)) {
-                builder.displayHoverText(GsonHelper.convertToBoolean(json.get(DISPLAY_HOVER_TEXT_KEY), DISPLAY_HOVER_TEXT_KEY));
-            }
-
-            if (json.has(EMPTY_SLOT_TEXTURE_KEY)) {
-                builder.emptySlotPath(GsonHelper.convertToString(json.get(EMPTY_SLOT_TEXTURE_KEY), EMPTY_SLOT_TEXTURE_KEY));
-            }
-
-            if (json.has(HOVER_TEXT_COLOUR_KEY)) {
-                JsonElement hoverTextColourElement = json.get("hoverTextColor");
-
-                if (GsonHelper.isNumberValue(hoverTextColourElement)) {
-                    builder.hoverTextColour(hoverTextColourElement.getAsInt());
-                } else {
-                    if (hoverTextColourElement.isJsonPrimitive()) {
-                        String string = hoverTextColourElement.getAsString();
-
-                        if (string.startsWith("0x")) {
-                            builder.hoverTextColour(HexFormat.fromHexDigits(string, 2, string.length()));
-                        } else {
-                            builder.hoverTextColour(string);
-                        }
-                    } else {
-                        throw new JsonSyntaxException("Expected " + HOVER_TEXT_COLOUR_KEY + " to be an Int or a string, was " + GsonHelper.getType(json));
-                    }
-                }
-            }
-
-            if (json.has(NO_FALLBACK_KEY)) {
-                builder.noFallback(GsonHelper.convertToBoolean(json.get(NO_FALLBACK_KEY), NO_FALLBACK_KEY));
-            }
-
-            if (json.has(PRIORITY_KEY)) {
-                builder.priority(GsonHelper.convertToInt(json.get(PRIORITY_KEY), PRIORITY_KEY));
-            }
-
-            return builder;
-        }
-    }
-
-    /**
-     * JSON serialiser for accessory types, will possibly be moved purely to codecs
-     */
-    public static final class Serializer implements JsonSerializer<Builder> {
-        public static final @NonNull Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(AccessoryType.Builder.class, new Serializer())
-                .create();
-
-        private Serializer() {}
-
-        @Override
-        public @NonNull JsonElement serialize(@NonNull Builder builder, @NonNull Type type, @NonNull JsonSerializationContext context) {
-            JsonObject object = new JsonObject();
-
-            object.add(ATTRIBUTE_MODIFIERS_KEY, AccessoryModifiers.CODEC
-                    .encodeStart(JsonOps.INSTANCE, builder.attributeModifiers)
-                    .result()
-                    .orElseGet(JsonArray::new));
-            object.addProperty(DISPLAY_HOVER_TEXT_KEY, builder.displayHoverText);
-            object.addProperty(EMPTY_SLOT_TEXTURE_KEY, builder.emptySlotPath);
-            object.addProperty(HOVER_TEXT_COLOUR_KEY, builder.hoverTextColour);
-            object.addProperty(NO_FALLBACK_KEY, builder.noFallback);
-            object.addProperty(PRIORITY_KEY, builder.priority);
-
-            return object;
         }
     }
 }

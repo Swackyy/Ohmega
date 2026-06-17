@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.client.model.HaloModel;
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;

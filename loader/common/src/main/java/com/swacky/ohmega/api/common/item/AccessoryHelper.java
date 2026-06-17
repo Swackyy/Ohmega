@@ -65,7 +65,11 @@ public final class AccessoryHelper {
 
         for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
             if (item.builtInRegistryHolder().is(entry.getValue())) {
-                builder.add(entry.getKey());
+                AccessoryType type = entry.getKey();
+
+                if (!type.isNoSpecify()) {
+                    builder.add(entry.getKey());
+                }
             }
         }
 
@@ -104,7 +108,8 @@ public final class AccessoryHelper {
             if (item.builtInRegistryHolder().is(entry.getValue())) {
                 AccessoryType candidate = entry.getKey();
 
-                if (candidate.getPriority() < type.getPriority() && (type.isNoFallback() || slotTypes.contains(candidate)) || (!candidate.isNoFallback() && !slotTypes.contains(type))) {
+                // todo: this check works I think but is structured strangely
+                if (!candidate.isNoSpecify() && candidate.getPriority() < type.getPriority() && (type.isNoFallback() || slotTypes.contains(candidate)) || (!candidate.isNoFallback() && !slotTypes.contains(type))) {
                     type = candidate;
                 }
             }

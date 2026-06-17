@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin.client;
 
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.LivingEntityRenderStateExtension;
 import com.swacky.ohmega.event.ClientCallbacks;
 import net.minecraft.client.model.EntityModel;

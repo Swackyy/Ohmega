@@ -1,7 +1,7 @@
 package com.swacky.ohmega.network.S2C;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.network.OhmegaByteBufCodecs;
+import com.swacky.ohmega.api.util.codec.OhmegaByteBufCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
