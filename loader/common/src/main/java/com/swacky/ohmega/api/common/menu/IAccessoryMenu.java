@@ -1,11 +1,14 @@
 package com.swacky.ohmega.api.common.menu;
 
+import com.swacky.ohmega.common.menu.AccessorySlot;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 // todo: clear added slots and replace with new ones on config change
 // todo: if possible, instead move ALL of this to a client-based approach with only one registration needed
@@ -36,6 +39,21 @@ public interface IAccessoryMenu {
      * @param extension accessory extension to set to
      */
     void setAccessoryExtension(@NonNull AccessoryMenuExtension extension);
+
+    /**
+     * Get a list of the accessory slots added to the extension's parent menu.
+     * This is stored as to eliminate the need for looping through all the slots just to perform operations on our custom ones
+     * @return a list of strictly {@link AccessorySlot}s added with the accessory extension
+     */
+    default @Nullable List<AccessorySlot> getSlots() {
+        AccessoryMenuExtension extension = getAccessoryExtension();
+
+        if (extension != null) {
+            return extension.getSlots();
+        }
+
+        return null;
+    }
 
     /**
      * Determines whether the extension should be shown

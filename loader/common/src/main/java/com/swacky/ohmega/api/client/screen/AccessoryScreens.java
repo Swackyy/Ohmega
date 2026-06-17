@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.client.screen;
 import com.swacky.ohmega.api.client.ui.AccessoryUIs;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Holds methods related to screen extensions that implement correct functionality
@@ -39,12 +42,17 @@ public final class AccessoryScreens {
      * @param screen parent screen
      */
     public static void onConstruct(@NonNull AbstractContainerScreen<?> screen) {
-        AccessoryMenuExtension menuExtension = AccessoryMenus.assertImplementation(screen.getMenu()).getAccessoryExtension();
+        IAccessoryMenu accessoryMenu = AccessoryMenus.assertImplementation(screen.getMenu());
+        AccessoryMenuExtension menuExtension = accessoryMenu.getAccessoryExtension();
         IAccessoryScreen accessoryScreen = assertImplementation(screen);
 
         if (menuExtension != null) {
-            for (AccessorySlot slot : menuExtension.getSlots()) {
-                slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
+            List<AccessorySlot> slots = accessoryMenu.getSlots();
+
+            if (slots != null) {
+                for (AccessorySlot slot : slots) {
+                    slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
+                }
             }
 
             AccessoryScreenExtension extension = AccessoryUIs.getActiveScreenFactory().construct(screen, menuExtension);

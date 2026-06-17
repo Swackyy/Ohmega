@@ -61,7 +61,7 @@ public abstract class AccessoryMenuExtension {
      * This is stored as to eliminate the need for looping through all the slots just to perform operations on our custom ones
      * @return a list of strictly {@link AccessorySlot}s added with the accessory extension
      */
-    public @NonNull List<AccessorySlot> getSlots() {
+    public @Nullable List<AccessorySlot> getSlots() {
         return slots;
     }
 

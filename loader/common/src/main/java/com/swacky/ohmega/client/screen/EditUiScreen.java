@@ -27,6 +27,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.jspecify.annotations.NonNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public final class EditUiScreen extends Screen implements IEmbeddingScreen {
@@ -105,13 +106,17 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     private void updateSlotPositions() {
         if (menuExtension != null) {
-            NonNullList<Slot> slots = menuExtension.getMenu().slots;
+            List<AccessorySlot> accessorySlots = menuExtension.getAccessoryMenu().getSlots();
 
-            for (AccessorySlot accessorySlot : menuExtension.getSlots()) {
-                Slot slot = slots.get(accessorySlot.index);
+            if (accessorySlots != null) {
+                NonNullList<Slot> slots = menuExtension.getMenu().slots;
 
-                slot.x = accessorySlot.getOriginalX() + xValue.get();
-                slot.y = accessorySlot.getOriginalY() + yValue.get();
+                for (AccessorySlot accessorySlot : accessorySlots) {
+                    Slot slot = slots.get(accessorySlot.index);
+
+                    slot.x = accessorySlot.getOriginalX() + xValue.get();
+                    slot.y = accessorySlot.getOriginalY() + yValue.get();
+                }
             }
         }
     }

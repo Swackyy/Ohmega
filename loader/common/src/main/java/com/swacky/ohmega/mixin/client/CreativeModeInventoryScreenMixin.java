@@ -9,7 +9,6 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
-import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.menu.AccessorySlot;
@@ -32,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(CreativeModeInventoryScreen.class)
 abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<CreativeModeInventoryScreen.ItemPickerMenu> implements IMixinAccessoryScreen, IMixinEntityRenderingScreen {
@@ -152,11 +153,11 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
                     value = "NEW",
                     target = "(Lnet/minecraft/world/inventory/Slot;III)Lnet/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper;"))
     private CreativeModeInventoryScreen.SlotWrapper selectTab(Slot slot, int index, int x, int y, Operation<CreativeModeInventoryScreen.SlotWrapper> handle) {
-        if (menu instanceof IAccessoryMenu accessoryMenu) {
-            AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
+        if (menu instanceof IAccessoryMenu accessoryMenu && slot instanceof AccessorySlot) {
+            List<AccessorySlot> slots = accessoryMenu.getSlots();
 
-            if (extension != null && slot instanceof AccessorySlot) {
-                slot = extension.getSlots().get(slot.getContainerSlot());
+            if (slots != null) {
+                slot = slots.get(slot.getContainerSlot());
                 slot.index = index;
                 x = slot.x;
                 y = slot.y;

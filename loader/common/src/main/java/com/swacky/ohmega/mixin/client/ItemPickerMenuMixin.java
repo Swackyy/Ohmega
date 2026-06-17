@@ -4,6 +4,7 @@ import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.common.menu.IMixinAccessoryMenu;
+import com.swacky.ohmega.common.menu.AccessorySlot;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -17,6 +18,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(CreativeModeInventoryScreen.ItemPickerMenu.class)
 abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMixinAccessoryMenu {
@@ -45,6 +48,12 @@ abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMix
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
+    public @Nullable List<AccessorySlot> getSlots() {
+        return ((IAccessoryMenu) inventoryMenu).getSlots();
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
     public boolean isAccessoryExtensionVisible() {
         return ((IAccessoryMenu) inventoryMenu).isAccessoryExtensionVisible();
     }
@@ -62,6 +71,6 @@ abstract class ItemPickerMenuMixin extends AbstractContainerMenu implements IMix
                     value = "RETURN"),
             order = -7777)
     private void init(Player owner, CallbackInfo ci) {
-        AccessoryMenus.onConstruct(this, owner);
+        AccessoryMenus.attachExtension(this, owner, this);
     }
 }

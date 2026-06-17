@@ -236,11 +236,9 @@ public final class AccessoryMenus {
      * @param menu supplied by caller {@code this} instance usually: menu we are moving a stack in
      * @param player supplied by method override: player which this menu belongs
      * @param index supplied by method override: slot index we are moving from
-     * @param considerExtensionSlots whether we should actually try moving to/from accessory slots
      * @return {@link ItemStack} after moving
      */
-    @SuppressWarnings("SameReturnValue")
-    public static @NonNull ItemStack quickMoveStack(@NonNull AbstractContainerMenu menu, @NonNull Player player, int index, boolean considerExtensionSlots) {
+    public static @NonNull ItemStack quickMoveStack(@NonNull AbstractContainerMenu menu, @NonNull Player player, int index) {
         Slot slot = menu.getSlot(index);
 
         if (slot.hasItem()) {
@@ -268,12 +266,12 @@ public final class AccessoryMenus {
                 Accessory accessory = Accessories.get(item);
                 Slot slot0 = menu.getSlot(46 + openIndex);
 
-                if (considerExtensionSlots && accessory != null && index > 8 && index < 45 && openIndex >= 0 && slot0.mayPlace(stack0)) { // Inventory -> accessory
+                if (accessory != null && index > 8 && index < 45 && openIndex >= 0 && slot0.mayPlace(stack0)) { // Inventory -> accessory
                     if (!menu.moveItemStackTo(stack, 46, 52, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else {
-                    if (considerExtensionSlots && index > 45 && index < 52) { // Accessory -> inventory
+                    if (index > 45 && index < 52) { // Accessory -> inventory
                         AccessoryData data = AccessoryHelper.getData(player);
                         ItemStack stack1 = tryMoveItemStackTo(player, menu, data, stack, 9, 45, false);
 
@@ -333,12 +331,16 @@ public final class AccessoryMenus {
      * This should be the return value of your target menu's {@link AbstractContainerMenu#quickMoveStack(Player, int)}.
      * You could always use a custom method however the built-in one handles every case needed for Ohmega to work well
      * See {@link InventoryMenu#quickMoveStack(Player, int)} for an example of a fallback
-     * @param menu supplied by caller {@code this} instance usually: menu we are moving a stack in
+     * @param menu Menu we are moving a stack in, usually supplied by caller {@code this} instance
      * @param player supplied by method override: player which this menu belongs
      * @param index supplied by method override: slot index we are moving from
      * @return {@link ItemStack} after moving, or {@code null} on failing, at which point you should rely on a fallback
      */
-    public static @NonNull ItemStack onQuickMoveStack(@NonNull AbstractContainerMenu menu, @NonNull Player player, int index) {
-        return quickMoveStack(menu, player, index, assertImplementation(menu).isAccessoryExtensionVisible());
+    public static @Nullable ItemStack onQuickMoveStack(@NonNull AbstractContainerMenu menu, @NonNull Player player, int index) {
+        if (assertImplementation(menu).isAccessoryExtensionVisible()) {
+            return quickMoveStack(menu, player, index);
+        }
+
+        return null;
     }
 }

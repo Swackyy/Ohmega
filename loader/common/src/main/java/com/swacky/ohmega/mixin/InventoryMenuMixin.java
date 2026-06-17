@@ -66,6 +66,10 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
                     value = "HEAD"),
             cancellable = true)
     private void quickMoveStack(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
-        cir.setReturnValue(AccessoryMenus.onQuickMoveStack(this, player, index));
+        ItemStack candidate = AccessoryMenus.onQuickMoveStack(this, player, index);
+
+        if (candidate != null) {
+            cir.setReturnValue(candidate);
+        }
     }
 }
