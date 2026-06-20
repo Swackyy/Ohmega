@@ -1,4 +1,4 @@
-package com.swacky.ohmega.client.model;
+package com.swacky.ohmega.api.client.model;
 
 import com.swacky.ohmega.mixin.client.ModelLayersMixin;
 import net.minecraft.client.model.geom.ModelLayerLocation;

@@ -2,7 +2,7 @@ package com.swacky.ohmega.mixin.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.swacky.ohmega.client.model.ModelLayerRegistry;
+import com.swacky.ohmega.api.client.model.ModelLayerRegistry;
 import net.minecraft.client.model.geom.LayerDefinitions;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;

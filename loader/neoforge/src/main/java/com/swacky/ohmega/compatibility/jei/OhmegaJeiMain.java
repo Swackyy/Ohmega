@@ -1,9 +1,8 @@
 package com.swacky.ohmega.compatibility.jei;
 
-/*
+
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.event.ClientCallbacks;
-import com.swacky.ohmega.event.CommonCallbacks;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
@@ -16,10 +15,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 @JeiPlugin
-*/
 // todo: this needs to be done in a much more disable-able way
-public class OhmegaJeiMain /*implements IModPlugin*/ {
-    /*
+public class OhmegaJeiMain implements IModPlugin {
     @Override
     public @NonNull Identifier getPluginUid() {
         return Ohmega.id("jei");
@@ -34,5 +31,4 @@ public class OhmegaJeiMain /*implements IModPlugin*/ {
             }
         });
     }
-    */
 }

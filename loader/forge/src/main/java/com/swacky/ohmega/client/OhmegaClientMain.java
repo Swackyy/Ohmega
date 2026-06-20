@@ -1,7 +1,7 @@
 package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.client.model.HaloModel;
-import com.swacky.ohmega.client.model.ModelLayerRegistry;
+import com.swacky.ohmega.api.client.model.ModelLayerRegistry;
 import com.swacky.ohmega.client.screen.ConfigurationScreen;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraftforge.client.ConfigScreenHandler;

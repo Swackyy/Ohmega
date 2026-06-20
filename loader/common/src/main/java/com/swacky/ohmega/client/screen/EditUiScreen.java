@@ -56,8 +56,8 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     private int previousSetY = 0;
     private double cumulativeXo = 0;
     private double cumulativeYo = 0;
-    private int xSnapLineIndex = -1;
-    private int ySnapLineIndex = -1;
+    private SnapLine xSnapLine = null;
+    private SnapLine ySnapLine = null;
 
     @SuppressWarnings("DataFlowIssue")
     public EditUiScreen(Screen parentScreen, LocalPlayer owner) {
@@ -153,10 +153,12 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     }
 
     private void extractSnapLine(GuiGraphicsExtractor gui, SnapLine line) {
-        if (line.vertical()) {
-            gui.verticalLine(line.value(), 0, embeddedScreen.height, 0xbbff6666);
-        } else {
-            gui.horizontalLine(0, embeddedScreen.width, line.value(), 0xbbff6666);
+        if (line != null) {
+            if (line.vertical()) {
+                gui.verticalLine(line.value(), 0, embeddedScreen.height, 0xbbff6666);
+            } else {
+                gui.horizontalLine(0, embeddedScreen.width, line.value(), 0xbbff6666);
+            }
         }
     }
 
@@ -232,8 +234,8 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             cumulativeYo = 0;
         }
 
-        xSnapLineIndex = -1;
-        ySnapLineIndex = -1;
+        xSnapLine = null;
+        ySnapLine = null;
 
         return super.mouseReleased(event);
     }
@@ -263,26 +265,24 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             int testY = y + yo;
             int snappedX = Integer.MAX_VALUE;
             int snappedY = Integer.MAX_VALUE;
-            xSnapLineIndex = -1;
-            ySnapLineIndex = -1;
+            xSnapLine = null;
+            ySnapLine = null;
 
             if (shouldUseMagnetics) {
-                for (int i = 0; i < snapLines.size(); i++) {
-                    SnapLine line = snapLines.get(i);
-
+                for (SnapLine line : snapLines) {
                     if (line.vertical()) {
                         int testValue = line.test(testX, element.getWidth());
 
                         if (testValue != -1 && Math.abs(testX - testValue) < Math.abs(testX - snappedX)) {
                             snappedX = testValue - xo;
-                            xSnapLineIndex = i;
+                            xSnapLine = line;
                         }
                     } else {
                         int testValue = line.test(testY, element.getHeight());
 
                         if (testValue != -1 && Math.abs(testY - testValue) < Math.abs(testY - snappedY)) {
                             snappedY = testValue - yo;
-                            ySnapLineIndex = i;
+                            ySnapLine = line;
                         }
                     }
                 }
@@ -291,7 +291,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             LazyPosition position = element.getElementPosition();
             IntLazySavedValue xPosition = position.x();
 
-            if (xSnapLineIndex == -1) {
+            if (xSnapLine == null) {
                 xPosition.set(x - embeddedScreen.leftPos);
             } else {
                 xPosition.set(snappedX - embeddedScreen.leftPos);
@@ -299,7 +299,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
             IntLazySavedValue yPosition = position.y();
 
-            if (ySnapLineIndex == -1) {
+            if (ySnapLine == null) {
                 yPosition.set(y - embeddedScreen.topPos);
             } else {
                 yPosition.set(snappedY - embeddedScreen.topPos);
@@ -438,13 +438,8 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
         }
 
         if (shouldUseMagnetics) {
-            if (xSnapLineIndex != -1) {
-                extractSnapLine(gui, snapLines.get(xSnapLineIndex));
-            }
-
-            if (ySnapLineIndex != -1) {
-                extractSnapLine(gui, snapLines.get(ySnapLineIndex));
-            }
+            extractSnapLine(gui, xSnapLine);
+            extractSnapLine(gui, ySnapLine);
         }
     }
 
