@@ -1,9 +1,9 @@
 package com.swacky.ohmega.api.util;
 
+import it.unimi.dsi.fastutil.longs.LongBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.LongConsumer;
 import java.util.function.LongSupplier;
 
 /**
@@ -11,7 +11,7 @@ import java.util.function.LongSupplier;
  */
 public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
     private final @Nullable LongSupplier getter;
-    private final @Nullable LongConsumer setter;
+    private final @Nullable LongBooleanBiConsumer setter;
 
     private long value;
 
@@ -20,7 +20,7 @@ public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public LongLazySavedValue(@Nullable LongSupplier getter, @Nullable LongConsumer setter) {
+    public LongLazySavedValue(@Nullable LongSupplier getter, @Nullable LongBooleanBiConsumer setter) {
         this.getter = getter;
         this.setter = setter;
     }
@@ -47,6 +47,11 @@ public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
         if (value != null) {
             set(value);
         }
+    }
+
+    @Override
+    public boolean isSerialisable() {
+        return setter != null;
     }
 
     /**
@@ -85,10 +90,12 @@ public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
 
     /**
      * Calls the serialiser with the currently stored value in memory
+     * @param last {@code true} if this is the expected last invocation of this function, {@code false} if not.
+     *                         Allows for better optimisation and avoids unwanted {@link #pull()} calls
      */
-    public void serialise() {
+    public void serialise(boolean last) {
         if (setter != null) {
-            setter.accept(value);
+            setter.accept(value, last);
         }
     }
 }

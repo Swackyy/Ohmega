@@ -8,23 +8,23 @@ loom {
 
     runs {
         configureEach {
-            property "mixin.debug.export", "true"
-            setConfigName "Fabric ${it.name.capitalize()}"
+            systemProperties.put "mixin.debug.export", "true"
+            displayName = "Fabric ${it.name.capitalize()}"
 
-            runDir = "run"
-            ideConfigGenerated = true
+            runDirectory = file("run")
+            generateRunConfig = true
         }
 
         client {
             client()
 
-            programArgs "--username", "Dev"
+            programArguments.addAll "--username", "Dev"
         }
 
         client2 {
             client()
 
-            programArgs "--username", "AlsoDev"
+            programArguments.addAll "--username", "AlsoDev"
         }
 
         server {

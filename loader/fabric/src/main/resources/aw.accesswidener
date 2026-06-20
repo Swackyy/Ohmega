@@ -1,6 +1,7 @@
 accessWidener v2 official
 
 extendable method net/minecraft/client/gui/components/AbstractWidget extractRenderState (Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V
+accessible field net/minecraft/client/gui/components/ImageButton sprites Lnet/minecraft/client/gui/components/WidgetSprites;
 extendable method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen extractSlotHighlightBack (Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V
 extendable method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen extractSlotHighlightFront (Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I

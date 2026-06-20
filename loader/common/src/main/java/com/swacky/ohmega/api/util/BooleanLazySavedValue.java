@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.util;
 
-import org.apache.commons.lang3.function.BooleanConsumer;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -11,7 +11,7 @@ import java.util.function.BooleanSupplier;
  */
 public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
     private final @Nullable BooleanSupplier getter;
-    private final @Nullable BooleanConsumer setter;
+    private final @Nullable BooleanBooleanBiConsumer setter;
 
     private boolean value;
 
@@ -20,7 +20,7 @@ public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public BooleanLazySavedValue(@Nullable BooleanSupplier getter, @Nullable BooleanConsumer setter) {
+    public BooleanLazySavedValue(@Nullable BooleanSupplier getter, @Nullable BooleanBooleanBiConsumer setter) {
         this.getter = getter;
         this.setter = setter;
     }
@@ -47,6 +47,11 @@ public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
         if (value != null) {
             set(value);
         }
+    }
+
+    @Override
+    public boolean isSerialisable() {
+        return setter != null;
     }
 
     /**
@@ -85,10 +90,12 @@ public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
 
     /**
      * Calls the serialiser with the currently stored value in memory
+     * @param last {@code true} if this is the expected last invocation of this function, {@code false} if not.
+     *                         Allows for better optimisation and avoids unwanted {@link #pull()} calls
      */
-    public void serialise() {
+    public void serialise(boolean last) {
         if (setter != null) {
-            setter.accept(value);
+            setter.accept(value, last);
         }
     }
 }

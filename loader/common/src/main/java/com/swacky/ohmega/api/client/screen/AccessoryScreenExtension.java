@@ -1,12 +1,13 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
-import net.minecraft.client.renderer.Rect2i;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
  * A way to add extra slots and functionality to the default inventory.
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
  */
-public abstract class AccessoryScreenExtension {
+public abstract class AccessoryScreenExtension implements IEditUiElement {
     private final @NonNull AbstractContainerScreen<?> screen;
     private final @NonNull IAccessoryScreen accessoryScreen;
     private final @NonNull AccessoryMenuExtension menuExtension;
@@ -46,13 +47,6 @@ public abstract class AccessoryScreenExtension {
     }
 
     /**
-     * The list of regions where the extension is present, used for checking whether the mouse is hovering over the extension.
-     * The origin position will be relative to the position of the accessory extension
-     * @return a list of clickable accessory extension regions as {@link Rect2i}s
-     */
-    public abstract @NonNull List<Rect2i> getRects();
-
-    /**
      * Get the width of the extension
      * @return width of this accessory extension
      */
@@ -65,11 +59,35 @@ public abstract class AccessoryScreenExtension {
     public abstract int getHeight();
 
     /**
+     * Used to add widgets or execute other setup code for the screen, equivalent to {@link AbstractContainerScreen#init()}
+     * @param adder a utility to add widgets to the GUI
+     */
+    public abstract void initExtension(WidgetAdder adder);
+
+    /**
+     * Extract render data for the accessory extension, called in {@link AbstractContainerScreen#extractBackground(GuiGraphicsExtractor, int, int, float)}.
+     * The current pose is relative to the user's (adjusted) defined co-ordinates for the extension
+     * @param gui graphics extractor
+     */
+    public abstract void extractExtension(GuiGraphicsExtractor gui);
+
+    /**
+     * Check if the player has clicked outside the accessory extension bounds.
+     * Parameters are relative to the top left of the extension, not the parent screen
+     * <p>
+     * Automatically implemented for {@link AbstractContainerScreen} and {@link AbstractRecipeBookScreen}
+     * @param mx mouse x relative to the extension
+     * @param my mouse y relative to the extension
+     * @return {@code true} if the player is found to have clicked outside the extension's bounds, {@code false} otherwise
+     */
+    public abstract boolean hasClickedOutside(double mx, double my);
+
+    /**
      * Get the actual width added with the extension on the left side
      * @return total width that lies over the current screen's leftmost boundary
      */
     public final int getExtraWidthLeft() {
-        return Math.clamp(-accessoryScreen.getAccessoryExtensionX().get(), 0, getWidth());
+        return Math.clamp(-accessoryScreen.getAccessoryExtensionPosition().x().get(), 0, getWidth());
     }
 
     /**
@@ -79,7 +97,7 @@ public abstract class AccessoryScreenExtension {
     public final int getExtraWidthRight() {
         int width = getWidth();
 
-        return Math.clamp(accessoryScreen.getAccessoryExtensionX().get() + width - screen.imageWidth, 0, width);
+        return Math.clamp(accessoryScreen.getAccessoryExtensionPosition().x().get() + width - screen.imageWidth, 0, width);
     }
 
     /**
@@ -87,7 +105,7 @@ public abstract class AccessoryScreenExtension {
      * @return total height that lies over the current screen's topmost boundary
      */
     public final int getExtraHeightTop() {
-        return Math.clamp(-accessoryScreen.getAccessoryExtensionY().get(), 0, getHeight());
+        return Math.clamp(-accessoryScreen.getAccessoryExtensionPosition().y().get(), 0, getHeight());
     }
 
     /**
@@ -97,7 +115,7 @@ public abstract class AccessoryScreenExtension {
     public final int getExtraHeightBottom() {
         int height = getHeight();
 
-        return Math.clamp(accessoryScreen.getAccessoryExtensionY().get() + height - screen.imageHeight, 0, height);
+        return Math.clamp(accessoryScreen.getAccessoryExtensionPosition().y().get() + height - screen.imageHeight, 0, height);
     }
 
     /**
@@ -159,29 +177,20 @@ public abstract class AccessoryScreenExtension {
         return true;
     }
 
-    /**
-     * Used to add widgets or execute other setup code for the screen, equivalent to {@link AbstractContainerScreen#init()}
-     * @param adder a utility to add widgets to the GUI
-     */
-    public abstract void initExtension(WidgetAdder adder);
+    @Override
+    public final @NonNull LazyPosition getElementPosition() {
+        return accessoryScreen.getAccessoryExtensionPosition();
+    }
 
-    /**
-     * Extract render data for the accessory extension, called in {@link AbstractContainerScreen#extractBackground(GuiGraphicsExtractor, int, int, float)}.
-     * The current pose is relative to the user's (adjusted) defined co-ordinates for the extension
-     * @param gui graphics extractor
-     */
-    public abstract void extractExtension(GuiGraphicsExtractor gui);
+    @Override
+    public boolean isExtensionRelative() {
+        return false;
+    }
 
-    /**
-     * Check if the player has clicked outside the accessory extension bounds.
-     * Parameters are relative to the top left of the extension, not the parent screen
-     * <p>
-     * Automatically implemented for {@link AbstractContainerScreen} and {@link AbstractRecipeBookScreen}
-     * @param mx mouse x relative to the extension
-     * @param my mouse y relative to the extension
-     * @return {@code true} if the player is found to have clicked outside the extension's bounds, {@code false} otherwise
-     */
-    public abstract boolean hasClickedOutside(double mx, double my);
+    @Override
+    public final boolean isActive() {
+        return accessoryScreen.isAccessoryExtensionVisible();
+    }
 
     public static final class WidgetAdder {
         private final @NonNull Consumer<AbstractWidget> consumer;

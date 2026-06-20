@@ -1,8 +1,9 @@
 package com.swacky.ohmega.client.screen;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.common.Ohmega;
@@ -55,7 +56,13 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
                 int addedCurrentColumn = 0;
 
                 for (int j = 0; true; j++) {
-                    adder.addOverlay(new ToggleVisibilityButton(getScreen(), 1 + 18 * (i + 1), 2 + j * 18, getMenuExtension().getOwner(), index++));
+                    adder.addOverlay(new ToggleVisibilityButton(
+                            getScreen(),
+                            new LazyPosition(
+                                    1 + 18 * (i + 1),
+                                    2 + j * 18),
+                            getMenuExtension().getOwner(),
+                            index++));
 
                     if (++addedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
                         break;

@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.util;
 
-import org.apache.commons.lang3.function.ByteConsumer;
+import it.unimi.dsi.fastutil.bytes.ByteBooleanBiConsumer;
 import org.apache.commons.lang3.function.ByteSupplier;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
     private final @Nullable ByteSupplier getter;
-    private final @Nullable ByteConsumer setter;
+    private final @Nullable ByteBooleanBiConsumer setter;
 
     private byte value;
 
@@ -19,7 +19,7 @@ public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public ByteLazySavedValue(@Nullable ByteSupplier getter, @Nullable ByteConsumer setter) {
+    public ByteLazySavedValue(@Nullable ByteSupplier getter, @Nullable ByteBooleanBiConsumer setter) {
         this.getter = getter;
         this.setter = setter;
     }
@@ -46,6 +46,11 @@ public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
         if (value != null) {
             set(value);
         }
+    }
+
+    @Override
+    public boolean isSerialisable() {
+        return setter != null;
     }
 
     /**
@@ -84,10 +89,12 @@ public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
 
     /**
      * Calls the serialiser with the currently stored value in memory
+     * @param last {@code true} if this is the expected last invocation of this function, {@code false} if not.
+     *                         Allows for better optimisation and avoids unwanted {@link #pull()} calls
      */
-    public void serialise() {
+    public void serialise(boolean last) {
         if (setter != null) {
-            setter.accept(value);
+            setter.accept(value, last);
         }
     }
 }

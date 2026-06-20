@@ -1,9 +1,9 @@
 package com.swacky.ohmega.api.util;
 
+import it.unimi.dsi.fastutil.objects.ObjectBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  */
 public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
     private final @Nullable Supplier<T> getter;
-    private final @Nullable Consumer<T> setter;
+    private final @Nullable ObjectBooleanBiConsumer<T> setter;
 
     private @Nullable T value = null;
 
@@ -20,7 +20,7 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public LazySavedValue(@Nullable Supplier<T> getter, @Nullable Consumer<T> setter) {
+    public LazySavedValue(@Nullable Supplier<T> getter, @Nullable ObjectBooleanBiConsumer<T> setter) {
         this.getter = getter;
         this.setter = setter;
     }
@@ -56,6 +56,11 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
         this.value = value;
     }
 
+    @Override
+    public boolean isSerialisable() {
+        return setter != null;
+    }
+
     /**
      * Refreshes the cached value with the {@link #getter} if non-null
      */
@@ -67,10 +72,12 @@ public final class LazySavedValue<T> extends AbstractLazySavedValue<T> {
 
     /**
      * Calls the serialiser with the currently stored value in memory
+     * @param last {@code true} if this is the expected last invocation of this function, {@code false} if not.
+     *                         Allows for better optimisation and avoids unwanted {@link #pull()} calls
      */
-    public void serialise() {
+    public void serialise(boolean last) {
         if (setter != null) {
-            setter.accept(value);
+            setter.accept(value, last);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.Screen;
 import org.jspecify.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public interface IEmbeddingScreen {
     @Nullable Screen getEmbeddedScreen();
 
     /**
-     * Determines whether {@link Minecraft#setScreen(Screen)} will be allowed to proceed.
+     * Determines whether {@link Gui#setScreen(Screen)} will be allowed to proceed.
      * Useful in blocking unwanted screen changes when calling {@link Screen#init()}, however this is not always needed
      * @return {@code true} to allow screen setting, {@code false} to prohibit it
      */

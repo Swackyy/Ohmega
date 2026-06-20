@@ -40,7 +40,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -106,14 +106,14 @@ public final class ConfigurationScreen extends OptionsSubScreen {
         private final Set<String> untranslatablesWithFallback = new HashSet<>();
 
         public String check(final String translationKey) {
-            if (!I18n.exists(translationKey)) {
+            if (!Language.getInstance().has(translationKey)) {
                 untranslatables.add(translationKey);
             }
             return translationKey;
         }
 
         public String check(final String translationKey, final String fallback) {
-            if (!I18n.exists(translationKey)) {
+            if (!Language.getInstance().has(translationKey)) {
                 untranslatablesWithFallback.add(translationKey);
                 return check(fallback);
             }
@@ -121,7 +121,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
         }
 
         public boolean existsWithFallback(final String translationKey) {
-            if (!I18n.exists(translationKey)) {
+            if (!Language.getInstance().has(translationKey)) {
                 untranslatablesWithFallback.add(translationKey);
                 return false;
             }
@@ -133,7 +133,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
          * Otherwise returns an empty Component.
          */
         public Component optional(final Component prefix, final String translationKey, final ChatFormatting... style) {
-            if (I18n.exists(translationKey)) {
+            if (Language.getInstance().has(translationKey)) {
                 return Component.empty().append(prefix).append(Component.translatable(translationKey).withStyle(style));
             }
             return Component.empty();
@@ -263,13 +263,13 @@ public final class ConfigurationScreen extends OptionsSubScreen {
                         headerAdded = true;
                     }
                     btn = Button.builder(Component.translatable(SECTION, translatableConfig(modConfig, "", LANG_PREFIX + "type." + modConfig.getType().name().toLowerCase(Locale.ROOT))),
-                            button -> minecraft.setScreen(sectionScreen.apply(this, type, modConfig, translatableConfig(modConfig, ".title", LANG_PREFIX + "title." + type.name().toLowerCase(Locale.ROOT))))).width(BIG_BUTTON_WIDTH).build();
+                            button -> minecraft.gui.setScreen(sectionScreen.apply(this, type, modConfig, translatableConfig(modConfig, ".title", LANG_PREFIX + "title." + type.name().toLowerCase(Locale.ROOT))))).width(BIG_BUTTON_WIDTH).build();
                     MutableComponent tooltip = Component.empty();
                     if (!((ForgeConfigSpec) modConfig.getSpec()).isLoaded()) {
                         tooltip.append(TOOLTIP_CANNOT_EDIT_NOT_LOADED).append(EMPTY_LINE);
                         btn.active = false;
                         count = 99; // prevent autoClose
-                    } else if (type == ModConfig.Type.SERVER && minecraft.getCurrentServer() != null && !minecraft.isSingleplayer()) {
+                    } else if (type == ModConfig.Type.SERVER && minecraft.getCurrentServer() != null && !minecraft.isLocalServer()) {
                         tooltip.append(TOOLTIP_CANNOT_EDIT_THIS_WHILE_ONLINE).append(EMPTY_LINE);
                         btn.active = false;
                         count = 99; // prevent autoClose
@@ -310,7 +310,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
         translationChecker.finish();
         switch (needsRestart) {
             case GAME -> {
-                minecraft.setScreen(new TooltipConfirmScreen(b -> {
+                minecraft.gui.setScreen(new TooltipConfirmScreen(b -> {
                     if (b) {
                         minecraft.stop();
                     } else {
@@ -321,7 +321,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
             }
             case WORLD -> {
                 if (minecraft.level != null) {
-                    minecraft.setScreen(new TooltipConfirmScreen(b -> {
+                    minecraft.gui.setScreen(new TooltipConfirmScreen(b -> {
                         if (b) {
                             // when changing server configs from the client is added, this is where we tell the server to restart and activate the new config.
                             // also needs a different text in MP ("server will restart/exit, yada yada") than in SP
@@ -350,11 +350,11 @@ public final class ConfigurationScreen extends OptionsSubScreen {
 
         TitleScreen titlescreen = new TitleScreen();
         if (flag) {
-            this.minecraft.setScreen(titlescreen);
+            this.minecraft.gui.setScreen(titlescreen);
         } else if (serverdata != null && serverdata.isRealm()) {
-            this.minecraft.setScreen(new RealmsMainScreen(titlescreen));
+            this.minecraft.gui.setScreen(new RealmsMainScreen(titlescreen));
         } else {
-            this.minecraft.setScreen(new JoinMultiplayerScreen(titlescreen));
+            this.minecraft.gui.setScreen(new JoinMultiplayerScreen(titlescreen));
         }
     }
 
@@ -726,7 +726,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
          */
         public record Custom<T>(List<T> values) implements OptionInstance.ValueSet<T> {
             @Override
-            public Function<OptionInstance<T>, AbstractWidget> createButton(OptionInstance.TooltipSupplier<T> tooltip, Options options, int x, int y, int width, Consumer<T> target) {
+            public Function<OptionInstance<T>, AbstractWidget> createButton(OptionInstance.TooltipSupplier<T> tooltip, Options options, int x, int y, int width, OptionInstance.ValueUpdateListener<? super T> onValueChanged) {
                 return optionsInstance -> CycleButton.builder(optionsInstance.toString, (Supplier<T>) optionsInstance::get)
                         .withValues(CycleButton.ValueListSupplier.create(this.values))
                         .withTooltip(tooltip)
@@ -734,7 +734,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
                         .create(x, y, width, 20, optionsInstance.caption, (source, newValue) -> {
                             optionsInstance.set(newValue);
                             options.save();
-                            target.accept(newValue);
+                            onValueChanged.valueChanged(newValue);
                         });
             }
 
@@ -885,7 +885,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
             if (subconfig.isEmpty()) return null;
             return new Element(Component.translatable(SECTION, getTranslationComponent(key)), getTooltipComponent(key, null),
                     Button.builder(Component.translatable(SECTION, Component.translatable(translationChecker.check(getTranslationKey(key) + ".button", SECTION_TEXT))),
-                            button -> minecraft.setScreen(sectionCache.computeIfAbsent(key,
+                            button -> minecraft.gui.setScreen(sectionCache.computeIfAbsent(key,
                                     k -> new ConfigurationSectionScreen(context, this, subconfig.valueMap(), key, subsection.entrySet(), Component.translatable(getTranslationKey(key))).rebuild())))
                             .tooltip(Tooltip.create(getTooltipComponent(key, null)))
                             .width(Button.DEFAULT_WIDTH)
@@ -897,7 +897,7 @@ public final class ConfigurationScreen extends OptionsSubScreen {
         protected <T> Element createList(final String key, final ForgeConfigSpec.ValueSpec spec, final ForgeConfigSpec.ConfigValue<List<T>> list) {
             return new Element(Component.translatable(SECTION, getTranslationComponent(key)), getTooltipComponent(key, null),
                     Button.builder(Component.translatable(SECTION, Component.translatable(translationChecker.check(getTranslationKey(key) + ".button", SECTION_TEXT))),
-                            button -> minecraft.setScreen(sectionCache.computeIfAbsent(key,
+                            button -> minecraft.gui.setScreen(sectionCache.computeIfAbsent(key,
                                     k -> new ConfigurationListScreen<>(Context.list(context, this), key, Component.translatable(CRUMB, this.getTitle(), CRUMB_SEPARATOR, getTranslationComponent(key)), spec, list)).rebuild()))
                             .tooltip(Tooltip.create(getTooltipComponent(key, null))).build(),
                     false);

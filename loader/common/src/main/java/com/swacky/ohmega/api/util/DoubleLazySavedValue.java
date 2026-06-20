@@ -1,9 +1,9 @@
 package com.swacky.ohmega.api.util;
 
+import it.unimi.dsi.fastutil.doubles.DoubleBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
  */
 public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
     private final @Nullable DoubleSupplier getter;
-    private final @Nullable DoubleConsumer setter;
+    private final @Nullable DoubleBooleanBiConsumer setter;
 
     private double value;
 
@@ -20,7 +20,7 @@ public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public DoubleLazySavedValue(@Nullable DoubleSupplier getter, @Nullable DoubleConsumer setter) {
+    public DoubleLazySavedValue(@Nullable DoubleSupplier getter, @Nullable DoubleBooleanBiConsumer setter) {
         this.getter = getter;
         this.setter = setter;
     }
@@ -47,6 +47,11 @@ public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
         if (value != null) {
             set(value);
         }
+    }
+
+    @Override
+    public boolean isSerialisable() {
+        return setter != null;
     }
 
     /**
@@ -85,10 +90,12 @@ public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
 
     /**
      * Calls the serialiser with the currently stored value in memory
+     * @param last {@code true} if this is the expected last invocation of this function, {@code false} if not.
+     *                         Allows for better optimisation and avoids unwanted {@link #pull()} calls
      */
-    public void serialise() {
+    public void serialise(boolean last) {
         if (setter != null) {
-            setter.accept(value);
+            setter.accept(value, last);
         }
     }
 }

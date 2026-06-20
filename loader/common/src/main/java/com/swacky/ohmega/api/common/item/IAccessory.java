@@ -115,7 +115,7 @@ public interface IAccessory {
      * a component for the tooltip can be acquired from {@link AccessoryHelper#getBindTooltip(ItemStack)}.
      * @param player the {@link Player} wearing this accessory
      * @param stack {@link ItemStack} instance of the accessory in the slot which key-bind has been pressed
-     * @return {@code true} if a packet should be sent to the server requesting this method to be invoked, {@code false otherwise}.
+     * @return {@code true} if a packet should be sent to the server requesting this method to be invoked, {@code false} otherwise.
      * Useful for conserving network usage if it is guaranteed nothing will occur on either side.
      * Implementing custom behaviour for this method will likely mean you will have to return {@code true}
      */

@@ -18,6 +18,8 @@ java {
     targetCompatibility = javaVersion
     toolchain.languageVersion = javaVersion
 
+    // This artifact isn't used, it is just to ensure that Javadoc {@link ...} references are correct
+    withJavadocJar()
     withSourcesJar()
 }
 
@@ -43,6 +45,10 @@ tasks.withType(JavaCompile).configureEach {
 
 jar {
     exclude "**/.cache"
+}
+
+tasks.named("javadocJar", Jar) {
+    archiveClassifier = "javadoc-unused"
 }
 
 tasks.named("sourcesJar", Jar) {
@@ -96,6 +102,10 @@ if (secretsFile.exists()) {
 
                     from components.java
                     artifact tasks.named("pseudoJavadocJar")
+
+                    artifacts.removeAll { artifact ->
+                        artifact.classifier == "javadoc-unused"
+                    }
 
                     pom {
                         name = "${modName} ${project.name}"

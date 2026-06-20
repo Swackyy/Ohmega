@@ -298,7 +298,7 @@ public final class AccessoryData {
 
         if (accessory != null) {
             accessory.onUnequip(entity, stack, context);
-            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
+            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), false);
             AccessoryHelper.setNoSlot(stack);
         }
     }

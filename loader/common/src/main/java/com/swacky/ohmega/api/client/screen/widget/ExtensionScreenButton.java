@@ -13,24 +13,22 @@ import org.jspecify.annotations.NonNull;
 public abstract class ExtensionScreenButton extends HoverableButton {
     protected final @NonNull AbstractContainerScreen<?> screen;
     protected final @NonNull IAccessoryScreen accessoryScreen;
-    private final int desiredX;
-    private final int desiredY;
+    private final LazyPosition position;
 
-    public ExtensionScreenButton(@NonNull AbstractContainerScreen<?> screen, int x, int y, int width, int height, @NonNull Identifier textureLocation, @NonNull Component component) {
-        super(x, y, width, height, textureLocation, component);
+    public ExtensionScreenButton(@NonNull AbstractContainerScreen<?> screen, LazyPosition position, int width, int height, @NonNull Identifier textureLocation, @NonNull Component component) {
+        super(position.x().get(), position.y().get(), width, height, textureLocation, component);
 
         this.screen = screen;
         this.accessoryScreen = (IAccessoryScreen) screen;
-        this.desiredX = x;
-        this.desiredY = y;
+        this.position = position;
     }
 
     public int getAdjustedX() {
-        return desiredX + screen.leftPos;
+        return position.x().get() + screen.leftPos;
     }
 
     public int getAdjustedY() {
-        return desiredY + screen.topPos;
+        return position.y().get() + screen.topPos;
     }
 
     @Override

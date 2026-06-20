@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.jspecify.annotations.NonNull;
 
@@ -17,5 +17,5 @@ public interface IEntityRenderingScreen {
      * Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      * @return the position to add the {@link FlipEntityButton}
      */
-    @NonNull IntIntPair getFlipEntityButtonPosition();
+    @NonNull LazyPosition getFlipEntityButtonPosition();
 }

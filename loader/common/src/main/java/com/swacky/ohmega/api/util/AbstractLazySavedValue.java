@@ -20,4 +20,10 @@ public abstract class AbstractLazySavedValue<T> {
      * @param value the value to set as
      */
     public abstract void setObject(@Nullable T value);
+
+    /**
+     * Check if this can be serialised
+     * @return {@code true} if a serialiser has been specified, {@code false} otherwise ({@code null} value)
+     */
+    public abstract boolean isSerialisable();
 }

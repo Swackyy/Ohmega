@@ -5,12 +5,16 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
+import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.screen.widget.SnapLine;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -27,29 +31,31 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.jspecify.annotations.NonNull;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     private final Screen parentScreen;
-    private final AbstractContainerScreen<?> previewScreen;
+    private final AbstractContainerScreen<?> embeddedScreen;
     private final AccessoryScreenExtension screenExtension;
     private final AccessoryMenuExtension menuExtension;
     private final boolean originalVisibility;
-    private final IntLazySavedValue xValue;
-    private final IntLazySavedValue yValue;
+    private final Set<IEditUiElement> mutatedElements = new HashSet<>();
 
     private boolean allowSetScreen = true;
     private CreativeModeTab previousTab = null;
-    private SnapLine[] snapLines = {};
     private boolean shouldUseMagnetics = false;
     private boolean shouldShowLines = false;
-    private boolean isExtensionFocused = false;
-    private boolean isExtensionHeld = false;
+    private IEditUiElement element = null;
+    private List<SnapLine> snapLines = List.of();
+    private boolean isElementHeld = false;
     private int previousSetX = 0;
     private int previousSetY = 0;
-    private double xo = 0;
-    private double yo = 0;
+    private double cumulativeXo = 0;
+    private double cumulativeYo = 0;
     private int xSnapLineIndex = -1;
     private int ySnapLineIndex = -1;
 
@@ -60,16 +66,16 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
         this.parentScreen = parentScreen;
 
         if (parentScreen instanceof IAccessoryScreen && parentScreen instanceof AbstractContainerScreen<?> containerScreen) {
-            this.previewScreen = containerScreen;
+            this.embeddedScreen = containerScreen;
         } else {
             if (owner.hasInfiniteMaterials()) {
-                this.previewScreen = new CreativeModeInventoryScreen(owner, owner.connection.enabledFeatures(), minecraft.options.operatorItemsTab().get());
+                this.embeddedScreen = new CreativeModeInventoryScreen(owner, owner.connection.enabledFeatures(), minecraft.options.operatorItemsTab().get());
             } else {
-                this.previewScreen = new InventoryScreen(owner);
+                this.embeddedScreen = new InventoryScreen(owner);
             }
         }
 
-        IAccessoryScreen accessoryScreen = (IAccessoryScreen) this.previewScreen;
+        IAccessoryScreen accessoryScreen = (IAccessoryScreen) this.embeddedScreen;
         this.screenExtension = accessoryScreen.getAccessoryExtension();
 
         if (this.screenExtension != null) {
@@ -81,31 +87,55 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             this.menuExtension = null;
             this.originalVisibility = false;
         }
-
-        this.xValue = accessoryScreen.getAccessoryExtensionX();
-        this.yValue = accessoryScreen.getAccessoryExtensionY();
     }
 
-    private boolean isHoveringExtension(double mx, double my) {
-        if (screenExtension != null && screenExtension.isVisible()) {
-            mx -= xValue.get() + previewScreen.leftPos;
-            my -= yValue.get() + previewScreen.topPos;
+    private boolean isHoveringElement(IEditUiElement element, double mx, double my) {
+        LazyPosition position = element.getElementPosition();
 
-            for (Rect2i rect : screenExtension.getRects()) {
-                int rectX = rect.getX();
-                int rectY = rect.getY();
+        mx -= embeddedScreen.leftPos + position.x().get();
+        my -= embeddedScreen.topPos + position.y().get();
 
-                if (mx >= rectX && mx <= rectX + rect.getWidth() && my >= rectY && my <= rectY + rect.getHeight()) {
-                    return true;
-                }
+        if (element.isExtensionRelative()) {
+            position = screenExtension.getElementPosition();
+
+            mx -= position.x().get();
+            my -= position.y().get();
+        }
+
+        for (Rect2i rect : element.getRects()) {
+            int rectX = rect.getX();
+            int rectY = rect.getY();
+
+            if (mx >= rectX && mx <= rectX + rect.getWidth() && my >= rectY && my <= rectY + rect.getHeight()) {
+                return true;
             }
         }
 
         return false;
     }
 
-    private void updateSlotPositions() {
-        if (menuExtension != null) {
+    private IEditUiElement getHoveringElement(double mx, double my) {
+        for (AbstractWidget widget : screenExtension.getOverlayWidgets()) {
+            if (widget instanceof IEditUiElement candidate && isHoveringElement(candidate, mx, my)) {
+                return candidate;
+            }
+        }
+
+        for (GuiEventListener child : getEmbeddedScreen().children()) {
+            if (child instanceof IEditUiElement candidate && isHoveringElement(candidate, mx, my)) {
+                return candidate;
+            }
+        }
+
+        if (isHoveringElement(screenExtension, mx, my)) {
+            return screenExtension;
+        }
+
+        return null;
+    }
+
+    private void tryUpdateSlotPositions() {
+        if (element == screenExtension && menuExtension != null) {
             List<AccessorySlot> accessorySlots = menuExtension.getAccessoryMenu().getSlots();
 
             if (accessorySlots != null) {
@@ -113,65 +143,93 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
                 for (AccessorySlot accessorySlot : accessorySlots) {
                     Slot slot = slots.get(accessorySlot.index);
+                    LazyPosition position = screenExtension.getElementPosition();
 
-                    slot.x = accessorySlot.getOriginalX() + xValue.get();
-                    slot.y = accessorySlot.getOriginalY() + yValue.get();
+                    slot.x = accessorySlot.getOriginalX() + position.x().get();
+                    slot.y = accessorySlot.getOriginalY() + position.y().get();
                 }
             }
         }
     }
 
-    private void tryRenderSnapLine(GuiGraphicsExtractor gui, int index) {
-        if (index != -1) {
-            SnapLine line = snapLines[index];
+    private void extractSnapLine(GuiGraphicsExtractor gui, SnapLine line) {
+        if (line.vertical()) {
+            gui.verticalLine(line.value(), 0, embeddedScreen.height, 0xbbff6666);
+        } else {
+            gui.horizontalLine(0, embeddedScreen.width, line.value(), 0xbbff6666);
+        }
+    }
 
-            if (line.vertical) {
-                gui.verticalLine(line.value(), 0, previewScreen.height, 0xbbff6666);
-            } else {
-                gui.horizontalLine(0, previewScreen.width, line.value(), 0xbbff6666);
+    private void extractHighlight(GuiGraphicsExtractor gui, IEditUiElement element, double mx, double my) {
+        LazyPosition position = element.getElementPosition();
+        int xo = position.x().get() + embeddedScreen.leftPos;
+        int yo = position.y().get() + embeddedScreen.topPos;
+
+        if (element.isExtensionRelative()) {
+            LazyPosition extensionPosition = screenExtension.getElementPosition();
+            xo += extensionPosition.x().get();
+            yo += extensionPosition.y().get();
+        }
+
+        for (Rect2i rect : element.getRects()) {
+            int rectX = rect.getX();
+            int rectY = rect.getY();
+            Optional<GuiEventListener> hoveringChild = embeddedScreen.getChildAt(mx, my);
+
+            if (hoveringChild.isEmpty() || hoveringChild.get() == element || isElementHeld) {
+                gui.fill(rectX + xo, rectY + yo, rectX + rect.getWidth() + xo, rectY + rect.getHeight() + yo, 0x40ccccff);
             }
         }
     }
 
     @Override
     public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean isDoubleClick) {
-        Optional<GuiEventListener> child = previewScreen.getChildAt(event.x(), event.y());
+        if (isDoubleClick) {
+            Optional<GuiEventListener> child = embeddedScreen.getChildAt(event.x(), event.y());
 
-        if (child.isPresent()) {
-            GuiEventListener widget = child.get();
+            if (child.isPresent()) {
+                GuiEventListener widget = child.get();
 
-            if (widget.mouseClicked(event, isDoubleClick) && widget.shouldTakeFocusAfterInteraction()) {
-                setFocused(widget);
+                if (widget.mouseClicked(event, false) && widget.shouldTakeFocusAfterInteraction()) {
+                    setFocused(widget);
 
-                if (event.button() == 0) {
-                    setDragging(true);
+                    if (event.button() == 0) {
+                        setDragging(true);
+                    }
                 }
+
+                element = null;
+
+                return true;
             }
-
-            isExtensionFocused = false;
-
-            return true;
         }
 
-        if (event.button() == 0 && isHoveringExtension(event.x(), event.y())) {
-            isExtensionFocused = true;
-            isExtensionHeld = true;
-            previousSetX = xValue.get();
-            previousSetY = yValue.get();
+        if (event.button() == 0) {
+            IEditUiElement candidate = getHoveringElement(event.x(), event.y());
 
-            return true;
+            if (candidate != null && candidate.getElementPosition().isSerialisable()) {
+                mutatedElements.add(candidate);
+                element = candidate;
+                snapLines = element.getSnapLines(embeddedScreen, screenExtension);
+                isElementHeld = true;
+                LazyPosition position = candidate.getElementPosition();
+                previousSetX = position.x().get();
+                previousSetY = position.y().get();
+                return true;
+            }
         }
 
-        isExtensionFocused = false;
-        return previewScreen.mouseClicked(event, isDoubleClick);
+        element = null;
+
+        return embeddedScreen.mouseClicked(event, isDoubleClick);
     }
 
     @Override
     public boolean mouseReleased(@NonNull MouseButtonEvent event) {
-        if (isExtensionHeld) {
-            isExtensionHeld = false;
-            xo = 0;
-            yo = 0;
+        if (isElementHeld) {
+            isElementHeld = false;
+            cumulativeXo = 0;
+            cumulativeYo = 0;
         }
 
         xSnapLineIndex = -1;
@@ -182,51 +240,72 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     @Override
     public boolean mouseDragged(@NonNull MouseButtonEvent event, double dx, double dy) {
-        if (isExtensionHeld) {
-            xo += dx;
-            yo += dy;
-            int x = Math.clamp(previousSetX + (int) xo + previewScreen.leftPos, 0, previewScreen.width - screenExtension.getWidth() - 1);
-            int y = Math.clamp(previousSetY + (int) yo + previewScreen.topPos, 0, previewScreen.height - screenExtension.getHeight() - 1);
+        if (isElementHeld) {
+            cumulativeXo += dx;
+            cumulativeYo += dy;
 
+            int xo;
+            int yo;
+
+            if (element.isExtensionRelative()) {
+                LazyPosition position = screenExtension.getElementPosition();;
+                xo = position.x().get();
+                yo = position.y().get();
+            } else {
+                xo = 0;
+                yo = 0;
+            }
+
+            // todo: maybe not the -1
+            int x = Math.clamp(previousSetX + (int) cumulativeXo + embeddedScreen.leftPos, -xo, embeddedScreen.width - element.getWidth() - xo - 1);
+            int y = Math.clamp(previousSetY + (int) cumulativeYo + embeddedScreen.topPos, -yo, embeddedScreen.height - element.getHeight() - yo - 1);
+            int testX = x + xo;
+            int testY = y + yo;
             int snappedX = Integer.MAX_VALUE;
             int snappedY = Integer.MAX_VALUE;
             xSnapLineIndex = -1;
             ySnapLineIndex = -1;
 
             if (shouldUseMagnetics) {
-                for (int i = 0; i < snapLines.length; i++) {
-                    SnapLine line = snapLines[i];
+                for (int i = 0; i < snapLines.size(); i++) {
+                    SnapLine line = snapLines.get(i);
 
                     if (line.vertical()) {
-                        int testValue = line.test(x, screenExtension.getWidth());
+                        int testValue = line.test(testX, element.getWidth());
 
-                        if (testValue != -1 && Math.abs(x - testValue) < Math.abs(x - snappedX)) {
-                            snappedX = testValue;
+                        if (testValue != -1 && Math.abs(testX - testValue) < Math.abs(testX - snappedX)) {
+                            snappedX = testValue - xo;
                             xSnapLineIndex = i;
                         }
                     } else {
-                        int testValue = line.test(y, screenExtension.getHeight());
+                        int testValue = line.test(testY, element.getHeight());
 
-                        if (testValue != -1 && Math.abs(y - testValue) < Math.abs(y - snappedY)) {
-                            snappedY = testValue;
+                        if (testValue != -1 && Math.abs(testY - testValue) < Math.abs(testY - snappedY)) {
+                            snappedY = testValue - yo;
                             ySnapLineIndex = i;
                         }
                     }
                 }
             }
 
+            LazyPosition position = element.getElementPosition();
+            IntLazySavedValue xPosition = position.x();
+
             if (xSnapLineIndex == -1) {
-                xValue.set(x - previewScreen.leftPos);
+                xPosition.set(x - embeddedScreen.leftPos);
             } else {
-                xValue.set(snappedX - previewScreen.leftPos);
+                xPosition.set(snappedX - embeddedScreen.leftPos);
             }
 
+            IntLazySavedValue yPosition = position.y();
+
             if (ySnapLineIndex == -1) {
-                yValue.set(y - previewScreen.topPos);
+                yPosition.set(y - embeddedScreen.topPos);
             } else {
-                yValue.set(snappedY - previewScreen.topPos);
+                yPosition.set(snappedY - embeddedScreen.topPos);
             }
-            updateSlotPositions();
+
+            tryUpdateSlotPositions();
         }
 
         return super.mouseDragged(event, dx, dy);
@@ -234,140 +313,137 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
-        previewScreen.extractRenderState(gui, mx, my, partialTicks);
+        embeddedScreen.extractRenderState(gui, mx, my, partialTicks);
 
-        if (screenExtension != null && screenExtension.isVisible()) {
-            boolean hoveringExtension = isHoveringExtension(mx, my);
+        IEditUiElement hoveringElement = getHoveringElement(mx, my);
 
-            if (hoveringExtension) {
-                gui.requestCursor(CursorTypes.POINTING_HAND);
+        if (hoveringElement != null && hoveringElement.isActive()) {
+            gui.requestCursor(CursorTypes.POINTING_HAND);
+            extractHighlight(gui, hoveringElement, mx, my);
+        }
+
+        if (element != null && element.isActive()) {
+            extractHighlight(gui, element, mx, my);
+
+            LazyPosition position = element.getElementPosition();
+            int minX = position.x().get();
+            int minY = position.y().get();
+            int maxX = minX + element.getWidth();
+            int maxY = minY + element.getHeight();
+
+            if (element.isExtensionRelative()) {
+                LazyPosition extensionPosition = screenExtension.getElementPosition();
+                int extensionX = extensionPosition.x().get();
+                int extensionY = extensionPosition.y().get();
+                minX += extensionX;
+                minY += extensionY;
+                maxX += extensionX;
+                maxY += extensionY;
             }
 
-            int xo = xValue.get() + previewScreen.leftPos;
-            int yo = yValue.get() + previewScreen.topPos;
-            int minX = Integer.MAX_VALUE;
-            int minY = Integer.MAX_VALUE;
-            int maxX = Integer.MIN_VALUE;
-            int maxY = Integer.MIN_VALUE;
+            gui.outline(minX + embeddedScreen.leftPos, minY + embeddedScreen.topPos, maxX - minX, maxY - minY, 0xdd8888ff);
 
-            for (Rect2i rect : screenExtension.getRects()) {
-                int rectX = rect.getX();
-                int rectY = rect.getY();
-                int rectWidth = rect.getWidth();
-                int rectHeight = rect.getHeight();
+            if (shouldShowLines) {
+                minX += embeddedScreen.leftPos;
+                minY += embeddedScreen.topPos;
+                maxX += embeddedScreen.leftPos;
+                maxY += embeddedScreen.topPos;
+                int midX = (minX + maxX) / 2;
+                int midY = (minY + maxY) / 2;
+                int pixelDistance;
 
-                if (hoveringExtension && (isExtensionHeld || previewScreen.getChildAt(mx, my).isEmpty())) {
-                    gui.fill(rectX + xo, rectY + yo, rectX + rectWidth + xo, rectY + rectHeight + yo, 0x40ccccff);
+                // Left
+                if (minX < embeddedScreen.leftPos || midY < embeddedScreen.topPos || midY > embeddedScreen.topPos + embeddedScreen.imageHeight) {
+                    pixelDistance = minX;
+                } else {
+                    if (minX < embeddedScreen.leftPos + embeddedScreen.imageWidth) {
+                        pixelDistance = minX - embeddedScreen.leftPos;
+                    } else {
+                        pixelDistance = minX - embeddedScreen.leftPos - embeddedScreen.imageWidth;
+                    }
                 }
 
-                if (isExtensionFocused) {
-                    minX = Math.min(minX, rectX);
-                    minY = Math.min(minY, rectY);
-                    maxX = Math.max(maxX, rectX + rectWidth);
-                    maxY = Math.max(maxY, rectY + rectHeight);
+                if (pixelDistance > 0) {
+                    gui.verticalLine(minX - 1, midY - 2, midY + 2, 0xdd8888ff);
+                    gui.horizontalLine(minX - 2, minX - pixelDistance, midY, 0xdd8888ff);
+
+                    if (pixelDistance >= 30) {
+                        gui.text(minecraft.font, Component.literal(pixelDistance + "px"), minX - pixelDistance + 4, midY + 4, 0xdd8888ff);
+                    }
                 }
-            }
 
-            if (isExtensionFocused) {
-                gui.outline(minX + xo, minY + yo, maxX - minX, maxY - minY, 0xdd8888ff);
-
-                if (shouldShowLines) {
-                    minX += xo;
-                    minY += yo;
-                    maxX += xo;
-                    maxY += yo;
-                    int midX = (minX + maxX) / 2;
-                    int midY = (minY + maxY) / 2;
-                    int pixelDistance;
-
-                    // Left
-                    if (minX < previewScreen.leftPos || midY < previewScreen.topPos || midY > previewScreen.topPos + previewScreen.imageHeight) {
-                        pixelDistance = minX;
+                // Top
+                if (minY < embeddedScreen.topPos || midX < embeddedScreen.leftPos || midX > embeddedScreen.leftPos + embeddedScreen.imageWidth) {
+                    pixelDistance = minY;
+                } else {
+                    if (minY < embeddedScreen.topPos + embeddedScreen.imageHeight) {
+                        pixelDistance = minY - embeddedScreen.topPos;
                     } else {
-                        if (minX < previewScreen.leftPos + previewScreen.imageWidth) {
-                            pixelDistance = minX - previewScreen.leftPos;
-                        } else {
-                            pixelDistance = minX - previewScreen.leftPos - previewScreen.imageWidth;
-                        }
+                        pixelDistance = minY - embeddedScreen.topPos - embeddedScreen.imageHeight;
                     }
+                }
 
-                    if (pixelDistance > 0) {
-                        gui.verticalLine(minX - 1, midY - 2, midY + 2, 0xdd8888ff);
-                        gui.horizontalLine(minX - 2, minX - pixelDistance, midY, 0xdd8888ff);
+                if (pixelDistance > 0) {
+                    gui.horizontalLine(midX - 2, midX + 2, minY - 1, 0xdd8888ff);
+                    gui.verticalLine(midX, minY, minY - pixelDistance, 0xdd8888ff);
 
-                        if (pixelDistance >= 30) {
-                            gui.text(minecraft.font, Component.literal(pixelDistance + "px"), minX - pixelDistance + 4, midY + 4, 0xdd8888ff);
-                        }
+                    if (pixelDistance >= 15) {
+                        gui.text(minecraft.font, Component.literal(pixelDistance + "px"), midX + 4, minY - pixelDistance + 4, 0xdd8888ff);
                     }
+                }
 
-                    // Top
-                    if (minY < previewScreen.topPos || midX < previewScreen.leftPos || midX > previewScreen.leftPos + previewScreen.imageWidth) {
-                        pixelDistance = minY;
+
+                // Right
+                if (maxX > embeddedScreen.leftPos + embeddedScreen.imageWidth || midY < embeddedScreen.topPos || midY > embeddedScreen.topPos + embeddedScreen.imageHeight) {
+                    pixelDistance = embeddedScreen.width - maxX;
+                } else {
+                    if (maxX < embeddedScreen.leftPos) {
+                        pixelDistance = embeddedScreen.leftPos - maxX;
                     } else {
-                        if (minY < previewScreen.topPos + previewScreen.imageHeight) {
-                            pixelDistance = minY - previewScreen.topPos;
-                        } else {
-                            pixelDistance = minY - previewScreen.topPos - previewScreen.imageHeight;
-                        }
+                        pixelDistance = embeddedScreen.leftPos + embeddedScreen.imageWidth - maxX;
                     }
+                }
 
-                    if (pixelDistance > 0) {
-                        gui.horizontalLine(midX - 2, midX + 2, minY - 1, 0xdd8888ff);
-                        gui.verticalLine(midX, minY, minY - pixelDistance, 0xdd8888ff);
+                if (pixelDistance > 0) {
+                    gui.verticalLine(maxX, midY - 2, midY + 2, 0xdd8888ff);
+                    gui.horizontalLine(maxX + 1, maxX + pixelDistance, midY, 0xdd8888ff);
 
-                        if (pixelDistance >= 15) {
-                            gui.text(minecraft.font, Component.literal(pixelDistance + "px"), midX + 4, minY - pixelDistance + 4, 0xdd8888ff);
-                        }
+                    if (pixelDistance >= 30) {
+                        String string = pixelDistance + "px";
+
+                        gui.text(minecraft.font, Component.literal(string), maxX + pixelDistance - minecraft.font.width(string) - 4, midY + 4, 0xdd8888ff);
                     }
+                }
 
-
-                    // Right
-                    if (maxX > previewScreen.leftPos + previewScreen.imageWidth || midY < previewScreen.topPos || midY > previewScreen.topPos + previewScreen.imageHeight) {
-                        pixelDistance = previewScreen.width - maxX;
+                // Top
+                if (maxY > embeddedScreen.topPos + embeddedScreen.imageHeight || midX < embeddedScreen.leftPos || midX > embeddedScreen.leftPos + embeddedScreen.imageWidth) {
+                    pixelDistance = embeddedScreen.height - maxY;
+                } else {
+                    if (maxY < embeddedScreen.topPos) {
+                        pixelDistance = embeddedScreen.topPos - maxY;
                     } else {
-                        if (maxX < previewScreen.leftPos) {
-                            pixelDistance = previewScreen.leftPos - maxX;
-                        } else {
-                            pixelDistance = previewScreen.leftPos + previewScreen.imageWidth - maxX;
-                        }
+                        pixelDistance = embeddedScreen.topPos + embeddedScreen.imageHeight - maxY;
                     }
+                }
 
-                    if (pixelDistance > 0) {
-                        gui.verticalLine(maxX, midY - 2, midY + 2, 0xdd8888ff);
-                        gui.horizontalLine(maxX + 1, maxX + pixelDistance, midY, 0xdd8888ff);
+                if (pixelDistance > 0) {
+                    gui.horizontalLine(midX - 2, midX + 2, maxY, 0xdd8888ff);
+                    gui.verticalLine(midX, maxY + 1, maxY + pixelDistance, 0xdd8888ff);
 
-                        if (pixelDistance >= 30) {
-                            String string = pixelDistance + "px";
-
-                            gui.text(minecraft.font, Component.literal(string), maxX + pixelDistance - minecraft.font.width(string) - 4, midY + 4, 0xdd8888ff);
-                        }
-                    }
-
-                    // Top
-                    if (maxY > previewScreen.topPos + previewScreen.imageHeight || midX < previewScreen.leftPos || midX > previewScreen.leftPos + previewScreen.imageWidth) {
-                        pixelDistance = previewScreen.height - maxY;
-                    } else {
-                        if (maxY < previewScreen.topPos) {
-                            pixelDistance = previewScreen.topPos - maxY;
-                        } else {
-                            pixelDistance = previewScreen.topPos + previewScreen.imageHeight - maxY;
-                        }
-                    }
-
-                    if (pixelDistance > 0) {
-                        gui.horizontalLine(midX - 2, midX + 2, maxY, 0xdd8888ff);
-                        gui.verticalLine(midX, maxY + 1, maxY + pixelDistance, 0xdd8888ff);
-
-                        if (pixelDistance >= 15) {
-                            gui.text(minecraft.font, Component.literal(pixelDistance + "px"), midX + 4, maxY + pixelDistance - minecraft.font.lineHeight - 4, 0xdd8888ff);
-                        }
+                    if (pixelDistance >= 15) {
+                        gui.text(minecraft.font, Component.literal(pixelDistance + "px"), midX + 4, maxY + pixelDistance - minecraft.font.lineHeight - 4, 0xdd8888ff);
                     }
                 }
             }
+        }
 
-            if (shouldUseMagnetics) {
-                tryRenderSnapLine(gui, xSnapLineIndex);
-                tryRenderSnapLine(gui, ySnapLineIndex);
+        if (shouldUseMagnetics) {
+            if (xSnapLineIndex != -1) {
+                extractSnapLine(gui, snapLines.get(xSnapLineIndex));
+            }
+
+            if (ySnapLineIndex != -1) {
+                extractSnapLine(gui, snapLines.get(ySnapLineIndex));
             }
         }
     }
@@ -379,47 +455,55 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             return true;
         }
 
-        if (isExtensionFocused) {
+        if (element != null) {
             if (OhmegaBinds.EDIT_MAGNETICS.matches(event)) {
                 shouldUseMagnetics = true;
             }
 
             if (OhmegaBinds.EDIT_NUDGE_LEFT.matches(event)) {
-                int x = xValue.get();
+                IntLazySavedValue xPosition = element.getElementPosition().x();
+                int x = xPosition.get();
 
-                if (x + previewScreen.leftPos > 0) {
-                    xValue.set(x - 1);
-                    updateSlotPositions();
+                if (x + embeddedScreen.leftPos > 0) {
+                    mutatedElements.add(element);
+                    xPosition.set(x - 1);
+                    tryUpdateSlotPositions();
                     return true;
                 }
             }
 
             if (OhmegaBinds.EDIT_NUDGE_UP.matches(event)) {
-                int y = yValue.get();
+                IntLazySavedValue yPosition = element.getElementPosition().y();
+                int y = yPosition.get();
 
-                if (y + previewScreen.topPos > 0) {
-                    yValue.set(y - 1);
-                    updateSlotPositions();
+                if (y + embeddedScreen.topPos > 0) {
+                    mutatedElements.add(element);
+                    yPosition.set(y - 1);
+                    tryUpdateSlotPositions();
                     return true;
                 }
             }
 
             if (OhmegaBinds.EDIT_NUDGE_RIGHT.matches(event)) {
-                int x = xValue.get();
+                IntLazySavedValue xPosition = element.getElementPosition().x();
+                int x = xPosition.get();
 
-                if (x + screenExtension.getWidth() + previewScreen.leftPos + 1 < previewScreen.width) {
-                    xValue.set(x + 1);
-                    updateSlotPositions();
+                if (x + embeddedScreen.leftPos + element.getWidth() + 1 < embeddedScreen.width) {
+                    mutatedElements.add(element);
+                    xPosition.set(x + 1);
+                    tryUpdateSlotPositions();
                     return true;
                 }
             }
 
             if (OhmegaBinds.EDIT_NUDGE_DOWN.matches(event)) {
-                int y = yValue.get();
+                IntLazySavedValue yPosition = element.getElementPosition().y();
+                int y = yPosition.get();
 
-                if (y + screenExtension.getHeight() + previewScreen.topPos + 1 < previewScreen.height) {
-                    yValue.set(y + 1);
-                    updateSlotPositions();
+                if (y + embeddedScreen.topPos + element.getHeight() + 1 < embeddedScreen.height) {
+                    mutatedElements.add(element);
+                    yPosition.set(y + 1);
+                    tryUpdateSlotPositions();
                     return true;
                 }
             }
@@ -453,10 +537,16 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             screenExtension.setVisible(originalVisibility);
         }
 
-        xValue.serialise();
-        yValue.serialise();
+        Iterator<IEditUiElement> iterator = mutatedElements.iterator();
 
-        if (previousTab != null && previewScreen instanceof CreativeModeInventoryScreen screen) {
+        while (iterator.hasNext()) {
+            LazyPosition position = iterator.next().getElementPosition();
+
+            position.x().serialise(false);
+            position.y().serialise(!iterator.hasNext());
+        }
+
+        if (previousTab != null && embeddedScreen instanceof CreativeModeInventoryScreen screen) {
             screen.selectTab(previousTab);
         }
 
@@ -469,12 +559,14 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     @Override
     public void init() {
-        Window window = minecraft.getWindow();
         allowSetScreen = false;
-        previewScreen.init(window.getGuiScaledWidth(), window.getGuiScaledHeight());
+        Window window = minecraft.getWindow();
+
+        embeddedScreen.init(window.getGuiScaledWidth(), window.getGuiScaledHeight());
+
         allowSetScreen = true;
 
-        if (previewScreen instanceof CreativeModeInventoryScreen screen) {
+        if (embeddedScreen instanceof CreativeModeInventoryScreen screen) {
             previousTab = CreativeModeInventoryScreen.selectedTab;
 
             for (CreativeModeTab tab : CreativeModeTabs.allTabs()) {
@@ -485,19 +577,15 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             }
         }
 
-        snapLines = new SnapLine[]{
-                new SnapLine(true, previewScreen.width / 2),
-                new SnapLine(false, previewScreen.height / 2),
-                new SnapLine(true, previewScreen.leftPos),
-                new SnapLine(false, previewScreen.topPos),
-                new SnapLine(true, previewScreen.leftPos + previewScreen.imageWidth),
-                new SnapLine(false, previewScreen.topPos + previewScreen.imageHeight),
-        };
+        if (element != screenExtension) {
+            element = null;
+            isElementHeld = false;
+        }
     }
 
     @Override
     public void extractBackground(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
-        previewScreen.extractBackground(gui, mx, my, partialTicks);
+        embeddedScreen.extractBackground(gui, mx, my, partialTicks);
     }
 
     @Override
@@ -505,7 +593,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     @Override
     public void extractTransparentBackground(@NonNull GuiGraphicsExtractor gui) {
-        previewScreen.extractTransparentBackground(gui);
+        embeddedScreen.extractTransparentBackground(gui);
     }
 
     @Override
@@ -515,37 +603,11 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     @Override
     public @NonNull Screen getEmbeddedScreen() {
-        return previewScreen;
+        return embeddedScreen;
     }
 
     @Override
     public boolean shouldAllowSetScreen() {
         return allowSetScreen;
-    }
-
-    private record SnapLine(boolean vertical, int value) {
-        private int test(int testValue, int delta) {
-            int startDistance = Math.abs(testValue - value);
-            int centreDistance = Math.abs(testValue + delta / 2 - value);
-            int endDistance = Math.abs(testValue + delta - value);
-            int closestDistance = Integer.MAX_VALUE;
-            int returnValue = -1;
-
-            if (startDistance < 6) {
-                closestDistance = startDistance;
-                returnValue = value;
-            }
-
-            if (centreDistance < 6 && centreDistance < closestDistance) {
-                closestDistance = centreDistance;
-                returnValue = value - delta / 2;
-            }
-
-            if (endDistance < 6 && endDistance < closestDistance) {
-                returnValue = value - delta;
-            }
-
-            return returnValue;
-        }
     }
 }

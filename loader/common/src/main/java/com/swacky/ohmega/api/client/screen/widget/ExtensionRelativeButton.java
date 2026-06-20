@@ -9,15 +9,15 @@ import org.jspecify.annotations.NonNull;
  * A button that with position relative to the accessory extension with the origin being the top-left
  */
 public abstract class ExtensionRelativeButton extends ExtensionScreenButton {
-    public ExtensionRelativeButton(@NonNull AbstractContainerScreen<?> screen, int x, int y, int width, int height, @NonNull Identifier textureLocation, @NonNull Component component) {
-        super(screen, x, y, width, height, textureLocation, component);
+    public ExtensionRelativeButton(@NonNull AbstractContainerScreen<?> screen, LazyPosition position, int width, int height, @NonNull Identifier textureLocation, @NonNull Component component) {
+        super(screen, position, width, height, textureLocation, component);
     }
 
     public int getAdjustedX() {
-        return super.getAdjustedX() + accessoryScreen.getAccessoryExtensionX().get();
+        return super.getAdjustedX() + accessoryScreen.getAccessoryExtensionPosition().x().get();
     }
 
     public int getAdjustedY() {
-        return super.getAdjustedY() + accessoryScreen.getAccessoryExtensionY().get();
+        return super.getAdjustedY() + accessoryScreen.getAccessoryExtensionPosition().y().get();
     }
 }

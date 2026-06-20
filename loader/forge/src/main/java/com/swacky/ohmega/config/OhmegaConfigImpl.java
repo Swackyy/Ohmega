@@ -7,23 +7,32 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class OhmegaConfigImpl {
     private static BooleanLazySavedValue wrapBoolean(ForgeConfigSpec.ConfigValue<Boolean> nativeValue) {
-        return new BooleanLazySavedValue(nativeValue::get, value -> {
+        return new BooleanLazySavedValue(nativeValue::get, (value, last) -> {
             nativeValue.set(value);
-            nativeValue.save();
+
+            if (last) {
+                nativeValue.save();
+            }
         });
     }
 
     private static IntLazySavedValue wrapInt(ForgeConfigSpec.ConfigValue<Integer> nativeValue) {
-        return new IntLazySavedValue(nativeValue::get, value -> {
+        return new IntLazySavedValue(nativeValue::get, (value, last) -> {
             nativeValue.set(value);
-            nativeValue.save();
+
+            if (last) {
+                nativeValue.save();
+            }
         });
     }
 
     private static <T> LazySavedValue<T> wrapObject(ForgeConfigSpec.ConfigValue<T> nativeValue) {
-        return new LazySavedValue<>(nativeValue, value -> {
+        return new LazySavedValue<>(nativeValue, (value, last) -> {
             nativeValue.set(value);
-            nativeValue.save();
+
+            if (last) {
+                nativeValue.save();
+            }
         });
     }
 

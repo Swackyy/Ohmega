@@ -5,9 +5,8 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
-import com.swacky.ohmega.api.util.IntLazySavedValue;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.config.OhmegaConfig;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -47,32 +46,30 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NonNull IntLazySavedValue getAccessoryExtensionX() {
-        return OhmegaConfig.Client.getData().survivalExtensionX();
+    public @NonNull LazyPosition getAccessoryExtensionPosition() {
+        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+
+        return new LazyPosition(
+                data.survivalExtensionX(),
+                data.survivalExtensionY());
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NonNull IntLazySavedValue getAccessoryExtensionY() {
-        return OhmegaConfig.Client.getData().survivalExtensionY();
-    }
-
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    @Override
-    public @NonNull IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
+    public @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
         return switch (style) {
-            case DEFAULT -> IntIntPair.of(132, 61);
-            case LEGACY -> IntIntPair.of(27, 9);
-            case TAG_LEFT -> IntIntPair.of(-11, 8);
-            case TAG_RIGHT -> IntIntPair.of(173, 8);
+            case DEFAULT -> new LazyPosition(132, 61);
+            case LEGACY -> new LazyPosition(27, 9);
+            case TAG_LEFT -> new LazyPosition(-11, 8);
+            case TAG_RIGHT -> new LazyPosition(173, 8);
             default -> throw new IllegalStateException("Unexpected value: " + style);
         };
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NonNull IntIntPair getFlipEntityButtonPosition() {
-        return IntIntPair.of(65, 9);
+    public @NonNull LazyPosition getFlipEntityButtonPosition() {
+        return new LazyPosition(65, 9);
     }
 
     @Inject(

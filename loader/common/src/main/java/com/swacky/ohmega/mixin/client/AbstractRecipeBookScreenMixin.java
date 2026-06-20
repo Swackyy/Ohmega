@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -49,9 +50,11 @@ abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> extends A
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
+                LazyPosition position = accessoryScreen.getAccessoryExtensionPosition();
+
                 return extension.hasClickedOutside(
-                        mx - accessoryScreen.getAccessoryExtensionX().get() - leftPos,
-                        my - accessoryScreen.getAccessoryExtensionY().get() - topPos);
+                        mx - position.x().get() - leftPos,
+                        my - position.y().get() - topPos);
             }
         }
 

@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.api.client.ui.AccessoryUIs;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
@@ -50,8 +51,10 @@ public final class AccessoryScreens {
             List<AccessorySlot> slots = accessoryMenu.getSlots();
 
             if (slots != null) {
+                LazyPosition position = accessoryScreen.getAccessoryExtensionPosition();
+
                 for (AccessorySlot slot : slots) {
-                    slot.applyOffset(accessoryScreen.getAccessoryExtensionX().get(), accessoryScreen.getAccessoryExtensionY().get());
+                    slot.applyOffset(position.x().get(), position.y().get());
                 }
             }
 

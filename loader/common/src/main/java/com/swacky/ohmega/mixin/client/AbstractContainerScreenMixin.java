@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -118,9 +119,11 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
+                LazyPosition position = accessoryScreen.getAccessoryExtensionPosition();
+
                 return extension.hasClickedOutside(
-                        mx - accessoryScreen.getAccessoryExtensionX().get() - leftPos,
-                        my - accessoryScreen.getAccessoryExtensionY().get() - topPos);
+                        mx - position.x().get() - leftPos,
+                        my - position.y().get() - topPos);
             }
         }
 

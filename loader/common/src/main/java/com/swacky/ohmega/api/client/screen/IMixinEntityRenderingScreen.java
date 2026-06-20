@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.common.Ohmega;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
  */
 public interface IMixinEntityRenderingScreen extends IEntityRenderingScreen {
     @Override
-    default @NonNull IntIntPair getFlipEntityButtonPosition() {
+    default @NonNull LazyPosition getFlipEntityButtonPosition() {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 }

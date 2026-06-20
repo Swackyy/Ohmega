@@ -81,14 +81,19 @@ if (secretsFile.exists()) {
     // Maven central repository
     // CurseForge
     // Modrinth
+    // todo: see if this new code works
     tasks.register("completeRelease") {
         group = "publishing"
 
-        subprojects.each { sub ->
-            //noinspection ConfigurationAvoidance
-            Task publishTask = sub.tasks.findByName("publishMods")
+        TaskProvider<Task> datagenTask = tasks.named("runDatagen")
 
-            if (publishTask != null) {
+        dependsOn datagenTask
+
+        subprojects.each { sub ->
+            sub.tasks.matching {
+                it.name == "publishMods"
+            }.configureEach { publishTask ->
+                publishTask.mustRunAfter datagenTask
                 dependsOn publishTask
             }
         }

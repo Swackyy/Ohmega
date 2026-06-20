@@ -3,11 +3,13 @@ package com.swacky.ohmega.event;
 import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
@@ -16,7 +18,6 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.client.command.OhmegaClientRootCommand;
-import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
@@ -25,7 +26,6 @@ import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.ReloadDataPacket;
 import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -119,20 +119,23 @@ public final class ClientCallbacks {
                 }
 
                 OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().buttonStyle().getObject();
-                IntIntPair buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
+                LazyPosition buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
 
                 if (buttonStyle != null) {
                     rects.add(new Rect2i(
-                            screen.leftPos + buttonPosition.firstInt(),
-                            screen.topPos + buttonPosition.secondInt(),
+                            screen.leftPos + buttonPosition.x().get(),
+                            screen.topPos + buttonPosition.y().get(),
                             buttonStyle.width,
                             buttonStyle.height));
-                    rects.add(new Rect2i(
-                            screen.leftPos + accessoryScreen.getAccessoryExtensionX().get(),
-                            screen.topPos + accessoryScreen.getAccessoryExtensionY().get(),
-                            extension.getWidth(),
-                            extension.getHeight()));
                 }
+
+                LazyPosition position = accessoryScreen.getAccessoryExtensionPosition();
+
+                rects.add(new Rect2i(
+                        screen.leftPos + position.x().get(),
+                        screen.topPos + position.y().get(),
+                        extension.getWidth(),
+                        extension.getHeight()));
 
                 return rects;
             }
@@ -205,7 +208,7 @@ public final class ClientCallbacks {
             ));
 
             option.set(false);
-            option.serialise();
+            option.serialise(true);
         }
     }
 
@@ -299,18 +302,15 @@ public final class ClientCallbacks {
                 }
 
                 if (screen instanceof IEntityRenderingScreen entityRenderingScreen && extension instanceof IEntityRenderingExtension entityRenderingExtension) {
-                    IntIntPair pair = entityRenderingScreen.getFlipEntityButtonPosition();
-
-                    consumer.accept(new FlipEntityButton(
-                            containerScreen,
-                            entityRenderingExtension,
-                            pair.firstInt(),
-                            pair.secondInt()));
+                    consumer.accept(new FlipEntityButton(containerScreen, entityRenderingScreen.getFlipEntityButtonPosition(), entityRenderingExtension));
                 }
 
-                extension.initExtension(new AccessoryScreenExtension.WidgetAdder(consumer, extension.getOverlayWidgets()));
+                List<AbstractWidget> overlayWidgets = extension.getOverlayWidgets();
 
-                for (AbstractWidget widget : extension.getOverlayWidgets()) {
+                overlayWidgets.clear();
+                extension.initExtension(new AccessoryScreenExtension.WidgetAdder(consumer, overlayWidgets));
+
+                for (AbstractWidget widget : overlayWidgets) {
                     screen.children.add(widget);
                     screen.narratables.add(widget);
                 }

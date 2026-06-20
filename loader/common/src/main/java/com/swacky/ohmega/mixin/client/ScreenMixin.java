@@ -3,6 +3,7 @@ package com.swacky.ohmega.mixin.client;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -32,11 +33,13 @@ abstract class ScreenMixin extends AbstractContainerEventHandler implements Rend
                 Matrix3x2fStack pose = gui.pose();
 
                 pose.pushMatrix();
-                pose.translate(
-                        accessoryScreen.getAccessoryExtensionX().get() + containerScreen.leftPos,
-                        accessoryScreen.getAccessoryExtensionY().get() + containerScreen.topPos);
-                extension.extractExtension(gui);
 
+                LazyPosition position = accessoryScreen.getAccessoryExtensionPosition();
+
+                pose.translate(
+                        position.x().get() + containerScreen.leftPos,
+                        position.y().get() + containerScreen.topPos);
+                extension.extractExtension(gui);
                 pose.popMatrix();
             }
         }

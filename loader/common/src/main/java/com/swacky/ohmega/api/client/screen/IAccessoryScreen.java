@@ -1,11 +1,9 @@
 package com.swacky.ohmega.api.client.screen;
 
-import com.swacky.ohmega.api.util.IntLazySavedValue;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.config.OhmegaConfig;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -41,18 +39,11 @@ public interface IAccessoryScreen {
     void setAccessoryExtension(@NonNull AccessoryScreenExtension extension);
 
     /**
-     * The x-coordinate, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed.
-     * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
-     * @return relative x-coordinate to place the extension
+     * The position, relative to {@link AbstractContainerScreen#leftPos}, where the extension will be placed.
+     * This is implemented as a {@link LazyPosition} as to allow for changing this value via the {@link EditUiScreen}
+     * @return relative position to place the extension
      */
-    @NonNull IntLazySavedValue getAccessoryExtensionX();
-
-    /**
-     * The y-coordinate, relative to {@link AbstractContainerScreen#topPos}, where the extension will be placed.
-     * This is implemented as a {@link LazySavedValue} as to allow for changing this value via the {@link EditUiScreen}
-     * @return relative y-coordinate to place the extension
-     */
-    @NonNull IntLazySavedValue getAccessoryExtensionY();
+    @NonNull LazyPosition getAccessoryExtensionPosition();
 
     /**
      * The (x, y) position the {@link ToggleExtensionButton} will be added.
@@ -64,7 +55,7 @@ public interface IAccessoryScreen {
      * @return the position to add the {@link ToggleExtensionButton}
      */
     // todo: implement UiScreen move capability for this
-    @NonNull IntIntPair getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
+    @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
 
     /**
      * A per-screen function that determines whether the extension should be shown.

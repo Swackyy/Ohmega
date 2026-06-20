@@ -1,7 +1,8 @@
 package com.swacky.ohmega.client.screen.widget;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.client.screen.widget.ExtensionRelativeButton;
+import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -17,8 +18,8 @@ public final class ToggleVisibilityButton extends ExtensionRelativeButton {
     private final Player player;
     private final int index;
 
-    public ToggleVisibilityButton(AbstractContainerScreen<?> screen, int x, int y, Player player, int index) {
-        super(screen, x, y, 6, 6, LOCATION, Component.translatable(TRANSLATION_KEY));
+    public ToggleVisibilityButton(AbstractContainerScreen<?> screen, LazyPosition position, Player player, int index) {
+        super(screen, position, 6, 6, LOCATION, Component.translatable(TRANSLATION_KEY));
 
         this.player = player;
         this.index = index;
