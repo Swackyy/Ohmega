@@ -5,14 +5,16 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
+import com.swacky.ohmega.api.client.screen.SnapLine;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
-import com.swacky.ohmega.api.client.screen.widget.SnapLine;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.menu.AccessorySlot;
+import com.swacky.ohmega.config.OhmegaConfig;
+import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -24,13 +26,20 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Util;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -38,26 +47,33 @@ import java.util.Optional;
 import java.util.Set;
 
 public final class EditUiScreen extends Screen implements IEmbeddingScreen {
+    private static final Identifier BACKGROUND_LOCATION = Ohmega.id("textures/gui/sprites/edit_ui_background.png");
+
     private final Screen parentScreen;
     private final AbstractContainerScreen<?> embeddedScreen;
     private final AccessoryScreenExtension screenExtension;
     private final AccessoryMenuExtension menuExtension;
     private final boolean originalVisibility;
+    private final long startMillis;
     private final Set<IEditUiElement> mutatedElements = new HashSet<>();
+    private final Deque<Pair<IEditUiElement, IntIntPair>> undoDequeue = new ArrayDeque<>();
+    private final Deque<Pair<IEditUiElement, IntIntPair>> redoDequeue = new ArrayDeque<>();
 
     private boolean allowSetScreen = true;
+    private boolean allowDimBackground = true;
     private CreativeModeTab previousTab = null;
+    private IEditUiElement element = null;
     private boolean shouldUseMagnetics = false;
     private boolean shouldShowLines = false;
-    private IEditUiElement element = null;
     private List<SnapLine> snapLines = List.of();
     private boolean isElementHeld = false;
+    private SnapLine xSnapLine = null;
+    private SnapLine ySnapLine = null;
+    private boolean recordNudgeHistory = true;
     private int previousSetX = 0;
     private int previousSetY = 0;
     private double cumulativeXo = 0;
     private double cumulativeYo = 0;
-    private SnapLine xSnapLine = null;
-    private SnapLine ySnapLine = null;
 
     @SuppressWarnings("DataFlowIssue")
     public EditUiScreen(Screen parentScreen, LocalPlayer owner) {
@@ -86,6 +102,40 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
         } else {
             this.menuExtension = null;
             this.originalVisibility = false;
+        }
+
+        startMillis = Util.getMillis();
+    }
+
+    private void extractHighlight(GuiGraphicsExtractor gui, IEditUiElement element, double mx, double my) {
+        LazyPosition position = element.getElementPosition();
+        int xo = position.x().get() + embeddedScreen.leftPos;
+        int yo = position.y().get() + embeddedScreen.topPos;
+
+        if (element.isExtensionRelative()) {
+            LazyPosition extensionPosition = screenExtension.getElementPosition();
+            xo += extensionPosition.x().get();
+            yo += extensionPosition.y().get();
+        }
+
+        for (Rect2i rect : element.getRects()) {
+            int rectX = rect.getX();
+            int rectY = rect.getY();
+            Optional<GuiEventListener> hoveringChild = embeddedScreen.getChildAt(mx, my);
+
+            if (!isElementHeld || hoveringChild.isEmpty() || hoveringChild.get() == element) {
+                gui.fill(rectX + xo, rectY + yo, rectX + rect.getWidth() + xo, rectY + rect.getHeight() + yo, 0x40ccccff);
+            }
+        }
+    }
+
+    private void extractSnapLine(GuiGraphicsExtractor gui, SnapLine line) {
+        if (line != null) {
+            if (line.vertical()) {
+                gui.verticalLine(line.value(), 0, embeddedScreen.height, 0xbbff6666);
+            } else {
+                gui.horizontalLine(0, embeddedScreen.width, line.value(), 0xbbff6666);
+            }
         }
     }
 
@@ -134,6 +184,99 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
         return null;
     }
 
+    private void doNudge(IntLazySavedValue value, boolean positive) {
+        mutatedElements.add(element);
+
+        LazyPosition position = element.getElementPosition();
+
+        if (recordNudgeHistory) {
+            recordNudgeHistory = false;
+
+            pushDequeue(undoDequeue, IntIntPair.of(position.x().get(), position.y().get()));
+        }
+
+        if (positive) {
+            value.set(value.get() + 1);
+        } else {
+            value.set(value.get() - 1);
+        }
+
+        tryUpdateSlotPositions();
+    }
+
+    private boolean nudge(boolean vertical, boolean positive) {
+        LazyPosition position = element.getElementPosition();
+
+        if (vertical) {
+            IntLazySavedValue yPosition = position.y();
+            int y = yPosition.get();
+
+            if (positive) {
+                if (y + embeddedScreen.topPos + element.getHeight() + 1 < embeddedScreen.height) {
+                    doNudge(yPosition, true);
+                    return true;
+                }
+            } else {
+                if (y + embeddedScreen.topPos > 0) {
+                    doNudge(yPosition, false);
+                    return true;
+                }
+            }
+        } else {
+            IntLazySavedValue xPosition = position.x();
+            int x = xPosition.get();
+
+            if (positive) {
+                if (x + embeddedScreen.leftPos + element.getWidth() + 1 < embeddedScreen.width) {
+                    doNudge(xPosition, true);
+                    return true;
+                }
+            } else {
+                if (x + embeddedScreen.leftPos > 0) {
+                    doNudge(xPosition, false);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void pushDequeue(Deque<Pair<IEditUiElement, IntIntPair>> deque, IntIntPair oldPosition) {
+        if (deque.size() >= 64) {
+            deque.removeLast();
+        }
+
+        deque.push(Pair.of(element, oldPosition));
+    }
+
+    private void releaseElement() {
+        if (element != null) {
+            LazyPosition position = element.getElementPosition();
+
+            if (previousSetX != position.x().get() || previousSetY != position.y().get()) {
+                pushDequeue(undoDequeue, IntIntPair.of(previousSetX, previousSetY));
+            }
+        }
+
+        isElementHeld = false;
+        xSnapLine = null;
+        ySnapLine = null;
+        cumulativeXo = 0;
+        cumulativeYo = 0;
+    }
+
+    private void setElementFocus(IEditUiElement element) {
+        mutatedElements.add(element);
+
+        this.element = element;
+        snapLines = element.getSnapLines(embeddedScreen, screenExtension);
+        recordNudgeHistory = true;
+        LazyPosition position = element.getElementPosition();
+        previousSetX = position.x().get();
+        previousSetY = position.y().get();
+    }
+
     private void tryUpdateSlotPositions() {
         if (element == screenExtension && menuExtension != null) {
             List<AccessorySlot> accessorySlots = menuExtension.getAccessoryMenu().getSlots();
@@ -152,36 +295,22 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
         }
     }
 
-    private void extractSnapLine(GuiGraphicsExtractor gui, SnapLine line) {
-        if (line != null) {
-            if (line.vertical()) {
-                gui.verticalLine(line.value(), 0, embeddedScreen.height, 0xbbff6666);
-            } else {
-                gui.horizontalLine(0, embeddedScreen.width, line.value(), 0xbbff6666);
-            }
-        }
-    }
+    private boolean updateHistory(Pair<IEditUiElement, IntIntPair> event, Deque<Pair<IEditUiElement, IntIntPair>> oppositeDequeue) {
+        if (event != null) {
+            setElementFocus(event.getLeft());
 
-    private void extractHighlight(GuiGraphicsExtractor gui, IEditUiElement element, double mx, double my) {
-        LazyPosition position = element.getElementPosition();
-        int xo = position.x().get() + embeddedScreen.leftPos;
-        int yo = position.y().get() + embeddedScreen.topPos;
+            LazyPosition position = element.getElementPosition();
 
-        if (element.isExtensionRelative()) {
-            LazyPosition extensionPosition = screenExtension.getElementPosition();
-            xo += extensionPosition.x().get();
-            yo += extensionPosition.y().get();
+            pushDequeue(oppositeDequeue, IntIntPair.of(position.x().get(), position.y().get()));
+
+            IntIntPair newPosition = event.getRight();
+
+            position.set(newPosition.firstInt(), newPosition.secondInt());
+            tryUpdateSlotPositions();
+            return true;
         }
 
-        for (Rect2i rect : element.getRects()) {
-            int rectX = rect.getX();
-            int rectY = rect.getY();
-            Optional<GuiEventListener> hoveringChild = embeddedScreen.getChildAt(mx, my);
-
-            if (hoveringChild.isEmpty() || hoveringChild.get() == element || isElementHeld) {
-                gui.fill(rectX + xo, rectY + yo, rectX + rect.getWidth() + xo, rectY + rect.getHeight() + yo, 0x40ccccff);
-            }
-        }
+        return false;
     }
 
     @Override
@@ -210,33 +339,22 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             IEditUiElement candidate = getHoveringElement(event.x(), event.y());
 
             if (candidate != null && candidate.getElementPosition().isSerialisable()) {
-                mutatedElements.add(candidate);
-                element = candidate;
-                snapLines = element.getSnapLines(embeddedScreen, screenExtension);
                 isElementHeld = true;
-                LazyPosition position = candidate.getElementPosition();
-                previousSetX = position.x().get();
-                previousSetY = position.y().get();
+
+                setElementFocus(candidate);
                 return true;
             }
         }
 
         element = null;
 
+        releaseElement();
         return embeddedScreen.mouseClicked(event, isDoubleClick);
     }
 
     @Override
     public boolean mouseReleased(@NonNull MouseButtonEvent event) {
-        if (isElementHeld) {
-            isElementHeld = false;
-            cumulativeXo = 0;
-            cumulativeYo = 0;
-        }
-
-        xSnapLine = null;
-        ySnapLine = null;
-
+        releaseElement();
         return super.mouseReleased(event);
     }
 
@@ -250,7 +368,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             int yo;
 
             if (element.isExtensionRelative()) {
-                LazyPosition position = screenExtension.getElementPosition();;
+                LazyPosition position = screenExtension.getElementPosition();
                 xo = position.x().get();
                 yo = position.y().get();
             } else {
@@ -258,7 +376,6 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
                 yo = 0;
             }
 
-            // todo: maybe not the -1
             int x = Math.clamp(previousSetX + (int) cumulativeXo + embeddedScreen.leftPos, -xo, embeddedScreen.width - element.getWidth() - xo - 1);
             int y = Math.clamp(previousSetY + (int) cumulativeYo + embeddedScreen.topPos, -yo, embeddedScreen.height - element.getHeight() - yo - 1);
             int testX = x + xo;
@@ -450,57 +567,35 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
             return true;
         }
 
+        if (event.hasControlDown()) {
+            if (OhmegaBinds.EDIT_REDO.matches(event) && updateHistory(redoDequeue.poll(), undoDequeue)) {
+                return true;
+            }
+
+            if (OhmegaBinds.EDIT_UNDO.matches(event) && updateHistory(undoDequeue.poll(), redoDequeue)) {
+                return true;
+            }
+        }
+
         if (element != null) {
             if (OhmegaBinds.EDIT_MAGNETICS.matches(event)) {
                 shouldUseMagnetics = true;
             }
 
-            if (OhmegaBinds.EDIT_NUDGE_LEFT.matches(event)) {
-                IntLazySavedValue xPosition = element.getElementPosition().x();
-                int x = xPosition.get();
-
-                if (x + embeddedScreen.leftPos > 0) {
-                    mutatedElements.add(element);
-                    xPosition.set(x - 1);
-                    tryUpdateSlotPositions();
-                    return true;
-                }
+            if (OhmegaBinds.EDIT_NUDGE_LEFT.matches(event) && nudge(false, false)) {
+                return true;
             }
 
-            if (OhmegaBinds.EDIT_NUDGE_UP.matches(event)) {
-                IntLazySavedValue yPosition = element.getElementPosition().y();
-                int y = yPosition.get();
-
-                if (y + embeddedScreen.topPos > 0) {
-                    mutatedElements.add(element);
-                    yPosition.set(y - 1);
-                    tryUpdateSlotPositions();
-                    return true;
-                }
+            if (OhmegaBinds.EDIT_NUDGE_UP.matches(event) && nudge(true, false)) {
+                return true;
             }
 
-            if (OhmegaBinds.EDIT_NUDGE_RIGHT.matches(event)) {
-                IntLazySavedValue xPosition = element.getElementPosition().x();
-                int x = xPosition.get();
-
-                if (x + embeddedScreen.leftPos + element.getWidth() + 1 < embeddedScreen.width) {
-                    mutatedElements.add(element);
-                    xPosition.set(x + 1);
-                    tryUpdateSlotPositions();
-                    return true;
-                }
+            if (OhmegaBinds.EDIT_NUDGE_RIGHT.matches(event) && nudge(false, true)) {
+                return true;
             }
 
-            if (OhmegaBinds.EDIT_NUDGE_DOWN.matches(event)) {
-                IntLazySavedValue yPosition = element.getElementPosition().y();
-                int y = yPosition.get();
-
-                if (y + embeddedScreen.topPos + element.getHeight() + 1 < embeddedScreen.height) {
-                    mutatedElements.add(element);
-                    yPosition.set(y + 1);
-                    tryUpdateSlotPositions();
-                    return true;
-                }
+            if (OhmegaBinds.EDIT_NUDGE_DOWN.matches(event) && nudge(true, true)) {
+                return true;
             }
 
             if (OhmegaBinds.EDIT_SHOW_LINES.matches(event)) {
@@ -580,11 +675,29 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     @Override
     public void extractBackground(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
-        embeddedScreen.extractBackground(gui, mx, my, partialTicks);
-    }
+        super.extractBackground(gui, mx, my, partialTicks);
 
-    @Override
-    protected void extractBlurredBackground(@NonNull GuiGraphicsExtractor gui) {}
+        for (int i = 0; i < Math.ceilDiv(width, 256); i++) {
+            for (int j = 0; j < Math.ceilDiv(height, 256); j++) {
+                gui.blit(
+                        RenderPipelines.GUI_TEXTURED,
+                        BACKGROUND_LOCATION,
+                        i * 256,
+                        j * 256,
+                        256 - (Util.getMillis() - startMillis) / 64f % 256,
+                        0,
+                        256,
+                        256,
+                        256,
+                        256,
+                        ARGB.white(OhmegaConfig.Client.getData().backgroundAlpha().get()));
+            }
+        }
+
+        allowDimBackground = false;
+        embeddedScreen.extractBackground(gui, mx, my, partialTicks);
+        allowDimBackground = true;
+    }
 
     @Override
     public void extractTransparentBackground(@NonNull GuiGraphicsExtractor gui) {
@@ -604,5 +717,10 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     @Override
     public boolean shouldAllowSetScreen() {
         return allowSetScreen;
+    }
+
+    @Override
+    public boolean allowDimBackground() {
+        return allowDimBackground;
     }
 }

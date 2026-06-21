@@ -11,7 +11,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 // todo: clear added slots and replace with new ones on config change
-// todo: if possible, instead move ALL of this to a client-based approach with only one registration needed
 /**
  * Implemented by {@link AbstractContainerMenu}s to allow them to have an accessory extension.
  * See {@link AccessoryMenus} for crucial implementation details

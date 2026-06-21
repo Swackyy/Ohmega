@@ -13,8 +13,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class RuRuProvider extends OhmegaLangProvider {
-    public RuRuProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public final class OhmegaRuRuProvider extends OhmegaLangProvider {
+    public OhmegaRuRuProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "ru_ru", lookup);
     }
 
@@ -56,7 +56,7 @@ public final class RuRuProvider extends OhmegaLangProvider {
                 "Режим Совместимости",
                 "Отключает некоторые полезные, но малозаметные функции, которые могут улучшить совместимость с другими модами в редких случаях");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BUTTON_STYLE_KEY,
+                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Стиль Кнопки",
                 """
                         Стиль кнопки, открывающей панель аксессуаров

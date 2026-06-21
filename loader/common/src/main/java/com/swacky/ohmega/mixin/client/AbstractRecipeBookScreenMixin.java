@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

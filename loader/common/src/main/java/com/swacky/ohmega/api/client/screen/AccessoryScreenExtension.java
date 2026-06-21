@@ -1,13 +1,14 @@
 package com.swacky.ohmega.api.client.screen;
 
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.function.Consumer;
 /**
  * A way to add extra slots and functionality to the default inventory.
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
+ * <p>
+ * Ohmega uses this to provide the default accessory extension implementation packaged with the mod
  */
 public abstract class AccessoryScreenExtension implements IEditUiElement {
     private final @NonNull AbstractContainerScreen<?> screen;
@@ -24,24 +27,48 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
     private final @NonNull AccessoryMenuExtension menuExtension;
     private final @NonNull List<AbstractWidget> overlayWidgets = new ArrayList<>();
 
+    /**
+     * Constructs an instance of this screen extension, called internally by Ohmega.
+     * Your constructor of this should be what you pass to {@link AccessoryExtensions#registerExtension(Identifier, AccessoryMenuExtension.Factory, Factory)}
+     * as the screen factory, to be constructed when necessary
+     * @param screen the parent screen
+     * @param menuExtension the corresponding parent menu's {@link AccessoryMenuExtension}
+     */
     public AccessoryScreenExtension(@NonNull AbstractContainerScreen<?> screen, @NonNull AccessoryMenuExtension menuExtension) {
         this.screen = screen;
         this.accessoryScreen = (IAccessoryScreen) screen;
         this.menuExtension = menuExtension;
     }
 
+    /**
+     * Retrieve the parent screen for this accessory extension instance
+     * @return the parent screen where the extension will be added onto
+     */
     public @NonNull AbstractContainerScreen<?> getScreen() {
         return screen;
     }
 
+    /**
+     * Get the {@link IAccessoryScreen} cast version of {@link #getScreen()}
+     * @return the parent {@link IAccessoryScreen} this extension belongs to
+     */
     public @NonNull IAccessoryScreen getAccessoryScreen() {
         return accessoryScreen;
     }
 
+    /**
+     * Get the corresponding parent screen's menu extension
+     * @return the parent menu's {@link AccessoryScreenExtension}
+     */
     public @NonNull AccessoryMenuExtension getMenuExtension() {
         return menuExtension;
     }
 
+    /**
+     * Gets the list of widgets to render as an overlay, above (usually) all other rendering.
+     * These are added through {@link #initExtension(WidgetAdder)} by calling {@link WidgetAdder#addOverlay(AbstractWidget)}
+     * @return list of widgets to render after most other things
+     */
     public final @NonNull List<AbstractWidget> getOverlayWidgets() {
         return overlayWidgets;
     }
@@ -145,6 +172,10 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
         return menuExtension.getAccessoryMenu().isAccessoryExtensionVisible();
     }
 
+    /**
+     * A defaulted empty method that is called after {@link #setVisible(boolean)} is invoked
+     * @param value {@code true} if the extension has been set to visible, {@code false} if it has been hidden
+     */
     protected void onSetVisible(boolean value) {}
 
     /**
@@ -183,19 +214,22 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
     }
 
     @Override
-    public boolean isExtensionRelative() {
-        return false;
-    }
-
-    @Override
     public final boolean isActive() {
         return accessoryScreen.isAccessoryExtensionVisible();
     }
 
+    /**
+     * A helper class to easily add widgets to the parent screen of the extension
+     */
     public static final class WidgetAdder {
         private final @NonNull Consumer<AbstractWidget> consumer;
         private final @NonNull List<AbstractWidget> overlayWidgets;
 
+        /**
+         * Creates a new instance, called internally
+         * @param consumer a callback to add widgets
+         * @param overlayWidgets a list of widgets that should be added, being rendered over the top of other widgets and most other rendering
+         */
         public WidgetAdder(@NonNull Consumer<AbstractWidget> consumer, @NonNull List<AbstractWidget> overlayWidgets) {
             this.consumer = consumer;
             this.overlayWidgets = overlayWidgets;
@@ -210,7 +244,7 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
         }
 
         /**
-         * Simply add a widget to the screen that will be rendered after everything else
+         * Simply add a widget to the screen that will be rendered after (usually) everything else
          * @param widget generic widget to add
          */
         public void addOverlay(@NonNull AbstractWidget widget) {

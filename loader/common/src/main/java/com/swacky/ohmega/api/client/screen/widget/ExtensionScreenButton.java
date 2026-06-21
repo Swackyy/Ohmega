@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.client.screen.widget;
 
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;

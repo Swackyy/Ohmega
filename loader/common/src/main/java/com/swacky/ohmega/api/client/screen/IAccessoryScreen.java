@@ -1,6 +1,5 @@
 package com.swacky.ohmega.api.client.screen;
 
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.config.OhmegaConfig;

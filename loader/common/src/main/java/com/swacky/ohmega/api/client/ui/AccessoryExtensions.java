@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * A unified registration and data holder for accessory extension menus and screens, and some common related methods
  */
-public final class AccessoryUIs {
+public final class AccessoryExtensions {
     private static final @NonNull Map<Identifier, Pair<AccessoryMenuExtension.Factory, AccessoryScreenExtension.Factory>> EXTENSIONS = new HashMap<>();
 
     /**
@@ -40,6 +40,12 @@ public final class AccessoryUIs {
         return EXTENSIONS.keySet();
     }
 
+    /**
+     * Check if an extension with the given {@link Identifier} exists.
+     * Used for config value validation internally, but you may also use it
+     * @param id identifier to check
+     * @return {@code true} if an extension with the supplied {@code id} exists, {@code false} otherwise
+     */
     public static boolean exists(@Nullable Identifier id) {
         if (id != null) {
             return EXTENSIONS.containsKey(id);
@@ -53,10 +59,14 @@ public final class AccessoryUIs {
      * @return the currently in-use menu extension factory
      */
     public static AccessoryMenuExtension.@NonNull Factory getActiveMenuFactory() {
-        Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
+        String rawId = OhmegaConfig.Client.getData().accessoryExtensionId().getObject();
 
-        if (id != null) {
-            return EXTENSIONS.get(id).getLeft();
+        if (rawId != null) {
+            Identifier id = Identifier.tryParse(rawId);
+
+            if (id != null) {
+                return EXTENSIONS.get(id).getLeft();
+            }
         }
 
         return EXTENSIONS.get(OhmegaClient.DEFAULT_EXTENSION_ID).getLeft();
@@ -67,10 +77,14 @@ public final class AccessoryUIs {
      * @return the currently in-use menu extension factory
      */
     public static AccessoryScreenExtension.@NonNull Factory getActiveScreenFactory() {
-        Identifier id = Identifier.tryParse(OhmegaConfig.Client.getData().accessoryExtensionId().getObject());
+        String rawId = OhmegaConfig.Client.getData().accessoryExtensionId().getObject();
 
-        if (id != null) {
-            return EXTENSIONS.get(id).getRight();
+        if (rawId != null) {
+            Identifier id = Identifier.tryParse(rawId);
+
+            if (id != null) {
+                return EXTENSIONS.get(id).getRight();
+            }
         }
 
         return EXTENSIONS.get(OhmegaClient.DEFAULT_EXTENSION_ID).getRight();

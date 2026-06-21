@@ -6,10 +6,11 @@ import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingScreen;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
@@ -61,18 +62,17 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public final class ClientCallbacks {
-    public static float applyEntityInInventoryTranslation(EntityRenderState state, float scale, Quaternionf rotation) {
-        // Hacky thing, shouldn't cause issues
-        if (state instanceof LivingEntityRenderState livingState && scale < 0) {
+    public static void applyEntityInInventoryTranslation(EntityRenderState state, Quaternionf rotation) {
+        if (
+                AccessoryScreens.getEffectiveScreen() instanceof IAccessoryScreen accessoryScreen &&
+                accessoryScreen.getAccessoryExtension() instanceof IEntityRenderingExtension extension &&
+                extension.isEntityFlipped() &&
+                state instanceof LivingEntityRenderState livingState) {
             livingState.bodyRot = -livingState.bodyRot;
             livingState.yRot = -livingState.yRot;
 
             rotation.rotationX((float) Math.PI);
-
-            return -scale;
         }
-
-        return scale;
     }
 
     public static AccessoryRenderStateData createRenderStateData(LivingEntity entity) {
@@ -118,10 +118,11 @@ public final class ClientCallbacks {
                     rects = new ArrayList<>(2);
                 }
 
-                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().buttonStyle().getObject();
-                LazyPosition buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
+                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().toggleExtensionButtonStyle().getObject();
 
-                if (buttonStyle != null) {
+                if (buttonStyle != null && buttonStyle != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
+                    LazyPosition buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
+
                     rects.add(new Rect2i(
                             screen.leftPos + buttonPosition.x().get(),
                             screen.topPos + buttonPosition.y().get(),
@@ -294,7 +295,7 @@ public final class ClientCallbacks {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
-                OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().buttonStyle().getObject();
+                OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().toggleExtensionButtonStyle().getObject();
                 AbstractContainerScreen<?> containerScreen = extension.getScreen();
 
                 if (style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {

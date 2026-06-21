@@ -17,14 +17,15 @@ The following table describes features and the mod's version requirement in whic
 | Feature             | Version | Support / detail        | Documentation |
 |---------------------|---------|-------------------------|---------------|
 | Multi-loader        | >=1.4   | Fabric, Forge, NeoForge | N/A           |
-| Accessory rendering | >=1.6   | Broad (exp)             | No            |
+| Accessory rendering | >=1.6   | Broad (exp)             | Yes           |
 | Custom slot types   | >=1.3   | Full, data-driven       | Yes           |
-| Data generation     | >=1.5.8 | Accessory types, lang   | No            |
+| Data generation     | >=1.5.8 | Accessory types, lang   | Yes           |
 | Key-bound slots     | Any     | Built-in, dynamic       | No            |
 | Accessory events    | >=1.1   | Full (>=1.6)            | Partial       |
 | Attribute modifiers | >=1.1   | Full, conditional       | Yes           |
-| Custom screens      | >=1.6   | Full (exp)              | No            |
+| Custom screens      | >=1.6   | Full (exp)              | Yes           |
 | Configs             | >=1.3   | Client & server config  | N/A           |
+| UI Edit Screen      | >=1.6   | Complete widget editing | N/A           |
 
 **The Fabric version depends on the 'Fabric API' and 'Forge Config API Port' mods to function, whereas the Forge and NeoForge versions are standalone**
 

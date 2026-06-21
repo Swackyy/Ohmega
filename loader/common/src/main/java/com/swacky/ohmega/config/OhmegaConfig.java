@@ -1,15 +1,16 @@
 package com.swacky.ohmega.config;
 
-import com.swacky.ohmega.api.client.ui.AccessoryUIs;
+import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import net.minecraft.resources.Identifier;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -28,30 +29,79 @@ public final class OhmegaConfig {
             return IMPL.isLoaded();
         }
 
+        public static String createPositionDescription(String template, boolean x, String... args) {
+            char axis;
+
+            if (x) {
+                axis = 'x';
+            } else {
+                axis = 'y';
+            }
+
+            Object[] combinedArgs = new Object[args.length + 1];
+            combinedArgs[0] = axis;
+
+            System.arraycopy(args, 0, combinedArgs, 1, args.length);
+            return MessageFormat.format(template, combinedArgs);
+        }
+
         public interface Service {
+            String SECTION_EDIT_UI = "edit_ui";
+            String SECTION_EDIT_UI_DESCRIPTION = """
+                    Contains some configuration values pertaining to the Edit UI""";
+            String SECTION_POSITIONS = "positions";
+            String SECTION_POSITIONS_DESCRIPTION = """
+                    Determines where certain Ohmega elements are placed on different screens""";
+            String SECTION_SURVIVAL = "survival";
+            String SECTION_SURVIVAL_DESCRIPTION = """
+                    Contains positions for the survival inventory""";
+            String SECTION_CREATIVE = "creative";
+            String SECTION_CREATIVE_DESCRIPTION = """
+                    Contains positions for the creative inventory""";
+            String SECTION_TOGGLE_EXTENSION_BUTTON = "toggle_extension_button";
+            String SECTION_TOGGLE_EXTENSION_BUTTON_DESCRIPTION = """
+                    Contains positions for the toggle extension button""";
+            String EXTENSION_DESCRIPTION_TEMPLATE = """
+                The {0}-coordinate of the accessory extension in the {1} menu, relative to the main segment of the current screen""";
+            String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
+                The {0}-coordinate of the toggle extension button in the {1} menu when using the ''{2}'' button style, relative to the main segment of the current screen""";
+            String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
+                The {0}-coordinate of the flip entity button in the {1} menu, relative to the main segment of the current screen""";
+            String SURVIVAL_INVENTORY = "survival inventory";
+            String CREATIVE_INVENTORY = "creative inventory";
+            int POSITION_MIN = -2048;
+            int POSITION_MAX = 2048;
+
             String COMPATIBILITY_MODE_KEY = "compatibilityMode";
             String COMPATIBILITY_MODE_DESCRIPTION = """
                     Disables or reworks some useful yet mostly unnoticeable features that may improve mod compatibility in rare cases""";
             boolean COMPATIBILITY_MODE_DEFAULT = false;
             // - - -
-            String BUTTON_STYLE_KEY = "buttonStyle";
-            String BUTTON_STYLE_DESCRIPTION = """
-                    Style of the accessory inventory button
+            String SHOW_TRANSLATION_TOAST_KEY = "showTranslationToast";
+            String SHOW_TRANSLATION_TOAST_DESCRIPTION = """
+                    If true, will show a toast referring to Ohmega Crowdin translations on joining a world.
+                    This is automatically set to false after the first pop-up, making it only display once""";
+            boolean SHOW_TRANSLATION_TOAST_DEFAULT = true;
+            // - - -
+            String TOGGLE_EXTENSION_BUTTON_STYLE_KEY = "toggleExtensionButtonStyle";
+            String TOGGLE_EXTENSION_BUTTON_STYLE_DESCRIPTION = """
+                    Style of the accessory extension button
                     DEFAULT: The normal Ohmega button style
-                    LEGACY: A curios/baubles inspired button that renders next to the inventory player model
+                    LEGACY: A Curios/Baubles inspired button that renders next to the inventory player model
                     TAG_LEFT: A small tag-like button appearing just off the top left corner of the inventory
                     TAG_RIGHT: A small tag-like button appearing just off the top right corner of the inventory
-                    HIDDEN: Will not show, use the dedicated keybind to open the accessory inventory instead""";
+                    HIDDEN: Will not show, use the dedicated keybind to open the accessory extension instead""";
+            // - - -
+            String ACCESSORY_EXTENSION_ID_KEY = "accessoryExtensionId";
+            String ACCESSORY_EXTENSION_ID_DESCRIPTION = """
+                    The accessory extension type to use, other mods can register custom accessory extensions, which can be chosen here""";
+            String ACCESSORY_EXTENSION_ID_DEFAULT = OhmegaClient.DEFAULT_EXTENSION_ID.toString();
+            Predicate<Object> ACCESSORY_EXTENSION_ID_VALIDATOR = object -> object instanceof String string && AccessoryExtensions.exists(Identifier.tryParse(string));
             // - - -
             String FILL_DIRECTION_KEY = "fillDirection";
             String FILL_DIRECTION_DESCRIPTION = """
                     The direction that accessory slots will fill up in""";
             FillDirection FILL_DIRECTION_DEFAULT = FillDirection.RIGHT;
-            // - - -
-            String SHOW_HOVER_TOOLTIP_KEY = "showHoverTooltip";
-            String SHOW_HOVER_TOOLTIP_DESCRIPTION = """
-                    If true, will display a tooltip box of the type of accessory slot when it is hovered over""";
-            boolean SHOW_HOVER_TOOLTIP_DEFAULT = true;
             // - - -
             String MAX_COLUMNS_KEY = "maxColumns";
             String MAX_COLUMNS_DESCRIPTION = """
@@ -75,74 +125,194 @@ public final class OhmegaConfig {
             int MAX_COLUMN_RENDER_SLOTS_MIN = 1;
             int MAX_COLUMN_RENDER_SLOTS_MAX = 6;
             // - - -
-            String SHOW_TRANSLATION_TOAST_KEY = "showTranslationToast";
-            String SHOW_TRANSLATION_TOAST_DESCRIPTION = """
-                    If true, will show a toast referring to Ohmega Crowdin translations on joining a world.
-                    This is automatically set to false after the first pop-up, making it only display once""";
-            boolean SHOW_TRANSLATION_TOAST_DEFAULT = true;
+            String SHOW_HOVER_TOOLTIP_KEY = "showHoverTooltip";
+            String SHOW_HOVER_TOOLTIP_DESCRIPTION = """
+                    If true, will display a tooltip box of the type of accessory slot when it is hovered over""";
+            boolean SHOW_HOVER_TOOLTIP_DEFAULT = true;
+            // - - -
+            String BACKGROUND_ALPHA_KEY = "background_alpha";
+            String BACKGROUND_ALPHA_DESCRIPTION = """
+                    The alpha value for the background of the Edit UI""";
+            int BACKGROUND_ALPHA_DEFAULT = 48;
+            int BACKGROUND_ALPHA_MIN = 0;
+            int BACKGROUND_ALPHA_MAX = 255;
+            // - - -
+            String MAGNETICS_STRENGTH_KEY = "magneticsStrength";
+            String MAGNETICS_STRENGTH_DESCRIPTION = """
+                    The maximum pixel distance where magnetic lines will be considered for snapping""";
+            int MAGNETICS_STRENGTH_DEFAULT = 5;
+            int MAGNETICS_STRENGTH_MIN = 1;
+            int MAGNETICS_STRENGTH_MAX = 64;
             // - - -
             String SURVIVAL_EXTENSION_X_KEY = "survivalExtensionX";
-            String SURVIVAL_EXTENSION_X_DESCRIPTION = """
-                    The x-coordinate of the accessory extension in the survival inventory, relative to the main segment of the current screen with left and right being negative and positive X respectively""";
+            String SURVIVAL_EXTENSION_X_DESCRIPTION = createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, true, SURVIVAL_INVENTORY);
             int SURVIVAL_EXTENSION_X_DEFAULT = 178;
-            int SURVIVAL_EXTENSION_X_MIN = -2048;
-            int SURVIVAL_EXTENSION_X_MAX = 2048;
             // - - -
             String SURVIVAL_EXTENSION_Y_KEY = "survivalExtensionY";
-            String SURVIVAL_EXTENSION_Y_DESCRIPTION = """
-                    The y-coordinate of the accessory extension in the survival inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
+            String SURVIVAL_EXTENSION_Y_DESCRIPTION = createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, false, SURVIVAL_INVENTORY);
             int SURVIVAL_EXTENSION_Y_DEFAULT = 25;
-            int SURVIVAL_EXTENSION_Y_MIN = -2048;
-            int SURVIVAL_EXTENSION_Y_MAX = 2048;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY = "survivalToggleExtensionButtonDefaultX";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DEFAULT = 132;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY = "survivalToggleExtensionButtonDefaultY";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DEFAULT = 61;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY = "survivalToggleExtensionButtonLegacyX";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DEFAULT = 27;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY = "survivalToggleExtensionButtonLegacyY";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DEFAULT = 9;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY = "survivalToggleExtensionButtonTagLeftX";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DEFAULT = -11;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY = "survivalToggleExtensionButtonTagLeftY";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DEFAULT = 8;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY = "survivalToggleExtensionButtonTagRightX";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DEFAULT = 173;
+            // - - -
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY = "survivalToggleExtensionButtonTagRightY";
+            String SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name);
+            int SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DEFAULT = 8;
+            // - - -
+            String SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY = "survivalFlipEntityButtonX";
+            String SURVIVAL_FLIP_ENTITY_BUTTON_X_DESCRIPTION = createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, true, SURVIVAL_INVENTORY);
+            int SURVIVAL_FLIP_ENTITY_BUTTON_X_DEFAULT = 65;
+            // - - -
+            String SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY = "survivalFlipEntityButtonY";
+            String SURVIVAL_FLIP_ENTITY_BUTTON_Y_DESCRIPTION = createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, false, SURVIVAL_INVENTORY);
+            int SURVIVAL_FLIP_ENTITY_BUTTON_Y_DEFAULT = 9;
             // - - -
             String CREATIVE_EXTENSION_X_KEY = "creativeExtensionX";
-            String CREATIVE_EXTENSION_X_DESCRIPTION = """
-                    The x-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with left and right being negative and positive X respectively""";
+            String CREATIVE_EXTENSION_X_DESCRIPTION = createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, true, CREATIVE_INVENTORY);
             int CREATIVE_EXTENSION_X_DEFAULT = 197;
-            int CREATIVE_EXTENSION_X_MIN = -2048;
-            int CREATIVE_EXTENSION_X_MAX = 2048;
             // - - -
             String CREATIVE_EXTENSION_Y_KEY = "creativeExtensionY";
-            String CREATIVE_EXTENSION_Y_DESCRIPTION = """
-                    The y-coordinate of the accessory extension in the creative inventory, relative to the main segment of the current screen with up and down being negative and positive Y respectively""";
+            String CREATIVE_EXTENSION_Y_DESCRIPTION = createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, false, CREATIVE_INVENTORY);
             int CREATIVE_EXTENSION_Y_DEFAULT = 10;
-            int CREATIVE_EXTENSION_Y_MIN = -2048;
-            int CREATIVE_EXTENSION_Y_MAX = 2048;
             // - - -
-            String ACCESSORY_EXTENSION_ID_KEY = "accessoryExtensionId";
-            String ACCESSORY_EXTENSION_ID_DESCRIPTION = """
-                    The accessory extension type to use, other mods can register custom accessory extensions, which can be chosen here""";
-            String ACCESSORY_EXTENSION_ID_DEFAULT = OhmegaClient.DEFAULT_EXTENSION_ID.toString();
-            Predicate<Object> ACCESSORY_EXTENSION_ID_VALIDATOR = object -> object instanceof String string && AccessoryUIs.exists(Identifier.tryParse(string));
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY = "creativeToggleExtensionButtonDefaultX";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DEFAULT = 137;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY = "creativeToggleExtensionButtonDefaultY";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DEFAULT = 19;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY = "creativeToggleExtensionButtonLegacyX";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DEFAULT = 74;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY = "creativeToggleExtensionButtonLegacyY";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DEFAULT = 7;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY = "creativeToggleExtensionButtonTagLeftX";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DEFAULT = -11;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY = "creativeToggleExtensionButtonTagLeftY";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DEFAULT = 8;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY = "creativeToggleExtensionButtonTagRightX";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, true, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DEFAULT = 192;
+            // - - -
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY = "creativeToggleExtensionButtonTagRightY";
+            String CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DESCRIPTION = createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, false, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name);
+            int CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DEFAULT = 8;
+            // - - -
+            String CREATIVE_FLIP_ENTITY_BUTTON_X_KEY = "creativeFlipEntityButtonX";
+            String CREATIVE_FLIP_ENTITY_BUTTON_X_DESCRIPTION = createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, true, CREATIVE_INVENTORY);
+            int CREATIVE_FLIP_ENTITY_BUTTON_X_DEFAULT = 95;
+            // - - -
+            String CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY = "creativeFlipEntityButtonY";
+            String CREATIVE_FLIP_ENTITY_BUTTON_Y_DESCRIPTION = createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, false, CREATIVE_INVENTORY);
+            int CREATIVE_FLIP_ENTITY_BUTTON_Y_DEFAULT = 7;
             // - - -
 
             record Data(
                     BooleanLazySavedValue compatibilityMode,
-                    LazySavedValue<ButtonStyle> buttonStyle,
+                    BooleanLazySavedValue showTranslationToast,
+                    LazySavedValue<ButtonStyle> toggleExtensionButtonStyle,
+                    LazySavedValue<String> accessoryExtensionId,
                     LazySavedValue<FillDirection> fillDirection,
-                    BooleanLazySavedValue showHoverTooltip,
                     IntLazySavedValue maxColumns,
                     IntLazySavedValue maxColumnSlots,
                     IntLazySavedValue maxColumnRenderSlots,
-                    BooleanLazySavedValue showTranslationToast,
+                    BooleanLazySavedValue showHoverTooltip,
+                    IntLazySavedValue backgroundAlpha,
+                    IntLazySavedValue magneticsStrength,
                     IntLazySavedValue survivalExtensionX,
                     IntLazySavedValue survivalExtensionY,
+                    IntLazySavedValue survivalToggleExtensionButtonDefaultX,
+                    IntLazySavedValue survivalToggleExtensionButtonDefaultY,
+                    IntLazySavedValue survivalToggleExtensionButtonLegacyX,
+                    IntLazySavedValue survivalToggleExtensionButtonLegacyY,
+                    IntLazySavedValue survivalToggleExtensionButtonTagLeftX,
+                    IntLazySavedValue survivalToggleExtensionButtonTagLeftY,
+                    IntLazySavedValue survivalToggleExtensionButtonTagRightX,
+                    IntLazySavedValue survivalToggleExtensionButtonTagRightY,
+                    IntLazySavedValue survivalFlipEntityButtonX,
+                    IntLazySavedValue survivalFlipEntityButtonY,
                     IntLazySavedValue creativeExtensionX,
                     IntLazySavedValue creativeExtensionY,
-                    LazySavedValue<String> accessoryExtensionId) {
+                    IntLazySavedValue creativeToggleExtensionButtonDefaultX,
+                    IntLazySavedValue creativeToggleExtensionButtonDefaultY,
+                    IntLazySavedValue creativeToggleExtensionButtonLegacyX,
+                    IntLazySavedValue creativeToggleExtensionButtonLegacyY,
+                    IntLazySavedValue creativeToggleExtensionButtonTagLeftX,
+                    IntLazySavedValue creativeToggleExtensionButtonTagLeftY,
+                    IntLazySavedValue creativeToggleExtensionButtonTagRightX,
+                    IntLazySavedValue creativeToggleExtensionButtonTagRightY,
+                    IntLazySavedValue creativeFlipEntityButtonX,
+                    IntLazySavedValue creativeFlipEntityButtonY) {
                 public void pull() {
                     compatibilityMode.pull();
-                    buttonStyle.pull();
-                    showHoverTooltip.pull();
+                    showTranslationToast.pull();
+                    toggleExtensionButtonStyle.pull();
+                    accessoryExtensionId.pull();
+                    fillDirection.pull();
                     maxColumns.pull();
                     maxColumnSlots.pull();
                     maxColumnRenderSlots.pull();
-                    showTranslationToast.pull();
+                    showHoverTooltip.pull();
+                    backgroundAlpha.pull();
+                    magneticsStrength.pull();
                     survivalExtensionX.pull();
                     survivalExtensionY.pull();
+                    survivalToggleExtensionButtonDefaultX.pull();
+                    survivalToggleExtensionButtonDefaultY.pull();
+                    survivalToggleExtensionButtonLegacyX.pull();
+                    survivalToggleExtensionButtonLegacyY.pull();
+                    survivalToggleExtensionButtonTagLeftX.pull();
+                    survivalToggleExtensionButtonTagLeftY.pull();
+                    survivalToggleExtensionButtonTagRightX.pull();
+                    survivalToggleExtensionButtonTagRightY.pull();
+                    survivalFlipEntityButtonX.pull();
+                    survivalFlipEntityButtonY.pull();
                     creativeExtensionX.pull();
                     creativeExtensionY.pull();
-                    accessoryExtensionId.pull();
+                    creativeToggleExtensionButtonDefaultX.pull();
+                    creativeToggleExtensionButtonDefaultY.pull();
+                    creativeToggleExtensionButtonLegacyX.pull();
+                    creativeToggleExtensionButtonLegacyY.pull();
+                    creativeToggleExtensionButtonTagLeftX.pull();
+                    creativeToggleExtensionButtonTagLeftY.pull();
+                    creativeToggleExtensionButtonTagRightX.pull();
+                    creativeToggleExtensionButtonTagRightY.pull();
+                    creativeFlipEntityButtonX.pull();
+                    creativeFlipEntityButtonY.pull();
                 }
             }
 
@@ -151,21 +321,23 @@ public final class OhmegaConfig {
             boolean isLoaded();
 
             enum ButtonStyle {
-                DEFAULT(20, 18, "default", true),
-                LEGACY(9, 9, "legacy", true),
-                TAG_LEFT(14, 8, "tag_left", false),
-                TAG_RIGHT(14, 8, "tag_right", false),
-                HIDDEN(0, 0, null, false);
+                DEFAULT("default", 20, 18, true),
+                LEGACY("legacy", 9, 9, true),
+                TAG_LEFT("tag_left", 14, 8, false),
+                TAG_RIGHT("tag_right", 14, 8, false),
+                HIDDEN("hidden", 0, 0, false);
 
+                public final String name;
                 public final int width;
                 public final int height;
                 public final Identifier textureLocation;
                 public final boolean highlightWhenHovered;
 
-                ButtonStyle(int width, int height, String textureName, boolean highlightWhenHovered) {
+                ButtonStyle(String name, int width, int height, boolean highlightWhenHovered) {
+                    this.name = name;
                     this.width = width;
                     this.height = height;
-                    this.textureLocation = Ohmega.id("textures/gui/container/accessory_inventory/inventory_buttons/" + textureName + ".png");
+                    this.textureLocation = Ohmega.id("textures/gui/container/accessory_inventory/inventory_buttons/" + name + ".png");
                     this.highlightWhenHovered = highlightWhenHovered;
                 }
             }

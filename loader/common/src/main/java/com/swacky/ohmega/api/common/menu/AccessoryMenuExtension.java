@@ -17,6 +17,8 @@ import java.util.List;
  * <p>
  * This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server.
  * The only reason this is in the {@code common} package is because Ohmega defines one singular server implementation for internal use
+ * <p>
+ * Ohmega uses this to provide the default accessory extension implementation packaged with the mod
  */
 public abstract class AccessoryMenuExtension {
     private final @NonNull AbstractContainerMenu menu;

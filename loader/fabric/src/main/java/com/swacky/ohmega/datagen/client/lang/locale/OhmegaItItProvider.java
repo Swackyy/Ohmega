@@ -14,8 +14,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("SpellCheckingInspection")
-public final class ItItProvider extends OhmegaLangProvider {
-    public ItItProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public final class OhmegaItItProvider extends OhmegaLangProvider {
+    public OhmegaItItProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "it_it", lookup);
     }
 
@@ -57,12 +57,12 @@ public final class ItItProvider extends OhmegaLangProvider {
                 "Modalità Compatibilità",
                 "Disabilita alcune funzioni utili ma per lo più invisibili che possono migliorare la compatibilità delle mod in rari casi");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BUTTON_STYLE_KEY,
+                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Stile Pulsanti",
                 """
                         Stile del pulsante dell'inventario accessori
                         DEFAULT: Lo stile di default dei pulsanti Ohmega
-                        LEGACY: Uno stile ispirato alla curios/baubles che renderizza il pulsante accanto al modello del giocatore nell'inventario
+                        LEGACY: Uno stile ispirato alla Curios/Baubles che renderizza il pulsante accanto al modello del giocatore nell'inventario
                         TAG: Un piccolo pulsante simile ad un tag che appare appena fuori dall'angolo superiore dell'inventario
                         HIDDEN: Non mostrerà alcun pulsante, si utilizzi il tasto dedicato invece per aprire l'inventario accessori""");
         /*internalHelper.addConfigOption(

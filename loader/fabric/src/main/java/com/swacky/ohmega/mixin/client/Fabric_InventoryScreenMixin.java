@@ -29,6 +29,7 @@ abstract class Fabric_InventoryScreenMixin extends AbstractRecipeBookScreen<Inve
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;entity(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;FLorg/joml/Vector3fc;Lorg/joml/Quaternionfc;Lorg/joml/Quaternionfc;IIII)V"))
     private static void extractEntityInInventoryFollowsMouse(GuiGraphicsExtractor gui, EntityRenderState state, float scale, Vector3fc translation, Quaternionfc rotation, Quaternionfc xRotation, int x0, int y0, int x1, int y1, Operation<Void> handle) {
-        handle.call(gui, state, ClientCallbacks.applyEntityInInventoryTranslation(state, scale, (Quaternionf) rotation), translation, rotation, xRotation, x0, y0, x1, y1);
+        ClientCallbacks.applyEntityInInventoryTranslation(state, (Quaternionf) rotation);
+        handle.call(gui, state, scale, translation, rotation, xRotation, x0, y0, x1, y1);
     }
 }

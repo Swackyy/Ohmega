@@ -14,8 +14,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("SpellCheckingInspection")
-public final class NlNlProvider extends OhmegaLangProvider {
-    public NlNlProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public final class OhmegaNlNlProvider extends OhmegaLangProvider {
+    public OhmegaNlNlProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "nl_nl", lookup);
     }
 
@@ -58,12 +58,12 @@ public final class NlNlProvider extends OhmegaLangProvider {
                 "Compatibiliteitsmodus",
                 "Schakelt wat nuttige, maar vooral onopvallende functies uit die de compatibiliteit in zeldzame gevallen verbeteren");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BUTTON_STYLE_KEY,
+                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Knop Stijl",
                 """
                         Stijl van de accessoire inventaris knop
                         DEFAULT: De normale Ohmega knop stijl
-                        LEGACY: Een curios/baubles geïnspireerde knop die naast het spelersmodel staat
+                        LEGACY: Een Curios/Baubles geïnspireerde knop die naast het spelersmodel staat
                         TAG: Een kleine markering die in de bovenste hoek van de inventaris staat
                         HIDDEN: Zal verborgen blijven, gebruik de toegewezen toets om de inventaris te openen""");
         /*internalHelper.addConfigOption(

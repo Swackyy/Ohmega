@@ -1,5 +1,6 @@
 package com.swacky.ohmega.network;
 
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -7,7 +8,6 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.api.util.codec.OhmegaByteBufCodecs;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
@@ -146,7 +146,7 @@ public final class OhmegaNetworking {
             RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), lookup);
 
             buf.writeBytes(packet.data());
-            AccessoryTypeManager.apply(OhmegaByteBufCodecs.ACCESSORY_TYPE_COLLECTION.decode(buf));
+            AccessoryTypeManager.apply(AccessoryType.COLLECTION_STREAM_CODEC.decode(buf));
             AccessoryTypeManager.applyClient(() -> ClientCallbacks.reloadRegisteredKeybinds(Minecraft.getInstance().options::load), !OhmegaConfig.Server.isLoaded());
         }
 

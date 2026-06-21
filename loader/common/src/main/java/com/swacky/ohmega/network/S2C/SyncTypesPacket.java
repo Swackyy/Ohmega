@@ -1,8 +1,8 @@
 package com.swacky.ohmega.network.S2C;
 
-import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.api.util.codec.OhmegaByteBufCodecs;
+import com.swacky.ohmega.common.Ohmega;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,7 +22,7 @@ public record SyncTypesPacket(byte[] data) implements CustomPacketPayload {
     public SyncTypesPacket(RegistryAccess lookup) {
         RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), lookup);
 
-        OhmegaByteBufCodecs.ACCESSORY_TYPE_COLLECTION.encode(buf, AccessoryTypeManager.getTypes());
+        AccessoryType.COLLECTION_STREAM_CODEC.encode(buf, AccessoryTypeManager.getTypes());
 
         byte[] data = new byte[buf.readableBytes()];
 

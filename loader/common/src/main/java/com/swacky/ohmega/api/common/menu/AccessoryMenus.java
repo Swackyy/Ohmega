@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.common.menu;
 
 import com.google.common.collect.ImmutableList;
-import com.swacky.ohmega.api.client.ui.AccessoryUIs;
+import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -61,7 +61,7 @@ public final class AccessoryMenus {
         List<AccessorySlot> slots = new ArrayList<>(requiredCount);
 
         if (owner.level().isClientSide()) {
-            AccessoryMenuExtension extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
+            AccessoryMenuExtension extension = AccessoryExtensions.getActiveMenuFactory().construct(menu, owner);
 
             extension.addSlots((index, x, y) -> {
                 AccessorySlot slot = new AccessorySlot(
@@ -109,7 +109,7 @@ public final class AccessoryMenus {
         AccessoryMenuExtension extension;
 
         if (owner.level().isClientSide()) {
-            extension = AccessoryUIs.getActiveMenuFactory().construct(menu, owner);
+            extension = AccessoryExtensions.getActiveMenuFactory().construct(menu, owner);
         } else {
             extension = new ServerAccessoryMenuExtension(menu, owner);
         }

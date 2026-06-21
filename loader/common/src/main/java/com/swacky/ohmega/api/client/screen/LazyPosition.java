@@ -1,4 +1,4 @@
-package com.swacky.ohmega.api.client.screen.widget;
+package com.swacky.ohmega.api.client.screen;
 
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import org.jspecify.annotations.NonNull;
@@ -17,6 +17,11 @@ public record LazyPosition(@NonNull IntLazySavedValue x, @NonNull IntLazySavedVa
      */
     public LazyPosition(int x, int y) {
         this(IntLazySavedValue.of(x), IntLazySavedValue.of(y));
+    }
+
+    public void set(int x, int y) {
+        this.x.set(x);
+        this.y.set(y);
     }
 
     /**

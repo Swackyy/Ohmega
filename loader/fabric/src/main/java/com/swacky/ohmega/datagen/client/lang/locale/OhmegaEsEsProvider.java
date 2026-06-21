@@ -14,8 +14,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("SpellCheckingInspection")
-public final class EsEsProvider extends OhmegaLangProvider {
-    public EsEsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public final class OhmegaEsEsProvider extends OhmegaLangProvider {
+    public OhmegaEsEsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "es_es", lookup);
     }
 
@@ -57,12 +57,12 @@ public final class EsEsProvider extends OhmegaLangProvider {
                 "Modo de Compatibilidad",
                 "Deshabilita algunas características útiles pero que pasan desapercibidas que pueden mejorar la compatibilidad con otros mods en algunos casos raros");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BUTTON_STYLE_KEY,
+                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Estilo del Botón",
                 """
                         Estilo del botón del inventario de accesorios
                         POR DEFECTO: El estilo normal del botón de Ohmega
-                        ANTIGUO: Un botón inspirado en curios/baubles que se renderiza al lado del modelo en el inventario del jugador
+                        ANTIGUO: Un botón inspirado en Curios/Baubles que se renderiza al lado del modelo en el inventario del jugador
                         ETIQUETA: Un botón pequeño como una etiqueta en la esquina superior del inventario
                         OCULTO: No se va a mostrar, usa una tecla asignada para abrir el inventario de accesorios""");
         /*internalHelper.addConfigOption(

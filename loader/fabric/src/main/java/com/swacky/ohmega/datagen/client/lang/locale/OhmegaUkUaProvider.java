@@ -13,8 +13,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class UkUaProvider extends OhmegaLangProvider {
-    public UkUaProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+public final class OhmegaUkUaProvider extends OhmegaLangProvider {
+    public OhmegaUkUaProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "uk_ua", lookup);
     }
 
@@ -56,12 +56,12 @@ public final class UkUaProvider extends OhmegaLangProvider {
                 "Режим сумісности",
                 "Вимикає деякі корисні, але здебільшого непомітні функції, які можуть покращити сумісність модів у рідкісних випадках");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BUTTON_STYLE_KEY,
+                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Кнопка стилю",
                 """
                         Стиль кнопки інвентарю аксесуарів.
                         DEFAULT: звичайний стиль кнопки Ohmega.
-                        LEGACY: кнопка, натхненна curios/baubles, яку буде видно поруч із моделлю гравця в інвентарі.
+                        LEGACY: кнопка, натхненна Curios/Baubles, яку буде видно поруч із моделлю гравця в інвентарі.
                         TAG: маленька кнопка, схожа на теґ, що з’являється біля верхнього кута інвентарю.
                         HIDDEN: не буде видно, скористайтеся спеціальним призначенням клавіш, щоб відкрити інвентар аксесуарів""");
         /*internalHelper.addConfigOption(

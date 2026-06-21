@@ -1,7 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
-import com.swacky.ohmega.api.client.ui.AccessoryUIs;
+import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
@@ -58,7 +57,7 @@ public final class AccessoryScreens {
                 }
             }
 
-            AccessoryScreenExtension extension = AccessoryUIs.getActiveScreenFactory().construct(screen, menuExtension);
+            AccessoryScreenExtension extension = AccessoryExtensions.getActiveScreenFactory().construct(screen, menuExtension);
 
             accessoryScreen.setAccessoryExtension(extension);
 

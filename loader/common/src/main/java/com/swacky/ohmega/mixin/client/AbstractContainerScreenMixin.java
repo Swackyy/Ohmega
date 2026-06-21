@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

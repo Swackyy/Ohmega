@@ -126,7 +126,9 @@ public final class ClientEvents {
         event.register(OhmegaBinds.EDIT_NUDGE_LEFT);
         event.register(OhmegaBinds.EDIT_NUDGE_RIGHT);
         event.register(OhmegaBinds.EDIT_NUDGE_UP);
+        event.register(OhmegaBinds.EDIT_REDO);
         event.register(OhmegaBinds.EDIT_SHOW_LINES);
+        event.register(OhmegaBinds.EDIT_UNDO);
         event.register(OhmegaBinds.OPEN_ACCESSORY_INVENTORY);
         event.register(OhmegaBinds.OPEN_EDIT_UI);
         event.registerCategory(OhmegaBinds.CATEGORY);

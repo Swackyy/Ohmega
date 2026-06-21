@@ -3,7 +3,9 @@ package com.swacky.ohmega.mixin.client;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -42,6 +44,17 @@ abstract class ScreenMixin extends AbstractContainerEventHandler implements Rend
                 extension.extractExtension(gui);
                 pose.popMatrix();
             }
+        }
+    }
+
+    @Inject(
+            method = "extractTransparentBackground",
+            at = @At(
+                    value = "HEAD"),
+            cancellable = true)
+    private void extractTransparentBackground(GuiGraphicsExtractor gui, CallbackInfo ci) {
+        if (Minecraft.getInstance().gui.screen() instanceof IEmbeddingScreen embeddingScreen && !embeddingScreen.allowDimBackground()) {
+            ci.cancel();
         }
     }
 }

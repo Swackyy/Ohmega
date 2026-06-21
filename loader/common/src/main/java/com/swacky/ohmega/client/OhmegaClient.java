@@ -1,7 +1,7 @@
 package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.api.client.command.OhmegaClientCommandNodes;
-import com.swacky.ohmega.api.client.ui.AccessoryUIs;
+import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.HelpCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
@@ -39,7 +39,7 @@ public final class OhmegaClient {
             LOGGER.info("Successfully loaded {} client services", servicesCount);
 
             // Register extension
-            AccessoryUIs.registerExtension(DEFAULT_EXTENSION_ID, DefaultMenuExtension::new, DefaultScreenExtension::new);
+            AccessoryExtensions.registerExtension(DEFAULT_EXTENSION_ID, DefaultMenuExtension::new, DefaultScreenExtension::new);
 
             // Register command nodes
             OhmegaClientCommandNodes.register(ExtensionsCommand.ELEMENT_ROOT, ExtensionsCommand::new);

@@ -6,10 +6,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
-import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
+import com.swacky.ohmega.api.client.screen.SnapLine;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -73,19 +72,15 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
+        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+
         return switch (style) {
-            case DEFAULT -> new LazyPosition(137, 19);
-            case LEGACY -> new LazyPosition(74, 7);
-            case TAG_LEFT -> new LazyPosition(-11, 8);
-            case TAG_RIGHT -> new LazyPosition(192, 8);
+            case DEFAULT -> new LazyPosition(data.creativeToggleExtensionButtonDefaultX(), data.creativeToggleExtensionButtonDefaultY());
+            case LEGACY -> new LazyPosition(data.creativeToggleExtensionButtonLegacyX(), data.creativeToggleExtensionButtonLegacyY());
+            case TAG_LEFT -> new LazyPosition(data.creativeToggleExtensionButtonTagLeftX(), data.creativeToggleExtensionButtonTagLeftY());
+            case TAG_RIGHT -> new LazyPosition(data.creativeToggleExtensionButtonTagRightX(), data.creativeToggleExtensionButtonTagRightY());
             default -> throw new IllegalStateException("Unexpected value: " + style);
         };
-    }
-
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    @Override
-    public @NonNull LazyPosition getFlipEntityButtonPosition() {
-        return new LazyPosition(95, 7);
     }
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
@@ -101,27 +96,33 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
         return false;
     }
 
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public @NonNull LazyPosition getFlipEntityButtonPosition() {
+        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+
+        return new LazyPosition(data.creativeFlipEntityButtonX(), data.creativeFlipEntityButtonY());
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public @Nullable List<SnapLine> getSnapLines(@NonNull AbstractContainerScreen<?> screen, @NonNull AccessoryScreenExtension extension) {
+        int x = screen.leftPos;
+        int y = screen.topPos;
+
+        return List.of(
+                new SnapLine(true, x + 72),
+                new SnapLine(false, y + 5),
+                new SnapLine(true, x + 105),
+                new SnapLine(false, y + 49));
+    }
+
     @Inject(
             method = "<init>",
             at = @At(
                     value = "RETURN"))
     private void init(LocalPlayer owner, FeatureFlagSet flags, boolean displayOperatorTab, CallbackInfo ci) {
         AccessoryScreens.onConstruct(this);
-    }
-
-    @ModifyArg(
-            method = "extractBackground",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;extractEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V"),
-            index = 5)
-    private int extractBackground(int size) {
-        // Hacky thing, shouldn't cause issues
-        if (ohmega$extension instanceof IEntityRenderingExtension extension && extension.isEntityFlipped()) {
-            return -size;
-        }
-
-        return size;
     }
 
     @ModifyReturnValue(

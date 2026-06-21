@@ -4,8 +4,8 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.widget.ExtensionScreenButton;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
-import com.swacky.ohmega.api.client.screen.widget.LazyPosition;
-import com.swacky.ohmega.api.client.screen.widget.SnapLine;
+import com.swacky.ohmega.api.client.screen.LazyPosition;
+import com.swacky.ohmega.api.client.screen.SnapLine;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
@@ -59,7 +59,7 @@ public final class ToggleExtensionButton extends ExtensionScreenButton implement
     }
 
     @Override
-    public @NonNull List<SnapLine> getSnapLines(@NonNull AbstractContainerScreen<?> screen, @NonNull AccessoryScreenExtension screenExtension) {
+    public @NonNull List<SnapLine> getSnapLines(@NonNull AbstractContainerScreen<?> screen, @NonNull AccessoryScreenExtension extension) {
         for (Renderable renderable : screen.renderables) {
             if (renderable instanceof ImageButton button && button.sprites == RecipeBookComponent.RECIPE_BUTTON_SPRITES) {
                 int x = button.getX();
@@ -68,8 +68,8 @@ public final class ToggleExtensionButton extends ExtensionScreenButton implement
                 return List.of(
                         new SnapLine(true, x),
                         new SnapLine(false, y),
-                        new SnapLine(true, x + button.getWidth()),
-                        new SnapLine(false, y + button.getHeight()));
+                        new SnapLine(true, x + button.getWidth() - 1),
+                        new SnapLine(false, y + button.getHeight() - 1));
             }
         }
 

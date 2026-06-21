@@ -1,15 +1,9 @@
 package com.swacky.ohmega.api.util.codec;
 
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.NonNull;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Contains some general use {@link StreamCodec}s that Ohmega may use internally,
@@ -60,32 +54,6 @@ public final class OhmegaByteBufCodecs {
 
             for (int value : values) {
                 VarInt.write(buf, value);
-            }
-        }
-    };
-
-    /**
-     * Codec for any general collection of {@link AccessoryType}s
-     */
-    public static final StreamCodec<RegistryFriendlyByteBuf, Collection<AccessoryType>> ACCESSORY_TYPE_COLLECTION = new StreamCodec<>() {
-        @Override
-        public @NonNull Collection<AccessoryType> decode(@NonNull RegistryFriendlyByteBuf buf) {
-            int size = VarInt.read(buf);
-            Set<AccessoryType> map = new HashSet<>(size);
-
-            for (int i = 0; i < size; i++) {
-                map.add(AccessoryType.STREAM_CODEC.decode(buf));
-            }
-
-            return map;
-        }
-
-        @Override
-        public void encode(@NonNull RegistryFriendlyByteBuf buf, @NonNull Collection<AccessoryType> values) {
-            VarInt.write(buf, values.size());
-
-            for (AccessoryType value : values) {
-                AccessoryType.STREAM_CODEC.encode(buf, value);
             }
         }
     };

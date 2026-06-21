@@ -61,7 +61,9 @@ public final class OhmegaClientMain implements ClientModInitializer {
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_LEFT);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_RIGHT);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_NUDGE_UP);
+        KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_REDO);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_SHOW_LINES);
+        KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_UNDO);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_ACCESSORY_INVENTORY);
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.OPEN_EDIT_UI);
 

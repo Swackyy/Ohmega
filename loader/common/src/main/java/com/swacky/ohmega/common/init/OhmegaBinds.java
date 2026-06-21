@@ -33,7 +33,9 @@ public final class OhmegaBinds {
     public static final KeyMapping EDIT_NUDGE_LEFT = key("edit_nudge_left", GLFW.GLFW_KEY_LEFT);
     public static final KeyMapping EDIT_NUDGE_RIGHT = key("edit_nudge_right", GLFW.GLFW_KEY_RIGHT);
     public static final KeyMapping EDIT_NUDGE_UP = key("edit_nudge_up", GLFW.GLFW_KEY_UP);
+    public static final KeyMapping EDIT_REDO = key("edit_redo", GLFW.GLFW_KEY_Y);
     public static final KeyMapping EDIT_SHOW_LINES = key("edit_show_lines", GLFW.GLFW_KEY_LEFT_SHIFT);
+    public static final KeyMapping EDIT_UNDO = key("edit_undo", GLFW.GLFW_KEY_Z);
     public static final KeyMapping OPEN_ACCESSORY_INVENTORY = key("open_accessory_inventory", GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping OPEN_EDIT_UI = key("open_edit_ui", GLFW.GLFW_KEY_LEFT_BRACKET);
 
