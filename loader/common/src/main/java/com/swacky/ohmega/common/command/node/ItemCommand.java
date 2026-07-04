@@ -93,8 +93,7 @@ public final class ItemCommand implements ICommandNode {
 
         context.getSource().sendSuccess(() -> Component.translatable(GET_FEEDBACK,
                 target.getDisplayName(),
-                stack.getCount(),
-                stack.getDisplayName(),
+                stack.toString(),
                 index
         ), true);
         return Command.SINGLE_SUCCESS;

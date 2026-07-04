@@ -35,20 +35,24 @@ public final class OhmegaConfig {
             return IMPL.isLoaded();
         }
 
-        public static String createPositionDescription(String template, boolean x, String... args) {
-            char axis;
-
-            if (x) {
-                axis = 'x';
-            } else {
-                axis = 'y';
-            }
-
+        public static String createPositionDescription(String template, String coordinate, String... args) {
             Object[] combinedArgs = new Object[args.length + 1];
-            combinedArgs[0] = axis;
+            combinedArgs[0] = coordinate;
 
             System.arraycopy(args, 0, combinedArgs, 1, args.length);
             return MessageFormat.format(template, combinedArgs);
+        }
+
+        public static String createPositionDescription(String template, boolean x, String... args) {
+            String axis;
+
+            if (x) {
+                axis = "x-coordinate";
+            } else {
+                axis = "y-coordinate";
+            }
+
+            return createPositionDescription(template, axis, args);
         }
 
         public interface Service {
@@ -67,14 +71,14 @@ public final class OhmegaConfig {
             String SECTION_TOGGLE_EXTENSION_BUTTON = "toggle_extension_button";
             String SECTION_TOGGLE_EXTENSION_BUTTON_DESCRIPTION = """
                     Contains positions for the toggle extension button""";
-            String EXTENSION_DESCRIPTION_TEMPLATE = """
-                The {0}-coordinate of the accessory extension in the {1} menu, relative to the main segment of the current screen""";
-            String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
-                The {0}-coordinate of the toggle extension button in the {1} menu when using the ''{2}'' button style, relative to the main segment of the current screen""";
-            String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
-                The {0}-coordinate of the flip entity button in the {1} menu, relative to the main segment of the current screen""";
             String SURVIVAL_INVENTORY = "survival inventory";
             String CREATIVE_INVENTORY = "creative inventory";
+            String EXTENSION_DESCRIPTION_TEMPLATE = """
+                The {0} of the accessory extension in the {1} menu, relative to the main segment of the current screen""";
+            String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
+                The {0} of the toggle extension button in the {1} menu when using the ''{2}'' button style, relative to the main segment of the current screen""";
+            String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
+                The {0} of the flip entity button in the {1} menu, relative to the main segment of the current screen""";
             int POSITION_MIN = -2048;
             int POSITION_MAX = 2048;
             // - - -
@@ -440,16 +444,16 @@ public final class OhmegaConfig {
             // - - -
 
             String DEFAULT_SLOT_TYPES_KEY = "defaultSlotTypes";
-            String SLOT_TYPES_DESCRIPTION = """
+            String DEFAULT_SLOT_TYPES_DESCRIPTION = """
                     Defines the types and number of slots to default to for the accessory inventory""";
-            List<String> SLOT_TYPES_DEFAULT = List.of(
+            List<String> DEFAULT_SLOT_TYPES_DEFAULT = List.of(
                     NORMAL,
                     NORMAL,
                     NORMAL,
                     UTILITY,
                     UTILITY,
                     SPECIAL);
-            String SLOT_TYPES_NEW_VALUE_DEFAULT = NORMAL;
+            String DEFAULT_SLOT_TYPES_NEW_VALUE_DEFAULT = NORMAL;
             // - - -
             String SHRINK_DEFAULT_SLOT_TYPES_KEY = "shrinkDefaultSlotTypes";
             String SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION = """

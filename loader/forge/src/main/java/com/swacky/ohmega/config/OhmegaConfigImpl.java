@@ -236,8 +236,8 @@ public final class OhmegaConfigImpl {
         public Server() {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
             LazySavedValue<List<? extends String>> defaultSlotTypes = wrap(builder
-                    .comment(SLOT_TYPES_DESCRIPTION)
-                    .defineList(DEFAULT_SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
+                    .comment(DEFAULT_SLOT_TYPES_DESCRIPTION)
+                    .defineList(DEFAULT_SLOT_TYPES_KEY, DEFAULT_SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
             BooleanLazySavedValue shrinkDefaultSlotTypes = wrap(builder
                     .comment(SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION)
                     .define(SHRINK_DEFAULT_SLOT_TYPES_KEY, SHRINK_DEFAULT_SLOT_TYPES_DEFAULT));

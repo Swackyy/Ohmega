@@ -2,6 +2,7 @@ package com.swacky.ohmega.datagen;
 
 import com.swacky.ohmega.datagen.client.OhmegaModelProvider;
 import com.swacky.ohmega.datagen.client.OhmegaSplashProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.OhmegaEnPtProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaEnUsProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaEsEsProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaItItProvider;
@@ -22,6 +23,7 @@ public final class OhmegaDataGenerationMain implements DataGeneratorEntrypoint {
 
         // Client
         // Language locales
+        pack.addProvider(OhmegaEnPtProvider::new);
         pack.addProvider(OhmegaEnUsProvider::new);
         pack.addProvider(OhmegaEsEsProvider::new);
         pack.addProvider(OhmegaItItProvider::new);

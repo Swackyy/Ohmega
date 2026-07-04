@@ -66,8 +66,8 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(InfoCommand.REPORT_FEEDBACK, "Thanks for using Ohmega, if you want to report a bug, click this message to open our issue tracker");
         builder.add(InfoCommand.WIKI_FEEDBACK, "Want to make a mod with Ohmega? Click this message to open the Ohmega wiki to learn how");
         // Item
-        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Index %s is out of bounds! Must be greater than or equal to 0 and below %s");
-        builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s %s in index %s of their accessory inventory");
+        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Index %s is out of bounds! Must be below %s");
+        builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s in index %s of their accessory inventory");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s of %s entities' accessory inventories to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
         builder.add(ItemCommand.TYPE_GET_FEEDBACK, "Item '%s' has default accessory type '%s'");
@@ -287,7 +287,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Default Slot Types",
-                OhmegaConfig.Server.Service.SLOT_TYPES_DESCRIPTION);
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_DESCRIPTION);
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Edit");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
