@@ -1,7 +1,5 @@
 package com.swacky.ohmega.api.common.dataattachment;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Booleans;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -11,179 +9,147 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
-import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
-import com.swacky.ohmega.common.menu.AccessorySlot;
-import com.swacky.ohmega.common.menu.TemporarySlot;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
-import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncDataPacket;
+import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+// todo: slots need realignment, it's very bad
 /**
  * Storage holder for accessory-related data, attachable for any {@link LivingEntity}
  */
 public final class AccessoryData {
-    public static final @NonNull Codec<AccessoryData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
-    ).apply(builder, AccessoryData::new));
+    public static final @NonNull HashSet<LivingEntity> DEFAULT_TRACKERS = new HashSet<>();
 
     public static final @NonNull MapCodec<AccessoryData> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("stacks").forGetter(inst -> inst.stacks),
-            Codec.BOOL.listOf().fieldOf("hidden").forGetter(inst -> Booleans.asList(inst.hidden))
+            Codec.BOOL.fieldOf("trackingDefault").forGetter(AccessoryData::isTrackingDefault),
+            AccessoryDataEntry.ARRAY_LIST_CODEC.fieldOf("entries").forGetter(AccessoryData::getEntries)
     ).apply(builder, AccessoryData::new));
 
-    private @NonNull NonNullList<ItemStack> stacks;
-    private boolean[] hidden;
+    public static final @NonNull Codec<AccessoryData> CODEC = MAP_CODEC.codec();
+
+    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL, AccessoryData::isTrackingDefault,
+            AccessoryDataEntry.ARRAY_LIST_STREAM_CODEC, AccessoryData::getEntries,
+            AccessoryData::new);
+
+    private MutableBoolean trackingDefault;
+    private @NonNull ArrayList<@NonNull AccessoryDataEntry> entries;
     private long tickIndex = 0;
 
     /**
-     * Internal constructor for redirection
-     * @param stacks list of {@link ItemStack}s in the slots
-     * @param hidden boolean array dictating the visibility of renderable accessories,
-     *               not retained through the items themselves, but rather bound to the slot indexes
+     * Root constructor, used internally
+     * @param entries a list of data entries containing all related information corresponding to each slot
      */
-    private AccessoryData(@NonNull NonNullList<ItemStack> stacks, boolean[] hidden) {
-        this.stacks = stacks;
-        this.hidden = hidden;
-    }
-
-    /**
-     * Internal constructor used by {@link Codec}s
-     * @param stacks list of {@link ItemStack}s in the slots
-     * @param hidden boolean array dictating the visibility of renderable accessories,
-     *               not retained through the items themselves, but rather bound to the slot indexes
-     */
-    private AccessoryData(@NonNull List<ItemStack> stacks, @NonNull List<Boolean> hidden) {
-        this(NonNullList.of(ItemStack.EMPTY, stacks.toArray(new ItemStack[0])), Booleans.toArray(hidden));
+    public AccessoryData(boolean trackingDefault, @NonNull ArrayList<@NonNull AccessoryDataEntry> entries) {
+        this.trackingDefault = new MutableBoolean(trackingDefault);
+        this.entries = entries;
     }
 
     /**
      * Publicly exposed constructor, used internally by Ohmega.
-     * Initialises {@link ItemStack}s as all empty and all {@code hidden} as {@code false}
+     * All data will be instantiated using their default values, or in more detail:
+     * <ul>
+     *     <li>Tracking default slots</li>
+     *     <li>Default initialised {@link AccessoryDataEntry} entries</li>
+     * </ul>
      */
     public AccessoryData() {
-        int size = AccessoryHelper.getSlotTypes().size();
-        this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        this.hidden = new boolean[size];
+        List<AccessoryType> types = OhmegaConfig.Server.getDefaultSlotTypes();
+        int size = types.size();
+        ArrayList<AccessoryDataEntry> entries = new ArrayList<>(size);
+
+        for (AccessoryType type : types) {
+            entries.add(new AccessoryDataEntry(type));
+        }
+
+        this(true, entries);
     }
 
     /**
      * Get the amount of items supported by this storage instance
-     * @return the amount of items held
+     * @return the number of {@link AccessoryDataEntry} held
      */
     public int size() {
-        return stacks.size();
+        return entries.size();
     }
 
     /**
-     * Retrieve all the stacks held by this accessory extension
-     * @return the stored {@link ItemStack}s
+     * Check if this instance holds no entries
      */
-    public @NonNull NonNullList<ItemStack> getStacks() {
-        return stacks;
+    public boolean isEmpty() {
+        return entries.isEmpty();
     }
 
     /**
-     * Retrieve the {@link ItemStack} in the given slot index
-     * @param index slot index relative to the accessory extension
-     * @return the {@link ItemStack} in the provided slot index
+     * Get a specific entry at the given instance
+     * @param index slot index for the desired entry
+     * @return the {@link AccessoryDataEntry} at the given {@code index}
      */
-    public @NonNull ItemStack getStackInSlot(int index) {
-        return stacks.get(index);
+    public @NonNull AccessoryDataEntry getEntry(int index) {
+        return entries.get(index);
     }
 
     /**
-     * Retrieve the boolean data representing which indexes' accessories should not be rendered
-     * @return the stored hidden array
+     * Retrieve all stored entries
+     * @return all {@link AccessoryDataEntry} instances held by this data instance
      */
-    public boolean[] getHidden() {
-        return hidden;
-    }
-
-    /**
-     * Check if a particular index's accessory should be hidden
-     * @param index slot index relative to the accessory extension
-     * @return {@code true} if it is hidden, and accessories in this slot should not be rendered, {@code false} otherwise
-     */
-    public boolean isHidden(int index) {
-        return hidden[index];
-    }
-
-    /**
-     * Set one index's hidden state, used primarily in synchronisation
-     * @param index slot index relative to the accessory extension
-     * @param value {@code true} to set it as hidden, {@code false} to set as visible
-     */
-    public void setHidden(int index, boolean value) {
-        hidden[index] = value;
+    public @NonNull ArrayList<AccessoryDataEntry> getEntries() {
+        return entries;
     }
 
     /**
      * Called internally when attaching this data storage to the target entity, only necessary for players
-     * @param player the {@link ServerPlayer} the data is being attached to
+     * @param entity the {@link LivingEntity} the data is being attached to
      */
-    public void onAttach(@NonNull ServerPlayer player) {
-        // If the server config gets de-synced, this fixes it instead of throwing
-        reload(player);
-
+    public void onAttach(@NonNull LivingEntity entity) {
         int size = size();
-        int[] allIndexes = new int[size];
 
         for (int i = 0; i < size; i++) {
-            ItemStack stack = getStackInSlot(i);
+            AccessoryDataEntry entry = entries.get(i);
+            ItemStack stack = entry.getStack();
 
             if (AccessoryHelper.isActive(stack)) {
-                doEquip(player, stack, i, EquipContext.ATTACH);
-            }
-
-            allIndexes[i] = i;
-        }
-
-        // Initial load syncing
-        syncAllData(player, player.getId(), allIndexes);
-
-        // Rebuild slots for InventoryMenu
-        InventoryMenu menu = player.inventoryMenu;
-        NonNullList<Slot> slots = menu.slots;
-        List<AccessorySlot> accessorySlots = AccessoryMenus.createSlots(menu, player, null);
-        int cursor = 0;
-
-        for (int i = 0; i < slots.size(); i++) {
-            Slot slot = slots.get(i);
-
-            if (slot instanceof TemporarySlot) {
-                AccessorySlot accessorySlot = accessorySlots.get(cursor++);
-                accessorySlot.index = slot.index;
-
-                slots.set(i, accessorySlot);
+                entry.doEquip(entity, stack, i, EquipContext.ATTACH);
             }
         }
 
-        menu.sendAllDataToRemote();
+        if (!entity.level().isClientSide() && isTrackingDefault()) {
+            DEFAULT_TRACKERS.add(entity);
+        }
+
+        if (entity instanceof ServerPlayer player) {
+            SyncDataPacket packet = new SyncDataPacket(player.getId(), this);
+
+            OhmegaNetworking.S2C.send(player, packet);
+        }
     }
 
     /**
@@ -205,7 +171,7 @@ public final class AccessoryData {
         }
 
         for (int i = 0; i < size; i++) {
-            ItemStack stack = getStackInSlot(i);
+            ItemStack stack = entries.get(i).getStack();
             Item item = stack.getItem();
             Accessory accessory = Accessories.get(item);
 
@@ -235,116 +201,10 @@ public final class AccessoryData {
         }
 
         if (indexes != null) {
-            int[] indexesArray = indexes.toIntArray();
-
-            for (ServerPlayer receiver : level.players()) {
-                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexesArray, stacks, true));
-            }
+            trySendPacketToAll(level, new SyncStacksPacket(entity.getId(), indexes.toIntArray(), stacks, true));
         }
 
         tickIndex++;
-    }
-
-    /**
-     * Toggle one index's hidden state
-     * @param entity the entity that this data instance belongs to
-     * @param index slot index relative to the accessory extension
-     */
-    public void toggleHidden(@NonNull LivingEntity entity, int index) {
-        if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
-            boolean value = !isHidden(index);
-
-            setHidden(index, value);
-
-            if (entity.level().isClientSide()) {
-                OhmegaNetworking.C2S.send(new SetHiddenPacket(index, value));
-            }
-        }
-    }
-
-    /**
-     * Predicate function to assert validity of an {@link ItemStack} candidate to place it in a slot
-     * @param entity the entity attempting to equip this item / this call is relevant towards
-     * @param index slot index relative to the accessory extension
-     * @param stack the {@link ItemStack} to check validity for
-     * @param context the context of this call
-     * @return {@code true} if valid, {@code false} if invalid
-     */
-    public boolean isItemValid(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack, @NonNull EquipContext context) {
-        if (stack.isEmpty()) {
-            return true;
-        }
-
-        Item item = stack.getItem();
-        Accessory accessory = Accessories.get(item);
-
-        if (accessory != null && (AccessoryHelper.compatibleWith(entity, stack) || ItemStack.isSameItem(stack, getStackInSlot(index)))) {
-            return
-                    AccessoryHelper.getType(item) == AccessoryHelper.getSlotTypes().get(index) &&
-                    accessory.canEquip(entity, stack, context);
-        }
-
-        return false;
-    }
-
-    /**
-     * Perform necessary operations that occur when un-equipping an accessory
-     * @param entity the entity un-equipping the accessory
-     * @param stack the accessory's {@link ItemStack} representation being un-equipped
-     * @param context the context surrounding this un-equip invocation
-     */
-    public void doUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
-        Accessory accessory = Accessories.get(stack.getItem());
-
-        if (accessory != null) {
-            accessory.onUnequip(entity, stack, context);
-            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), false);
-            AccessoryHelper.setNoSlot(stack);
-        }
-    }
-
-    /**
-     * Perform necessary operations that occur when un-equipping an accessory
-     * @param entity the entity un-equipping the accessory
-     * @param stack the accessory's {@link ItemStack} representation being un-equipped
-     * @param context the context surrounding this equip invocation
-     */
-    private void doEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull EquipContext context) {
-        Accessory accessory = Accessories.get(stack.getItem());
-
-        if (accessory != null) {
-            AccessoryHelper.setSlot(stack, index);
-            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), true);
-            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
-            accessory.onEquip(entity, stack, context);
-
-            if (context == EquipContext.USE_HELD) {
-                SoundData data = accessory.getEquipSound(stack);
-
-                if (data != null) {
-                    entity.playSound(data.sound().value(), data.volume(), data.pitch());
-                }
-            }
-        }
-    }
-
-    /**
-     * Synchronise the requested data stored on the server with this instance with all clients
-     * @param entity the entity that this data instance belongs to
-     * @param index the index to synchronise
-     */
-    public void sendSync(@NonNull LivingEntity entity, int index) {
-        sendSync(entity, new int[]{index}, List.of(getStackInSlot(index)));
-    }
-
-    /**
-     * Synchronise the requested data stored on the server with this instance with all clients
-     * @param entity the entity that this data instance belongs to
-     * @param index the index to synchronise
-     * @param stack the matching {@link ItemStack} to synchronise as, corresponding to the {@code index}
-     */
-    public void sendSync(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack) {
-        sendSync(entity, new int[]{index}, List.of(stack));
     }
 
     /**
@@ -353,78 +213,12 @@ public final class AccessoryData {
      * @param indexes the indexes to synchronise
      * @param stacks the matching {@link ItemStack}s to synchronise as, corresponding to the {@code indexes}
      */
-    public void sendSync(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks) {
+    public void trySendSync(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks) {
         if (entity.level() instanceof ServerLevel level) {
             for (ServerPlayer receiver : level.players()) {
                 OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes, stacks, true));
             }
         }
-    }
-
-    /**
-     * Perform the actual stack setting and other related operations
-     * @param entity the entity that this data instance belongs to
-     * @param index slot index relative to the accessory extension to set in
-     * @param stack the {@link ItemStack} to set as in the provided slot index
-     * @param context the context surrounding this set invocation
-     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
-     * @param sync {@code true} if this invocation should be synced with clients
-     */
-    private void doSetStack(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack, @NonNull EquipContext context, boolean forceOnEquip, boolean sync) {
-        ItemStack current = getStackInSlot(index);
-
-        if (!ItemStack.matches(current, stack)) {
-            doUnequip(entity, current, context);
-
-            if (stack.isEmpty()) {
-                AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
-            }
-
-            stacks.set(index, stack);
-
-            if (forceOnEquip || AccessoryHelper.isActive(stack)) {
-                doEquip(entity, stack, index, context);
-            }
-
-            if (sync) {
-                sendSync(entity, index, stack);
-            }
-        }
-    }
-
-    /**
-     * Set the {@link ItemStack} in a certain index
-     * @param entity the entity that this data instance belongs to
-     * @param index slot index relative to the accessory extension to set in
-     * @param stack the {@link ItemStack} to set as in the provided slot index
-     * @param context the context surrounding this set invocation
-     * @param bypassValidation {@code true} will not check {@link #isItemValid(LivingEntity, int, ItemStack, EquipContext)} before setting
-     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
-     * @return {@code true} if successful ({@link #isItemValid(LivingEntity, int, ItemStack, EquipContext)}
-     * result if {@code bypassValidation} is {@code false}
-     */
-    // todo fix: Syncing with this is bugged as it will always call Accessory#onEquip afaik
-    // todo update: confirmed, this happens because forceOnEquip = true from AccessorySlot#set, but its effects are only visible on Forge for some reason
-    public boolean setStack(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack, @NonNull EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
-        if (bypassValidation || isItemValid(entity, index, stack, context)) {
-            doSetStack(entity, index, stack, context, forceOnEquip, true);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Set the {@link ItemStack} in a certain index.
-     * This is most likely the overload you want to use
-     * @param entity the entity that this data instance belongs to
-     * @param index slot index relative to the accessory extension to set in
-     * @param stack the {@link ItemStack} to set as in the provided slot index
-     * @param context the context surrounding this set invocation
-     * @return the result of {@link #isItemValid(LivingEntity, int, ItemStack, EquipContext)}
-     */
-    public boolean setStack(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack, @NonNull EquipContext context) {
-        return setStack(entity, index, stack, context, false, true);
     }
 
     /**
@@ -440,17 +234,17 @@ public final class AccessoryData {
             int index = indexes[i];
 
             if (index < size()) {
-                doSetStack(entity, index, stacks.get(i), context, forceOnEquip, false);
+                entries.get(index).setStack(entity, stacks.get(i), index, context, true, forceOnEquip);
             }
         }
 
-        sendSync(entity, indexes, stacks);
+        trySendSync(entity, indexes, stacks);
     }
 
     /**
      * Sets all the {@link ItemStack}s in the given range to the provided new {@link ItemStack}s
      * @param entity the entity that this data instance belongs to
-     * @param minIndex minimum index to set in, inclusive
+     * @param minIndex minimum index to set in
      * @param maxIndex maximum index to set in, exclusive
      * @param allStacks the stacks corresponding to the index range to set as
      * @param context the context surrounding this set invocation
@@ -471,50 +265,6 @@ public final class AccessoryData {
     }
 
     /**
-     * Remove the {@link ItemStack} from the provided index, returning the removed stack
-     * @param entity the entity that this data instance belongs to
-     * @param index slot index relative to the accessory extension to take from
-     * @param amount the amount to remove
-     * @param context the context surrounding this removal invocation
-     * @return the removed {@link ItemStack}
-     */
-    public ItemStack remove(@NonNull LivingEntity entity, int index, int amount, @NonNull EquipContext context) {
-        ItemStack stack;
-
-        if (amount < 0) {
-            stack = ContainerHelper.takeItem(stacks, index);
-        } else {
-            stack = ContainerHelper.removeItem(stacks, index, amount);
-        }
-
-        if (!ItemStack.isSameItemSameComponents(getStackInSlot(index), stack)) {
-            doUnequip(entity, stack, context);
-            AccessoryHelper.changeModifiers(entity, AccessoryHelper.getSlotTypes().get(index).getAttributeModifiers().getPassive(), false);
-        }
-
-        return stack;
-    }
-
-    /**
-     * Attempts to remove the {@link ItemStack} in the given index and return it to the entity's inventory if they are a player,
-     * otherwise it will drop in front of them
-     * @param entity the entity that this data instance belongs to
-     * @param index slot index relative to the accessory extension to take from
-     * @param context the context surrounding this removal invocation
-     */
-    private void removeOrDropStack(@NonNull LivingEntity entity, int index, @NonNull EquipContext context) {
-        ItemStack stack = getStackInSlot(index);
-
-        if (!stack.isEmpty()) {
-            doUnequip(entity, stack, context);
-
-            if (!(entity instanceof Player player) || !player.addItem(stack)) {
-                entity.drop(stack, false, true);
-            }
-        }
-    }
-
-    /**
      * Remove all items matching a given filter up to a maximum amount
      * @param entity the entity that this data instance belongs to
      * @param filter the predicate to test against every {@link ItemStack} removal candidate
@@ -523,11 +273,13 @@ public final class AccessoryData {
      * @return the total number of items cleared
      */
     public int clearMatchingItems(@NonNull LivingEntity entity, @NonNull Predicate<ItemStack> filter, int max, @NonNull EquipContext context) {
+        int size = size();
         int removed = 0;
         IntList indexes = new IntArrayList();
 
-        for (int i = 0; i < size() && (max < 0 || removed < max); i++) {
-            ItemStack stack = getStackInSlot(i);
+        for (int i = 0; i < size && (max < 0 || removed < max); i++) {
+            AccessoryDataEntry entry = entries.get(i);
+            ItemStack stack = entry.getStack();
 
             if (filter.test(stack)) {
                 int count = stack.count();
@@ -540,7 +292,7 @@ public final class AccessoryData {
                 }
 
                 if (max < 0 || removed + count <= max) {
-                    doUnequip(entity, stack, context);
+                    AccessoryDataEntry.doUnequip(entity, stack, context);
                     indexes.add(i);
                 }
 
@@ -550,94 +302,417 @@ public final class AccessoryData {
             }
         }
 
-        sendSync(entity, indexes.toIntArray(), NonNullList.withSize(indexes.size(), ItemStack.EMPTY));
+        int count = indexes.size();
+        List<ItemStack> stacks = new ArrayList<>(count);
+
+        for (int i = 0; i < count; i++) {
+            stacks.add(ItemStack.EMPTY);
+        }
+
+        trySendSync(entity, indexes.toIntArray(), stacks);
         return removed;
     }
 
     /**
-     * Synchronise specified data stored in this instance to the given client receiver
-     * @param receiver the player to synchronise with
-     * @param entityId the ID of the entity which this data instance belongs to
-     * @param indexes the slot indexes for which to synchronise data
-     */
-    private void syncAllData(@NonNull ServerPlayer receiver, int entityId, int[] indexes) {
-        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(entityId, indexes, hidden));
-        OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entityId, indexes, stacks, true));
-    }
-
-    /**
-     * Synchronise all data stored in this instance to the given client receiver
-     * @param receiver the player to synchronise with
-     * @param entityId the ID of the entity which this data instance belongs to
-     */
-    public void syncAllData(@NonNull ServerPlayer receiver, int entityId) {
-        int size = size();
-        int[] allIndexes = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            allIndexes[i] = i;
-        }
-
-        syncAllData(receiver, entityId, allIndexes);
-    }
-
-    /**
-     * Mirrors another {@link AccessoryData}'s stored data in this instance, this does not call any {@link IAccessory} methods.
-     * This is a shallow copy, use {@link #copyFrom(AccessoryData)} for a deep copy
-     * @param other the other instance to mirror
+     * Mirrors another {@link AccessoryData}'s stored data with this instance, this does not call any {@link IAccessory} methods.
+     * This is a shallow copy, use {@link #copyFrom(AccessoryData, boolean)} for a deep copy
+     * @param other the other instance to mirror with
      */
     public void mirror(@NonNull AccessoryData other) {
-        stacks = other.getStacks();
-        hidden = other.getHidden();
+        trackingDefault = other.trackingDefault;
+        entries = other.entries;
     }
 
     /**
-     * Copy another {@link AccessoryData}'s stored data into this instance, this does not call any {@link IAccessory} methods.
+     * Copies from another {@link AccessoryData}'s stored data into this instance, this does not call any {@link IAccessory} methods.
      * This is a deep copy, use {@link #mirror(AccessoryData)} for a shallow copy
      * @param other the other instance to copy from
      */
-    public void copyFrom(@NonNull AccessoryData other) {
-        int size = other.size();
-        stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        hidden = ArrayUtils.clone(other.getHidden());
+    public void copyFrom(@NonNull AccessoryData other, boolean slotsOnly) {
+        trackingDefault.setValue(other.trackingDefault.booleanValue());
+        ArrayList<@NonNull AccessoryDataEntry> otherEntries = other.entries;
+
+        int size = otherEntries.size();
+        entries = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
-            stacks.set(i, other.getStackInSlot(i).copy());
+            if (slotsOnly) {
+                entries.add(new AccessoryDataEntry(otherEntries.get(i).getType()));
+            } else {
+                entries.add(otherEntries.get(i).copy());
+            }
+        }
+    }
+
+    // todo: experimental stuff here yay
+
+    /**
+     * Attempts to send the given packet to all players on a {@link Level}, only succeeds if it is a {@link ServerLevel}
+     * @param level possibly {@code null} level to retrieve {@link Player} receivers from
+     * @param packet the packet to send to each receiver
+     */
+    private void trySendPacketToAll(@Nullable Level level, @NonNull CustomPacketPayload packet) {
+        if (level instanceof ServerLevel serverLevel) {
+            for (ServerPlayer player : serverLevel.players()) {
+                OhmegaNetworking.S2C.send(player, packet);
+            }
         }
     }
 
     /**
-     * Reloads and rebuilds the data if necessary in accordance to the server config
-     * @param entity the entity that this data instance belongs to
+     * Checks whether this data instance is tracking the default accessory slots
+     * @return {@code true} if we are tracking the default accessory slots, {@code false} otherwise
      */
-    public void reload(@NonNull LivingEntity entity) {
-        int oldSize = size();
-        ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
-        int newSize = types.size();
+    public boolean isTrackingDefault() {
+        return trackingDefault.booleanValue();
+    }
 
-        if (newSize > oldSize) {
-            // Grow data
-            ItemStack[] emptyStackArray = new ItemStack[newSize - oldSize];
-            Arrays.fill(emptyStackArray, ItemStack.EMPTY);
+    /**
+     * Untracks this data instance from the default accessory slots, making it change independently to them
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     */
+    public void untrackDefault(LivingEntity entity) {
+        DEFAULT_TRACKERS.remove(entity);
+        trackingDefault.setFalse();
+    }
 
-            stacks = NonNullList.of(ItemStack.EMPTY, ArrayUtils.addAll(stacks.toArray(new ItemStack[0]), emptyStackArray));
-            hidden = ArrayUtils.addAll(hidden, new boolean[newSize - oldSize]);
-        } else if (newSize < oldSize) {
-            // Drop stacks outside of range
-            for (int i = newSize; i < oldSize; i++) {
-                removeOrDropStack(entity, i, EquipContext.RESIZE);
+    private void resetSlotDataComponents() {
+        int size = size();
+
+        for (int i = 0; i < size; i++) {
+            AccessoryHelper.setSlot(entries.get(i).getStack(), i);
+        }
+    }
+
+    /**
+     * Removes slots from this data instance up to a given maximum
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param max the maximum amount of slots to remove, or {@code -1} to unlimit it
+     * @param context the context surrounding this invocation
+     * @return the number of slots cleared
+     * @apiNote This traverses the {@link #entries} list and subsequently removes entries in reverse order
+     */
+    public int clearSlots(@NonNull LivingEntity entity, int max, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        int count;
+        CustomPacketPayload packet;
+
+        if (max == -1) {
+            count = size();
+
+            for (AccessoryDataEntry entry : entries) {
+                entry.moveOrDropStack(entity, context);
             }
 
-            // Shrink data
-            stacks = NonNullList.of(ItemStack.EMPTY, Arrays.copyOfRange(stacks.toArray(new ItemStack[0]), 0, newSize));
-            hidden = Arrays.copyOfRange(hidden, 0, newSize);
+            entries.clear();
+
+            packet = new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.CLEAR_ALL,
+                    entity.getId(),
+                    ArrayUtils.EMPTY_INT_ARRAY,
+                    Optional.empty(),
+                    context);
+        } else {
+            count = 0;
+
+            for (int i = size() - 1; i >= 0 && count < max; i++) {
+                count++;
+
+                entries.remove(i).moveOrDropStack(entity, context);
+            }
+
+            packet = new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.CLEAR,
+                    entity.getId(),
+                    new int[]{max},
+                    Optional.empty(),
+                    context);
         }
 
-        // Drop invalid stacks (mismatched accessory types and non-accessory items)
-        for (int i = 0; i < size(); i++) {
-            if (types.get(i) != AccessoryHelper.getType(getStackInSlot(i).getItem())) {
-                removeOrDropStack(entity, i, EquipContext.RESIZE);
+        resetSlotDataComponents();
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), packet);
+        return count;
+    }
+
+    /**
+     * Removes slots from this data instance matching a provided filter and up to a given maximum
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param filter the filter for removals
+     * @param max the maximum amount of slots to remove, or {@code -1} to unlimit it
+     * @param context the context surrounding this invocation
+     * @return the number of slots cleared
+     * @apiNote This traverses the {@link #entries} list and subsequently removes entries in reverse order
+     */
+    public int clearSlots(@NonNull LivingEntity entity, @NonNull Predicate<AccessoryType> filter, int max, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        int count = 0;
+        IntArrayList list = new IntArrayList();
+
+        for (int i = size() - 1; i >= 0 && (count < max || max == -1); i--) {
+            if (filter.test(entries.get(i).getType())) {
+                count++;
+
+                entries.remove(i).moveOrDropStack(entity, context);
+                list.add(i);
             }
         }
+
+        resetSlotDataComponents();
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.REMOVE,
+                entity.getId(),
+                list.toIntArray(),
+                Optional.empty(),
+                context));
+        return list.size();
+    }
+
+    /**
+     * Resets the slots to the default value (controlled by server config) and enables default slot tracking
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param context the context surrounding this invocation
+     */
+    public void defaultSlots(@NonNull LivingEntity entity, @NonNull EquipContext context) {
+        trackingDefault.setTrue();
+
+        if (!entity.level().isClientSide()) {
+            DEFAULT_TRACKERS.add(entity);
+        }
+
+        AccessoryData newData = new AccessoryData();
+        int newSize = newData.size();
+        int size = size();
+
+        for (int i = 0; i < newSize; i++) {
+            AccessoryDataEntry newEntry = newData.getEntry(i);
+
+            if (i < size) {
+                entries.get(i).setType(entity, newEntry.getType(), context);
+            } else {
+                entries.add(newEntry);
+            }
+        }
+
+        for (int i = size() - 1; i >= newSize; i--) {
+            entries.remove(i).moveOrDropStack(entity, context);
+        }
+
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.DEFAULT,
+                entity.getId(),
+                ArrayUtils.EMPTY_INT_ARRAY,
+                Optional.empty(),
+                context));
+    }
+
+    /**
+     * Inherits accessory slots between a given range from another {@link LivingEntity}, does not track
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param other the other {@link LivingEntity} to inherit slots from
+     * @param min the minimum slot index to inherit from
+     * @param max the maximum slot index to inherit from, exclusive, or {@code -1} to unlimit
+     * @param context the context surrounding this invocation
+     */
+    public void inheritSlots(@NonNull LivingEntity entity, @NonNull LivingEntity other, int min, int max, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        AccessoryData otherData = OhmegaDataAttachments.getData(other);
+        int otherSize = otherData.size();
+
+        if (max == -1) {
+            entries.ensureCapacity(otherSize);
+        } else {
+            entries.ensureCapacity(max);
+        }
+
+        int size = size();
+
+        for (int i = min; i < otherSize && (i <= max || max == -1); i++) {
+            if (size > i) {
+                entries.get(i).setType(entity, otherData.getEntry(i).getType(), context);
+            } else {
+                entries.add(new AccessoryDataEntry(otherData.getEntry(i).getType()));
+            }
+        }
+
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.INHERIT,
+                entity.getId(),
+                new int[]{other.getId(), min, max},
+                Optional.empty(),
+                context));
+    }
+
+    /**
+     * Inserts the provided number slots of the given type at the provided index
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param index the slot index to begin inserting at
+     * @param type the {@link AccessoryType} of the slots to insert
+     * @param amount the number of slots to insert
+     */
+    public void insertSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int amount) {
+        untrackDefault(entity);
+
+        int size = size();
+        boolean flag = index != size;
+
+        entries.ensureCapacity(size + amount);
+
+        for (int i = 0; i < amount; i++) {
+            int entryIndex = index + i;
+
+            entries.add(entryIndex, new AccessoryDataEntry(type));
+        }
+
+        if (flag) {
+            resetSlotDataComponents();
+        }
+
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.INSERT,
+                entity.getId(),
+                new int[]{index, amount},
+                Optional.of(type),
+                EquipContext.DUMMY));
+    }
+
+    /**
+     * Adds the provided number of slots of the given type at the end of the slot list
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param type the {@link AccessoryType} of the slots to insert
+     * @param amount the number of slots to insert
+     * @apiNote Internally this is just a {@link #insertSlots(LivingEntity, int, AccessoryType, int)} call,
+     * with the {@code index} parameter passed as {@link #size()}
+     */
+    public void addSlots(@NonNull LivingEntity entity, @NonNull AccessoryType type, int amount) {
+        insertSlots(entity, size(), type, amount);
+    }
+
+    /**
+     * Removes a give number of slots starting from the provided index
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param index the index at which removals should begin
+     * @param amount the number of slots to remove
+     * @param context the context surrounding this invocation
+     * @return the number of slots removed
+     */
+    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        int size = size();
+        int count = 0;
+        IntArrayList list = new IntArrayList(Math.min(amount, size - index));
+
+        for (int i = Math.min(index + amount, size) - 1; i >= index && count < amount; i--) {
+            count++;
+
+            entries.remove(index).moveOrDropStack(entity, context);
+            list.add(i);
+        }
+
+        resetSlotDataComponents();
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.REMOVE,
+                entity.getId(),
+                list.toIntArray(),
+                Optional.empty(),
+                EquipContext.DUMMY));
+        return count;
+    }
+
+    /**
+     * Removes a give number of slots starting from the provided index, matching a filter
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param index the index at which removals should begin
+     * @param amount the number of slots to remove
+     * @param filter the filter for removals
+     * @param context the context surrounding this invocation
+     * @return the number of slots removed
+     */
+    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @NonNull Predicate<AccessoryType> filter, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        int size = size();
+        int count = 0;
+        IntArrayList list = new IntArrayList(Math.min(amount, size - index));
+
+        for (int i = Math.min(index + amount, size) - 1; i >= index && count < amount; i--) {
+            if (filter.test(entries.get(i).getType())) {
+                count++;
+
+                entries.remove(i).moveOrDropStack(entity, context);
+                list.add(i);
+            }
+        }
+
+        resetSlotDataComponents();
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.REMOVE,
+                entity.getId(),
+                list.toIntArray(),
+                Optional.empty(),
+                EquipContext.DUMMY));
+        return count;
+    }
+
+    /**
+     * Removes the provided slots corresponding to the given indexes.
+     * This version should really only be used internally for synchronisation, but it is still publicly accessible nonetheless
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param indexes an array of slot indexes to remove
+     * @param context the context surrounding this invocation
+     * @apiNote removes slots in reverse order, and as such this assumes that the {@code indexes} parameter will be a sorted array.
+     * Providing a non-sorted array may lead to unexpected behaviour and index exception throws
+     */
+    public void removeSlots(@NonNull LivingEntity entity, int @NonNull [] indexes, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        for (int i = indexes.length - 1; i >= 0; i--) {
+            int index = indexes[i];
+
+            entries.remove(index).moveOrDropStack(entity, context);
+        }
+
+        resetSlotDataComponents();
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.REMOVE,
+                entity.getId(),
+                indexes,
+                Optional.empty(),
+                context));
+    }
+
+    /**
+     * Sets the {@link AccessoryType} of slots from a given index to a given maximum to the provided new type
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param index the index at which setting should begin
+     * @param type the new {@link AccessoryType} to set the slots' types as
+     * @param max the maximum index to set the slots' types as, exclusive
+     * @param context the context surrounding this invocation
+     */
+    public void setSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int max, @NonNull EquipContext context) {
+        untrackDefault(entity);
+
+        for (int i = index; i <= max; i++) {
+            entries.get(i).setType(entity, type, context);
+        }
+
+        AccessoryMenus.tryRebuildSlots(entity);
+        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
+                SyncSlotsPacket.Action.SET,
+                entity.getId(),
+                new int[]{index, max},
+                Optional.of(type),
+                context));
     }
 }

@@ -1,16 +1,17 @@
 package com.swacky.ohmega.api.common.menu;
 
-import com.google.common.collect.ImmutableList;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.common.menu.ServerAccessoryMenuExtension;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -49,15 +50,16 @@ public final class AccessoryMenus {
 
     /**
      * Creates a list of pertaining to the accessory extension {@link AccessorySlot}s to (optionally) perform operations on through a callback
-     * Called by {@link #onConstruct(AbstractContainerMenu, Player)} and will usually not need to be invoked manually
      * @param menu parent menu
      * @param owner player which this menu belongs
      * @param consumer a callback to perform an operation for each generated {@link AccessorySlot}, supplying it
      * @return a list of {@link AccessorySlot}s to add with the accessory extension to the menu
+     * @apiNote Called by {@link #onConstruct(AbstractContainerMenu, Player)} and will usually not need to be invoked manually
      */
     public static List<AccessorySlot> createSlots(@NonNull AbstractContainerMenu menu, @NonNull Player owner, @Nullable Consumer<AccessorySlot> consumer) {
-        ImmutableList<AccessoryType> types = AccessoryHelper.getSlotTypes();
-        int requiredCount = types.size();
+        AccessoryData data = OhmegaDataAttachments.getData(owner);
+        ArrayList<AccessoryDataEntry> entries = data.getEntries();
+        int requiredCount = data.size();
         List<AccessorySlot> slots = new ArrayList<>(requiredCount);
 
         if (owner.level().isClientSide()) {
@@ -69,7 +71,7 @@ public final class AccessoryMenus {
                         index,
                         x,
                         y,
-                        types.get(index));
+                        entries.get(index).getType());
 
                 slots.add(slot);
 
@@ -85,7 +87,7 @@ public final class AccessoryMenus {
             }
         } else {
             for (int i = 0; i < requiredCount; i++) {
-                AccessorySlot slot = new AccessorySlot(owner, i, 0, 0, types.get(i));
+                AccessorySlot slot = new AccessorySlot(owner, i, 0, 0, entries.get(i).getType());
 
                 slots.add(slot);
 
@@ -121,13 +123,59 @@ public final class AccessoryMenus {
     /**
      * This must be called at the end of your target menu's constructor to assign the accessory extension and add slots.
      * The logic handled here is split into separate functions above because it may be useful at times to only run parts of the construction
-     * <p>
-     * Ohmega calls this in another place internally, do not replicate. It is to fix an annoying edge case
      * @param menu parent menu
      * @param owner player which this menu belongs
+     * @apiNote Ohmega calls this in another place internally, do not replicate. It is to fix an annoying edge case
      */
     public static void onConstruct(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
         attachExtension(menu, owner, assertImplementation(menu)).setSlots(createSlots(menu, owner, menu::addSlot));
+    }
+
+    /**
+     * Removes all current slots and calls {@link AccessoryMenuExtension#addSlots(AccessoryMenuExtension.SlotAdder)} again.
+     * Used internally to rebuild the accessory slots after they have changed, usually via in-game commands
+     * @param menu parent menu
+     * @param owner player which this menu belongs
+     */
+    public static void rebuildSlots(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
+        IAccessoryMenu accessoryMenu = assertImplementation(menu);
+        List<AccessorySlot> slots = accessoryMenu.getSlots();
+
+        if (slots != null) {
+            menu.slots.removeAll(slots);
+        }
+
+        AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
+
+        if (extension != null) {
+            extension.setSlots(createSlots(menu, owner, menu::addSlot));
+        }
+    }
+
+    /**
+     * Attempts to re-build the accessory slots for the {@link InventoryMenu} and the currently opened menu if the passed {@code entity} is a {@link Player}.
+     * @param entity owner of the menu(s),this takes in a {@link LivingEntity}, as to reduce code verbosity
+     *               by eliminating the need to assert the entity is a {@link Player} on every invocation
+     * @apiNote If successful and on the client, this will also call {@link AccessoryScreens#onRebuildSlots(IAccessoryMenu)}
+     */
+    public static void tryRebuildSlots(@NonNull LivingEntity entity) {
+        if (entity instanceof Player player) {
+            AbstractContainerMenu menu = player.inventoryMenu;
+
+            if (menu instanceof IAccessoryMenu) {
+                rebuildSlots(menu, player);
+            }
+
+            menu = player.containerMenu;
+
+            if (menu instanceof IAccessoryMenu accessoryMenu) {
+                rebuildSlots(menu, player);
+
+                if (player.level().isClientSide()) {
+                    AccessoryScreens.onRebuildSlots(accessoryMenu);
+                }
+            }
+        }
     }
 
     /**
@@ -136,7 +184,7 @@ public final class AccessoryMenus {
      * which is impossible in the normal version as it may return a newly created {@link ItemStack} instead of the one passed as a parameter
      * @param menu menu we are moving in
      * @param stack {@link ItemStack} we are moving
-     * @param startIndex lowest index to search, inclusive
+     * @param startIndex lowest index to search
      * @param endIndex highest index to search, exclusive
      * @param reverseDirection move back to front, starting from the end index -1 (to retain exclusivity)
      * @return the {@link ItemStack} that has been moved, or {@link ItemStack#EMPTY} if nothing changed
@@ -164,7 +212,7 @@ public final class AccessoryMenus {
                 if (!stack0.isEmpty()) {
                     ItemStack stack1 = stack.copy();
 
-                    data.doUnequip(player, stack1, EquipContext.SLOT);
+                    AccessoryDataEntry.doUnequip(player, stack1, EquipContext.SLOT);
 
                     if (ItemStack.isSameItemSameComponents(stack1, stack0)) {
                         int j = stack0.getCount() + stack.getCount();
@@ -261,22 +309,19 @@ public final class AccessoryMenus {
                 }
             } else {
                 Item item = stack.getItem();
-                AccessoryType type = AccessoryHelper.getType(item);
-                int openIndex = AccessoryHelper.getFirstOpenSlot(player, type);
-                Accessory accessory = Accessories.get(item);
-                Slot slot0 = menu.getSlot(46 + openIndex);
+                int openIndex = AccessoryHelper.getFirstOpenSlot(player, Accessories.getType(player, item));
 
-                if (accessory != null && index > 8 && index < 45 && openIndex >= 0 && slot0.mayPlace(stack0)) { // Inventory -> accessory
+                if (Accessories.get(item) != null && index > 8 && index < 45 && openIndex >= 0 && menu.getSlot(46 + openIndex).mayPlace(stack0)) { // Inventory -> accessory
                     if (!menu.moveItemStackTo(stack, 46, 52, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else {
                     if (index > 45 && index < 52) { // Accessory -> inventory
-                        AccessoryData data = AccessoryHelper.getData(player);
+                        AccessoryData data = OhmegaDataAttachments.getData(player);
                         ItemStack stack1 = tryMoveItemStackTo(player, menu, data, stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) {
-                            data.doUnequip(player, stack1, EquipContext.SLOT);
+                            AccessoryDataEntry.doUnequip(player, stack1, EquipContext.SLOT);
                             slot.setChanged();
                         }
                     } else {

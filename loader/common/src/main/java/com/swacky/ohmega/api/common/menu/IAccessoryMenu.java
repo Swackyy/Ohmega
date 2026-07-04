@@ -25,6 +25,7 @@ import java.util.List;
  * </ul>
  */
 public interface IAccessoryMenu {
+    // todo: make non-null and add a throwing assertation
     /**
      * Retrieve the accessory extension bound to this menu.
      * If using this, you should almost always check for nullability

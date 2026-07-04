@@ -59,6 +59,8 @@ public abstract class AccessoryMenuExtension {
     }
 
     /**
+     * You are probably intending to call {@link IAccessoryMenu#getSlots()}
+     * <p>
      * Get a list of the accessory slots added to the extension's parent menu.
      * This is stored as to eliminate the need for looping through all the slots just to perform operations on our custom ones
      * @return a list of strictly {@link AccessorySlot}s added with the accessory extension
@@ -73,15 +75,11 @@ public abstract class AccessoryMenuExtension {
      * @param slots added slots
      */
     public void setSlots(@NonNull List<AccessorySlot> slots) {
-        if (this.slots == null) {
-            this.slots = slots;
-        } else {
-            throw new IllegalStateException("Slot list cannot be set as it has already been initialised");
-        }
+        this.slots = slots;
     }
 
     /**
-     * Call {@link IAccessoryMenu#isAccessoryExtensionVisible()} instead
+     * You are probably intending to call {@link IAccessoryMenu#isAccessoryExtensionVisible()}
      * <p>
      * Determines whether the extension should be shown
      * @return {@code true} if the accessory extension should be shown, {@code false} otherwise
@@ -91,7 +89,7 @@ public abstract class AccessoryMenuExtension {
     }
 
     /**
-     * Call {@link IAccessoryMenu#setAccessoryExtensionVisible(boolean)} instead
+     * You are probably intending to call {@link IAccessoryMenu#setAccessoryExtensionVisible(boolean)}
      * <p>
      * Set the visibility of the extension
      * @param value {@code true} to make the extension visible, {@code false} to hide it
@@ -108,8 +106,10 @@ public abstract class AccessoryMenuExtension {
      * Add slots to the accessory inventory, these will be displayed in the extension pop-up.
      * You should ensure that you add the correct amount of slots ({@code AccessoryHelper.getSlotTypes().size()})
      * <p>
-     * This is only called on the logical client, whilst the server specific behaviour is handled internally by Ohmega
+     * This is called for menu construction (usually) and for every slot change.
+     * This includes simple slot accessory type changes, as there is no guarantee that the added slots will be the same
      * @param adder a function reference to {@link AbstractContainerMenu#addSlot(Slot)} with some behaviour automatically handled
+     * @apiNote This is only called on the logical client, whilst the server specific behaviour is handled internally by Ohmega
      */
     public abstract void addSlots(@NonNull SlotAdder adder);
 

@@ -1,9 +1,7 @@
 package com.swacky.ohmega.client.menu;
 
-import com.google.common.collect.ImmutableList;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,12 +18,12 @@ public final class DefaultMenuExtension extends AccessoryMenuExtension {
 
     @Override
     public void addSlots(@NonNull SlotAdder adder) {
-        ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
+        int size = OhmegaDataAttachments.getData(getOwner()).size();
 
         OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
         int renderSlots = Math.min(data.maxColumnSlots().get(), data.maxColumnRenderSlots().get());
-        int renderColumns = (int) Math.min(Math.ceil((double) slotTypes.size() / renderSlots), data.maxColumns().get());
-        int slotsAvailable = Math.min(renderColumns * renderSlots, slotTypes.size());
+        int renderColumns = (int) Math.min(Math.ceil((double) size / renderSlots), data.maxColumns().get());
+        int slotsAvailable = Math.min(renderColumns * renderSlots, size);
 
         boolean stop = false;
         int index = 0;

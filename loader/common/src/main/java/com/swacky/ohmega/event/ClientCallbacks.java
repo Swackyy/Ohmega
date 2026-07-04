@@ -1,6 +1,5 @@
 package com.swacky.ohmega.event;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
@@ -14,6 +13,7 @@ import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
@@ -23,9 +23,10 @@ import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.network.C2S.ReloadDataPacket;
-import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
+import com.swacky.ohmega.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -76,9 +77,9 @@ public final class ClientCallbacks {
     }
 
     public static AccessoryRenderStateData createRenderStateData(LivingEntity entity) {
-        AccessoryData data = AccessoryHelper.getData(entity);
+        AccessoryData data = OhmegaDataAttachments.getData(entity);
 
-        return new AccessoryRenderStateData(data.getStacks(), data.getHidden());
+        return new AccessoryRenderStateData(data.getEntries());
     }
 
     public static List<Rect2i> getJeiAvoidRects(AbstractContainerScreen<?> screen) {
@@ -167,7 +168,7 @@ public final class ClientCallbacks {
 
     public static void onDisconnect(Runnable loadFunction) {
         AccessoryTypeManager.clear();
-        AccessoryTypeManager.applyClient(() -> reloadRegisteredKeybinds(loadFunction), !OhmegaConfig.Server.isLoaded());
+        reloadRegisteredKeybinds(loadFunction);
     }
 
     public static boolean onKeyPressedInMenu(AbstractContainerScreen<?> screen, KeyEvent event) {
@@ -248,14 +249,12 @@ public final class ClientCallbacks {
                 }
 
                 List<KeyMapping> mappings = OhmegaBinds.getMappings();
-                Set<AccessoryType> keyboundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
-                ImmutableList<AccessoryType> slotTypes = AccessoryHelper.getSlotTypes();
+                Set<AccessoryType> keyboundSlotTypes = OhmegaConfig.Server.getKeyboundSlotTypes();
+                AccessoryData data = OhmegaDataAttachments.getData(player);
 
-                if (mappings.isEmpty() || keyboundSlotTypes.isEmpty() || slotTypes.isEmpty()) {
+                if (mappings.isEmpty() || keyboundSlotTypes.isEmpty() || data.isEmpty()) {
                     return;
                 }
-
-                AccessoryData data = AccessoryHelper.getData(player);
 
                 // Never ever touch this again; wrote 2 months ago, I now consider it dark magic.
                 for (int i = 0; i < OhmegaBinds.size(); i++) {
@@ -264,19 +263,19 @@ public final class ClientCallbacks {
 
                     if (mapping.consumeClick()) {
                         for (int k = 1; true; j++) {
-                            if (keyboundSlotTypes.contains(slotTypes.get(j)) && k++ > i) {
+                            if (keyboundSlotTypes.contains(data.getEntry(j).getType()) && k++ > i) {
                                 break;
                             }
                         }
 
-                        ItemStack stack = data.getStackInSlot(j);
+                        ItemStack stack = data.getEntry(j).getStack();
                         Accessory accessory = Accessories.get(stack.getItem());
 
                         if (accessory != null) {
                             boolean shouldNotifyServer = accessory.onKeybindUse(player, stack);
 
                             if (shouldNotifyServer) {
-                                OhmegaNetworking.C2S.send(new UseAccessoryPacket(j));
+                                OhmegaNetworking.C2S.send(new KeybindUsePacket(j));
                             }
                         }
                     }
@@ -298,7 +297,9 @@ public final class ClientCallbacks {
                 OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().toggleExtensionButtonStyle().getObject();
                 AbstractContainerScreen<?> containerScreen = extension.getScreen();
 
-                if (style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
+                List<AccessorySlot> slots = extension.getMenuExtension().getSlots();
+
+                if (slots != null && !slots.isEmpty() && style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
                     consumer.accept(new ToggleExtensionButton(containerScreen, extension, style));
                 }
 
@@ -306,15 +307,7 @@ public final class ClientCallbacks {
                     consumer.accept(new FlipEntityButton(containerScreen, entityRenderingScreen.getFlipEntityButtonPosition(), entityRenderingExtension));
                 }
 
-                List<AbstractWidget> overlayWidgets = extension.getOverlayWidgets();
-
-                overlayWidgets.clear();
-                extension.initExtension(new AccessoryScreenExtension.WidgetAdder(consumer, overlayWidgets));
-
-                for (AbstractWidget widget : overlayWidgets) {
-                    screen.children.add(widget);
-                    screen.narratables.add(widget);
-                }
+                AccessoryScreens.doExtensionInit(screen, extension, consumer);
             }
         }
     }
@@ -349,8 +342,9 @@ public final class ClientCallbacks {
                     }
                 }
 
-                AccessoryHelper.getData(player).reload(player);
-                OhmegaNetworking.C2S.send(ReloadDataPacket.INSTANCE);
+                // todo: do new thing
+                //OhmegaDataAttachments.getData(player).reload(player);
+                //OhmegaNetworking.C2S.send(ReloadDataPacket.INSTANCE);
             }
         }
     }
@@ -368,9 +362,10 @@ public final class ClientCallbacks {
         AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
         if (data != null) {
-            for (ItemStack stack : data.stacks()) {
+            for (AccessoryDataEntry entry : data.entries()) {
+                ItemStack stack = entry.getStack();
                 // todo: optimise this by caching it somehow
-                if (AccessoryRenderers.isNoRender(Accessories.get(stack.getItem()), state.entityType)) {
+                if (AccessoryRenderers.isNoRender(stack.getItem(), state.entityType)) {
                     return true;
                 }
             }
@@ -382,7 +377,7 @@ public final class ClientCallbacks {
     public static void reloadRegisteredKeybinds(Runnable loadFunction) {
         ArrayList<KeyMapping> list = new ArrayList<>();
 
-        OhmegaBinds.reloadSlotKeys();
+        OhmegaBinds.rebuildSlotKeys();
 
         for (List<KeyMapping> immutableList : OhmegaBinds.getSlotKeys().values()) {
             list.addAll(immutableList);

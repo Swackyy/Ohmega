@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +40,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     private static final @NonNull Logger LOGGER = LogManager.getLogger();
     public static final @NonNull String LOCATION = Ohmega.MODID + "/accessory_types.json";
     private static final @NonNull Map<Identifier, AccessoryType> TYPES = new HashMap<>();
+    private static final @NonNull Set<Identifier> REFERENCEABLE_TYPES = new HashSet<>();
     private static final @NonNull List<Runnable> APPLY_TASKS = new ArrayList<>();
     private static final @NonNull List<Runnable> CONFIG_LOAD_TASKS = new ArrayList<>();
     private static final ThreadLocal<Boolean> ALLOW_POST_EVENTS = ThreadLocal.withInitial(() -> Boolean.FALSE);
@@ -143,6 +145,12 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         TYPES.putAll(types);
         TYPES.putAll(OhmegaHooks.registerAccessoryTypes());
 
+        for (AccessoryType type : TYPES.values()) {
+            if (!type.shouldPreventReference()) {
+                REFERENCEABLE_TYPES.add(type.getId());
+            }
+        }
+
         if (ALLOW_POST_EVENTS.get()) {
             postOverrideTypes();
         }
@@ -183,19 +191,6 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
     @Override
     protected void apply(@NonNull Map<Identifier, AccessoryType> types, @NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
         apply(types);
-    }
-
-    /**
-     * Called on the client to finish type application
-     * @param onConfigLoad a task to either enqueue if {@code shouldDefer} is {@code true} or immediately execute otherwise
-     * @param shouldDefer decides whether we should defer or simply execute the passed {@link Runnable} task
-     */
-    public static void applyClient(Runnable onConfigLoad, boolean shouldDefer) {
-        if (shouldDefer) {
-            CONFIG_LOAD_TASKS.add(onConfigLoad);
-        } else {
-            onConfigLoad.run();
-        }
     }
 
     /**
@@ -243,15 +238,21 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
      * @return all accessory types located and stored by the {@link AccessoryTypeManager} at the given instant.
      * It is data-based and so should be empty when not in-world
      */
-    public static @NonNull Collection<AccessoryType> getTypes() {
-        return TYPES.values();
+    public static @NonNull List<AccessoryType> getTypes() {
+        return new ArrayList<>(TYPES.values());
     }
 
     /**
      * Get the {@link AccessoryType} identifier keyset
+     * @param referenceableOnly {@code true} to give types where {@link AccessoryType#shouldPreventReference()} returns {@code false},
+     *                                      and {@code false} to not check for that and simply give all types
      * @return the backing keyset for the type map
      */
-    public static @NonNull Set<Identifier> getTypeIdentifiers() {
+    public static @NonNull Set<Identifier> getTypeIdentifiers(boolean referenceableOnly) {
+        if (referenceableOnly) {
+            return REFERENCEABLE_TYPES;
+        }
+
         return TYPES.keySet();
     }
 

@@ -30,5 +30,4 @@ public class OhmegaJeiMain implements IModPlugin {
             }
         });
     }
-
 }

@@ -10,8 +10,8 @@ import org.jspecify.annotations.NonNull;
 public record SetHiddenPacket(int index, boolean value) implements CustomPacketPayload {
     public static final Type<@NonNull SetHiddenPacket> TYPE = new Type<>(Ohmega.id("set_hidden"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SetHiddenPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, inst -> inst.index,
-            ByteBufCodecs.BOOL, inst -> inst.value,
+            ByteBufCodecs.VAR_INT, SetHiddenPacket::index,
+            ByteBufCodecs.BOOL, SetHiddenPacket::value,
             SetHiddenPacket::new);
 
     @Override

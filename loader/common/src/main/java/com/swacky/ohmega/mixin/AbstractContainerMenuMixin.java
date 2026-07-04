@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * we redirect all synchronisation calls to custom handlers here
  */
 @Mixin(AbstractContainerMenu.class)
-public class AbstractContainerMenuMixin {
+abstract class AbstractContainerMenuMixin {
     @Shadow
     @Final
     public NonNullList<Slot> slots;

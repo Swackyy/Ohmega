@@ -3,6 +3,7 @@ package com.swacky.ohmega.client.screen;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
+import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
@@ -12,7 +13,6 @@ import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
-import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -27,12 +27,10 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Util;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.apache.commons.lang3.tuple.Pair;
@@ -279,19 +277,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
 
     private void tryUpdateSlotPositions() {
         if (element == screenExtension && menuExtension != null) {
-            List<AccessorySlot> accessorySlots = menuExtension.getAccessoryMenu().getSlots();
-
-            if (accessorySlots != null) {
-                NonNullList<Slot> slots = menuExtension.getMenu().slots;
-
-                for (AccessorySlot accessorySlot : accessorySlots) {
-                    Slot slot = slots.get(accessorySlot.index);
-                    LazyPosition position = screenExtension.getElementPosition();
-
-                    slot.x = accessorySlot.getOriginalX() + position.x().get();
-                    slot.y = accessorySlot.getOriginalY() + position.y().get();
-                }
-            }
+            AccessoryScreens.applySlotOffsets(menuExtension.getAccessoryMenu(), screenExtension.getAccessoryScreen());
         }
     }
 

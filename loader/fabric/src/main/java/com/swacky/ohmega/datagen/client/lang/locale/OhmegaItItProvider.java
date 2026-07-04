@@ -91,10 +91,10 @@ public final class OhmegaItItProvider extends OhmegaLangProvider {
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Server Ohmega", "Configurazione Server Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Tipi Di Slot",
                 "Definisce i tipi e il numero di index nell'inventario accessori");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Modifica");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Modifica");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Associazione Tasti Tipi Di Slot",

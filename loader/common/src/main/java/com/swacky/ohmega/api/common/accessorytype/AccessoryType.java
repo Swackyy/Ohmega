@@ -7,7 +7,6 @@ import com.swacky.ohmega.api.util.codec.OhmegaCodecs;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.VarInt;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -18,11 +17,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -36,54 +33,42 @@ public final class AccessoryType {
     public static final @NonNull String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
     public static final @NonNull String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
     public static final @NonNull String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
-    public static final @NonNull String NO_FALLBACK_KEY = "noFallback";
-    public static final @NonNull String NO_SPECIFY_KEY = "noSpecify";
+    public static final @NonNull String PREVENT_FALLBACK_KEY = "preventFallback";
+    public static final @NonNull String PREVENT_REFERENCE_KEY = "preventReference";
     public static final @NonNull String PRIORITY_KEY = "priority";
 
-    public static final @NonNull Codec<AccessoryType> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+    public static final @NonNull Codec<AccessoryType> INITIALISER_CODEC = RecordCodecBuilder.create(builder -> builder.group(
             Identifier.CODEC.fieldOf("id").forGetter(AccessoryType::getId),
             AccessoryModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(AccessoryType::getAttributeModifiers),
             Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(AccessoryType::displayHoverText),
             Identifier.CODEC.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(AccessoryType::getEmptySlotLocation),
             OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(AccessoryType::getHoverTextColour),
-            Codec.BOOL.fieldOf(NO_FALLBACK_KEY).forGetter(AccessoryType::isNoFallback),
-            Codec.BOOL.fieldOf(NO_SPECIFY_KEY).forGetter(AccessoryType::isNoSpecify),
+            Codec.BOOL.fieldOf(PREVENT_FALLBACK_KEY).forGetter(AccessoryType::shouldPreventFallback),
+            Codec.BOOL.fieldOf(PREVENT_REFERENCE_KEY).forGetter(AccessoryType::shouldPreventReference),
             Codec.INT.fieldOf(PRIORITY_KEY).forGetter(AccessoryType::getPriority)
     ).apply(builder, AccessoryType::new));
 
-    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryType> STREAM_CODEC = StreamCodec.composite(
+    public static final @NonNull Codec<AccessoryType> CODEC = Identifier.CODEC.xmap(
+            AccessoryTypeManager::get,
+            AccessoryType::getId);
+
+    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryType> INITIALISER_STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC, AccessoryType::getId,
             AccessoryModifiers.STREAM_CODEC, AccessoryType::getAttributeModifiers,
             ByteBufCodecs.BOOL, AccessoryType::displayHoverText,
             Identifier.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
-            ByteBufCodecs.BOOL, AccessoryType::isNoFallback,
-            ByteBufCodecs.BOOL, AccessoryType::isNoSpecify,
+            ByteBufCodecs.BOOL, AccessoryType::shouldPreventFallback,
+            ByteBufCodecs.BOOL, AccessoryType::shouldPreventReference,
             ByteBufCodecs.INT, AccessoryType::getPriority,
             AccessoryType::new);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, Collection<AccessoryType>> COLLECTION_STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public @NonNull Collection<AccessoryType> decode(@NonNull RegistryFriendlyByteBuf buf) {
-            int size = VarInt.read(buf);
-            Set<AccessoryType> map = new HashSet<>(size);
+    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, List<AccessoryType>> LIST_INITIALISER_STREAM_CODEC = INITIALISER_STREAM_CODEC.apply(
+            ByteBufCodecs.list());
 
-            for (int i = 0; i < size; i++) {
-                map.add(AccessoryType.STREAM_CODEC.decode(buf));
-            }
-
-            return map;
-        }
-
-        @Override
-        public void encode(@NonNull RegistryFriendlyByteBuf buf, @NonNull Collection<AccessoryType> values) {
-            VarInt.write(buf, values.size());
-
-            for (AccessoryType value : values) {
-                AccessoryType.STREAM_CODEC.encode(buf, value);
-            }
-        }
-    };
+    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryType> STREAM_CODEC = StreamCodec.of(
+            (buf, value) -> Identifier.STREAM_CODEC.encode(buf, value.getId()),
+            buf -> AccessoryTypeManager.get(Identifier.STREAM_CODEC.decode(buf)));
 
     // Use these for data generation
     public static final @NonNull Identifier NONE_ID    = Ohmega.id("none");
@@ -94,7 +79,7 @@ public final class AccessoryType {
 
     // A placeholder or "unknown" accessory type. Do not use this
     public static final @NonNull AccessoryType NONE = new Builder()
-            .noSpecify()
+            .preventReference()
             .priority(Integer.MAX_VALUE)
             .build(NONE_ID);
     // Deferred to ensure they are not 'ohmega:none'
@@ -108,8 +93,8 @@ public final class AccessoryType {
     private final boolean displayHoverText;
     private final @NonNull Identifier emptySlotLocation;
     private final int hoverTextColour;
-    private final boolean noSpecify;
-    private final boolean noFallback;
+    private final boolean preventFallback;
+    private final boolean preventReference;
     private final int priority;
 
     /**
@@ -120,8 +105,8 @@ public final class AccessoryType {
      * @param displayHoverText whether text should be displayed when hovering over a slot of this type. May be overridden globally by a client config option
      * @param emptySlotLocation the location of the texture to display when a slot of this type is empty
      * @param hoverTextColour the colour of the text displayed when hovering. Only for when {@code displayHoverText} is {@code true}
-     * @param noFallback prevents accessories with this as the priority type from defaulting to a fallback type when no slots of this type are present
-     * @param noSpecify prevents items from being specifically tagged as this accessory type
+     * @param preventFallback prevents accessories from defaulting to this as a fallback type
+     * @param preventReference prevents this type from being able to be explicitly referenced in most ways in-game
      * @param priority the priority index for this type to use if an item is tagged with multiple different types.
      *                 Lower indexes technically mean higher priority
      */
@@ -131,16 +116,16 @@ public final class AccessoryType {
             boolean displayHoverText,
             @NonNull Identifier emptySlotLocation,
             int hoverTextColour,
-            boolean noFallback,
-            boolean noSpecify,
+            boolean preventFallback,
+            boolean preventReference,
             int priority) {
         this.id = id;
         this.attributeModifiers = attributeModifiers;
         this.displayHoverText = displayHoverText;
         this.emptySlotLocation = emptySlotLocation;
         this.hoverTextColour = hoverTextColour;
-        this.noFallback = noFallback;
-        this.noSpecify = noSpecify;
+        this.preventFallback = preventFallback;
+        this.preventReference = preventReference;
         this.priority = priority;
     }
 
@@ -184,20 +169,22 @@ public final class AccessoryType {
         return hoverTextColour;
     }
 
-    /**
-     * Check if this type should not be able to be defined specifically as an item's accessory type
-     * @return {@code true} to prevent items from being tagged as this type, {@code false} otherwise
-     */
-    public boolean isNoSpecify() {
-        return noSpecify;
-    }
-
+    // todo: move away from "prevent" prefix
     /**
      * Check whether this accessory type supports falling back
-     * @return prevents accessories with this as the priority type from defaulting to a fallback type when no slots of this type are present
+     * @return prevents accessories from defaulting to this as a fallback type
      */
-    public boolean isNoFallback() {
-        return noFallback;
+    public boolean shouldPreventFallback() {
+        return preventFallback;
+    }
+
+    // todo: move away from "prevent" prefix
+    /**
+     * Check if this type should not be able to be explicitly referenced in most ways in-game
+     * @return {@code true} to prevent referencing this type, {@code false} otherwise
+     */
+    public boolean shouldPreventReference() {
+        return preventReference;
     }
 
     /**
@@ -282,8 +269,8 @@ public final class AccessoryType {
                 Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(inst -> inst.displayHoverText),
                 Codec.STRING.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(inst -> inst.emptySlotPath),
                 OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(inst -> inst.hoverTextColour),
-                Codec.BOOL.fieldOf(NO_FALLBACK_KEY).forGetter(inst -> inst.noFallback),
-                Codec.BOOL.fieldOf(NO_SPECIFY_KEY).forGetter(inst -> inst.noSpecify),
+                Codec.BOOL.fieldOf(PREVENT_FALLBACK_KEY).forGetter(inst -> inst.preventFallback),
+                Codec.BOOL.fieldOf(PREVENT_REFERENCE_KEY).forGetter(inst -> inst.preventReference),
                 Codec.INT.fieldOf(PRIORITY_KEY).forGetter(inst -> inst.priority)
         ).apply(builder, Builder::new));
 
@@ -295,8 +282,8 @@ public final class AccessoryType {
         private boolean displayHoverText;
         private @NonNull String emptySlotPath;
         private int hoverTextColour;
-        private boolean noFallback;
-        private boolean noSpecify;
+        private boolean preventFallback;
+        private boolean preventReference;
         private int priority;
 
         private Builder(
@@ -304,15 +291,15 @@ public final class AccessoryType {
                 boolean displayHoverText,
                 @NonNull String emptySlotPath,
                 int hoverTextColour,
-                boolean noFallback,
-                boolean noSpecify,
+                boolean preventFallback,
+                boolean preventReference,
                 int priority) {
             this.attributeModifiers = attributeModifiers;
             this.displayHoverText = displayHoverText;
             this.emptySlotPath = emptySlotPath;
             this.hoverTextColour = hoverTextColour;
-            this.noFallback = noFallback;
-            this.noSpecify = noSpecify;
+            this.preventFallback = preventFallback;
+            this.preventReference = preventReference;
             this.priority = priority;
         }
 
@@ -321,8 +308,8 @@ public final class AccessoryType {
             this.displayHoverText = true;
             this.emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
             this.hoverTextColour = 0xffffff;
-            this.noFallback = false;
-            this.noSpecify = false;
+            this.preventFallback = false;
+            this.preventReference = false;
             this.priority = 0;
         }
 
@@ -393,21 +380,21 @@ public final class AccessoryType {
         }
 
         /**
-         * Prevents accessories of this type from falling back to a different type if no slots of this type are present
+         * Prevents accessories of this type from falling back to this type
          * @return the current builder instance
          */
-        public @NonNull Builder noFallback() {
-            noFallback = true;
+        public @NonNull Builder preventFallback() {
+            preventFallback = true;
 
             return this;
         }
 
         /**
-         * Enabling this prevents tagging items with this accessory type
+         * Check if this type should not be able to be explicitly referenced in most ways in-game
          * @return the current builder instance
          */
-        public @NonNull Builder noSpecify() {
-            this.noSpecify = true;
+        public @NonNull Builder preventReference() {
+            this.preventReference = true;
 
             return this;
         }
@@ -440,8 +427,8 @@ public final class AccessoryType {
                             Identifier.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath) :
                             Identifier.parse(emptySlotPath).withPrefix(LOCATION_PREFIX),
                     hoverTextColour,
-                    noSpecify,
-                    noFallback,
+                    preventFallback,
+                    preventReference,
                     priority);
         }
 

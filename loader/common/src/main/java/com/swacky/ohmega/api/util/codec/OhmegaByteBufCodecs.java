@@ -13,7 +13,7 @@ public final class OhmegaByteBufCodecs {
     /**
      * Codec for an array of boolean primitives
      */
-    public static final StreamCodec<ByteBuf, boolean[]> BOOLEAN_ARRAY = new StreamCodec<>() {
+    public static final @NonNull StreamCodec<ByteBuf, boolean[]> BOOLEAN_ARRAY = new StreamCodec<>() {
         public boolean @NonNull [] decode(@NonNull ByteBuf buf) {
             int size = VarInt.read(buf);
             boolean[] values = new boolean[size];
@@ -37,7 +37,7 @@ public final class OhmegaByteBufCodecs {
     /**
      * Codec for an array of {@link VarInt}s
      */
-    public static final StreamCodec<ByteBuf, int[]> VAR_INT_ARRAY = new StreamCodec<>() {
+    public static final @NonNull StreamCodec<ByteBuf, int[]> VAR_INT_ARRAY = new StreamCodec<>() {
         public int @NonNull [] decode(@NonNull ByteBuf buf) {
             int size = VarInt.read(buf);
             int[] values = new int[size];

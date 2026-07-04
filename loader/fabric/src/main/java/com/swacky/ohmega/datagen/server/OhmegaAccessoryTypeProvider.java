@@ -15,8 +15,8 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
         add(AccessoryType.GENERIC_ID, new AccessoryType.Builder()
                 .hideHoverText()
                 .emptySlotPath("accessory_slot_generic")
-                .noFallback()
-                .noSpecify()
+                .preventFallback()
+                .preventReference()
                 .priority(Integer.MAX_VALUE));
         add(AccessoryType.NORMAL_ID, new AccessoryType.Builder()
                 .emptySlotPath("accessory_slot_normal")

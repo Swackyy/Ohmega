@@ -6,11 +6,13 @@
     "AbstractContainerMenuMixin",
     "DispenserBlockMixin",
     "EnchantmentHelperMixin",
+    "EntityMixin",
     "InventoryMenuMixin",
     "PiglinAiMixin",
     "PowderSnowBlockMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin",
+    "ServerPlayerMixin",
     "WorldLoaderMixin"
   ],
   "client": [
@@ -26,6 +28,9 @@
     "client.RecipeBookComponentMixin",
     "client.ScreenMixin"
   ],
+  "injectors": {
+    "defaultRequire": 1
+  },
   "minVersion": "0.8.5",
   "mixinextras": {
     "minVersion": "0.5.0"

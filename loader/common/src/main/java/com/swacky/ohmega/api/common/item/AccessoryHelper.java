@@ -1,33 +1,34 @@
 package com.swacky.ohmega.api.common.item;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
-import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.core.NonNullList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -37,21 +38,10 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
-    private static final @NonNull Service IMPL = Ohmega.loadService(Service.class);
-
     public static void bootstrap() {}
 
     /**
-     * Retrieves the data on the {@link LivingEntity} pertaining to accessories
-     * @param entity to retrieve data from
-     * @return the accessory inventory data in the form of an {@link AccessoryData}
-     */
-    public static @NonNull AccessoryData getData(@NonNull LivingEntity entity) {
-        return IMPL.getData(entity);
-    }
-
-    /**
-     * You most likely want to use {@link #getType(Item)} instead
+     * You most likely want to use {@link Accessories#getType(LivingEntity, Item)} instead
      * @param item the item to find the {@link AccessoryType}s of
      * @return all of the {@link AccessoryType}s that the {@link Item} is a part of, ignoring the priority index of each type
      */
@@ -67,7 +57,7 @@ public final class AccessoryHelper {
             if (item.builtInRegistryHolder().is(entry.getValue())) {
                 AccessoryType type = entry.getKey();
 
-                if (!type.isNoSpecify()) {
+                if (!type.shouldPreventReference()) {
                     builder.add(entry.getKey());
                 }
             }
@@ -86,42 +76,6 @@ public final class AccessoryHelper {
         }
 
         return set;
-    }
-
-    /**
-     * Retrieves the accessory's effective {@link AccessoryType} (lowest priority index),
-     * or the type returned by the AccessoryOverrideTypes(event/callback) if overridden
-     * @param item the item to find the effective {@link AccessoryType} of
-     * @return the {@link AccessoryType} of lowest priority index bound to the given accessory, or,
-     * if no type can be found (including such a case where the item is not an accessory), then {@link AccessoryType#NONE}
-     */
-    @SuppressWarnings("deprecation")
-    public static @NonNull AccessoryType getType(@NonNull Item item) {
-        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
-            return AccessoryType.GENERIC.get();
-        }
-
-        AccessoryType type = AccessoryType.NONE;
-        ImmutableList<AccessoryType> slotTypes = getSlotTypes();
-
-        for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
-            if (item.builtInRegistryHolder().is(entry.getValue())) {
-                AccessoryType candidate = entry.getKey();
-
-                // todo: this check works I think but is structured strangely
-                if (!candidate.isNoSpecify() && candidate.getPriority() < type.getPriority() && (type.isNoFallback() || slotTypes.contains(candidate)) || (!candidate.isNoFallback() && !slotTypes.contains(type))) {
-                    type = candidate;
-                }
-            }
-        }
-
-        BooleanObjectPair<AccessoryType> override = AccessoryTypeManager.getTypeOverride(item);
-
-        if (override != null && (override.leftBoolean() || type == AccessoryType.NONE)) {
-            return override.right();
-        }
-
-        return type;
     }
 
     /**
@@ -149,7 +103,7 @@ public final class AccessoryHelper {
         stack.set(OhmegaDataComponents.getActive(), value);
 
         if (value) {
-            ItemAttributeModifiers modifiers = getSlotTypes().get(getSlot(stack)).getAttributeModifiers().getActive();
+            ItemAttributeModifiers modifiers = OhmegaDataAttachments.getData(entity).getEntry(getSlot(stack)).getType().getAttributeModifiers().getActive();
 
             stack.set(OhmegaDataComponents.getSlotActiveModifiers(), modifiers);
             changeModifiers(entity, modifiers, true);
@@ -230,62 +184,6 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieves the index types of each accessory index in entities' accessory inventories (determined by the server config)
-     * @return a list of {@link AccessoryType}s matching indexes of accessory indexes
-     */
-    // todo: cache
-    // todo: make a cached "getUniqueSlotTypes" that returns a Set
-    public static @NonNull ImmutableList<AccessoryType> getSlotTypes() {
-        List<? extends String> slotTypes = OhmegaConfig.Server.getData().slotTypes().getObject();
-
-        if (slotTypes != null) {
-            int size = slotTypes.size();
-            ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(size);
-
-            if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
-                for (int i = 0; i < size; i++) {
-                    builder.add(AccessoryType.GENERIC.get());
-                }
-
-                return builder.build();
-            }
-
-            for (String id : slotTypes) {
-                AccessoryType type = AccessoryTypeManager.get(Identifier.parse(id));
-
-                if (type != AccessoryType.NONE) {
-                    builder.add(type);
-                }
-            }
-
-            return builder.build();
-        }
-
-        return ImmutableList.of();
-    }
-
-    /**
-     * Retrieves the types of accessory which can be key-bound (determined by the server config)
-     * @return a set of {@link AccessoryType}s which can be key-bound
-     */
-    // todo: cache
-    public static @NonNull ImmutableSet<AccessoryType> getKeyboundSlotTypes() {
-        List<? extends String> types = OhmegaConfig.Server.getData().keyboundSlotTypes().getObject();
-
-        if (types != null) {
-            ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
-
-            for (String id : types) {
-                builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
-            }
-
-            return builder.build();
-        }
-
-        return ImmutableSet.of();
-    }
-
-    /**
      * You should most likely use {@link #getBindTooltip(ItemStack)} as it is easier
      * and uses standardised key formats that work with {@link OhmegaLangHelper}
      * <p>
@@ -297,52 +195,59 @@ public final class AccessoryHelper {
      * @return example: "Press G to toggle flight", "Allows the wearer to fly"
      */
     public static @NonNull MutableComponent getBindTooltip(@NonNull ItemStack stack, @NonNull String bindKey, @NonNull String nonBindKey) {
-        int slot = getSlot(stack);
-        ImmutableList<AccessoryType> slotTypes = getSlotTypes();
-        AccessoryType type;
+        Player player = Minecraft.getInstance().player;
 
-        if (slot < 0 || slot >= slotTypes.size()) {
-            type = null;
-        } else {
-            type = slotTypes.get(slot);
-        }
+        if (player != null) {
+            int slot = getSlot(stack);
+            AccessoryData data = OhmegaDataAttachments.getData(player);
+            AccessoryType type;
 
-        // Starts at -1 to align properly
-        int typeIndex = 0;
+            if (slot < 0 || slot >= data.size()) {
+                type = null;
+            } else {
+                type = data.getEntry(slot).getType();
+            }
 
-        if (type != null) {
-            for (int i = 0; i < slot; i++) {
-                if (slotTypes.get(i) == type) {
-                    typeIndex++;
+            int typeIndex = 0;
+
+            if (type != null) {
+                for (int i = 0; i < slot; i++) {
+                    if (data.getEntry(i).getType().equals(type)) {
+                        typeIndex++;
+                    }
                 }
             }
-        }
 
-        Accessory accessory = Accessories.get(stack.getItem());
-        boolean flag = false;
+            Accessory accessory = Accessories.get(stack.getItem());
+            boolean flag = false;
 
-        if (accessory != null) {
-            for (AccessoryType type0 : getKeyboundSlotTypes()) {
-                if (slotTypes.contains(type0)) {
-                    flag = true;
-                    break;
+            if (accessory != null) {
+                for (AccessoryType type0 : OhmegaConfig.Server.getKeyboundSlotTypes()) {
+                    for (AccessoryDataEntry entry : data.getEntries()) {
+                        if (entry.getType().equals(type0)) {
+                            flag = true;
+                            break;
+                        }
+                    }
                 }
             }
+
+            KeyMapping mapping;
+
+            if (type == null) {
+                mapping = null;
+            } else {
+                mapping = OhmegaBinds.getMapping(type, typeIndex);
+            }
+
+            if (slot < 0 || !flag || mapping == null) {
+                return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);
+            }
+
+            return Component.translatable(bindKey, mapping.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY);
         }
 
-        KeyMapping mapping;
-
-        if (type == null) {
-            mapping = null;
-        } else {
-            mapping = OhmegaBinds.getMapping(type, typeIndex);
-        }
-
-        if (slot < 0 || !flag || mapping == null) {
-            return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);
-        }
-
-        return Component.translatable(bindKey, mapping.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY);
+        return Component.translatable(nonBindKey).withStyle(ChatFormatting.GRAY);
     }
 
     /**
@@ -363,7 +268,7 @@ public final class AccessoryHelper {
      * @return example: "Accessory Type: Utility"
      */
     public static @Nullable MutableComponent getTypeTooltip(@NonNull Item item) {
-        AccessoryType type = getType(item);
+        AccessoryType type = Accessories.getType(Minecraft.getInstance().player, item);
 
         if (type.displayHoverText()) {
             return Component.translatable("accessory_type", type.getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
@@ -379,11 +284,12 @@ public final class AccessoryHelper {
      * @return index of the first open index matching the type, or {@code -1} if none is found
      */
     public static int getFirstOpenSlot(@NonNull LivingEntity entity, @NonNull AccessoryType type) {
-        AccessoryData data = getData(entity);
-        ImmutableList<AccessoryType> slotTypes = getSlotTypes();
+        AccessoryData data = OhmegaDataAttachments.getData(entity);
 
         for (int i = 0; i < data.size(); i++) {
-            if (slotTypes.get(i) == type && data.getStackInSlot(i).isEmpty()) {
+            AccessoryDataEntry entry = data.getEntry(i);
+
+            if (entry.getType().equals(type) && entry.getStack().isEmpty()) {
                 return i;
             }
         }
@@ -404,12 +310,12 @@ public final class AccessoryHelper {
         Accessory accessory = Accessories.get(item);
 
         if (accessory != null) {
-            int slot = getFirstOpenSlot(entity, getType(item));
+            int index = getFirstOpenSlot(entity, Accessories.getType(entity, item));
 
-            if (slot >= 0) {
+            if (index >= 0) {
                 ItemStack stack0 = stack.copyWithCount(1);
 
-                if (getData(entity).setStack(entity, slot, stack0, EquipContext.USE_HELD)) {
+                if (OhmegaDataAttachments.getData(entity).getEntry(index).setStack(entity, stack0, index, EquipContext.USE_HELD)) {
                     stack.consume(1, entity);
                     return InteractionResult.SUCCESS;
                 }
@@ -447,7 +353,9 @@ public final class AccessoryHelper {
      */
 
     public static boolean compatibleWith(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
-        for (ItemStack other : getData(entity).getStacks()) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(entity).getEntries()) {
+            ItemStack other = entry.getStack();
+
             if (!other.isEmpty() && !compatibleWith(stack, other))  {
                 return false;
             }
@@ -462,11 +370,13 @@ public final class AccessoryHelper {
      * @param filter A predicate filter to allow or deny elements from the returned list
      * @return every matching {@link ItemStack} in the entity's accessory inventory
      */
-    public static @NonNull NonNullList<ItemStack> getStacksFiltered(@NonNull LivingEntity entity, @NonNull Predicate<ItemStack> filter) {
-        NonNullList<ItemStack> stacks = getData(entity).getStacks();
-        NonNullList<ItemStack> filteredStacks = NonNullList.createWithCapacity(stacks.size());
+    public static @NonNull List<ItemStack> getStacksFiltered(@NonNull LivingEntity entity, @NonNull Predicate<ItemStack> filter) {
+        AccessoryData data = OhmegaDataAttachments.getData(entity);
+        List<ItemStack> filteredStacks = new ArrayList<>(data.size());
 
-        for (ItemStack stack : stacks) {
+        for (AccessoryDataEntry entry : data.getEntries()) {
+            ItemStack stack = entry.getStack();
+
             if (filter.test(stack)) {
                 filteredStacks.add(stack);
             }
@@ -476,23 +386,14 @@ public final class AccessoryHelper {
     }
 
     /**
-     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory that are not empty.
-     * @param entity {@link LivingEntity} to get accessory inventory data from
-     * @return every non-empty {@link ItemStack} in the entity's accessory inventory
-     */
-    public static @NonNull NonNullList<ItemStack> getStacksNoEmpty(@NonNull LivingEntity entity) {
-        return getStacksFiltered(entity, stack -> !stack.isEmpty());
-    }
-
-    /**
      * Check if an entity is wearing a certain {@link Item} in an accessory slot
      * @param entity {@link LivingEntity} to get accessory inventory data from
      * @param item the item to find
      * @return {@code true} if found, {@code false} otherwise
      */
     public static boolean hasAccessory(@NonNull LivingEntity entity, @NonNull Item item) {
-        for (ItemStack stack : getData(entity).getStacks()) {
-            if (stack.getItem() == item) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(entity).getEntries()) {
+            if (entry.getStack().getItem() == item) {
                 return true;
             }
         }
@@ -507,16 +408,14 @@ public final class AccessoryHelper {
      * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
      */
     public static @NonNull ItemStack getStack(@NonNull LivingEntity entity, @NonNull Item item) {
-        for (ItemStack stack : getData(entity).getStacks()) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(entity).getEntries()) {
+            ItemStack stack = entry.getStack();
+
             if (stack.getItem() == item) {
                 return stack;
             }
         }
 
         return ItemStack.EMPTY;
-    }
-
-    public interface Service {
-        @NonNull AccessoryData getData(@NonNull LivingEntity entity);
     }
 }

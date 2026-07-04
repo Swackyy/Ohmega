@@ -1,20 +1,26 @@
 package com.swacky.ohmega.config;
 
+import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.LivingEntity;
+import org.jspecify.annotations.NonNull;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-// todo: order elements alphabetically
 public final class OhmegaConfig {
     public static final class Client {
         private static final Service IMPL = OhmegaClient.loadService(Service.class);
@@ -71,6 +77,7 @@ public final class OhmegaConfig {
             String CREATIVE_INVENTORY = "creative inventory";
             int POSITION_MIN = -2048;
             int POSITION_MAX = 2048;
+            // - - -
 
             String COMPATIBILITY_MODE_KEY = "compatibilityMode";
             String COMPATIBILITY_MODE_DESCRIPTION = """
@@ -113,7 +120,7 @@ public final class OhmegaConfig {
             String MAX_COLUMN_SLOTS_KEY = "maxColumnSlots";
             String MAX_COLUMN_SLOTS_DESCRIPTION = """
                     The maximum amount of slots per column
-                    If exceeded, a new column will be made if it does not exceed "maxColumns\"""";
+                    If exceeded, a new column will be made if it does not exceed 'maxColumns'""";
             int MAX_COLUMN_SLOTS_DEFAULT = 8;
             int MAX_COLUMN_SLOTS_MIN = 1;
             int MAX_COLUMN_SLOTS_MAX = 32;
@@ -352,6 +359,9 @@ public final class OhmegaConfig {
     public static final class Server {
         private static final Service IMPL = Ohmega.loadService(Service.class);
 
+        private static @NonNull List<AccessoryType> defaultSlotTypes = List.of();
+        private static @NonNull ImmutableSet<AccessoryType> keyboundSlotTypes = ImmutableSet.of();
+
         public static void bootstrap() {}
 
         public static Service.Data getData() {
@@ -362,17 +372,76 @@ public final class OhmegaConfig {
             return IMPL.isLoaded();
         }
 
+        public static void revalidateCached() {
+            Service.Data data = getData();
+            List<? extends String> slotTypes = data.defaultSlotTypes().getObject();
+            List<AccessoryType> list;
+
+            // todo: respect new config option here
+
+            if (slotTypes != null) {
+                int size = slotTypes.size();
+                list = new ArrayList<>(size);
+
+                if (data.disableAccessoryTypes().get()) {
+                    for (int i = 0; i < size; i++) {
+                        list.add(AccessoryType.GENERIC.get());
+                    }
+                } else {
+                    for (String id : slotTypes) {
+                        AccessoryType type = AccessoryTypeManager.get(Identifier.parse(id));
+
+                        if (type != AccessoryType.NONE) {
+                            list.add(type);
+                        }
+                    }
+                }
+            } else {
+                list = List.of();
+            }
+
+            if (!list.equals(defaultSlotTypes)) {
+                defaultSlotTypes = list;
+
+                for (LivingEntity tracker : AccessoryData.DEFAULT_TRACKERS) {
+                    OhmegaDataAttachments.getData(tracker).defaultSlots(tracker, EquipContext.CONFIG);
+                }
+            }
+
+            List<? extends String> types = data.keyboundSlotTypes().getObject();
+
+            if (types != null) {
+                ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
+
+                for (String id : types) {
+                    builder.add(AccessoryTypeManager.get(Identifier.parse(id)));
+                }
+
+                keyboundSlotTypes = builder.build();
+            } else {
+                keyboundSlotTypes = ImmutableSet.of();
+            }
+        }
+
+        public static @NonNull List<AccessoryType> getDefaultSlotTypes() {
+            return defaultSlotTypes;
+        }
+
+        public static @NonNull ImmutableSet<AccessoryType> getKeyboundSlotTypes() {
+            return keyboundSlotTypes;
+        }
+
         public interface Service {
-            String GENERIC  = AccessoryType.GENERIC_ID.toString();
+            String GENERIC = AccessoryType.GENERIC_ID.toString();
             String NORMAL  = AccessoryType.NORMAL_ID.toString();
             String UTILITY = AccessoryType.UTILITY_ID.toString();
             String SPECIAL = AccessoryType.SPECIAL_ID.toString();
             Predicate<Object> ACCESSORY_TYPE_VALIDATOR = object -> AccessoryTypeManager.getTypes().isEmpty() || (object instanceof String string && AccessoryTypeManager.exists(Identifier.tryParse(string)));
             // - - -
 
-            String SLOT_TYPES_KEY = "slotTypes";
+            String DEFAULT_SLOT_TYPES_KEY = "defaultSlotTypes";
             String SLOT_TYPES_DESCRIPTION = """
-                    Defines the types and number of slots in the accessory inventory""";
+                    Defines the types and number of slots to default to for the accessory inventory""";
             List<String> SLOT_TYPES_DEFAULT = List.of(
                     NORMAL,
                     NORMAL,
@@ -381,6 +450,12 @@ public final class OhmegaConfig {
                     UTILITY,
                     SPECIAL);
             String SLOT_TYPES_NEW_VALUE_DEFAULT = NORMAL;
+            // - - -
+            String SHRINK_DEFAULT_SLOT_TYPES_KEY = "shrinkDefaultSlotTypes";
+            String SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION = """
+                    If true, will automatically shrink the default slot types based on registered items' types.
+                    This means that if an accessory type exists but no items are tagged with it, all instances of the type will be removed from the default slot list""";
+            boolean SHRINK_DEFAULT_SLOT_TYPES_DEFAULT = false;
             // - - -
             String KEYBOUND_SLOT_TYPES_KEY = "keyboundSlotTypes";
             String KEYBOUND_SLOT_TYPES_DESCRIPTION = """
@@ -394,13 +469,13 @@ public final class OhmegaConfig {
             String KEEP_ACCESSORIES_BEHAVIOUR_KEY = "keepAccessoriesBehaviour";
             String KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION = """
                     Defines how to handle player death in terms of dropping accessories
-                    DEFAULT: Uses the vanilla "keepInventory" game-rule
+                    DEFAULT: Uses the vanilla 'keepInventory' game-rule
                     ALWAYS_ON: Will never drop accessories on death
                     ALWAYS_OFF: Will always drop accessories on death""";
             // - - -
             String DISABLE_ACCESSORY_TYPES_KEY = "disableAccessoryTypes";
             String DISABLE_ACCESSORY_TYPES_DESCRIPTION = """
-                    If true, effectively no accessory types will be used, and they will all be overridden, changing them all to "ohmega:generic\"""";
+                    If true, effectively no accessory types will be used, and they will all be overridden, changing them all to 'ohmega:generic'""";
             boolean DISABLE_ACCESSORY_TYPES_DEFAULT = false;
             // - - -
             String ALLOW_HIDE_ACCESSORIES_KEY = "allowHideAccessories";
@@ -408,23 +483,26 @@ public final class OhmegaConfig {
                     Will prevent players from toggling visibility on their accessories if false, so that they always render""";
             boolean ALLOW_HIDE_ACCESSORIES_DEFAULT = true;
             // - - -
-
             record Data(
-                    LazySavedValue<List<? extends String>> slotTypes,
+                    LazySavedValue<List<? extends String>> defaultSlotTypes,
+                    BooleanLazySavedValue shrinkDefaultSlotTypes,
                     LazySavedValue<List<? extends String>> keyboundSlotTypes,
                     LazySavedValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour,
                     BooleanLazySavedValue disableAccessoryTypes,
                     BooleanLazySavedValue allowHideAccessories) {
                 public void pull() {
-                    slotTypes.pull();
+                    defaultSlotTypes.pull();
+                    shrinkDefaultSlotTypes.pull();
                     keyboundSlotTypes.pull();
                     keepAccessoriesBehaviour.pull();
                     disableAccessoryTypes.pull();
                     allowHideAccessories.pull();
+                    revalidateCached();
                 }
             }
 
             Data getData();
+
 
             boolean isLoaded();
 

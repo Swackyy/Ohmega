@@ -2,7 +2,7 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.client.OhmegaClientMain;
 import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
@@ -23,9 +23,9 @@ public final class OhmegaMain {
 
         // Registration
         OhmegaArgumentTypes.register(bus);
-        OhmegaItemsImpl.register(bus);
+        OhmegaDataAttachmentsImpl.register(bus);
         OhmegaDataComponentsImpl.register(bus);
-        OhmegaDataAttachments.register(bus);
+        OhmegaItemsImpl.register(bus);
 
         // Client entry
         if (distro.isClient()) {

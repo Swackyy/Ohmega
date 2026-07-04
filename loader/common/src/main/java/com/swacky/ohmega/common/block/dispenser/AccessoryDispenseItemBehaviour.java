@@ -1,14 +1,17 @@
 package com.swacky.ohmega.common.block.dispenser;
 
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBehavior 
     }
 
     @Override
-    protected ItemStack execute(BlockSource source, ItemStack stack) {
+    protected @NonNull ItemStack execute(BlockSource source, @NonNull ItemStack stack) {
         List<LivingEntity> entities = source.level().getEntitiesOfClass(
                 LivingEntity.class,
                 new AABB(source.pos().relative(source.state().getValue(DispenserBlock.FACING))),
@@ -30,17 +33,13 @@ public class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBehavior 
 
         if (!entities.isEmpty()) {
             for (LivingEntity entity : entities) {
-                int slot = AccessoryHelper.getFirstOpenSlot(entity, AccessoryHelper.getType(stack.getItem()));
+                int index = AccessoryHelper.getFirstOpenSlot(entity, Accessories.getType(entity, stack.getItem()));
 
-                if (slot >= 0) {
-                    AccessoryData data = AccessoryHelper.getData(entity);
+                if (index >= 0) {
+                    AccessoryDataEntry entry = OhmegaDataAttachments.getData(entity).getEntry(index);
 
-                    if (data.isItemValid(entity, slot, stack, EquipContext.DISPENSE)) {
-                        data.setStack(
-                                entity,
-                                slot,
-                                stack.split(1),
-                                EquipContext.DISPENSE);
+                    if (entry.isItemValid(entity, stack, EquipContext.DISPENSE)) {
+                        entry.setStack(entity, stack.split(1), index, EquipContext.DISPENSE);
                         return stack;
                     }
                 }

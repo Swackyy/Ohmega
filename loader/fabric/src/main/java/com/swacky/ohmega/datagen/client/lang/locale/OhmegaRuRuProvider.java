@@ -90,10 +90,10 @@ public final class OhmegaRuRuProvider extends OhmegaLangProvider {
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Сервер", "Конфигурация Ohmega Сервер");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Типы Ячеек",
                 "Определяет типы и количество ячеек для аксессуаров");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Изменить");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Изменить");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Типы Слотов с Горячей Клавишей",

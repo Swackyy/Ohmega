@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-// todo: convert to client command
 public final class InfoCommand implements IClientCommandNode {
     public static final String ELEMENT_ROOT = "info";
     public static final String ELEMENT_CROWDIN = "crowdin";

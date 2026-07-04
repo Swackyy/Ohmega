@@ -11,9 +11,9 @@ import org.jspecify.annotations.NonNull;
 public record SyncHiddenPacket(int entityId, int[] indexes, boolean[] values) implements CustomPacketPayload {
     public static final Type<@NonNull SyncHiddenPacket> TYPE = new Type<>(Ohmega.id("sync_hidden"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncHiddenPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, inst -> inst.entityId,
-            OhmegaByteBufCodecs.VAR_INT_ARRAY, inst -> inst.indexes,
-            OhmegaByteBufCodecs.BOOLEAN_ARRAY, inst -> inst.values,
+            ByteBufCodecs.VAR_INT, SyncHiddenPacket::entityId,
+            OhmegaByteBufCodecs.VAR_INT_ARRAY, SyncHiddenPacket::indexes,
+            OhmegaByteBufCodecs.BOOLEAN_ARRAY, SyncHiddenPacket::values,
             SyncHiddenPacket::new);
 
     @Override

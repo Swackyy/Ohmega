@@ -10,10 +10,12 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientEvents;
 import com.swacky.ohmega.network.OhmegaNetworking;
+import com.swacky.ohmega.network.S2C.SyncDataPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import com.swacky.ohmega.network.S2C.SyncUsePacket;
+import com.swacky.ohmega.network.S2C.SyncKeybindUsePacket;
+import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -46,14 +48,18 @@ public final class OhmegaClientMain implements ClientModInitializer {
 
         // Networking
         // Receive
+        ClientPlayNetworking.registerGlobalReceiver(SyncDataPacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncData(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncHiddenPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
+        ClientPlayNetworking.registerGlobalReceiver(SyncKeybindUsePacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncKeybindUse(packet));
+        ClientPlayNetworking.registerGlobalReceiver(SyncSlotsPacket.TYPE, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncSlots(packet));
         ClientPlayNetworking.registerGlobalReceiver(SyncStacksPacket.TYPE, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
         ClientConfigurationNetworking.registerGlobalReceiver(SyncTypesPacket.TYPE, (packet, context) ->
                 OhmegaNetworking.S2C.handleSyncTypes(packet, context.packetListener().receivedRegistries));
-        ClientPlayNetworking.registerGlobalReceiver(SyncUsePacket.TYPE, (packet, _) ->
-                OhmegaNetworking.S2C.handleSyncUse(packet));
 
         // Registration
         KeyMappingHelper.registerKeyMapping(OhmegaBinds.EDIT_MAGNETICS);

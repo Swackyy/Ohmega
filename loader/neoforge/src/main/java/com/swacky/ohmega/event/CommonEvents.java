@@ -1,21 +1,23 @@
 package com.swacky.ohmega.event;
 
+import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
-import com.swacky.ohmega.network.C2S.ReloadDataPacket;
+import com.swacky.ohmega.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
-import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
+import com.swacky.ohmega.network.S2C.SyncDataPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncKeybindUsePacket;
+import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
-import com.swacky.ohmega.network.S2C.SyncUsePacket;
 import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -42,13 +44,7 @@ import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 public final class CommonEvents {
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
-        Player oldPlayer = event.getOriginal();
-
-        if (!event.isWasDeath() || CommonCallbacks.shouldKeepInventory(oldPlayer)) {
-            Player newPlayer = event.getEntity();
-
-            CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
-        }
+        CommonCallbacks.onClonePlayer(event.getOriginal(), event.getEntity(), event.isWasDeath());
     }
 
     @SubscribeEvent
@@ -92,15 +88,8 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AccessoryHelper.getData(player).onAttach(player);
+            OhmegaDataAttachments.getData(player).onAttach(player);
         }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerRespawnPost(PlayerEvent.PlayerRespawnEvent event) {
-        ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        AccessoryHelper.getData(player).onAttach(player);
     }
 
     @SubscribeEvent
@@ -118,6 +107,12 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onRegisterNetwork(RegisterPayloadHandlersEvent event) {
         event.registrar("1.0")
+                // C2S
+                .playToServer(
+                        KeybindUsePacket.TYPE,
+                        KeybindUsePacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, context) ->
+                                OhmegaNetworking.C2S.handleKeybindUse(packet, (ServerPlayer) context.player())))
                 .playToServer(
                         ReloadDataPacket.TYPE,
                         ReloadDataPacket.CODEC,
@@ -133,16 +128,27 @@ public final class CommonEvents {
                         SetHiddenPacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, context) ->
                                 OhmegaNetworking.C2S.handleSetHidden(packet, (ServerPlayer) context.player())))
-                .playToServer(
-                        UseAccessoryPacket.TYPE,
-                        UseAccessoryPacket.CODEC,
-                        new MainThreadPayloadHandler<>((packet, context) ->
-                                OhmegaNetworking.C2S.handleUseAccessory(packet, (ServerPlayer) context.player())))
+                // S2C
+                .playToClient(
+                        SyncDataPacket.TYPE,
+                        SyncDataPacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncData(packet)))
                 .playToClient(
                         SyncHiddenPacket.TYPE,
                         SyncHiddenPacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, _) ->
                                 OhmegaNetworking.S2C.handleSyncHidden(packet)))
+                .playToClient(
+                        SyncKeybindUsePacket.TYPE,
+                        SyncKeybindUsePacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncKeybindUse(packet)))
+                .playToClient(
+                        SyncSlotsPacket.TYPE,
+                        SyncSlotsPacket.CODEC,
+                        new MainThreadPayloadHandler<>((packet, _) ->
+                                OhmegaNetworking.S2C.handleSyncSlots(packet)))
                 .playToClient(
                         SyncStacksPacket.TYPE,
                         SyncStacksPacket.CODEC,
@@ -155,12 +161,7 @@ public final class CommonEvents {
                             if (context.connection().getPacketListener() instanceof ClientConfigurationPacketListenerImpl listener) {
                                 OhmegaNetworking.S2C.handleSyncTypes(packet, listener.receivedRegistries);
                             }
-                        }))
-                .playToClient(
-                        SyncUsePacket.TYPE,
-                        SyncUsePacket.CODEC,
-                        new MainThreadPayloadHandler<>((packet, _) ->
-                                OhmegaNetworking.S2C.handleSyncUse(packet)));
+                        }));
     }
 
     @SubscribeEvent

@@ -11,7 +11,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
-// todo: clean up these (and other related) codec shenanigans if possible
 public record SyncTypesPacket(byte[] data) implements CustomPacketPayload {
     public static final Type<@NonNull SyncTypesPacket> TYPE = new Type<>(Ohmega.id("sync_types"));
     public static final StreamCodec<FriendlyByteBuf, SyncTypesPacket> CODEC = CustomPacketPayload.codec(
@@ -22,7 +21,7 @@ public record SyncTypesPacket(byte[] data) implements CustomPacketPayload {
     public SyncTypesPacket(RegistryAccess lookup) {
         RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), lookup);
 
-        AccessoryType.COLLECTION_STREAM_CODEC.encode(buf, AccessoryTypeManager.getTypes());
+        AccessoryType.LIST_INITIALISER_STREAM_CODEC.encode(buf, AccessoryTypeManager.getTypes());
 
         byte[] data = new byte[buf.readableBytes()];
 

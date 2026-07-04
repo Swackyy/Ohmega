@@ -90,10 +90,10 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Сервер Ohmega", "Серверні налаштування Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Типи слотів",
                 "Керує типами та кількістю слотів в інвентарі аксесуарів");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Редагувати");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Редагувати");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Ключові типи слотів",

@@ -92,10 +92,10 @@ public final class OhmegaNlNlProvider extends OhmegaLangProvider {
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Configuratie");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Slot Types",
                 "Definieert de types en het aantal vakken in de accessoire inventaris");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Bewerken");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Bewerken");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Toetsgebonden Slot Types",

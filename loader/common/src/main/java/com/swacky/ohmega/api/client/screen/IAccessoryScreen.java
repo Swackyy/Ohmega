@@ -53,7 +53,6 @@ public interface IAccessoryScreen {
      * @param style the button style currently in use
      * @return the position to add the {@link ToggleExtensionButton}
      */
-    // todo: implement UiScreen move capability for this
     @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
 
     /**

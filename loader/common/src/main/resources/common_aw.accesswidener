@@ -14,6 +14,7 @@ accessible field net/minecraft/client/gui/screens/inventory/AbstractRecipeBookSc
 accessible class net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper
 accessible field net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen selectedTab Lnet/minecraft/world/item/CreativeModeTab;
 accessible method net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen selectTab (Lnet/minecraft/world/item/CreativeModeTab;)V
+accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
 accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/List;
 accessible method net/minecraft/client/gui/screens/Screen init ()V
 accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraft/client/Minecraft;

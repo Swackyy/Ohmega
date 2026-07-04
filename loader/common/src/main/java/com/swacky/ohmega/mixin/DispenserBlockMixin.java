@@ -6,12 +6,17 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.common.block.dispenser.AccessoryDispenseItemBehaviour;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(DispenserBlock.class)
-public class DispenserBlockMixin {
+abstract class DispenserBlockMixin extends BaseEntityBlock {
+    private DispenserBlockMixin(Properties properties) {
+        super(properties);
+    }
+
     @WrapOperation(
             method = "getDispenseMethod",
             at = @At(

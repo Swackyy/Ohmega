@@ -8,6 +8,7 @@
     "ServerConfigurationPacketListenerImplMixin"
   ],
   "client": [
+    "client.ClientCommonPacketListenerImplMixin",
     "client.ClientPacketListenerMixin",
     "client.Forge_AbstractContainerScreenMixin",
     "client.Forge_InventoryScreenMixin",
@@ -17,5 +18,8 @@
     "client.LivingEntityRenderStateMixin",
     "client.ModelLayersMixin"
   ],
+  "injectors": {
+    "defaultRequire": 1
+  },
   "minVersion": "0.8.5"
 }

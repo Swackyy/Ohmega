@@ -1,14 +1,15 @@
 package com.swacky.ohmega.network;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.network.C2S.ReloadDataPacket;
+import com.swacky.ohmega.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
-import com.swacky.ohmega.network.C2S.UseAccessoryPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.network.S2C.SyncDataPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
+import com.swacky.ohmega.network.S2C.SyncKeybindUsePacket;
+import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
-import com.swacky.ohmega.network.S2C.SyncUsePacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -31,18 +32,22 @@ public final class OhmegaNetworkingImpl {
                 .simpleChannel();
 
         // C2S
-        net.play().serverbound().addMain(ReloadDataPacket.class, ReloadDataPacket.CODEC, (_, context) ->
-                OhmegaNetworking.C2S.handleReloadContainer(Objects.requireNonNull(context.getSender())));
+        net.play().serverbound().addMain(KeybindUsePacket.class, KeybindUsePacket.CODEC, (packet, context) ->
+                OhmegaNetworking.C2S.handleKeybindUse(packet, Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(SetExtensionVisiblePacket.class, SetExtensionVisiblePacket.CODEC, (packet, context) ->
                 OhmegaNetworking.C2S.handleSetExtensionVisible(packet, Objects.requireNonNull(context.getSender())));
         net.play().serverbound().addMain(SetHiddenPacket.class, SetHiddenPacket.CODEC, (packet, context) ->
                 OhmegaNetworking.C2S.handleSetHidden(packet, Objects.requireNonNull(context.getSender())));
-        net.play().serverbound().addMain(UseAccessoryPacket.class, UseAccessoryPacket.CODEC, (packet, context) ->
-                OhmegaNetworking.C2S.handleUseAccessory(packet, Objects.requireNonNull(context.getSender())));
 
         // S2C
+        net.play().clientbound().addMain(SyncDataPacket.class, SyncDataPacket.CODEC, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncData(packet));
         net.play().clientbound().addMain(SyncHiddenPacket.class, SyncHiddenPacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncHidden(packet));
+        net.play().clientbound().addMain(SyncKeybindUsePacket.class, SyncKeybindUsePacket.CODEC, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncKeybindUse(packet));
+        net.play().clientbound().addMain(SyncSlotsPacket.class, SyncSlotsPacket.CODEC, (packet, _) ->
+                OhmegaNetworking.S2C.handleSyncSlots(packet));
         net.play().clientbound().addMain(SyncStacksPacket.class, SyncStacksPacket.CODEC, (packet, _) ->
                 OhmegaNetworking.S2C.handleSyncStacks(packet));
         net.configuration().clientbound().addMain(SyncTypesPacket.class, SyncTypesPacket.CODEC, (packet, context) -> {
@@ -50,10 +55,8 @@ public final class OhmegaNetworkingImpl {
                 OhmegaNetworking.S2C.handleSyncTypes(packet, listener.receivedRegistries);
             }
         });
-        net.play().clientbound().addMain(SyncUsePacket.class, SyncUsePacket.CODEC, (packet, _) ->
-                OhmegaNetworking.S2C.handleSyncUse(packet));
 
-        OhmegaNetworkingImpl.channel = net;
+        OhmegaNetworkingImpl.channel = net.build();
     }
 
     public static final class C2S implements OhmegaNetworking.C2S.Service {

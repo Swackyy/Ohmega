@@ -31,11 +31,12 @@ public final class ExtensionsCommand implements IClientCommandNode {
         Set<Identifier> extensions = AccessoryExtensions.getExtensionKeys();
 
         for (Identifier id : extensions) {
-            components.add(Component.literal('[' + id.toString() + ']').withStyle(ChatFormatting.GREEN));
+            components.add(Component.literal(id.toString()).withStyle(ChatFormatting.GREEN));
         }
 
-        source.sendSuccess(Component.translatable(ROOT_FEEDBACK, extensions.size(),
-                ComponentUtils.formatList(components, Component.literal(", "))));
+        source.sendSuccess(Component.translatable(ROOT_FEEDBACK,
+                extensions.size(),
+                Component.literal("[").append(ComponentUtils.formatList(components, Component.literal(", "))).append("]")));
         return Command.SINGLE_SUCCESS;
     }
 }

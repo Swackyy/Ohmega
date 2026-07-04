@@ -1,10 +1,12 @@
 package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
@@ -14,6 +16,7 @@ import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTabOutput;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
@@ -44,13 +47,14 @@ public final class CommonEvents {
             bootstrapped = true;
 
             ServerPlayerEvents.COPY_FROM.register(CommonEvents::onClonePlayer);
+            ModConfigEvents.loading(Ohmega.MODID).register(CommonEvents::onConfigLoad);
             ModConfigEvents.reloading(Ohmega.MODID).register(CommonEvents::onConfigReload);
             ServerConfigurationConnectionEvents.CONFIGURE.register(CommonEvents::onConnectionConfigure);
+            ServerEntityEvents.ENTITY_LOAD.register(CommonEvents::onEntityLoad);
+            ServerEntityEvents.ENTITY_UNLOAD.register(CommonEvents::onEntityUnload);
             EntityTrackingEvents.START_TRACKING.register(CommonEvents::onLivingTrack);
             CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(CommonEvents::onModifyCreativeOpBlocksTab);
             ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(CommonEvents::onPlayerChangeDimension);
-            ServerPlayerEvents.JOIN.register(CommonEvents::onPlayerJoin);
-            ServerPlayerEvents.AFTER_RESPAWN.register(CommonEvents::onPlayerRespawnPost);
             CommandRegistrationCallback.EVENT.register(CommonEvents::onRegisterCommands);
             ServerLifecycleEvents.SERVER_STARTING.register(CommonEvents::onServerStarting);
             ItemEvents.USE.register(CommonEvents::onUseItem);
@@ -60,12 +64,17 @@ public final class CommonEvents {
     }
 
     private static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
-        if (alive || CommonCallbacks.shouldKeepInventory(oldPlayer)) {
-            CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
+        CommonCallbacks.onClonePlayer(oldPlayer, newPlayer, alive);
+    }
+
+    private static void onConfigLoad(ModConfig config) {
+        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+            CommonCallbacks.onServerConfigLoad();
         }
     }
 
     private static void onConfigReload(ModConfig config) {
+        System.out.println("hello, config is: " + config.getFileName());
         if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
             CommonCallbacks.onServerConfigReload();
         }
@@ -73,6 +82,18 @@ public final class CommonEvents {
 
     private static void onConnectionConfigure(ServerConfigurationPacketListenerImpl listener, MinecraftServer server) {
         ServerConfigurationNetworking.send(listener, new SyncTypesPacket(server.registryAccess()));
+    }
+
+    private static void onEntityLoad(Entity entity, ServerLevel level) {
+        if (entity instanceof LivingEntity living) {
+            OhmegaDataAttachments.getData(living).onAttach(living);
+        }
+    }
+
+    private static void onEntityUnload(Entity entity, ServerLevel level) {
+        if (entity instanceof LivingEntity living) {
+            AccessoryData.DEFAULT_TRACKERS.remove(living);
+        }
     }
 
     private static void onLivingTrack(Entity entity, ServerPlayer tracker) {
@@ -89,14 +110,6 @@ public final class CommonEvents {
 
     private static void onPlayerChangeDimension(ServerPlayer player, ServerLevel from, ServerLevel to) {
         CommonCallbacks.onPlayerChangeDimension(player);
-    }
-
-    private static void onPlayerJoin(ServerPlayer player) {
-        AccessoryHelper.getData(player).onAttach(player);
-    }
-
-    private static void onPlayerRespawnPost(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
-        AccessoryHelper.getData(newPlayer).onAttach(newPlayer);
     }
 
     private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {

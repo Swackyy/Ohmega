@@ -93,7 +93,7 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
 
     /**
      * Extract render data for the accessory extension, called in {@link AbstractContainerScreen#extractBackground(GuiGraphicsExtractor, int, int, float)}.
-     * The current pose is relative to the user's (adjusted) defined co-ordinates for the extension
+     * The current pose is relative to the user's (adjusted) defined coordinates for the extension
      * @param gui graphics extractor
      */
     public abstract void extractExtension(GuiGraphicsExtractor gui);

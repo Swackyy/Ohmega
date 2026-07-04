@@ -7,12 +7,13 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.entity.Entity;
@@ -41,29 +42,31 @@ public final class ItemsCommand implements ICommandNode {
                                 .executes(ItemsCommand::printWithEntityIncludeAir)));
     }
 
-    private static int doPrint(CommandContext<CommandSourceStack> context, Entity target, boolean includeAir) throws CommandSyntaxException {
-        NonNullList<ItemStack> stacks;
-        LivingEntity entity = CommandHelper.convertLiving(target);
+    private static int doPrint(CommandContext<CommandSourceStack> context, Entity entity, boolean includeAir) throws CommandSyntaxException {
+        LivingEntity target = CommandHelper.convertLiving(entity);
+        AccessoryData data = OhmegaDataAttachments.getData(target);
+        List<Component> components = new ArrayList<>(data.size());
         CommandSourceStack source = context.getSource();
 
-        if (includeAir) {
-            stacks = AccessoryHelper.getData(entity).getStacks();
-        } else {
-            stacks = AccessoryHelper.getStacksNoEmpty(entity);
+        for (AccessoryDataEntry entry : data.getEntries()) {
+            ItemStack stack = entry.getStack();
 
-            if (stacks.isEmpty()) {
-                source.sendSuccess(() -> Component.translatable(ROOT_FEEDBACK_EMPTY, target.getDisplayName()), true);
-                return Command.SINGLE_SUCCESS;
+            if (includeAir || !stack.isEmpty()) {
+                components.add(Component.literal(stack.count() + " ").append(stack.getDisplayName()));
             }
         }
 
-        List<Component> components = new ArrayList<>(stacks.size());
-
-        for (ItemStack stack : stacks) {
-            components.add(Component.literal(stack.count() + " ").append(stack.getDisplayName()));
+        if (components.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable(ROOT_FEEDBACK_EMPTY,
+                    target.getDisplayName()
+            ), true);
+            return Command.SINGLE_SUCCESS;
         }
 
-        source.sendSuccess(() -> Component.translatable(ROOT_FEEDBACK, target.getDisplayName(), ComponentUtils.formatList(components, Component.literal(", "))), true);
+        source.sendSuccess(() -> Component.translatable(ROOT_FEEDBACK,
+                target.getDisplayName(),
+                ComponentUtils.formatList(components, Component.literal(", "))
+        ), true);
         return Command.SINGLE_SUCCESS;
     }
 

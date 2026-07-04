@@ -7,11 +7,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
-public record UseAccessoryPacket(int index) implements CustomPacketPayload {
-    public static final Type<@NonNull UseAccessoryPacket> TYPE = new Type<>(Ohmega.id("use_accessory"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, UseAccessoryPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, inst -> inst.index,
-            UseAccessoryPacket::new);
+public record KeybindUsePacket(int index) implements CustomPacketPayload {
+    public static final Type<@NonNull KeybindUsePacket> TYPE = new Type<>(Ohmega.id("keybind_use"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, KeybindUsePacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, KeybindUsePacket::index,
+            KeybindUsePacket::new);
 
     @Override
     public @NonNull Type<? extends @NonNull CustomPacketPayload> type() {

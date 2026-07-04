@@ -14,12 +14,25 @@ import org.jspecify.annotations.NonNull;
 public abstract class HoverableButton extends AbstractButton {
     private final @NonNull Identifier textureLocation;
 
+    /**
+     * Constructs a new button that will change texture when {@link #shouldOffsetY()} returns {@code true}
+     * @param x initial x-coordinate of this button
+     * @param y initial y-coordinate of this button
+     * @param width width of the button
+     * @param height height of the button
+     * @param textureLocation {@link Identifier} location of the texture to render for the button
+     * @param component a {@link Component} that will be used for narration and possibly some other stuff
+     */
     public HoverableButton(int x, int y, int width, int height, @NonNull Identifier textureLocation, @NonNull Component component) {
         super(x, y, width, height, component);
 
         this.textureLocation = textureLocation;
     }
 
+    /**
+     * Determines whether the alternative texture should be used
+     * @return {@code true} to use the alternative texture for this render, {@code false} otherwise
+     */
     protected abstract boolean shouldOffsetY();
 
     @Override

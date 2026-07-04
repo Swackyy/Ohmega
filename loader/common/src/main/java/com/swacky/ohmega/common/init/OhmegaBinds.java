@@ -1,22 +1,23 @@
 package com.swacky.ohmega.common.init;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-// todo: register new keybinds on forge and neo
 public final class OhmegaBinds {
     private static final Service INST = OhmegaClient.loadService(Service.class);
 
@@ -39,7 +40,7 @@ public final class OhmegaBinds {
     public static final KeyMapping OPEN_ACCESSORY_INVENTORY = key("open_accessory_inventory", GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping OPEN_EDIT_UI = key("open_edit_ui", GLFW.GLFW_KEY_LEFT_BRACKET);
 
-    private static Map<AccessoryType, List<KeyMapping>> SLOT_KEYS = Map.of();
+    private static IdentityHashMap<AccessoryType, ArrayList<KeyMapping>> SLOT_KEYS = new IdentityHashMap<>();
     private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
 
     private static KeyMapping key(String key, int defaultKey) {
@@ -54,50 +55,57 @@ public final class OhmegaBinds {
         ORDERED_SLOT_KEYS.add(mapping);
     }
 
-    public static void reloadSlotKeys() {
-        Set<AccessoryType> keyBoundSlotTypes = AccessoryHelper.getKeyboundSlotTypes();
-        int keyboundSize = keyBoundSlotTypes.size();
-        int slotsSize = AccessoryHelper.getSlotTypes().size();
-        Map<AccessoryType, Integer> typeCountMap = new IdentityHashMap<>(keyboundSize);
-        SLOT_KEYS = new IdentityHashMap<>(keyboundSize);
-        ORDERED_SLOT_KEYS = new ArrayList<>(slotsSize);
+    public static void rebuildSlotKeys() {
+        LocalPlayer player = Minecraft.getInstance().player;
 
-        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
-            for (int i = 0; i < slotsSize; i++) {
-                addMapping(AccessoryType.GENERIC.get(), i, GLFW.GLFW_KEY_UNKNOWN);
-            }
-        } else {
-            for (AccessoryType type : AccessoryHelper.getSlotTypes()) {
-                if (keyBoundSlotTypes.contains(type)) {
-                    int index = typeCountMap.getOrDefault(type, 0);
-                    // Default bindings in ternary:
-                    // Utility 1: G
-                    // Utility 2: V
-                    // Special 1: B
-                    int key =
-                            type == AccessoryType.UTILITY.get() ?
-                                    index == 0 ? GLFW.GLFW_KEY_G :
-                                    index == 1 ? GLFW.GLFW_KEY_V :
-                                    GLFW.GLFW_KEY_UNKNOWN :
-                                    type == AccessoryType.SPECIAL.get() &&
-                                            index == 0 ? GLFW.GLFW_KEY_B :
-                                    GLFW.GLFW_KEY_UNKNOWN;
+        if (player != null) {
+            ImmutableSet<AccessoryType> keyBoundSlotTypes = OhmegaConfig.Server.getKeyboundSlotTypes();
+            int keyboundSize = keyBoundSlotTypes.size();
+            SLOT_KEYS = new IdentityHashMap<>(keyboundSize);
+            IdentityHashMap<AccessoryType, Integer> typeCountMap = new IdentityHashMap<>(keyboundSize);
+            AccessoryData data = OhmegaDataAttachments.getData(player);
+            int slotsSize = data.size();
+            ORDERED_SLOT_KEYS = new ArrayList<>(slotsSize);
 
-                    addMapping(type, index, key);
-                    typeCountMap.put(type, index + 1);
+            if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
+                for (int i = 0; i < slotsSize; i++) {
+                    addMapping(AccessoryType.GENERIC.get(), i, GLFW.GLFW_KEY_UNKNOWN);
+                }
+            } else {
+                for (AccessoryDataEntry entry : data.getEntries()) {
+                    AccessoryType type = entry.getType();
+
+                    if (keyBoundSlotTypes.contains(type)) {
+                        int index = typeCountMap.getOrDefault(type, 0);
+                        // Default bindings in ternary:
+                        // Utility 1: G
+                        // Utility 2: V
+                        // Special 1: B
+                        int key =
+                                type == AccessoryType.UTILITY.get() ?
+                                        index == 0 ? GLFW.GLFW_KEY_G :
+                                        index == 1 ? GLFW.GLFW_KEY_V :
+                                        GLFW.GLFW_KEY_UNKNOWN :
+                                        type == AccessoryType.SPECIAL.get() &&
+                                                index == 0 ? GLFW.GLFW_KEY_B :
+                                        GLFW.GLFW_KEY_UNKNOWN;
+
+                        addMapping(type, index, key);
+                        typeCountMap.put(type, index + 1);
+                    }
                 }
             }
         }
     }
 
-    public static Map<AccessoryType, List<KeyMapping>> getSlotKeys() {
+    public static IdentityHashMap<AccessoryType, ArrayList<KeyMapping>> getSlotKeys() {
         return SLOT_KEYS;
     }
 
     public static KeyMapping getMapping(AccessoryType type, int index) {
-        List<KeyMapping> list = SLOT_KEYS.get(type);
+        ArrayList<KeyMapping> list = SLOT_KEYS.get(type);
 
-        if (list != null) {
+        if (list != null && list.size() > index) {
             return list.get(index);
         }
 

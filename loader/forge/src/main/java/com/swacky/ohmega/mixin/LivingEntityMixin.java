@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelperImpl;
+import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
 import com.swacky.ohmega.event.CommonCallbacks;
 import net.minecraft.world.entity.Attackable;
 import net.minecraft.world.entity.Entity;
@@ -26,7 +26,7 @@ abstract class LivingEntityMixin extends Entity implements Attackable, WaypointT
     public void tick(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
 
-        if (AccessoryHelperImpl.isPlayerDataPresent(entity)) {
+        if (OhmegaDataAttachmentsImpl.isAccessoryDataPresent(entity)) {
             CommonCallbacks.onLivingPostTick(entity);
         }
     }

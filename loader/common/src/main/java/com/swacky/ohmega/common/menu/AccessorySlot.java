@@ -1,13 +1,13 @@
 package com.swacky.ohmega.common.menu;
 
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -19,6 +19,7 @@ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jspecify.annotations.NonNull;
 
+// todo: move to api and abstract, creating this as the default impl
 public final class AccessorySlot extends Slot {
     private static final Container EMPTY_CONTAINER = new SimpleContainer(0);
 
@@ -32,7 +33,7 @@ public final class AccessorySlot extends Slot {
         super(EMPTY_CONTAINER, index, x, y);
 
         this.player = player;
-        this.handler = AccessoryHelper.getData(player);
+        this.handler = OhmegaDataAttachments.getData(player);
         this.type = type;
         this.originalX = x;
         this.originalY = y;
@@ -80,7 +81,7 @@ public final class AccessorySlot extends Slot {
         Accessory accessory = Accessories.get(item);
 
         if (accessory != null) {
-            return handler.isItemValid(player, getContainerSlot(), stack, EquipContext.SLOT);
+            return handler.getEntry(getContainerSlot()).isItemValid(player, stack, EquipContext.SLOT);
         }
 
         return false;
@@ -109,7 +110,7 @@ public final class AccessorySlot extends Slot {
 
     @Override
     public @NonNull ItemStack getItem() {
-        return handler.getStackInSlot(getContainerSlot());
+        return handler.getEntry(getContainerSlot()).getStack();
     }
 
     @Override
@@ -127,12 +128,12 @@ public final class AccessorySlot extends Slot {
 
     @Override
     public @NonNull ItemStack remove(int amount) {
-        return handler.remove(player, getContainerSlot(), amount, EquipContext.SLOT);
+        return handler.getEntry(getContainerSlot()).remove(player, amount, EquipContext.SLOT);
     }
 
     @Override
     public void set(@NonNull ItemStack stack) {
-        handler.setStack(player, getContainerSlot(), stack, EquipContext.SLOT);
+        handler.getEntry(getContainerSlot()).setStack(player, stack, getContainerSlot(), EquipContext.SLOT);
     }
 
     @Override

@@ -1,10 +1,8 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IMixinAccessoryMenu;
-import com.swacky.ohmega.common.menu.TemporarySlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractCraftingMenu;
@@ -48,15 +46,16 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
                     value = "RETURN"),
             order = -7777)
     private void init(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
-        if (owner.level().isClientSide()) {
+        AccessoryMenus.attachExtension(this, owner, AccessoryMenus.assertImplementation(this));
+        /*if (owner.level().isClientSide()) {
             AccessoryMenus.onConstruct(this, owner);
         } else {
             AccessoryMenus.attachExtension(this, owner, AccessoryMenus.assertImplementation(this));
 
-            for (int i = 0; i < AccessoryHelper.getSlotTypes().size(); i++) {
+            for (int i = 0; i < AccessoryHelper.getData(owner).size(); i++) {
                 addSlot(new TemporarySlot());
             }
-        }
+        }*/
     }
 
     // todo: this bad

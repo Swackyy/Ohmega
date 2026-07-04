@@ -14,6 +14,7 @@ import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
+import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
 import com.swacky.ohmega.common.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
@@ -48,9 +49,10 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         // Commands
         // Misc
         builder.add(CommandHelper.CONTEXT_HOVER, "(hover)");
-        builder.add(CommandHelper.EXCEPTION_ARGUMENT_LIVING_ONLY, "Only living entities may be specified for this argument, however the provided selector includes non-living entities");
+        builder.add(CommandHelper.EXCEPTION_ARGUMENT_LIVING, "Only a living entity may be specified for this argument, however the provided selector returns a non-living entity");
         // Exceptions
-        builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown accessory type: %s");
+        builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown accessory type: '%s'");
+        builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Accessory type '%s' is marked as non-specifiable, and this argument only accepts specifiable types");
         // Clear
         builder.add(ClearCommand.ROOT_EXCEPTION_MULTIPLE, "No matching items were found in %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching items were found in entity %s's accessory inventory");
@@ -64,16 +66,46 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(InfoCommand.REPORT_FEEDBACK, "Thanks for using Ohmega, if you want to report a bug, click this message to open our issue tracker");
         builder.add(InfoCommand.WIKI_FEEDBACK, "Want to make a mod with Ohmega? Click this message to open the Ohmega wiki to learn how");
         // Item
-        builder.add(ItemCommand.ROOT_FEEDBACK, "Index %s is out of bounds! Must be greater than or equal to 0 and below %s");
+        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Index %s is out of bounds! Must be greater than or equal to 0 and below %s");
         builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s %s in index %s of their accessory inventory");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s of %s entities' accessory inventories to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
+        builder.add(ItemCommand.TYPE_GET_FEEDBACK, "Item '%s' has default accessory type '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Entity %s has the following items in their accessory inventory: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Entity %s has no items in their accessory inventory");
+        // Slots
+        builder.add(SlotsCommand.ADD_FEEDBACK_MULTIPLE, "Added %s accessory slot(s) of type '%s' to %s entities' accessory inventories");
+        builder.add(SlotsCommand.ADD_FEEDBACK_SINGLE, "Added %s accessory slot(s) of type '%s' to entity %s's accessory inventory");
+        builder.add(SlotsCommand.CLEAR_EXCEPTION_MULTIPLE, "No accessory slots were found on %s entities");
+        builder.add(SlotsCommand.CLEAR_EXCEPTION_SINGLE, "No accessory slots were found on entity %s");
+        builder.add(SlotsCommand.CLEAR_FEEDBACK_MULTIPLE, "Removed %s accessory slot(s) from %s entities");
+        builder.add(SlotsCommand.CLEAR_FEEDBACK_SINGLE, "Removed %s accessory slot(s) from entity %s");
+        builder.add(SlotsCommand.DEFAULT_FEEDBACK_MULTIPLE, "Set %s entities' accessory slots to default");
+        builder.add(SlotsCommand.DEFAULT_FEEDBACK_SINGLE, "Set entity %s's accessory slots to default");
+        builder.add(SlotsCommand.GET_FEEDBACK_RANGED, "Entity %s has %s accessory slots with the following types: %s");
+        builder.add(SlotsCommand.GET_FEEDBACK, "Slot with index %s in entity %s's accessory inventory is of type '%s'");
+        builder.add(SlotsCommand.INHERIT_FEEDBACK_MULTIPLE, "Inherited entity %s's accessory slots for %s entities");
+        builder.add(SlotsCommand.INHERIT_FEEDBACK_RANGED_MULTIPLE, "Inherited entity %s's accessory slots for %s entities for indexes %s to %s");
+        builder.add(SlotsCommand.INHERIT_FEEDBACK_RANGED_SINGLE, "Inherited entity %s's accessory slots for entity %s for indexes %s to %s");
+        builder.add(SlotsCommand.INHERIT_FEEDBACK_SINGLE, "Inherited entity %s's accessory slots for entity %s");
+        builder.add(SlotsCommand.INSERT_FEEDBACK_MULTIPLE, "Inserted %s accessory slot(s) of type '%s' at index %s in %s entities' accessory inventories");
+        builder.add(SlotsCommand.INSERT_FEEDBACK_SINGLE, "Inserted %s accessory slot(s) of type '%s' at index %s in entity %s's accessory inventory");
+        builder.add(SlotsCommand.REMOVE_FEEDBACK_MULTIPLE, "Removed %s accessory slot(s) from %s entities");
+        builder.add(SlotsCommand.REMOVE_FEEDBACK_SINGLE, "Removed %s accessory slot(s) from entity %s");
+        builder.add(SlotsCommand.ROOT_EXCEPTION_BOUNDS_ARGUMENT, "Argument '%s' of value %s is out of bounds, must be greater than or equal to argument '%s'");
+        builder.add(SlotsCommand.ROOT_EXCEPTION_BOUNDS_SLOTS, "Argument '%s' of value %s is out of bounds, must be less than or equal to entity %s's number of accessory slots");
+        builder.add(SlotsCommand.SET_FEEDBACK_MULTIPLE, "Set accessory slot with index %s in %s entities' accessory inventories to type '%s'");
+        builder.add(SlotsCommand.SET_FEEDBACK_RANGED_MULTIPLE, "Set accessory slots with indexes %s to %s in %s entities' accessory inventories to type '%s'");
+        builder.add(SlotsCommand.SET_FEEDBACK_RANGED_SINGLE, "Set accessory slots with indexes %s to %s in entity %s's accessory inventory to type '%s'");
+        builder.add(SlotsCommand.SET_FEEDBACK_SINGLE, "Set accessory slot with index %s in entity %s's accessory inventory to type '%s'");
+        builder.add(SlotsCommand.TRACKING_FEEDBACK_DEFAULT, "Entity %s is tracking the default accessory slots");
+        builder.add(SlotsCommand.TRACKING_FEEDBACK_NONE, "Entity %s is not tracking any other accessory slots");
+        builder.add(SlotsCommand.UNTRACK_FEEDBACK_MULTIPLE, "Untracked %s entities' accessory slots");
+        builder.add(SlotsCommand.UNTRACK_FEEDBACK_SINGLE, "Untracked entity %s's accessory slots");
         // Type
         builder.add(TypesCommand.LIST_FEEDBACK, "There are %s accessory type(s) recognised on this world: %s");
-        builder.add(TypesCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties:%s");
+        builder.add(TypesCommand.QUERY_FEEDBACK, "Accessory type '%s' has the following properties: %s");
 
         // Config
         internalHelper.addConfigTitle("Ohmega Config");
@@ -90,7 +122,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
-                "Button Style",
+                "Toggle Extension Button Style",
                 OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
@@ -253,10 +285,14 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         // Server
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Config");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
-                "Slot Types",
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
+                "Default Slot Types",
                 OhmegaConfig.Server.Service.SLOT_TYPES_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Edit");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Edit");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
+                "Shrink Default Slot Types",
+                OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION);
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Key-bound Slot Types",

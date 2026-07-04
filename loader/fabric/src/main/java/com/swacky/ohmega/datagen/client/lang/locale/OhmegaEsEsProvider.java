@@ -91,10 +91,10 @@ public final class OhmegaEsEsProvider extends OhmegaLangProvider {
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Server de Ohmega", "Configuración del Servidor de Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SLOT_TYPES_KEY,
+                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Tipos de Espacios",
                 "Define los tipos y números de los espacios en el inventario de accesorios");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.SLOT_TYPES_KEY, "Editar");
+        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Editar");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Tipos de espacios con teclas asignadas",

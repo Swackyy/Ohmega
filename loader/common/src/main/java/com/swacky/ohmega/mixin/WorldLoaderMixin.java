@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @Mixin(WorldLoader.class)
-public class WorldLoaderMixin {
+abstract class WorldLoaderMixin {
     @Inject(
             method = "load",
             at = @At(

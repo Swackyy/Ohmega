@@ -10,7 +10,7 @@ import org.jspecify.annotations.NonNull;
 public record SetExtensionVisiblePacket(boolean value) implements CustomPacketPayload {
     public static final Type<@NonNull SetExtensionVisiblePacket> TYPE = new Type<>(Ohmega.id("set_extension_visible"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SetExtensionVisiblePacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.BOOL, inst -> inst.value,
+            ByteBufCodecs.BOOL, SetExtensionVisiblePacket::value,
             SetExtensionVisiblePacket::new
     );
 

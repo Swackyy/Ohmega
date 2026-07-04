@@ -36,7 +36,7 @@ public final class TypesCommand implements ICommandNode {
                 .then(Commands.literal(ELEMENT_LIST)
                         .executes(TypesCommand::list))
                 .then(Commands.literal(ELEMENT_QUERY)
-                        .then(Commands.argument(ARGUMENT_TYPE, new AccessoryTypeArgument())
+                        .then(Commands.argument(ARGUMENT_TYPE, AccessoryTypeArgument.any())
                                 .executes(TypesCommand::query)));
     }
 
@@ -49,8 +49,10 @@ public final class TypesCommand implements ICommandNode {
                     style.withHoverEvent(new HoverEvent.ShowText(type.getTranslation().withColor(type.getHoverTextColour())))));
         }
 
-        context.getSource().sendSuccess(() -> Component.translatable(LIST_FEEDBACK, types.size(),
-                ComponentUtils.formatList(components, Component.literal(", "))), false);
+        context.getSource().sendSuccess(() -> Component.translatable(LIST_FEEDBACK,
+                types.size(),
+                ComponentUtils.formatList(components, Component.literal(", "))
+        ), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -59,7 +61,7 @@ public final class TypesCommand implements ICommandNode {
 
         context.getSource().sendSuccess(() -> Component.translatable(QUERY_FEEDBACK,
                 Component.literal(type.getId().toString()).withStyle(ChatFormatting.GREEN),
-                Component.literal(AccessoryType.CODEC.encodeStart(JsonOps.INSTANCE, type).getOrThrow().toString()).withStyle(ChatFormatting.GREEN)
+                Component.literal(AccessoryType.INITIALISER_CODEC.encodeStart(JsonOps.INSTANCE, type).getOrThrow().toString()).withStyle(ChatFormatting.GREEN)
         ), false);
         return Command.SINGLE_SUCCESS;
     }

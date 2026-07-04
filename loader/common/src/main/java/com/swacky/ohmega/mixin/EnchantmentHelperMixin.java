@@ -1,6 +1,7 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -55,7 +56,9 @@ abstract class EnchantmentHelperMixin {
 
         ArrayList<EnchantedItemInUse> list = new ArrayList<>();
 
-        for (ItemStack stack : AccessoryHelper.getData(entity).getStacks()) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(entity).getEntries()) {
+            ItemStack stack = entry.getStack();
+
             if (filter.test(stack)) {
                 for (Holder<Enchantment> holder : stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).keySet()) {
                     Enchantment enchantment = holder.value();

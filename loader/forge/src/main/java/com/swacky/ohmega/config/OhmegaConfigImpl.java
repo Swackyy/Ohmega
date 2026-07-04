@@ -235,9 +235,12 @@ public final class OhmegaConfigImpl {
 
         public Server() {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-            LazySavedValue<List<? extends String>> slotTypes = wrap(builder
+            LazySavedValue<List<? extends String>> defaultSlotTypes = wrap(builder
                     .comment(SLOT_TYPES_DESCRIPTION)
-                    .defineList(SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
+                    .defineList(DEFAULT_SLOT_TYPES_KEY, SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
+            BooleanLazySavedValue shrinkDefaultSlotTypes = wrap(builder
+                    .comment(SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION)
+                    .define(SHRINK_DEFAULT_SLOT_TYPES_KEY, SHRINK_DEFAULT_SLOT_TYPES_DEFAULT));
             LazySavedValue<List<? extends String>> keyboundSlotTypes = wrap(builder
                     .comment(KEYBOUND_SLOT_TYPES_DESCRIPTION)
                     .defineListAllowEmpty(KEYBOUND_SLOT_TYPES_KEY, KEYBOUND_SLOT_TYPES_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
@@ -251,7 +254,8 @@ public final class OhmegaConfigImpl {
                     .comment(ALLOW_HIDE_ACCESSORIES_DESCRIPTION)
                     .define(ALLOW_HIDE_ACCESSORIES_KEY, ALLOW_HIDE_ACCESSORIES_DEFAULT));
             this.data = new Data(
-                    slotTypes,
+                    defaultSlotTypes,
+                    shrinkDefaultSlotTypes,
                     keyboundSlotTypes,
                     keepAccessoriesBehaviour,
                     disableAccessoryTypes,

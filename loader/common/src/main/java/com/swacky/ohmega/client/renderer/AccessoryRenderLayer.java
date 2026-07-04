@@ -8,8 +8,7 @@ import com.swacky.ohmega.api.client.renderer.IHumanoidAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.ILivingAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.LivingRenderContext;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.Accessory;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
@@ -21,9 +20,11 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
+
+import java.util.ArrayList;
 
 // todo: cache renderer entries if possible
 public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U extends EntityModel<? super T>> extends RenderLayer<T, U> {
@@ -42,17 +43,17 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
 
         if (data != null && !OhmegaHooks.renderPre(state, poseStack)) {
             SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
-            NonNullList<ItemStack> stacks = data.stacks();
+            ArrayList<AccessoryDataEntry> entries = data.entries();
             boolean flag = OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.getData().allowHideAccessories().get();
 
-            for (int i = 0; i < stacks.size(); i++) {
-                ItemStack stack = stacks.get(i);
+            for (AccessoryDataEntry entry : entries) {
+                ItemStack stack = entry.getStack();
 
-                if (!stack.isEmpty() && !(flag && data.hidden()[i])) {
-                    Accessory accessory = Accessories.get(stack.getItem());
+                if (!stack.isEmpty() && !(flag && entry.isHidden())) {
+                    Item item = stack.getItem();
 
                     if (state instanceof HumanoidRenderState humanoidState) {
-                        IHumanoidAccessoryRenderer.Factory factory = AccessoryRenderers.getHumanoidFactory(accessory);
+                        IHumanoidAccessoryRenderer.Factory factory = AccessoryRenderers.getHumanoidFactory(item);
 
                         if (factory != null) {
                             HumanoidRenderContext context = new HumanoidRenderContext(
@@ -72,7 +73,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
                         }
                     }
 
-                    ILivingAccessoryRenderer.Factory factory = AccessoryRenderers.getLivingFactory(accessory);
+                    ILivingAccessoryRenderer.Factory factory = AccessoryRenderers.getLivingFactory(item);
 
                     if (factory != null) {
                         LivingRenderContext context = new LivingRenderContext(

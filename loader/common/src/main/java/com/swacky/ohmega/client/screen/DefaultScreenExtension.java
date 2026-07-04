@@ -3,9 +3,9 @@ package com.swacky.ohmega.client.screen;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.common.Ohmega;
+import com.swacky.ohmega.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -22,32 +22,40 @@ import java.util.List;
 public final class DefaultScreenExtension extends AccessoryScreenExtension implements IEntityRenderingExtension {
     private static final Identifier SLOT_LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/slot.png");
 
-    private final int renderColumns;
-    private final int slotsAvailable;
-    private final int mostSlotsPerColumn;
-    private final int lastColumnSlots;
-
+    private int renderColumns = 0;
+    private int slotsAvailable = 0;
+    private int mostSlotsPerColumn = 0;
+    private int lastColumnSlots = 0;
     private boolean flipEntity = false;
 
     @SuppressWarnings("unused")
     public DefaultScreenExtension(AbstractContainerScreen<?> screen, AccessoryMenuExtension menuExtension) {
         super(screen, menuExtension);
 
-        int size = AccessoryHelper.getSlotTypes().size();
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
-        int maxRenderSlots = data.maxColumnRenderSlots().get();
-        int maxColumnSlots = data.maxColumnSlots().get();
-        int maxColumns = data.maxColumns().get();
-        int renderSlots = Math.min(maxColumnSlots, maxRenderSlots);
-        this.renderColumns = (int) Math.min(Math.ceil((double) size / renderSlots), maxColumns);
-        // 2px buffer, 2 * 4px extension borders, 18 * number of columns
-        this.slotsAvailable = Math.min(renderColumns * renderSlots, size);
-        this.mostSlotsPerColumn = Math.min(renderSlots, size);
-        this.lastColumnSlots = slotsAvailable % mostSlotsPerColumn == 0 ? mostSlotsPerColumn : slotsAvailable % mostSlotsPerColumn;
+        int size = OhmegaDataAttachments.getData(menuExtension.getOwner()).size();
     }
 
     @Override
     public void initExtension(WidgetAdder adder) {
+        int size = OhmegaDataAttachments.getData(getMenuExtension().getOwner()).size();
+
+        if (size > 0) {
+            OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+            int maxRenderSlots = data.maxColumnRenderSlots().get();
+            int maxColumnSlots = data.maxColumnSlots().get();
+            int maxColumns = data.maxColumns().get();
+            int renderSlots = Math.min(maxColumnSlots, maxRenderSlots);
+            this.renderColumns = (int) Math.min(Math.ceil((double) size / renderSlots), maxColumns);
+            this.slotsAvailable = Math.min(renderColumns * renderSlots, size);
+            this.mostSlotsPerColumn = Math.min(renderSlots, size);
+            this.lastColumnSlots = slotsAvailable % mostSlotsPerColumn == 0 ? mostSlotsPerColumn : slotsAvailable % mostSlotsPerColumn;
+        } else {
+            this.renderColumns = 0;
+            this.slotsAvailable = 0;
+            this.mostSlotsPerColumn = 0;
+            this.lastColumnSlots = 0;
+        }
+
         if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
             int index = 0;
 
@@ -88,12 +96,20 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public int getWidth() {
-        return 8 + renderColumns * 18;
+        if (slotsAvailable > 0) {
+            return 8 + renderColumns * 18;
+        }
+
+        return 0;
     }
 
     @Override
     public int getHeight() {
-        return 8 + mostSlotsPerColumn * 18;
+        if (slotsAvailable > 0) {
+            return 8 + mostSlotsPerColumn * 18;
+        }
+
+        return 0;
     }
 
     private void blit(GuiGraphicsExtractor gui, int x, int y, int u, int v, int width, int height) {
@@ -102,66 +118,68 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public void extractExtension(GuiGraphicsExtractor gui) {
-        int index = 0;
+        if (slotsAvailable > 0) {
+            int index = 0;
 
-        for (int i = 0; i < renderColumns; i++) {
-            // Slots
-            int slotsCreatedCurrentColumn = 0;
+            for (int i = 0; i < renderColumns; i++) {
+                // Slots
+                int slotsCreatedCurrentColumn = 0;
 
-            for (int j = 0; true; j++) {
-                blit(gui, 4 + 18 * i, 4 + j * 18, 4, 4, 18, 18);
+                for (int j = 0; true; j++) {
+                    blit(gui, 4 + 18 * i, 4 + j * 18, 4, 4, 18, 18);
 
-                index++;
+                    index++;
 
-                if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
-                    break;
+                    if (++slotsCreatedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {
+                        break;
+                    }
+                }
+
+                // Top border
+                blit(gui, 4 + 18 * i, 0, 4, 0, 18, 4);
+
+                // Bottom border
+                if (i >= renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
+                    blit(gui, 4 + 18 * i, 4 + 18 * lastColumnSlots, 4, 22, 18, 4);
+                } else {
+                    blit(gui, 4 + 18 * i, 4 + 18 * mostSlotsPerColumn, 4, 22, 18, 4);
                 }
             }
 
-            // Top border
-            blit(gui, 4 + 18 * i, 0, 4, 0, 18, 4);
+            // Side borders
+            for (int i = 0; i < mostSlotsPerColumn; i++) {
+                // Left
+                blit(gui, 0, 4 + 18 * i, 0, 4, 4, 18);
 
-            // Bottom border
-            if (i >= renderColumns - 1 && lastColumnSlots != mostSlotsPerColumn) {
-                blit(gui, 4 + 18 * i, 4 + 18 * lastColumnSlots, 4, 22, 18, 4);
-            } else {
-                blit(gui, 4 + 18 * i, 4 + 18 * mostSlotsPerColumn, 4, 22, 18, 4);
+                // Right
+                if (i >= lastColumnSlots) {
+                    blit(gui, 4 + 18 * (renderColumns - 1), 4 + 18 * i, 22, 4, 4, 18);
+                } else {
+                    blit(gui, 4 + 18 * renderColumns, 4 + 18 * i, 22, 4, 4, 18);
+                }
             }
-        }
 
-        // Side borders
-        for (int i = 0; i < mostSlotsPerColumn; i++) {
-            // Left
-            blit(gui, 0, 4 + 18 * i, 0, 4, 4, 18);
+            // Top left corner
+            blit(gui, 0, 0, 0, 0, 4, 4);
 
-            // Right
-            if (i >= lastColumnSlots) {
-                blit(gui, 4 + 18 * (renderColumns - 1), 4 + 18 * i, 22, 4, 4, 18);
-            } else {
-                blit(gui, 4 + 18 * renderColumns, 4 + 18 * i, 22, 4, 4, 18);
+            // Top right corner
+            blit(gui, 4 + 18 * renderColumns, 0, 22, 0, 4, 4);
+
+            // Bottom left corner
+            blit(gui, 0, 4 + 18 * mostSlotsPerColumn, 0, 22, 4, 4);
+
+            // Bottom right corner
+            blit(gui, 4 + 18 * renderColumns, 4 + 18 * lastColumnSlots, 22, 22, 4, 4);
+
+            if (lastColumnSlots != mostSlotsPerColumn) {
+                blit(gui, 4 + 18 * (renderColumns - 1), 4 + 18 * mostSlotsPerColumn, 22, 22, 4, 4);
             }
-        }
 
-        // Top left corner
-        blit(gui, 0, 0, 0, 0, 4, 4);
-
-        // Top right corner
-        blit(gui, 4 + 18 * renderColumns, 0, 22, 0, 4, 4);
-
-        // Bottom left corner
-        blit(gui, 0, 4 + 18 * mostSlotsPerColumn, 0, 22, 4, 4);
-
-        // Bottom right corner
-        blit(gui, 4 + 18 * renderColumns, 4 + 18 * lastColumnSlots, 22, 22, 4, 4);
-
-        if (lastColumnSlots != mostSlotsPerColumn) {
-            blit(gui, 4 + 18 * (renderColumns - 1), 4 + 18 * mostSlotsPerColumn, 22, 22, 4, 4);
-        }
-
-        // Intersecting corner
-        if (lastColumnSlots != mostSlotsPerColumn) {
-            blit(gui, 5 + 18 * (renderColumns - 1), 4 + 18 * lastColumnSlots, 19, 22, 3, 3);
-            blit(gui, 5 + 18 * (renderColumns - 1), 4 + 18 * lastColumnSlots + 1, 21, 22, 1, 1);
+            // Intersecting corner
+            if (lastColumnSlots != mostSlotsPerColumn) {
+                blit(gui, 5 + 18 * (renderColumns - 1), 4 + 18 * lastColumnSlots, 19, 22, 3, 3);
+                blit(gui, 5 + 18 * (renderColumns - 1), 4 + 18 * lastColumnSlots + 1, 21, 22, 1, 1);
+            }
         }
     }
 
