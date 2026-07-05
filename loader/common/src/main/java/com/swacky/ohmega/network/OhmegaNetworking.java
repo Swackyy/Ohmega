@@ -171,8 +171,8 @@ public final class OhmegaNetworking {
                 EquipContext context = packet.context();
 
                 switch (packet.action()) {
-                    case CLEAR -> data.clearSlots(entity, packet.data()[0], context);
-                    case CLEAR_ALL -> data.clearSlots(entity, -1, context);
+                    case CLEAR -> data.clearSlots(entity, null, packet.data()[0], context);
+                    case CLEAR_ALL -> data.clearSlots(entity, null, -1, context);
                     case DEFAULT -> data.defaultSlots(entity, context);
                     case INHERIT -> {
                         int[] packetData = packet.data();
@@ -184,7 +184,7 @@ public final class OhmegaNetworking {
                     case INSERT -> {
                         int[] packetData = packet.data();
 
-                        data.insertSlots(entity, packetData[0], packet.accessoryType().orElseThrow(), packetData[1]);
+                        data.insertSlots(entity, packetData[0], packet.accessoryType().orElseThrow(), packetData[1], context);
                     }
                     case REMOVE -> data.removeSlots(entity, IntArrays.reverse(packet.data()), context);
                     case SET -> {

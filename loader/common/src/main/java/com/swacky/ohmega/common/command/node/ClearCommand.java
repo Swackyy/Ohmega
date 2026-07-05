@@ -87,13 +87,13 @@ public final class ClearCommand implements ICommandNode {
     }
 
     private static int clear(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        return doClear(context, List.of(context.getSource().getPlayerOrException()), _ -> true, -1);
+        return doClear(context, List.of(context.getSource().getPlayerOrException()), null, -1);
     }
 
     private static int clearWithTargets(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<? extends Entity> targets = EntityArgument.getEntities(context, ARGUMENT_TARGETS);
 
-        return doClear(context, targets, _ -> true, -1);
+        return doClear(context, targets, null, -1);
     }
 
     private static int clearWithTargetsFilter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

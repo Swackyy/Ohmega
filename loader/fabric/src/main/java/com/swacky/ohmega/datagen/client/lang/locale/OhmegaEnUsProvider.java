@@ -310,6 +310,10 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Allow Hide Accessories",
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
+                "Inject Vanilla Clear",
+                OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_DESCRIPTION);
 
         // ConfigurationScreen Forge port UI translations
         // Titles

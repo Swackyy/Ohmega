@@ -47,6 +47,16 @@ jar {
     exclude "**/.cache"
 }
 
+javadoc {
+    options {
+        tags = [
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
+        ]
+    }
+}
+
 tasks.named("javadocJar", Jar) {
     archiveClassifier = "javadoc-unused"
 }

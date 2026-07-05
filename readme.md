@@ -19,6 +19,7 @@ The following table describes features and the mod's version requirement in whic
 | Multi-loader        | >=1.4   | Fabric, Forge, NeoForge | N/A           |
 | Accessory rendering | >=1.6   | Broad (exp)             | Yes           |
 | Custom slot types   | >=1.3   | Full, data-driven       | Yes           |
+| Per-player slots    | >=1.6   | Dynamic, broad commands | No            |
 | Data generation     | >=1.5.8 | Accessory types, lang   | Yes           |
 | Key-bound slots     | Any     | Built-in, dynamic       | No            |
 | Accessory events    | >=1.1   | Full (>=1.6)            | Partial       |

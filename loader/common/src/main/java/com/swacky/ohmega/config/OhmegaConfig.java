@@ -487,13 +487,19 @@ public final class OhmegaConfig {
                     Will prevent players from toggling visibility on their accessories if false, so that they always render""";
             boolean ALLOW_HIDE_ACCESSORIES_DEFAULT = true;
             // - - -
+            String INJECT_VANILLA_CLEAR_KEY = "injectVanillaClear";
+            String INJECT_VANILLA_CLEAR_DESCRIPTION = """
+                    Injects accessory clear operations into vanilla inventory clearing code""";
+            boolean INJECT_VANILLA_CLEAR_DEFAULT = false;
+            // - - -
             record Data(
                     LazySavedValue<List<? extends String>> defaultSlotTypes,
                     BooleanLazySavedValue shrinkDefaultSlotTypes,
                     LazySavedValue<List<? extends String>> keyboundSlotTypes,
                     LazySavedValue<KeepAccessoriesBehaviour> keepAccessoriesBehaviour,
                     BooleanLazySavedValue disableAccessoryTypes,
-                    BooleanLazySavedValue allowHideAccessories) {
+                    BooleanLazySavedValue allowHideAccessories,
+                    BooleanLazySavedValue injectVanillaClear) {
                 public void pull() {
                     defaultSlotTypes.pull();
                     shrinkDefaultSlotTypes.pull();
@@ -501,6 +507,7 @@ public final class OhmegaConfig {
                     keepAccessoriesBehaviour.pull();
                     disableAccessoryTypes.pull();
                     allowHideAccessories.pull();
+                    injectVanillaClear.pull();
                     revalidateCached();
                 }
             }

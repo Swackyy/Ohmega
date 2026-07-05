@@ -152,7 +152,7 @@ public final class SlotsCommand implements ICommandNode {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         for (LivingEntity target : targets) {
-            OhmegaDataAttachments.getData(target).addSlots(target, type, amount);
+            OhmegaDataAttachments.getData(target).addSlots(target, type, amount, EquipContext.COMMAND);
         }
 
         int size = targets.size();
@@ -194,13 +194,7 @@ public final class SlotsCommand implements ICommandNode {
         int[] count = {0};
 
         for (LivingEntity target : targets) {
-            AccessoryData data = OhmegaDataAttachments.getData(target);
-
-            if (filter == null) {
-                count[0] += data.clearSlots(target, max, EquipContext.COMMAND);
-            } else {
-                count[0] += data.clearSlots(target, filter, max, EquipContext.COMMAND);
-            }
+            count[0] += OhmegaDataAttachments.getData(target).clearSlots(target, filter, max, EquipContext.COMMAND);
         }
 
         int size = targets.size();
@@ -309,7 +303,7 @@ public final class SlotsCommand implements ICommandNode {
         CommandSourceStack source = context.getSource();
         Component name = target.getDisplayName();
 
-        if (index == -1) {
+        if (index < 0) {
             List<Component> components = new ArrayList<>(size);
 
             for (int i = 0; i < size; i++) {
@@ -362,7 +356,7 @@ public final class SlotsCommand implements ICommandNode {
     private static int doInherit(CommandContext<CommandSourceStack> context, Entity other, Collection<? extends Entity> entities, int min, int max) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
 
-        if (min <= max || max == -1) {
+        if (min <= max || max < 0) {
             List<LivingEntity> targets = CommandHelper.convertLiving(entities);
             LivingEntity otherTarget = CommandHelper.convertLiving(other);
             int size = targets.size();
@@ -376,7 +370,7 @@ public final class SlotsCommand implements ICommandNode {
                 if (max < dataSize) {
                     data.inheritSlots(target, otherTarget, min, max, EquipContext.COMMAND);
 
-                    if (min == 0 && max == -1) {
+                    if (min == 0 && max < 0) {
                         source.sendSuccess(() -> Component.translatable(INHERIT_FEEDBACK_SINGLE,
                                 otherTarget.getDisplayName(),
                                 name
@@ -399,7 +393,7 @@ public final class SlotsCommand implements ICommandNode {
                     data.inheritSlots(target, otherTarget, min, Math.min(max, data.size()), EquipContext.COMMAND);
                 }
 
-                if (min == 0 && max == -1) {
+                if (min == 0 && max < 0) {
                     source.sendSuccess(() -> Component.translatable(INHERIT_FEEDBACK_MULTIPLE,
                             otherTarget.getDisplayName(),
                             size
@@ -468,7 +462,7 @@ public final class SlotsCommand implements ICommandNode {
             Component name = target.getDisplayName();
 
             if (index < dataSize) {
-                data.insertSlots(target, index, type, amount);
+                data.insertSlots(target, index, type, amount, EquipContext.COMMAND);
 
                 source.sendSuccess(() -> Component.translatable(INSERT_FEEDBACK_SINGLE,
                         amount,
@@ -483,7 +477,7 @@ public final class SlotsCommand implements ICommandNode {
             for (LivingEntity target : targets) {
                 AccessoryData data = OhmegaDataAttachments.getData(target);
 
-                data.insertSlots(target, Math.min(index, data.size()), type, amount);
+                data.insertSlots(target, Math.min(index, data.size()), type, amount, EquipContext.COMMAND);
             }
 
             source.sendSuccess(() -> Component.translatable(INSERT_FEEDBACK_MULTIPLE,
@@ -527,13 +521,7 @@ public final class SlotsCommand implements ICommandNode {
             Component name = targets.getFirst().getDisplayName();
 
             if (index < dataSize) {
-                int count;
-
-                if (filter == null) {
-                    count = data.removeSlots(target, index, amount, EquipContext.COMMAND);
-                } else {
-                    count = data.removeSlots(target, index, amount, filter, EquipContext.COMMAND);
-                }
+                int count = data.removeSlots(target, index, amount, filter, EquipContext.COMMAND);
 
                 source.sendSuccess(() -> Component.translatable(REMOVE_FEEDBACK_SINGLE,
                         count,
@@ -549,11 +537,7 @@ public final class SlotsCommand implements ICommandNode {
                 AccessoryData data = OhmegaDataAttachments.getData(target);
                 int correctedIndex = Math.min(index, data.size());
 
-                if (filter == null) {
-                    count[0] += data.removeSlots(target, correctedIndex, amount, EquipContext.COMMAND);
-                } else {
-                    count[0] += data.removeSlots(target, correctedIndex, amount, filter, EquipContext.COMMAND);
-                }
+                count[0] += data.removeSlots(target, correctedIndex, amount, filter, EquipContext.COMMAND);
             }
 
             source.sendSuccess(() -> Component.translatable(REMOVE_FEEDBACK_MULTIPLE,

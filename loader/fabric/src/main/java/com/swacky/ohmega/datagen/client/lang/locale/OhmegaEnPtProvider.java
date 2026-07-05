@@ -353,6 +353,11 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 "Allow Hide Doubloons",
                 """
                     Will prevent crew from hidin' doubloons if nay, so that they always be out""");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
+                "Inject Vanilla Clear",
+                """
+                    Pirates th' doubloon clearin' int' vanilla loot bag clearin'""");
 
         // Datapack
         internalHelper.addDataPackDescription("Magic Jar treasures fer Ohmega");
@@ -372,7 +377,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Draft UI Nudge off th' Plank");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Draft UI Nudge Port");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_RIGHT, "Draft UI Nudge Starboard");
-        internalHelper.add(OhmegaBinds.EDIT_NUDGE_UP, "Draft UI Nudge t' Heavens");
+        internalHelper.add(OhmegaBinds.EDIT_NUDGE_UP, "Draft UI Nudge t' th' Heavens");
         internalHelper.add(OhmegaBinds.EDIT_REDO, "Draft UI Rebuckle");
         internalHelper.add(OhmegaBinds.EDIT_SHOW_LINES, "Draft UI Pres'nt Journey Lines");
         internalHelper.add(OhmegaBinds.EDIT_UNDO, "Draft UI Unbuckle");

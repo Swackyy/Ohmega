@@ -253,13 +253,17 @@ public final class OhmegaConfigImpl {
             BooleanLazySavedValue allowHideAccessories = wrap(builder
                     .comment(ALLOW_HIDE_ACCESSORIES_DESCRIPTION)
                     .define(ALLOW_HIDE_ACCESSORIES_KEY, ALLOW_HIDE_ACCESSORIES_DEFAULT));
+            BooleanLazySavedValue injectVanillaClear = wrap(builder
+                    .comment(INJECT_VANILLA_CLEAR_DESCRIPTION)
+                    .define(INJECT_VANILLA_CLEAR_KEY, INJECT_VANILLA_CLEAR_DEFAULT));
             this.data = new Data(
                     defaultSlotTypes,
                     shrinkDefaultSlotTypes,
                     keyboundSlotTypes,
                     keepAccessoriesBehaviour,
                     disableAccessoryTypes,
-                    allowHideAccessories);
+                    allowHideAccessories,
+                    injectVanillaClear);
             Server.spec = builder.build();
         }
 

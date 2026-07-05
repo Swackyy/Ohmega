@@ -272,7 +272,7 @@ public final class AccessoryData {
      * @param context the context surrounding this clear invocation
      * @return the total number of items cleared
      */
-    public int clearMatchingItems(@NonNull LivingEntity entity, @NonNull Predicate<ItemStack> filter, int max, @NonNull EquipContext context) {
+    public int clearMatchingItems(@NonNull LivingEntity entity, @Nullable Predicate<ItemStack> filter, int max, @NonNull EquipContext context) {
         int size = size();
         int removed = 0;
         IntList indexes = new IntArrayList();
@@ -281,7 +281,7 @@ public final class AccessoryData {
             AccessoryDataEntry entry = entries.get(i);
             ItemStack stack = entry.getStack();
 
-            if (filter.test(stack)) {
+            if (filter == null || filter.test(stack)) {
                 int count = stack.count();
                 int toRemoveCurrentStack;
 
@@ -344,8 +344,6 @@ public final class AccessoryData {
         }
     }
 
-    // todo: experimental stuff here yay
-
     /**
      * Attempts to send the given packet to all players on a {@link Level}, only succeeds if it is a {@link ServerLevel}
      * @param level possibly {@code null} level to retrieve {@link Player} receivers from
@@ -385,90 +383,80 @@ public final class AccessoryData {
     }
 
     /**
-     * Removes slots from this data instance up to a given maximum
+     * Removes slots from this data instance matching an optionally provided filter and up to a given maximum
      * @param entity the {@link LivingEntity} this data instance is attached to
+     * @param filter the filter for removals, or {@code null} to not filter by type
      * @param max the maximum amount of slots to remove, or {@code -1} to unlimit it
      * @param context the context surrounding this invocation
      * @return the number of slots cleared
      * @apiNote This traverses the {@link #entries} list and subsequently removes entries in reverse order
      */
-    public int clearSlots(@NonNull LivingEntity entity, int max, @NonNull EquipContext context) {
+    public int clearSlots(@NonNull LivingEntity entity, @Nullable Predicate<AccessoryType> filter, int max, @NonNull EquipContext context) {
         untrackDefault(entity);
 
         int count;
-        CustomPacketPayload packet;
+        IntArrayList list = new IntArrayList();
+        SyncSlotsPacket packet;
 
-        if (max == -1) {
-            count = size();
+        if (filter == null) {
+            if (max < 0) {
+                count = size();
 
-            for (AccessoryDataEntry entry : entries) {
-                entry.moveOrDropStack(entity, context);
+                for (AccessoryDataEntry entry : entries) {
+                    entry.moveOrDropStack(entity, context);
+                }
+
+                entries.clear();
+
+                packet = new SyncSlotsPacket(
+                        SyncSlotsPacket.Action.CLEAR_ALL,
+                        entity.getId(),
+                        ArrayUtils.EMPTY_INT_ARRAY,
+                        Optional.empty(),
+                        context);
+            } else {
+                count = 0;
+
+                for (int i = size() - 1; i >= 0 && count < max; i++) {
+                    count++;
+
+                    entries.remove(i).moveOrDropStack(entity, context);
+                }
+
+                resetSlotDataComponents();
+
+                packet = new SyncSlotsPacket(
+                        SyncSlotsPacket.Action.CLEAR,
+                        entity.getId(),
+                        new int[]{max},
+                        Optional.empty(),
+                        context);
             }
-
-            entries.clear();
-
-            packet = new SyncSlotsPacket(
-                    SyncSlotsPacket.Action.CLEAR_ALL,
-                    entity.getId(),
-                    ArrayUtils.EMPTY_INT_ARRAY,
-                    Optional.empty(),
-                    context);
         } else {
             count = 0;
 
-            for (int i = size() - 1; i >= 0 && count < max; i++) {
-                count++;
+            for (int i = size() - 1; i >= 0 && (count < max || max < 0); i--) {
+                if (filter.test(entries.get(i).getType())) {
+                    count++;
 
-                entries.remove(i).moveOrDropStack(entity, context);
+                    entries.remove(i).moveOrDropStack(entity, context);
+                    list.add(i);
+                }
             }
 
+            resetSlotDataComponents();
+
             packet = new SyncSlotsPacket(
-                    SyncSlotsPacket.Action.CLEAR,
+                    SyncSlotsPacket.Action.REMOVE,
                     entity.getId(),
-                    new int[]{max},
+                    list.toIntArray(),
                     Optional.empty(),
                     context);
         }
 
-        resetSlotDataComponents();
         AccessoryMenus.tryRebuildSlots(entity);
         trySendPacketToAll(entity.level(), packet);
         return count;
-    }
-
-    /**
-     * Removes slots from this data instance matching a provided filter and up to a given maximum
-     * @param entity the {@link LivingEntity} this data instance is attached to
-     * @param filter the filter for removals
-     * @param max the maximum amount of slots to remove, or {@code -1} to unlimit it
-     * @param context the context surrounding this invocation
-     * @return the number of slots cleared
-     * @apiNote This traverses the {@link #entries} list and subsequently removes entries in reverse order
-     */
-    public int clearSlots(@NonNull LivingEntity entity, @NonNull Predicate<AccessoryType> filter, int max, @NonNull EquipContext context) {
-        untrackDefault(entity);
-
-        int count = 0;
-        IntArrayList list = new IntArrayList();
-
-        for (int i = size() - 1; i >= 0 && (count < max || max == -1); i--) {
-            if (filter.test(entries.get(i).getType())) {
-                count++;
-
-                entries.remove(i).moveOrDropStack(entity, context);
-                list.add(i);
-            }
-        }
-
-        resetSlotDataComponents();
-        AccessoryMenus.tryRebuildSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.REMOVE,
-                entity.getId(),
-                list.toIntArray(),
-                Optional.empty(),
-                context));
-        return list.size();
     }
 
     /**
@@ -524,7 +512,7 @@ public final class AccessoryData {
         AccessoryData otherData = OhmegaDataAttachments.getData(other);
         int otherSize = otherData.size();
 
-        if (max == -1) {
+        if (max < 0) {
             entries.ensureCapacity(otherSize);
         } else {
             entries.ensureCapacity(max);
@@ -532,7 +520,7 @@ public final class AccessoryData {
 
         int size = size();
 
-        for (int i = min; i < otherSize && (i <= max || max == -1); i++) {
+        for (int i = min; i < otherSize && (i <= max || max < 0); i++) {
             if (size > i) {
                 entries.get(i).setType(entity, otherData.getEntry(i).getType(), context);
             } else {
@@ -555,8 +543,9 @@ public final class AccessoryData {
      * @param index the slot index to begin inserting at
      * @param type the {@link AccessoryType} of the slots to insert
      * @param amount the number of slots to insert
+     * @param context the context surrounding this invocation
      */
-    public void insertSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int amount) {
+    public void insertSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int amount, @NonNull EquipContext context) {
         untrackDefault(entity);
 
         int size = size();
@@ -580,7 +569,7 @@ public final class AccessoryData {
                 entity.getId(),
                 new int[]{index, amount},
                 Optional.of(type),
-                EquipContext.DUMMY));
+                context));
     }
 
     /**
@@ -588,48 +577,16 @@ public final class AccessoryData {
      * @param entity the {@link LivingEntity} this data instance is attached to
      * @param type the {@link AccessoryType} of the slots to insert
      * @param amount the number of slots to insert
-     * @apiNote Internally this is just a {@link #insertSlots(LivingEntity, int, AccessoryType, int)} call,
+     * @param context the context surrounding this invocation
+     * @apiNote Internally this is just a {@link #insertSlots(LivingEntity, int, AccessoryType, int, EquipContext)} call,
      * with the {@code index} parameter passed as {@link #size()}
      */
-    public void addSlots(@NonNull LivingEntity entity, @NonNull AccessoryType type, int amount) {
-        insertSlots(entity, size(), type, amount);
+    public void addSlots(@NonNull LivingEntity entity, @NonNull AccessoryType type, int amount, @NonNull EquipContext context) {
+        insertSlots(entity, size(), type, amount, context);
     }
 
     /**
-     * Removes a give number of slots starting from the provided index
-     * @param entity the {@link LivingEntity} this data instance is attached to
-     * @param index the index at which removals should begin
-     * @param amount the number of slots to remove
-     * @param context the context surrounding this invocation
-     * @return the number of slots removed
-     */
-    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @NonNull EquipContext context) {
-        untrackDefault(entity);
-
-        int size = size();
-        int count = 0;
-        IntArrayList list = new IntArrayList(Math.min(amount, size - index));
-
-        for (int i = Math.min(index + amount, size) - 1; i >= index && count < amount; i--) {
-            count++;
-
-            entries.remove(index).moveOrDropStack(entity, context);
-            list.add(i);
-        }
-
-        resetSlotDataComponents();
-        AccessoryMenus.tryRebuildSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.REMOVE,
-                entity.getId(),
-                list.toIntArray(),
-                Optional.empty(),
-                EquipContext.DUMMY));
-        return count;
-    }
-
-    /**
-     * Removes a give number of slots starting from the provided index, matching a filter
+     * Removes a give number of slots starting from the given index, matching an optionally provided filter
      * @param entity the {@link LivingEntity} this data instance is attached to
      * @param index the index at which removals should begin
      * @param amount the number of slots to remove
@@ -637,7 +594,7 @@ public final class AccessoryData {
      * @param context the context surrounding this invocation
      * @return the number of slots removed
      */
-    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @NonNull Predicate<AccessoryType> filter, @NonNull EquipContext context) {
+    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @Nullable Predicate<AccessoryType> filter, @NonNull EquipContext context) {
         untrackDefault(entity);
 
         int size = size();
@@ -645,7 +602,7 @@ public final class AccessoryData {
         IntArrayList list = new IntArrayList(Math.min(amount, size - index));
 
         for (int i = Math.min(index + amount, size) - 1; i >= index && count < amount; i--) {
-            if (filter.test(entries.get(i).getType())) {
+            if (filter == null || filter.test(entries.get(i).getType())) {
                 count++;
 
                 entries.remove(i).moveOrDropStack(entity, context);
@@ -660,7 +617,7 @@ public final class AccessoryData {
                 entity.getId(),
                 list.toIntArray(),
                 Optional.empty(),
-                EquipContext.DUMMY));
+                context));
         return count;
     }
 

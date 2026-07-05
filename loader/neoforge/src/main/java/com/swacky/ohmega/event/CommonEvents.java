@@ -44,7 +44,7 @@ import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 public final class CommonEvents {
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
-        CommonCallbacks.onClonePlayer(event.getOriginal(), event.getEntity(), event.isWasDeath());
+        CommonCallbacks.onClonePlayer((ServerPlayer) event.getOriginal(), (ServerPlayer) event.getEntity(), event.isWasDeath());
     }
 
     @SubscribeEvent
@@ -113,11 +113,6 @@ public final class CommonEvents {
                         KeybindUsePacket.CODEC,
                         new MainThreadPayloadHandler<>((packet, context) ->
                                 OhmegaNetworking.C2S.handleKeybindUse(packet, (ServerPlayer) context.player())))
-                .playToServer(
-                        ReloadDataPacket.TYPE,
-                        ReloadDataPacket.CODEC,
-                        new MainThreadPayloadHandler<>((_, context) ->
-                                OhmegaNetworking.C2S.handleReloadContainer((ServerPlayer) context.player())))
                 .playToServer(
                         SetExtensionVisiblePacket.TYPE,
                         SetExtensionVisiblePacket.CODEC,

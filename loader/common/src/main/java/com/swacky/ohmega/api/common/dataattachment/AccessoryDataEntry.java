@@ -167,7 +167,7 @@ public final class AccessoryDataEntry {
 
     /**
      * Sets the visibility of the accessory stored within this entry
-     * @value should be {@code true} if rendering should be prevented for this entry, {@code false} to allow it to happen
+     * @param value should be {@code true} if rendering should be prevented for this entry, {@code false} to allow it to happen
      */
     public void setHidden(boolean value) {
         hidden = value;
