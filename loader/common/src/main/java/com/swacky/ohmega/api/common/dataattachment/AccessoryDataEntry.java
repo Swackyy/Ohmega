@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.common.dataattachment;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
@@ -13,6 +14,7 @@ import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -205,6 +207,15 @@ public final class AccessoryDataEntry {
     }
 
     /**
+     * Called on stack changes, currently just used to invoke criteria triggers
+     * @param player the player that has changed this entry
+     */
+    public void onChanged(ServerPlayer player) {
+        CriteriaTriggers.INVENTORY_CHANGED.trigger(player, player.getInventory(), stack);
+        OhmegaCriteriaTriggers.getAccessoryChange().trigger(player, stack);
+    }
+
+    /**
      * Perform necessary operations that occur when un-equipping an accessory
      * @param entity the entity un-equipping the accessory
      * @param stack the accessory's {@link ItemStack} representation being un-equipped
@@ -262,6 +273,10 @@ public final class AccessoryDataEntry {
             }
 
             this.stack = stack;
+
+            if (entity instanceof ServerPlayer player) {
+                onChanged(player);
+            }
 
             if (forceOnEquip || AccessoryHelper.isActive(stack)) {
                 doEquip(entity, stack, index, context);

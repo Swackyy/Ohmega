@@ -6,10 +6,10 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
-import com.swacky.ohmega.common.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.api.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.ChatFormatting;
@@ -38,8 +38,6 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
-    public static void bootstrap() {}
-
     /**
      * You most likely want to use {@link Accessories#getType(LivingEntity, Item)} instead
      * @param item the item to find the {@link AccessoryType}s of

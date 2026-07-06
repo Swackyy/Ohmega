@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

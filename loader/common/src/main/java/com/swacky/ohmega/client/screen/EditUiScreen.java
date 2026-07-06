@@ -12,7 +12,7 @@ import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

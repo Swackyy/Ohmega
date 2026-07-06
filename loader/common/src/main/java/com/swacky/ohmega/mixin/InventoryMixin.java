@@ -3,7 +3,7 @@ package com.swacky.ohmega.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

@@ -1,10 +1,11 @@
 package com.swacky.ohmega.common;
 
+import com.swacky.ohmega.api.common.init.OhmegaArgumentTypes;
+import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggersImpl;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachmentsImpl;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponentsImpl;
+import com.swacky.ohmega.api.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.client.OhmegaClientMain;
-import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
-import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
-import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
-import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -23,6 +24,7 @@ public final class OhmegaMain {
 
         // Registration
         OhmegaArgumentTypes.register(bus);
+        OhmegaCriteriaTriggersImpl.register(bus);
         OhmegaDataAttachmentsImpl.register(bus);
         OhmegaDataComponentsImpl.register(bus);
         OhmegaItemsImpl.register(bus);

@@ -1,7 +1,7 @@
 package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponentType;

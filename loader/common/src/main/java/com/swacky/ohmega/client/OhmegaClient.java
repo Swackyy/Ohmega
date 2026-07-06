@@ -9,7 +9,7 @@ import com.swacky.ohmega.client.menu.DefaultMenuExtension;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.DefaultScreenExtension;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.resources.Identifier;

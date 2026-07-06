@@ -10,7 +10,7 @@ import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.network.C2S.KeybindUsePacket;

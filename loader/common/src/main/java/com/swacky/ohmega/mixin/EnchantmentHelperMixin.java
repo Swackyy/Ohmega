@@ -1,7 +1,7 @@
 package com.swacky.ohmega.mixin;
 
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;

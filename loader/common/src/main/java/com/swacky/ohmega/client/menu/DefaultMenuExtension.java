@@ -1,7 +1,7 @@
 package com.swacky.ohmega.client.menu;
 
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;

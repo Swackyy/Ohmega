@@ -3,7 +3,7 @@ package com.swacky.ohmega.common;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypePredicateArgument;
-import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachmentsImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.CommonEvents;
 import com.swacky.ohmega.network.C2S.KeybindUsePacket;

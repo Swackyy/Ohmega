@@ -1,7 +1,7 @@
 package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
 import net.minecraft.network.chat.Component;

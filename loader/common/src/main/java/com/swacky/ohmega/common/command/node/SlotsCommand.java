@@ -12,7 +12,7 @@ import com.swacky.ohmega.api.common.command.argument.AccessoryTypePredicateArgum
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;

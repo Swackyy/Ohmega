@@ -1,9 +1,10 @@
 package com.swacky.ohmega.common;
 
+import com.swacky.ohmega.api.common.init.OhmegaArgumentTypes;
+import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggersImpl;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponentsImpl;
+import com.swacky.ohmega.api.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.client.OhmegaClientMain;
-import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
-import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
-import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
@@ -26,6 +27,7 @@ public final class OhmegaMain {
         BusGroup group = context.getModBusGroup();
 
         OhmegaArgumentTypes.register(group);
+        OhmegaCriteriaTriggersImpl.register(group);
         OhmegaDataComponentsImpl.register(group);
         OhmegaItemsImpl.register(group);
 

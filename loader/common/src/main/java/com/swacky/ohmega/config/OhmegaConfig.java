@@ -11,7 +11,7 @@ import com.swacky.ohmega.api.util.IntLazySavedValue;
 import com.swacky.ohmega.api.util.LazySavedValue;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import org.jspecify.annotations.NonNull;

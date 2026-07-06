@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.common.item;
 
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.api.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.core.registries.BuiltInRegistries;

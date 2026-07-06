@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.api.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;

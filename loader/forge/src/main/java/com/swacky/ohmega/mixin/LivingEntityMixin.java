@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachmentsImpl;
 import com.swacky.ohmega.event.CommonCallbacks;
 import net.minecraft.world.entity.Attackable;
 import net.minecraft.world.entity.Entity;

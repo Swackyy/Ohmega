@@ -2,7 +2,7 @@ package com.swacky.ohmega.common.dataattachment;
 
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachmentsImpl;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

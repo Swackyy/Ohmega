@@ -9,7 +9,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

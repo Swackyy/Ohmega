@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.item.datacomponent.AccessoryModifiers;
 import com.swacky.ohmega.api.util.codec.OhmegaCodecs;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.common.init.OhmegaTags;
+import com.swacky.ohmega.api.common.init.OhmegaTags;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

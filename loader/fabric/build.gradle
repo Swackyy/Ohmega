@@ -48,11 +48,6 @@ repositories {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/releases"
     }
-
-    maven {
-        name = "Parchment"
-        url = "https://maven.parchmentmc.org"
-    }
 }
 
 dependencies {
