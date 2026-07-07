@@ -3,6 +3,7 @@ package com.swacky.ohmega.network;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.EquipContext;
@@ -10,7 +11,6 @@ import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.ClientCallbacks;
 import com.swacky.ohmega.network.C2S.KeybindUsePacket;
@@ -30,7 +30,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,19 +37,19 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 
 public final class OhmegaNetworking {
+    private static final Service IMPL = Ohmega.loadService(Service.class);
+
+    public static void bootstrap() {}
+
+    public static void sendC2S(CustomPacketPayload packet) {
+        IMPL.sendC2S(packet);
+    }
+
+    public static void sendS2C(ServerPlayer receiver, CustomPacketPayload packet) {
+        IMPL.sendS2C(receiver, packet);
+    }
+
     public static final class C2S {
-        private static final Service IMPL = Ohmega.loadService(Service.class);
-
-        public static void bootstrap() {}
-
-        public static void send(CustomPacketPayload packet) {
-            IMPL.send(packet);
-        }
-
-        public static void send(LocalPlayer player, Packet<?> packet) {
-            player.connection.send(packet);
-        }
-
         public static void handleKeybindUse(KeybindUsePacket packet, ServerPlayer player) {
             int index = packet.index();
             AccessoryData data = OhmegaDataAttachments.getData(player);
@@ -64,7 +63,7 @@ public final class OhmegaNetworking {
                 }
 
                 for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
-                    OhmegaNetworking.S2C.send(receiver, new SyncKeybindUsePacket(player.getId(), index));
+                    OhmegaNetworking.sendS2C(receiver, new SyncKeybindUsePacket(player.getId(), index));
                 }
             }
         }
@@ -84,7 +83,7 @@ public final class OhmegaNetworking {
                     OhmegaDataAttachments.getData(player).getEntry(index).setHidden(value);
 
                     for (ServerPlayer receiver : player.level().getPlayers(player0 -> player0 != player)) {
-                        OhmegaNetworking.S2C.send(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
+                        OhmegaNetworking.sendS2C(receiver, new SyncHiddenPacket(player.getId(), new int[]{index}, new boolean[]{value}));
                     }
                 }
             }
@@ -96,14 +95,6 @@ public final class OhmegaNetworking {
     }
 
     public static final class S2C {
-        private static final Service IMPL = Ohmega.loadService(Service.class);
-
-        public static void bootstrap() {}
-
-        public static void send(ServerPlayer receiver, CustomPacketPayload packet) {
-            IMPL.send(receiver, packet);
-        }
-
         public static void handleSyncData(SyncDataPacket packet) {
             Minecraft mc = Minecraft.getInstance();
             ClientLevel level = mc.level;
@@ -218,9 +209,11 @@ public final class OhmegaNetworking {
             buf.writeBytes(packet.data());
             AccessoryTypeManager.apply(AccessoryType.LIST_INITIALISER_STREAM_CODEC.decode(buf));
         }
+    }
 
-        public interface Service {
-            void send(ServerPlayer receiver, CustomPacketPayload packet);
-        }
+    public interface Service {
+        void sendC2S(CustomPacketPayload packet);
+
+        void sendS2C(ServerPlayer receiver, CustomPacketPayload packet);
     }
 }

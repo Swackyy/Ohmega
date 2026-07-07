@@ -13,6 +13,8 @@ public final class OhmegaCriteriaTriggers {
     }
 
     public interface Service {
+        String ACCESSORY_CHANGE_KEY = "accessory_change";
+
         AccessoryChangeTrigger getAccessoryChange();
     }
 }

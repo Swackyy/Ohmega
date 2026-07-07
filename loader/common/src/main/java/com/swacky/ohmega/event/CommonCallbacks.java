@@ -88,11 +88,11 @@ public final class CommonCallbacks {
     }
 
     public static void onLivingTrack(ServerPlayer tracker, LivingEntity tracked) {
-        OhmegaNetworking.S2C.send(tracker, new SyncDataPacket(tracked.getId(), OhmegaDataAttachments.getData(tracked)));
+        OhmegaNetworking.sendS2C(tracker, new SyncDataPacket(tracked.getId(), OhmegaDataAttachments.getData(tracked)));
     }
 
     public static void onPlayerChangeDimension(ServerPlayer player) {
-        OhmegaNetworking.S2C.send(player, new SyncDataPacket(player.getId(), OhmegaDataAttachments.getData(player)));
+        OhmegaNetworking.sendS2C(player, new SyncDataPacket(player.getId(), OhmegaDataAttachments.getData(player)));
     }
 
     public static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {

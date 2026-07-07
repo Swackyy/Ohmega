@@ -185,7 +185,7 @@ public final class AccessoryDataEntry {
             hidden = !hidden;
 
             if (entity.level().isClientSide()) {
-                OhmegaNetworking.C2S.send(new SetHiddenPacket(index, hidden));
+                OhmegaNetworking.sendC2S(new SetHiddenPacket(index, hidden));
             }
         }
     }
@@ -250,7 +250,7 @@ public final class AccessoryDataEntry {
     public void trySendSync(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack) {
         if (entity.level() instanceof ServerLevel level) {
             for (ServerPlayer receiver : level.players()) {
-                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), new int[]{index}, List.of(stack), true));
+                OhmegaNetworking.sendS2C(receiver, new SyncStacksPacket(entity.getId(), new int[]{index}, List.of(stack), true));
             }
         }
     }

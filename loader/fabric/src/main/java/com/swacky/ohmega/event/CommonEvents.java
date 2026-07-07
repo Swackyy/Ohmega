@@ -74,7 +74,6 @@ public final class CommonEvents {
     }
 
     private static void onConfigReload(ModConfig config) {
-        System.out.println("hello, config is: " + config.getFileName());
         if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
             CommonCallbacks.onServerConfigReload();
         }

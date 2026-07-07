@@ -2,6 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
+import com.swacky.ohmega.api.client.item.AccessoryHelperClient;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
@@ -14,16 +15,15 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.client.command.OhmegaClientRootCommand;
 import com.swacky.ohmega.client.screen.EditUiScreen;
 import com.swacky.ohmega.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.client.screen.widget.ToggleExtensionButton;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
-import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.C2S.KeybindUsePacket;
@@ -189,7 +189,7 @@ public final class ClientCallbacks {
 
     public static void onItemTooltip(ItemStack stack, List<Component> tooltip) {
         if (Accessories.isBound(stack.getItem())) {
-            Component component = AccessoryHelper.getTypeTooltip(stack.getItem());
+            Component component = AccessoryHelperClient.getTypeTooltip(stack.getItem());
 
             if (component != null) {
                 tooltip.add(component);
@@ -275,7 +275,7 @@ public final class ClientCallbacks {
                             boolean shouldNotifyServer = accessory.onKeybindUse(player, stack);
 
                             if (shouldNotifyServer) {
-                                OhmegaNetworking.C2S.send(new KeybindUsePacket(j));
+                                OhmegaNetworking.sendC2S(new KeybindUsePacket(j));
                             }
                         }
                     }
@@ -341,10 +341,6 @@ public final class ClientCallbacks {
                         player.connection.send(new ServerboundContainerClosePacket(menu.containerId));
                     }
                 }
-
-                // todo: do new thing
-                //OhmegaDataAttachments.getData(player).reload(player);
-                //OhmegaNetworking.C2S.send(ReloadDataPacket.INSTANCE);
             }
         }
     }

@@ -136,19 +136,21 @@ public final class AccessoryData {
             AccessoryDataEntry entry = entries.get(i);
             ItemStack stack = entry.getStack();
 
-            if (AccessoryHelper.isActive(stack)) {
+            //if (AccessoryHelper.isActive(stack)) {
                 entry.doEquip(entity, stack, i, EquipContext.ATTACH);
+            //}
+        }
+
+        if (!entity.level().isClientSide()) {
+            if (isTrackingDefault()) {
+                DEFAULT_TRACKERS.add(entity);
             }
-        }
 
-        if (!entity.level().isClientSide() && isTrackingDefault()) {
-            DEFAULT_TRACKERS.add(entity);
-        }
+            if (entity instanceof ServerPlayer player) {
+                SyncDataPacket packet = new SyncDataPacket(player.getId(), this);
 
-        if (entity instanceof ServerPlayer player) {
-            SyncDataPacket packet = new SyncDataPacket(player.getId(), this);
-
-            OhmegaNetworking.S2C.send(player, packet);
+                OhmegaNetworking.sendS2C(player, packet);
+            }
         }
     }
 
@@ -216,7 +218,7 @@ public final class AccessoryData {
     public void trySendSync(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks) {
         if (entity.level() instanceof ServerLevel level) {
             for (ServerPlayer receiver : level.players()) {
-                OhmegaNetworking.S2C.send(receiver, new SyncStacksPacket(entity.getId(), indexes, stacks, true));
+                OhmegaNetworking.sendS2C(receiver, new SyncStacksPacket(entity.getId(), indexes, stacks, true));
             }
         }
     }
@@ -352,7 +354,7 @@ public final class AccessoryData {
     private void trySendPacketToAll(@Nullable Level level, @NonNull CustomPacketPayload packet) {
         if (level instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : serverLevel.players()) {
-                OhmegaNetworking.S2C.send(player, packet);
+                OhmegaNetworking.sendS2C(player, packet);
             }
         }
     }

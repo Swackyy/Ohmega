@@ -1,17 +1,16 @@
 package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.api.client.command.OhmegaClientCommandNodes;
+import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.HelpCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.menu.DefaultMenuExtension;
-import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.client.screen.DefaultScreenExtension;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.config.OhmegaConfig;
-import com.swacky.ohmega.network.OhmegaNetworking;
 import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +34,6 @@ public final class OhmegaClient {
             AccessoryRenderStateData.bootstrap();
             OhmegaBinds.bootstrap();
             OhmegaConfig.Client.bootstrap();
-            OhmegaNetworking.S2C.bootstrap();
             LOGGER.info("Successfully loaded {} client services", servicesCount);
 
             // Register extension

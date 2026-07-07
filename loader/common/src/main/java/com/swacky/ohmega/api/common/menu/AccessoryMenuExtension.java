@@ -98,7 +98,7 @@ public abstract class AccessoryMenuExtension {
         visible = value;
 
         if (owner.level().isClientSide()) {
-            OhmegaNetworking.C2S.send(new SetExtensionVisiblePacket(value));
+            OhmegaNetworking.sendC2S(new SetExtensionVisiblePacket(value));
         }
     }
 

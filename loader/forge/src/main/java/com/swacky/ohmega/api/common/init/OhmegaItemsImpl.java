@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public final class OhmegaItemsImpl implements OhmegaItems.Service {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Ohmega.MODID);
 
-    private static final RegistryObject<Item> ANGEL_RING = register("angel_ring", AngelRing::new, OhmegaItems::getAngelRingProperties);
+    private static final RegistryObject<Item> ANGEL_RING = register(ANGEL_RING_KEY, AngelRing::new, OhmegaItems::getAngelRingProperties);
 
     private static <T extends Item> RegistryObject<T> register(String id, Function<Item.Properties, T> function, Supplier<Item.Properties> supplier) {
         return ITEMS.register(id, () -> function.apply(supplier.get().setId(ResourceKey.create(Registries.ITEM, Ohmega.id(id)))));

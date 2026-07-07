@@ -2,14 +2,13 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.api.common.init.OhmegaItems;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
-import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.event.OhmegaHooks;
 import com.swacky.ohmega.network.OhmegaNetworking;
@@ -37,7 +36,7 @@ public final class Ohmega {
             OhmegaItems.bootstrap();
             OhmegaConfig.Server.bootstrap();
             OhmegaHooks.bootstrap();
-            OhmegaNetworking.C2S.bootstrap();
+            OhmegaNetworking.bootstrap();
             LOGGER.info("Successfully loaded {} common services", servicesCount);
 
             // Register command nodes

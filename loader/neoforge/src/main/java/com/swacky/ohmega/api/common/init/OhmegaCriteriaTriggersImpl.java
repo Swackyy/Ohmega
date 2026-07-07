@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public final class OhmegaCriteriaTriggersImpl implements OhmegaCriteriaTriggers.Service {
     private static final DeferredRegister<CriterionTrigger<?>> TRIGGERS = DeferredRegister.create(Registries.TRIGGER_TYPE, Ohmega.MODID);
 
-    private static final DeferredHolder<CriterionTrigger<?>, AccessoryChangeTrigger> ACCESSORY_CHANGE = register("accessory_change", AccessoryChangeTrigger::new);
+    private static final DeferredHolder<CriterionTrigger<?>, AccessoryChangeTrigger> ACCESSORY_CHANGE = register(ACCESSORY_CHANGE_KEY, AccessoryChangeTrigger::new);
 
     private static <T extends CriterionTrigger<?>> DeferredHolder<CriterionTrigger<?>, T> register(String id, Supplier<T> supplier) {
         return TRIGGERS.register(id, supplier);
