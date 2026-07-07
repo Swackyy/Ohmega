@@ -1,15 +1,9 @@
 package com.swacky.ohmega.api.client.screen;
 
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-
 /**
  * Implement this on your {@link AccessoryScreenExtension} if you want to be able to render a flippable entity in it.
  * Define a {@code boolean} in your class to hold the state of being flipped or not and reference it in the defined methods below
- * <p>
- * This will only be relevant when the active screen implements {@link IEntityRenderingScreen}
- * <p>
- * To actually flip the player, when calling {@link InventoryScreen#extractEntityInInventoryFollowsMouse},
- * pass the {@code size} as negative when {@link #isEntityFlipped()} and Ohmega will handle the rest
+ * @apiNote This will only be relevant when the active screen implements {@link IEntityRenderingScreen}
  */
 public interface IEntityRenderingExtension {
     /**

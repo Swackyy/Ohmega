@@ -20,8 +20,7 @@ import java.util.function.Consumer;
 
 /**
  * Holds methods related to screen extensions that implement correct functionality
- * <p>
- * In order for the extension to function properly, you should call:
+ * @apiNote In order for the extension to function properly, you should call:
  * <ul>
  *     <li>{@link #onConstruct(AbstractContainerScreen)}</li>
  * </ul>

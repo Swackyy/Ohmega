@@ -21,9 +21,8 @@ public interface IClientCommandNode {
     /**
      * Get the map of raw help elements to their argument types. Do not return strings from {@link CommandHelper.Builder#feedback()},
      * these are automatically wrapped. Instead, return a list of element strings like "get" or "set" mapped to arguments.
-     * <p>
-     * The boolean part of the argument value marks {@code true} for mandatory and {@code false} for optional
      * @return a map of raw elements to add to the built-in {@code /ohmegac help} command
+     * @apiNote The boolean part of the argument value marks {@code true} for mandatory and {@code false} for optional
      */
     default @NonNull Map<String, List<BooleanObjectPair<String>>> getHelpElements() {
         return Map.of();

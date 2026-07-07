@@ -15,14 +15,13 @@ import java.util.List;
  * Implemented by {@link AbstractContainerMenu}s to allow them to have an accessory extension.
  * See {@link AccessoryMenus} for crucial implementation details
  * <p>
- * This also contains some utility methods which you <strong>should</strong> call to implement complete functionality,
- * failing to call them may cause your menu to not have an extension applied
- * <p>
  * By default, this is applied by Ohmega via mixin to:
  * <ul>
  *     <li>{@link CreativeModeInventoryScreen.ItemPickerMenu}</li>
  *     <li>{@link InventoryMenu}</li>
  * </ul>
+ * @apiNote This also contains some utility methods which you <strong>should</strong> call to implement complete functionality,
+ * failing to call them may cause your menu to not have an extension applied
  */
 public interface IAccessoryMenu {
     // todo: make non-null and add a throwing assertation

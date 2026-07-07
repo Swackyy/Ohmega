@@ -10,15 +10,13 @@ import java.util.List;
 
 /**
  * Implement this on your {@link IAccessoryScreen} if you want to be able to render a flippable entity in it
- * <p>
- * This will only be relevant when the active extension implements {@link IEntityRenderingExtension}
+ * @apiNote This will only be relevant when the active extension implements {@link IEntityRenderingExtension}
  */
 public interface IEntityRenderingScreen {
     /**
      * The (x, y) position the {@link FlipEntityButton} will be added
-     * <p>
-     * Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      * @return the position to add the {@link FlipEntityButton}
+     * @apiNote Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      */
     @NonNull LazyPosition getFlipEntityButtonPosition();
 

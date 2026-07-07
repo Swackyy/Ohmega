@@ -31,10 +31,9 @@ public final class Accessory implements IAccessory {
 
     /**
      * Do not use this unless you have good reason
-     * <p>
-     * The decision of exposing the wrapped object instead of simply overriding {@link Object#equals(Object)} was to give developers
-     * more versatility with the API, such as for checking if other accessories are subclasses of this (wrapped) one
      * @return the wrapped {@link IAccessory} instance stored within this class
+     * @apiNote The decision of exposing the wrapped object instead of simply overriding {@link Object#equals(Object)} was to give developers
+     * more versatility with the API, such as for checking if other accessories are subclasses of this (wrapped) one
      */
     public @NonNull IAccessory unwrap() {
         return inner;

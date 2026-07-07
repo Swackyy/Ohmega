@@ -13,14 +13,13 @@ import org.jspecify.annotations.Nullable;
  * Implemented by {@link AbstractContainerScreen}s to allow them to have an accessory extension.
  * See {@link AccessoryScreens} for crucial implementation details
  * <p>
- * This also contains some utility methods which you <strong>should</strong> call to implement complete functionality
- * failing to call them may cause your screen to not have an extension applied
- * <p>
  * By default, this is applied by Ohmega via mixin to:
  * <ul>
  *     <li>{@link CreativeModeInventoryScreen}</li>
  *     <li>{@link InventoryScreen}</li>
  * </ul>
+ * @apiNote This also contains some utility methods which you <strong>should</strong> call to implement complete functionality
+ * failing to call them may cause your screen to not have an extension applied
  */
 public interface IAccessoryScreen {
     /**
@@ -48,10 +47,9 @@ public interface IAccessoryScreen {
      * The (x, y) position the {@link ToggleExtensionButton} will be added.
      * You should use a {@code switch} statement to handle the case for each style (handling {@link OhmegaConfig.Client.Service.ButtonStyle#HIDDEN} is not needed,
      * and you should instead use a {@code case default} to finish)
-     * <p>
-     * Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      * @param style the button style currently in use
      * @return the position to add the {@link ToggleExtensionButton}
+     * @apiNote Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      */
     @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
 

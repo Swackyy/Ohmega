@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.common.item;
 
+import com.swacky.ohmega.api.client.item.AccessoryHelperClient;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -23,9 +24,8 @@ import org.jspecify.annotations.Nullable;
  *     <li>Make your {@link Item} class inherit this interface (recommended for your own items)</li>
  *     <li>Bind an {@link IAccessory} instance with {@link Accessories#bind(Item, IAccessory)} (intended for vanilla and other mods' items)</li>
  * </ul>
- * <p>
- * One technical feature to be aware of is that internally, accessory instances are not stored with this class.
- * They are stored as the decorated {@link Accessory} class, so try not to store instances of {@link IAccessory},
+ * @apiNote One technical feature to be aware of is that internally, accessory instances are not stored with this class.
+ * They are instead stored as the decorator {@link Accessory} class -- try not to store instances of {@link IAccessory},
  * but the wrapper instead to help with performance
  */
 public interface IAccessory {
@@ -40,14 +40,13 @@ public interface IAccessory {
     /**
      * Check whether {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} should be called
      * <strong>instead of</strong> {@link #accessoryTick(LivingEntity, ItemStack)} when equipped in an accessory slot
-     * <p>
-     * Take note that {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} is only called on the server side
      * @param stack the {@link ItemStack} of this accessory item being worn
      * @return
      * <ul>
      *     <li>{@code true}: only call {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} every tick when equipped</li>
      *     <li>{@code false}: only call {@link #accessoryTick(LivingEntity, ItemStack)} every tick when equipped</li>
      * </ul>
+     * @apiNote Take note that {@link Item#inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot)} is only called on the server side
      */
     default boolean preferInventoryTick(@NonNull ItemStack stack) {
         return false;
@@ -109,15 +108,15 @@ public interface IAccessory {
 
     /**
      * Called when this accessory is worn and its corresponding slot's key-bind is pressed.
-     * This will only work for accessories of key-bound types, configurable in the server config.
      * <p>
      * It is recommended that when this is overridden and used, that a tooltip will be provided,
-     * a component for the tooltip can be acquired from {@link AccessoryHelper#getBindTooltip(ItemStack)}.
+     * a component for the tooltip can be acquired from {@link AccessoryHelperClient#getBindTooltip(ItemStack)}.
      * @param player the {@link Player} wearing this accessory
      * @param stack {@link ItemStack} instance of the accessory in the slot which key-bind has been pressed
      * @return {@code true} if a packet should be sent to the server requesting this method to be invoked, {@code false} otherwise.
      * Useful for conserving network usage if it is guaranteed nothing will occur on either side.
      * Implementing custom behaviour for this method will likely mean you will have to return {@code true}
+     * @apiNote This will only work for accessories of key-bound types, configurable in the server config.
      */
     // todo: split into 'onKeybindPress', 'onKeybindHold' and 'onKeybindRelease' or similar
     default boolean onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
@@ -127,10 +126,9 @@ public interface IAccessory {
     /**
      * Dictates whether Ohmega should synchronise the server's {@link ItemStack} instance with each client every tick.
      * Could be useful for stack data component changes, which are not automatically discovered.
-     * <p>
-     * If possible, let Ohmega do the syncing internally instead of using this which adds additional network overhead
      * @param stack the {@link ItemStack} of this accessory item being worn
      * @return {@code true} if the server should send updates to clients every tick, {@code false} otherwise
+     * @apiNote If possible, let Ohmega do the syncing internally instead of using this which adds additional network overhead
      */
     default boolean autoSync(@NonNull ItemStack stack) {
         return false;
@@ -139,14 +137,12 @@ public interface IAccessory {
     /**
      * Allows you to choose on which 'n' ticks that the server state of accessories of this type will be updated to clients,
      * <strong>this never includes the zeroth tick, and returning {@code 0} will never sync at all</strong>
-     * <p>
-     * This will only have an effect if {@link #autoSync(ItemStack)} returns {@code true}.
-     * Higher values may have more noticeable lag on clients, but will incur less network overhead
-     * <p>
-     * This has a {@code byte} return type as to discourage using particularly large numbers, as they shouldn't have any use in the first place.
-     * A consequence of this choice is that slightly less memory is used per tick, of course, which is always good
      * @param stack the {@link ItemStack} of this accessory item being worn
      * @return the modulo operand to use checking for which 'n' ticks the {@link ItemStack} should be updated
+     * @apiNote This will only have an effect if {@link #autoSync(ItemStack)} returns {@code true}.
+     * Higher values may have more noticeable lag on clients, but will incur less network overhead.
+     * This has a {@code byte} return type as to discourage using particularly large numbers, as they shouldn't have any use in the first place.
+     * A consequence of this choice is that slightly less memory is used per tick, of course, which is always good
      */
     default byte autoSyncModulo(@NonNull ItemStack stack) {
         return 5;

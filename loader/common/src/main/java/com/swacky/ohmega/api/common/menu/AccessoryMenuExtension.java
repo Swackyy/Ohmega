@@ -15,10 +15,9 @@ import java.util.List;
  * A way to add extra slots and functionality to the default inventory.
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
  * <p>
- * This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server.
- * The only reason this is in the {@code common} package is because Ohmega defines one singular server implementation for internal use
- * <p>
  * Ohmega uses this to provide the default accessory extension implementation packaged with the mod
+ * @apiNote This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server.
+ * The only reason this is in the {@code common} package is because Ohmega defines one singular server implementation for internal use
  */
 public abstract class AccessoryMenuExtension {
     private final @NonNull AbstractContainerMenu menu;
@@ -59,11 +58,10 @@ public abstract class AccessoryMenuExtension {
     }
 
     /**
-     * You are probably intending to call {@link IAccessoryMenu#getSlots()}
-     * <p>
      * Get a list of the accessory slots added to the extension's parent menu.
      * This is stored as to eliminate the need for looping through all the slots just to perform operations on our custom ones
      * @return a list of strictly {@link AccessorySlot}s added with the accessory extension
+     * @apiNote You are probably intending to call {@link IAccessoryMenu#getSlots()}
      */
     public @Nullable List<AccessorySlot> getSlots() {
         return slots;
@@ -79,20 +77,18 @@ public abstract class AccessoryMenuExtension {
     }
 
     /**
-     * You are probably intending to call {@link IAccessoryMenu#isAccessoryExtensionVisible()}
-     * <p>
      * Determines whether the extension should be shown
      * @return {@code true} if the accessory extension should be shown, {@code false} otherwise
+     * @apiNote You are probably intending to call {@link IAccessoryMenu#isAccessoryExtensionVisible()}
      */
     public boolean isVisible() {
         return visible;
     }
 
     /**
-     * You are probably intending to call {@link IAccessoryMenu#setAccessoryExtensionVisible(boolean)}
-     * <p>
      * Set the visibility of the extension
      * @param value {@code true} to make the extension visible, {@code false} to hide it
+     * @apiNote You are probably intending to call {@link IAccessoryMenu#setAccessoryExtensionVisible(boolean)}
      */
     public void setVisible(boolean value) {
         visible = value;

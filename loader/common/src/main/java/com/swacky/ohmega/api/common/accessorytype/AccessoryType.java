@@ -223,9 +223,8 @@ public final class AccessoryType {
 
     /**
      * Retrieve the item tag for this type
-     * <p>
-     * <strong>Do not use this in data generation, refer to {@link OhmegaTags#get(Identifier)}</strong>
      * @return the item tag associated with this type
+     * @apiNote Do not use this in data generation, refer to {@link OhmegaTags#get(Identifier)}
      */
     public @NonNull TagKey<Item> getTag() {
         return OhmegaTags.get(this);

@@ -100,12 +100,12 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
 
     /**
      * Check if the player has clicked outside the accessory extension bounds.
-     * Parameters are relative to the top left of the extension, not the parent screen
      * <p>
      * Automatically implemented for {@link AbstractContainerScreen} and {@link AbstractRecipeBookScreen}
      * @param mx mouse x relative to the extension
      * @param my mouse y relative to the extension
      * @return {@code true} if the player is found to have clicked outside the extension's bounds, {@code false} otherwise
+     * @apiNote Parameters are relative to the top left of the extension, not the parent screen
      */
     public abstract boolean hasClickedOutside(double mx, double my);
 

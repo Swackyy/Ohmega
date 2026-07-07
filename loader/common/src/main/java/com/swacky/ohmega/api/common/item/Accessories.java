@@ -30,11 +30,11 @@ public final class Accessories {
     /**
      * Retrieves a list of the accessory's possible effective {@link AccessoryType},
      * with values in ascending order of priority index
-     * <p>
-     * Only used internally as this method is more expensive than querying the cached value generated from this with {@link #getType(LivingEntity, Item)}
      * @param item the item to find the effective {@link AccessoryType} of
      * @return the {@link AccessoryType} of lowest priority index bound to the given accessory, or,
      * if no type can be found (including such a case where the item is not an accessory), then {@link AccessoryType#NONE}
+     * @apiNote Only used internally as this method is more expensive than querying the cached value
+     * generated from this with {@link #getType(LivingEntity, Item)}
      */
     @SuppressWarnings("deprecation")
     private static @NonNull List<AccessoryType> getEffectiveTypes(@NonNull Item item) {

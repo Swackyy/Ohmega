@@ -26,15 +26,14 @@ import org.jspecify.annotations.Nullable;
  */
 public final class AccessoryHelperClient {
     /**
-     * You should most likely use {@link #getBindTooltip(ItemStack)} as it is easier
-     * and uses standardised key formats that work with {@link OhmegaLangHelper}
-     * <p>
      * A utility method used to get a description for key-bound capable accessories
      * @param stack {@link ItemStack} instance of an accessory
      * @param bindKey the translatable key for use when a key-bind is applicable for this stack,
      * use '%s' for the bind key replacement in your translation
      * @param nonBindKey the translatable key for use when a key-bind is not applicable for this stack
      * @return example: "Press G to toggle flight", "Allows the wearer to fly"
+     * @apiNote You should most likely use {@link #getBindTooltip(ItemStack)} as it is easier
+     * and uses standardised key formats that work with {@link OhmegaLangHelper}
      */
     public static @NonNull MutableComponent getBindTooltip(@NonNull ItemStack stack, @NonNull String bindKey, @NonNull String nonBindKey) {
         Player player = Minecraft.getInstance().player;
