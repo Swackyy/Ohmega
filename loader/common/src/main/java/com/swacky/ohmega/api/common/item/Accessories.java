@@ -1,7 +1,9 @@
 package com.swacky.ohmega.api.common.item;
 
+import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaTags;
 import com.swacky.ohmega.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
@@ -26,7 +28,6 @@ public final class Accessories {
     private static final @NonNull Map<Item, List<AccessoryType>> BOUND_TYPES = new IdentityHashMap<>();
     private static final @NonNull List<Item> TO_TYPE_QUERY = new ArrayList<>();
 
-    // todo: implement this method properly
     /**
      * Retrieves a list of the accessory's possible effective {@link AccessoryType},
      * with values in ascending order of priority index
@@ -43,7 +44,7 @@ public final class Accessories {
         for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
             AccessoryType candidate = entry.getKey();
 
-            if (!candidate.shouldPreventReference() && item.builtInRegistryHolder().is(entry.getValue())) {
+            if (candidate.allowReference() && item.builtInRegistryHolder().is(entry.getValue())) {
                 int index = 0;
 
                 while (index < list.size() && list.get(index).getPriority() <= candidate.getPriority()) {
@@ -150,8 +151,20 @@ public final class Accessories {
         List<AccessoryType> candidates = BOUND_TYPES.get(item);
 
         if (candidates != null) {
-            // todo: make this actually respect order and fallback
-            return candidates.getFirst();
+            ImmutableList<AccessoryType> types = OhmegaDataAttachments.getData(entity).getTypes();
+            int size = candidates.size();
+
+            for (int i = 0; i < size; i++) {
+                AccessoryType candidate = candidates.get(i);
+
+                if (types.contains(candidate) && (i == 0 || candidate.allowFallback())) {
+                    return candidate;
+                }
+            }
+
+            if (!candidates.isEmpty()) {
+                return candidates.getFirst();
+            }
         }
 
         return AccessoryType.NONE;

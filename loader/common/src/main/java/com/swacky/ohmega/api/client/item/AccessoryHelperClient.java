@@ -2,7 +2,6 @@ package com.swacky.ohmega.api.client.item;
 
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -63,12 +62,10 @@ public final class AccessoryHelperClient {
             boolean flag = false;
 
             if (accessory != null) {
-                for (AccessoryType type0 : OhmegaConfig.Server.getKeyboundSlotTypes()) {
-                    for (AccessoryDataEntry entry : data.getEntries()) {
-                        if (entry.getType().equals(type0)) {
-                            flag = true;
-                            break;
-                        }
+                for (AccessoryType keyboundType : OhmegaConfig.Server.getKeyboundSlotTypes()) {
+                    if (data.getTypes().contains(keyboundType)) {
+                        flag = true;
+                        break;
                     }
                 }
             }

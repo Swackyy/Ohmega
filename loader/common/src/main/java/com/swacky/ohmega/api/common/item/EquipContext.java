@@ -5,7 +5,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.NonNull;
 
-// todo: possibly rename?
 /**
  * Context for when an accessory is equipped or un-equipped, provided for certain methods and events.
  * @apiNote A boolean {@link #isMutateSafe()} is provided to state whether it is generally considered safe to either cancel,

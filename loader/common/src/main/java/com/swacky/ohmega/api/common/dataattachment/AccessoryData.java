@@ -1,9 +1,11 @@
 package com.swacky.ohmega.api.common.dataattachment;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
@@ -41,7 +43,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-// todo: slots need realignment, it's very bad
 /**
  * Storage holder for accessory-related data, attachable for any {@link LivingEntity}
  */
@@ -63,6 +64,7 @@ public final class AccessoryData {
     private MutableBoolean trackingDefault;
     private @NonNull ArrayList<@NonNull AccessoryDataEntry> entries;
     private long tickIndex = 0;
+    private ImmutableList<AccessoryType> typesCache;
 
     /**
      * Root constructor, used internally
@@ -71,6 +73,14 @@ public final class AccessoryData {
     public AccessoryData(boolean trackingDefault, @NonNull ArrayList<@NonNull AccessoryDataEntry> entries) {
         this.trackingDefault = new MutableBoolean(trackingDefault);
         this.entries = entries;
+
+        ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(entries.size());
+
+        for (AccessoryDataEntry entry : entries) {
+            builder.add(entry.getType());
+        }
+
+        this.typesCache = builder.build();
     }
 
     /**
@@ -123,6 +133,14 @@ public final class AccessoryData {
      */
     public @NonNull ArrayList<AccessoryDataEntry> getEntries() {
         return entries;
+    }
+
+    /**
+     * Retrieve the cached list of {@link AccessoryType}s, rebuilt when slots are changed automatically
+     * @return the cached {@link AccessoryType}s held by the {@link #entries}
+     */
+    public ImmutableList<AccessoryType> getTypes() {
+        return typesCache;
     }
 
     /**
@@ -232,7 +250,9 @@ public final class AccessoryData {
      * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
      */
     public void setStacks(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks, @NonNull EquipContext context, boolean forceOnEquip) {
-        for (int i = 0; i < indexes.length; i++) {
+        int size = indexes.length;
+
+        for (int i = 0; i < size; i++) {
             int index = indexes[i];
 
             if (index < size()) {
@@ -347,19 +367,6 @@ public final class AccessoryData {
     }
 
     /**
-     * Attempts to send the given packet to all players on a {@link Level}, only succeeds if it is a {@link ServerLevel}
-     * @param level possibly {@code null} level to retrieve {@link Player} receivers from
-     * @param packet the packet to send to each receiver
-     */
-    private void trySendPacketToAll(@Nullable Level level, @NonNull CustomPacketPayload packet) {
-        if (level instanceof ServerLevel serverLevel) {
-            for (ServerPlayer player : serverLevel.players()) {
-                OhmegaNetworking.sendS2C(player, packet);
-            }
-        }
-    }
-
-    /**
      * Checks whether this data instance is tracking the default accessory slots
      * @return {@code true} if we are tracking the default accessory slots, {@code false} otherwise
      */
@@ -376,11 +383,43 @@ public final class AccessoryData {
         trackingDefault.setFalse();
     }
 
+    /**
+     * Fixes the {@link OhmegaDataComponents#getSlotIndex()} data component for stored items after they may have been moved
+     */
     private void resetSlotDataComponents() {
         int size = size();
 
         for (int i = 0; i < size; i++) {
             AccessoryHelper.setSlot(entries.get(i).getStack(), i);
+        }
+    }
+
+    /**
+     * Performs operations needed when slots are changed, including rebuilding caches and UI slots
+     * @param entity the {@link LivingEntity} this data instance is attached to
+     */
+    private void onMutateSlots(LivingEntity entity) {
+        ImmutableList.Builder<AccessoryType> builder = ImmutableList.builderWithExpectedSize(entries.size());
+
+        for (AccessoryDataEntry entry : entries) {
+            builder.add(entry.getType());
+        }
+
+        typesCache = builder.build();
+
+        AccessoryMenus.tryRebuildSlots(entity);
+    }
+
+    /**
+     * Attempts to send the given packet to all players on a {@link Level}, only succeeds if it is a {@link ServerLevel}
+     * @param level possibly {@code null} level to retrieve {@link Player} receivers from
+     * @param packet the packet to send to each receiver
+     */
+    private void trySendPacketToAll(@Nullable Level level, @NonNull CustomPacketPayload packet) {
+        if (level instanceof ServerLevel serverLevel) {
+            for (ServerPlayer player : serverLevel.players()) {
+                OhmegaNetworking.sendS2C(player, packet);
+            }
         }
     }
 
@@ -456,7 +495,7 @@ public final class AccessoryData {
                     context);
         }
 
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), packet);
         return count;
     }
@@ -491,7 +530,7 @@ public final class AccessoryData {
             entries.remove(i).moveOrDropStack(entity, context);
         }
 
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), new SyncSlotsPacket(
                 SyncSlotsPacket.Action.DEFAULT,
                 entity.getId(),
@@ -530,7 +569,7 @@ public final class AccessoryData {
             }
         }
 
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), new SyncSlotsPacket(
                 SyncSlotsPacket.Action.INHERIT,
                 entity.getId(),
@@ -565,7 +604,7 @@ public final class AccessoryData {
             resetSlotDataComponents();
         }
 
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), new SyncSlotsPacket(
                 SyncSlotsPacket.Action.INSERT,
                 entity.getId(),
@@ -613,7 +652,7 @@ public final class AccessoryData {
         }
 
         resetSlotDataComponents();
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), new SyncSlotsPacket(
                 SyncSlotsPacket.Action.REMOVE,
                 entity.getId(),
@@ -642,7 +681,7 @@ public final class AccessoryData {
         }
 
         resetSlotDataComponents();
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), new SyncSlotsPacket(
                 SyncSlotsPacket.Action.REMOVE,
                 entity.getId(),
@@ -666,7 +705,7 @@ public final class AccessoryData {
             entries.get(i).setType(entity, type, context);
         }
 
-        AccessoryMenus.tryRebuildSlots(entity);
+        onMutateSlots(entity);
         trySendPacketToAll(entity.level(), new SyncSlotsPacket(
                 SyncSlotsPacket.Action.SET,
                 entity.getId(),

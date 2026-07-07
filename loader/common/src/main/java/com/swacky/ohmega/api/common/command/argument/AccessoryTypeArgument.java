@@ -44,7 +44,7 @@ public class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
     public static final @NonNull DynamicCommandExceptionType EXCEPTION_UNKNOWN_TYPE = new DynamicCommandExceptionType(id ->
             Component.translatable(EXCEPTION_UNKNOWN_TYPE_KEY, id.toString()));
     /**
-     * General use unspecifiable type (see {@link AccessoryType#shouldPreventReference()}) exception
+     * General use unspecifiable type (see {@link AccessoryType#allowReference()}) exception
      * May be used elsewhere. hence the {@code public} specifier
      */
     public static final @NonNull DynamicCommandExceptionType EXCEPTION_UNSPECIFIABLE_TYPE = new DynamicCommandExceptionType(id ->
@@ -54,7 +54,7 @@ public class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
 
     /**
      * Internal constructor, use {@link #any()} and {@link #referenceable()}
-     * @param referenceableOnly controls whether we should allow parsing and validation for types marked with {@link AccessoryType#shouldPreventReference()}
+     * @param referenceableOnly controls whether we should allow parsing and validation for types marked with {@link AccessoryType#allowReference()}
      */
     private AccessoryTypeArgument(boolean referenceableOnly) {
         this.referenceableOnly = referenceableOnly;
@@ -93,7 +93,7 @@ public class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
         if (AccessoryTypeManager.exists(id)) {
             AccessoryType type = AccessoryTypeManager.get(id);
 
-            if (!referenceableOnly || !type.shouldPreventReference()) {
+            if (!referenceableOnly || type.allowReference()) {
                 return type;
             }
 

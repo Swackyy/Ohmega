@@ -1,16 +1,10 @@
 package com.swacky.ohmega.api.common.item;
 
-import com.google.common.collect.ImmutableSet;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.api.common.init.OhmegaTags;
-import com.swacky.ohmega.config.OhmegaConfig;
-import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -22,7 +16,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -30,44 +23,6 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("unused")
 public final class AccessoryHelper {
-    /**
-     * You most likely want to use {@link Accessories#getType(LivingEntity, Item)} instead
-     * @param item the item to find the {@link AccessoryType}s of
-     * @return all of the {@link AccessoryType}s that the {@link Item} is a part of, ignoring the priority index of each type
-     */
-    @SuppressWarnings("deprecation")
-    public static @NonNull ImmutableSet<AccessoryType> getTypes(@NonNull Item item) {
-        ImmutableSet.Builder<AccessoryType> builder = new ImmutableSet.Builder<>();
-
-        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
-            builder.add(AccessoryType.GENERIC.get());
-        }
-
-        for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
-            if (item.builtInRegistryHolder().is(entry.getValue())) {
-                AccessoryType type = entry.getKey();
-
-                if (!type.shouldPreventReference()) {
-                    builder.add(entry.getKey());
-                }
-            }
-        }
-
-        BooleanObjectPair<AccessoryType> override = AccessoryTypeManager.getTypeOverride(item);
-
-        if (override != null) {
-            builder.add(override.right());
-        }
-
-        ImmutableSet<AccessoryType> set = builder.build();
-
-        if (set.isEmpty()) {
-            return ImmutableSet.of(AccessoryType.NONE);
-        }
-
-        return set;
-    }
-
     /**
      * Checks the active state of an accessory item
      * @param stack {@link ItemStack} to seek active state from
@@ -181,8 +136,9 @@ public final class AccessoryHelper {
      */
     public static int getFirstOpenSlot(@NonNull LivingEntity entity, @NonNull AccessoryType type) {
         AccessoryData data = OhmegaDataAttachments.getData(entity);
+        int size = data.size();
 
-        for (int i = 0; i < data.size(); i++) {
+        for (int i = 0; i < size; i++) {
             AccessoryDataEntry entry = data.getEntry(i);
 
             if (entry.getType().equals(type) && entry.getStack().isEmpty()) {

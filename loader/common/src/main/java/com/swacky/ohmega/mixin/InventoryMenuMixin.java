@@ -47,15 +47,6 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
             order = -7777)
     private void init(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
         AccessoryMenus.attachExtension(this, owner, AccessoryMenus.assertImplementation(this));
-        /*if (owner.level().isClientSide()) {
-            AccessoryMenus.onConstruct(this, owner);
-        } else {
-            AccessoryMenus.attachExtension(this, owner, AccessoryMenus.assertImplementation(this));
-
-            for (int i = 0; i < AccessoryHelper.getData(owner).size(); i++) {
-                addSlot(new TemporarySlot());
-            }
-        }*/
     }
 
     // todo: this bad

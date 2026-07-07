@@ -128,9 +128,10 @@ public final class OhmegaNetworking {
                 }
 
                 if (level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
+                    int size = indexes.length;
                     AccessoryData data = OhmegaDataAttachments.getData(entity);
 
-                    for (int i = 0; i < indexes.length; i++) {
+                    for (int i = 0; i < size; i++) {
                         int index = indexes[i];
 
                         if (index < data.size()) {

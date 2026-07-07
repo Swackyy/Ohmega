@@ -71,9 +71,10 @@ public final class AccessoryChangeTrigger extends SimpleCriterionTrigger<Accesso
 
         @SuppressWarnings("deprecation")
         public static Criterion<InventoryChangeTrigger.TriggerInstance> hasItems(ItemLike... items) {
+            int size = items.length;
             ItemPredicate[] predicates = new ItemPredicate[items.length];
 
-            for (int i = 0; i < items.length; ++i) {
+            for (int i = 0; i < size; ++i) {
                 predicates[i] = new ItemPredicate(Optional.of(HolderSet.direct(items[i].asItem().builtInRegistryHolder())), MinMaxBounds.Ints.ANY, DataComponentMatchers.ANY);
             }
 

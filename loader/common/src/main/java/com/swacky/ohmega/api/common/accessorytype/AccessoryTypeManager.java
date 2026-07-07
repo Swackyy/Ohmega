@@ -146,7 +146,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         TYPES.putAll(OhmegaHooks.registerAccessoryTypes());
 
         for (AccessoryType type : TYPES.values()) {
-            if (!type.shouldPreventReference()) {
+            if (type.allowReference()) {
                 REFERENCEABLE_TYPES.add(type.getId());
             }
         }
@@ -244,8 +244,8 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
 
     /**
      * Get the {@link AccessoryType} identifier keyset
-     * @param referenceableOnly {@code true} to give types where {@link AccessoryType#shouldPreventReference()} returns {@code false},
-     *                                      and {@code false} to not check for that and simply give all types
+     * @param referenceableOnly {@code true} to give types where {@link AccessoryType#allowReference()} returns {@code true},
+     *                                      and {@code false} to not check and simply give all types
      * @return the backing keyset for the type map
      */
     public static @NonNull Set<Identifier> getTypeIdentifiers(boolean referenceableOnly) {

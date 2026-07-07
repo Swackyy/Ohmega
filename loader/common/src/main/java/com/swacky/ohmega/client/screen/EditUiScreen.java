@@ -663,8 +663,11 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     public void extractBackground(@NonNull GuiGraphicsExtractor gui, int mx, int my, float partialTicks) {
         super.extractBackground(gui, mx, my, partialTicks);
 
-        for (int i = 0; i < Math.ceilDiv(width, 256); i++) {
-            for (int j = 0; j < Math.ceilDiv(height, 256); j++) {
+        int xSteps = Math.ceilDiv(width, 256);
+        int ySteps = Math.ceilDiv(height, 256);
+
+        for (int i = 0; i < xSteps; i++) {
+            for (int j = 0; j < ySteps; j++) {
                 gui.blit(
                         RenderPipelines.GUI_TEXTURED,
                         BACKGROUND_LOCATION,

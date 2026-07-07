@@ -54,7 +54,7 @@ public class AccessoryTypePredicateArgument extends ParserBasedArgument<Accessor
 
     /**
      * Internal constructor, use {@link #any()} and {@link #referenceable()}
-     * @param referenceableOnly controls whether we should allow parsing and validation for types marked with {@link AccessoryType#shouldPreventReference()}
+     * @param referenceableOnly controls whether we should allow parsing and validation for types marked with {@link AccessoryType#allowReference()}
      */
     private AccessoryTypePredicateArgument(boolean referenceableOnly) {
         Grammar<Result> grammar;
@@ -72,7 +72,7 @@ public class AccessoryTypePredicateArgument extends ParserBasedArgument<Accessor
 
     /**
      * Creates the {@link Grammar} parsing instances, used internally to create {@code static} fields {@link #ANY_GRAMMAR} and {@link #REFERENCEABLE_GRAMMAR}
-     * @param referenceableOnly controls whether we should allow parsing and validation for types marked with {@link AccessoryType#shouldPreventReference()}
+     * @param referenceableOnly controls whether we should allow parsing and validation for types marked with {@link AccessoryType#allowReference()}
      * @return grammar rules and parsing schematic for this instance
      */
     private static Grammar<Result> createGrammar(boolean referenceableOnly) {
@@ -101,7 +101,7 @@ public class AccessoryTypePredicateArgument extends ParserBasedArgument<Accessor
                 if (AccessoryTypeManager.exists(id)) {
                     AccessoryType type = AccessoryTypeManager.get(id);
 
-                    if (!referenceableOnly || !type.shouldPreventReference()) {
+                    if (!referenceableOnly || type.allowReference()) {
                         return type::equals;
                     }
 

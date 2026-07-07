@@ -46,7 +46,7 @@ public final class ItemCommand implements ICommandNode {
     public static final String GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
     public static final String SET_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
     public static final String SET_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
-    public static final String TYPE_GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TYPE).add(ELEMENT_GET).feedback();
+    public static final String TYPE_GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TYPE).feedback();
 
     @SuppressWarnings("unchecked")
     private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(object -> {
@@ -73,9 +73,8 @@ public final class ItemCommand implements ICommandNode {
                                                 .then(Commands.argument(ARGUMENT_COUNT, IntegerArgumentType.integer(1))
                                                         .executes(ItemCommand::setWithCount))))))
                 .then(Commands.literal(ELEMENT_TYPE)
-                        .then(Commands.literal(ELEMENT_GET)
-                                .then(Commands.argument(ARGUMENT_ITEM, ItemArgument.item(context))
-                                        .executes(ItemCommand::type))));
+                        .then(Commands.argument(ARGUMENT_ITEM, ItemArgument.item(context))
+                                .executes(ItemCommand::type)));
     }
 
     private static int get(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

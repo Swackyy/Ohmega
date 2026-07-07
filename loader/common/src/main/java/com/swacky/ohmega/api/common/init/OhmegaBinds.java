@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfig;
@@ -72,23 +71,28 @@ public final class OhmegaBinds {
                     addMapping(AccessoryType.GENERIC.get(), i, GLFW.GLFW_KEY_UNKNOWN);
                 }
             } else {
-                for (AccessoryDataEntry entry : data.getEntries()) {
-                    AccessoryType type = entry.getType();
-
+                for (AccessoryType type : data.getTypes()) {
                     if (keyBoundSlotTypes.contains(type)) {
                         int index = typeCountMap.getOrDefault(type, 0);
-                        // Default bindings in ternary:
-                        // Utility 1: G
-                        // Utility 2: V
-                        // Special 1: B
-                        int key =
-                                type == AccessoryType.UTILITY.get() ?
-                                        index == 0 ? GLFW.GLFW_KEY_G :
-                                        index == 1 ? GLFW.GLFW_KEY_V :
-                                        GLFW.GLFW_KEY_UNKNOWN :
-                                        type == AccessoryType.SPECIAL.get() &&
-                                                index == 0 ? GLFW.GLFW_KEY_B :
-                                        GLFW.GLFW_KEY_UNKNOWN;
+                        int key;
+
+                        if (type.equals(AccessoryType.UTILITY.get())) {
+                            if (index == 0) {
+                                key = GLFW.GLFW_KEY_G;
+                            } else if (index == 1) {
+                                key = GLFW.GLFW_KEY_V;
+                            } else {
+                                key = GLFW.GLFW_KEY_UNKNOWN;
+                            }
+                        } else if (type.equals(AccessoryType.SPECIAL.get())) {
+                            if (index == 0) {
+                                key = GLFW.GLFW_KEY_B;
+                            } else {
+                                key = GLFW.GLFW_KEY_UNKNOWN;
+                            }
+                        } else {
+                            key = GLFW.GLFW_KEY_UNKNOWN;
+                        }
 
                         addMapping(type, index, key);
                         typeCountMap.put(type, index + 1);

@@ -256,8 +256,10 @@ public final class ClientCallbacks {
                     return;
                 }
 
+                int size = OhmegaBinds.size();
+
                 // Never ever touch this again; wrote 2 months ago, I now consider it dark magic.
-                for (int i = 0; i < OhmegaBinds.size(); i++) {
+                for (int i = 0; i < size; i++) {
                     KeyMapping mapping = mappings.get(i);
                     int j = 0;
 
