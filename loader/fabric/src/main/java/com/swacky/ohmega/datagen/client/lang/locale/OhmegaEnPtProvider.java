@@ -77,7 +77,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(InfoCommand.REPORT_FEEDBACK, "Cheers fer using Ohmega, if you want t' report a leak, click this message t' open our issue tracker");
         builder.add(InfoCommand.WIKI_FEEDBACK, "Want t' make a magic jar with Ohmega? Click this message t' open th' Ohmega wiki t' learn how");
         // Item
-        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Index %s be off th' ship! Must be and below %s");
+        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Index %s be off th' ship! Must be below %s");
         builder.add(ItemCommand.GET_FEEDBACK, "Lubber %s has %s in index %s o' their doubloon chest");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s o' %s lubbers' doubloon chests t' %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s o' lubber %s's doubloon chest t' %s %s");
@@ -116,7 +116,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(SlotsCommand.UNTRACK_FEEDBACK_SINGLE, "Untracked lubber %s's doubloon slots");
         // Type
         builder.add(TypesCommand.LIST_FEEDBACK, "Thar be %s doubloon type(s) recognised atop this land: %s");
-        builder.add(TypesCommand.QUERY_FEEDBACK, "doubloon type '%s' has th' followin' manifest scribbles: %s");
+        builder.add(TypesCommand.QUERY_FEEDBACK, "Doubloon type '%s' has th' followin' manifest scribbles: %s");
 
         // Config
         internalHelper.addConfigTitle("Ohmega Ship Logs");
@@ -139,7 +139,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 """
                     Style o' th' doubloon chest press'r
                     DEFAULT: Th' typical Ohmega press'r style
-                    LEGACY: A Curios/Baubles inspired press'r that draws next t' th' loot bag player model
+                    LEGACY: A Curios/Baubles inspired press'r that draws next t' th' player model in th' loot bag
                     TAG_LEFT: A small tag-like press'r appearing just off th' top left corner o' th' loot bag
                     TAG_RIGHT: A small tag-like press'r appearing just off th' top right corner o' th' loot bag
                     HIDDEN: Will not draw, use th' dedicated keybind t' open th' doubloon chest instead""");

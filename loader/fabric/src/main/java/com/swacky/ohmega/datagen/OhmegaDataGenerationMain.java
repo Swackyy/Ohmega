@@ -6,6 +6,7 @@ import com.swacky.ohmega.datagen.client.lang.locale.OhmegaEnPtProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaEnUsProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaEsEsProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaItItProvider;
+import com.swacky.ohmega.datagen.client.lang.locale.OhmegaLolUsProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaNlNlProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaRuRuProvider;
 import com.swacky.ohmega.datagen.client.lang.locale.OhmegaUkUaProvider;
@@ -27,6 +28,7 @@ public final class OhmegaDataGenerationMain implements DataGeneratorEntrypoint {
         pack.addProvider(OhmegaEnUsProvider::new);
         pack.addProvider(OhmegaEsEsProvider::new);
         pack.addProvider(OhmegaItItProvider::new);
+        pack.addProvider(OhmegaLolUsProvider::new);
         pack.addProvider(OhmegaNlNlProvider::new);
         pack.addProvider(OhmegaRuRuProvider::new);
         pack.addProvider(OhmegaUkUaProvider::new);

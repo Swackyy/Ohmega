@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.RemoteSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -39,33 +40,33 @@ abstract class ServerPlayerMixin extends Player {
 
     private record ContainerSynchroniserWrapper(ContainerSynchronizer wrapped, InventoryMenu menu) implements ContainerSynchronizer {
         @Override
-        public void sendInitialData(AbstractContainerMenu container, List<ItemStack> slotItems, ItemStack carried, int[] dataSlots) {
-            for (int i = slotItems.size() - 1; i >= 0; i--) {
+        public void sendInitialData(@NonNull AbstractContainerMenu container, List<ItemStack> stacks, @NonNull ItemStack carried, int @NonNull [] data) {
+            for (int i = stacks.size() - 1; i >= 0; i--) {
                 if (menu.getSlot(i) instanceof AccessorySlot) {
-                    slotItems.remove(i);
+                    stacks.remove(i);
                 }
             }
 
-            wrapped.sendInitialData(container, slotItems, carried, dataSlots);
+            wrapped.sendInitialData(container, stacks, carried, data);
         }
 
         @Override
-        public void sendSlotChange(AbstractContainerMenu container, int slotIndex, ItemStack itemStack) {
-            wrapped.sendSlotChange(container, slotIndex, itemStack);
+        public void sendSlotChange(@NonNull AbstractContainerMenu menu, int index, @NonNull ItemStack stack) {
+            wrapped.sendSlotChange(menu, index, stack);
         }
 
         @Override
-        public void sendCarriedChange(AbstractContainerMenu container, ItemStack itemStack) {
-            wrapped.sendCarriedChange(container, itemStack);
+        public void sendCarriedChange(@NonNull AbstractContainerMenu menu, @NonNull ItemStack stack) {
+            wrapped.sendCarriedChange(menu, stack);
         }
 
         @Override
-        public void sendDataChange(AbstractContainerMenu container, int id, int value) {
-            wrapped.sendDataChange(container, id, value);
+        public void sendDataChange(@NonNull AbstractContainerMenu menu, int id, int value) {
+            wrapped.sendDataChange(menu, id, value);
         }
 
         @Override
-        public RemoteSlot createSlot() {
+        public @NonNull RemoteSlot createSlot() {
             return wrapped.createSlot();
         }
     }

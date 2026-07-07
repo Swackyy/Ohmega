@@ -98,10 +98,10 @@ public final class OhmegaConfig {
             String TOGGLE_EXTENSION_BUTTON_STYLE_DESCRIPTION = """
                     Style of the accessory extension button
                     DEFAULT: The normal Ohmega button style
-                    LEGACY: A Curios/Baubles inspired button that renders next to the inventory player model
+                    LEGACY: A Curios/Baubles inspired button that renders next to the player model in the inventory
                     TAG_LEFT: A small tag-like button appearing just off the top left corner of the inventory
                     TAG_RIGHT: A small tag-like button appearing just off the top right corner of the inventory
-                    HIDDEN: Will not show, use the dedicated keybind to open the accessory extension instead""";
+                    HIDDEN: Will not show, use the dedicated key-bind to open the accessory extension instead""";
             // - - -
             String ACCESSORY_EXTENSION_ID_KEY = "accessoryExtensionId";
             String ACCESSORY_EXTENSION_ID_DESCRIPTION = """
