@@ -11,7 +11,6 @@ import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
@@ -20,8 +19,18 @@ import net.minecraftforge.network.SimpleChannel;
 
 import java.util.Objects;
 
-public final class OhmegaNetworkingImpl {
+public final class OhmegaNetworkingImpl implements OhmegaNetworking.Service {
     private static SimpleChannel channel;
+
+    @Override
+    public void sendC2S(CustomPacketPayload packet) {
+        channel.send(packet, PacketDistributor.SERVER.noArg());
+    }
+
+    @Override
+    public void sendS2C(ServerPlayer receiver, CustomPacketPayload packet) {
+        channel.send(packet, PacketDistributor.PLAYER.with(receiver));
+    }
 
     public static void bootstrap() {
         SimpleChannel net = ChannelBuilder
@@ -57,23 +66,5 @@ public final class OhmegaNetworkingImpl {
         });
 
         OhmegaNetworkingImpl.channel = net.build();
-    }
-
-    public static final class C2S implements OhmegaNetworking.C2S.Service {
-        @Override
-        public void send(CustomPacketPayload packet) {
-            OhmegaNetworkingImpl.channel.send(packet, PacketDistributor.SERVER.noArg());
-        }
-    }
-
-    public static final class S2C implements OhmegaNetworking.S2C.Service {
-        @Override
-        public void send(ServerPlayer receiver, CustomPacketPayload packet) {
-            OhmegaNetworkingImpl.channel.send(packet, PacketDistributor.PLAYER.with(receiver));
-        }
-
-        public static void send(Connection connection, CustomPacketPayload packet) {
-            OhmegaNetworkingImpl.channel.send(packet, connection);
-        }
     }
 }

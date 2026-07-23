@@ -33,11 +33,11 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
     private static final String X_COORDINATE = "dat way";
     private static final String Y_COORDINATE = "dis way";
     private static final String EXTENSION_DESCRIPTION_TEMPLATE = """
-            Teh {0} ov teh kit-cat inventori in teh {1} menuu, home iz teh main bit ov teh current fing""";
+            Teh {0} ov teh kit-cat inventori in teh {1} meneow, home iz teh main bit ov teh current fing""";
     private static final String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
-            Teh {0} ov teh switch chest buton in teh {1} menuu when using teh ''{2}'' buton style, home iz teh main bit ov teh current fing""";
+            Teh {0} ov teh kit-cat box buton in teh {1} meneow when using teh ''{2}'' buton style, home iz teh main bit ov teh current fing""";
     private static final String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
-            Teh {0} ov teh flip cat buton in teh {1} menuu, home iz teh main bit ov teh current fing""";
+            Teh {0} ov teh flip cat buton in teh {1} meneow, home iz teh main bit ov teh current fing""";
 
     public OhmegaLolUsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "lol_us", lookup);
@@ -70,14 +70,14 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "SWIPD %s fing(z) fwom %s catz' kit-cat inventoriz");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "SWIPD %s fing(z) from cat %s'z kit-cat inventori");
         // Extensions
-        builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmegawd knowz deez %s kit-cat flavr(z): %s");
+        builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmegawd knowz deez %s kit-cat box(z): %s");
         // Info
         builder.add(InfoCommand.CROWDIN_FEEDBACK, "Fink abowt tranzlating Ohmegawd on Crowdin by pokin diz meowsage!");
         builder.add(InfoCommand.DISCORD_FEEDBACK, "If yu needz helpz wif teh API (???) or want to giv feedbak, pok diz meowsage to get in Ohmegawd's Discord servr");
         builder.add(InfoCommand.REPORT_FEEDBACK, "Thankz 4 uzing Ohmegawd, iv yu wantz to report a mous, pok diz meowsage to open owr mous trackerr");
         builder.add(InfoCommand.WIKI_FEEDBACK, "Wantz to make an Ohmegawd fing? Pok diz meowsage to open teh Ohmegawd wiki to learn how");
         // Item
-        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Dat %s doezn't work! Haz to be below %s");
+        builder.add(ItemCommand.ARGUMENT_INDEX_EXCEPTION, "Dat %s doezn't work! Haz 2 be below %s");
         builder.add(ItemCommand.GET_FEEDBACK, "Cat %s haz %s in place %s ov der kit-cat inventori");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Maded item in place %s ov %s catz' kit-cat inventoriz to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Maded stack in place %s ov cat %s'z kit-cat inventori to %s %s");
@@ -115,8 +115,8 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(SlotsCommand.UNTRACK_FEEDBACK_MULTIPLE, "Maded %s catz' kit-cat slotz loneleh");
         builder.add(SlotsCommand.UNTRACK_FEEDBACK_SINGLE, "Maded cat %s'z kit-cat slotz loneleh");
         // Type
-        builder.add(TypesCommand.LIST_FEEDBACK, "Der iz %s kit-cat type(z) dat we know ov: %s");
-        builder.add(TypesCommand.QUERY_FEEDBACK, "kit-cat flavr '%s' haz deez pwoperteez: %s");
+        builder.add(TypesCommand.LIST_FEEDBACK, "Der iz %s kit-cat flavr(z) dat we know ov: %s");
+        builder.add(TypesCommand.QUERY_FEEDBACK, "Kit-cat flavr '%s' haz deez pwoperteez: %s");
 
         // Config
         internalHelper.addConfigTitle("Ohmegawd Setinz");
@@ -386,7 +386,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
 
         // Toast
         internalHelper.addToast("translation.title", "Ohmegawd tranzlatingz");
-        internalHelper.addToast("translation.message", "Fink abowt tranzlatingz Ohmegawd on Crowdinz frew teh Ohmegawd setinz menuu");
+        internalHelper.addToast("translation.message", "Fink abowt tranzlatingz Ohmegawd on Crowdinz frew teh Ohmegawd setinz meneow");
 
         // Widget
         builder.add(CrowdinButton.TRANSLATION_KEY, "Crowdinz");

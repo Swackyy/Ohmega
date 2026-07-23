@@ -1,9 +1,9 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.network.Connection;
 import net.minecraft.network.TickablePacketListener;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -25,6 +25,6 @@ abstract class ServerConfigurationPacketListenerImplMixin extends ServerCommonPa
             at = @At(
                     value = "TAIL"))
     private void handleConfigurationFinished(CallbackInfo ci) {
-        OhmegaNetworkingImpl.S2C.send(connection, new SyncTypesPacket(server.registryAccess()));
+        connection.send(new ClientboundCustomPayloadPacket(new SyncTypesPacket(server.registryAccess())));
     }
 }
