@@ -7,6 +7,7 @@ import com.swacky.ohmega.api.client.screen.SnapLine;
 import com.swacky.ohmega.api.client.screen.widget.ExtensionScreenButton;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public final class FlipEntityButton extends ExtensionScreenButton implements IEditUiElement {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/flip_entity_button.png");
-    public static final String TRANSLATION_KEY = Ohmega.MODID + ".widget.flip_entity";
+    public static final String TRANSLATION_KEY = OhmegaClient.widgetTranslationKey("flip_entity");
 
     private final LazyPosition position;
     private final IEntityRenderingExtension extension;

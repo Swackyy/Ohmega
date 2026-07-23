@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+// todo: possibly split nested classes and move to api package
 public final class OhmegaConfig {
     public static final class Client {
         private static final Service IMPL = OhmegaClient.loadService(Service.class);
@@ -140,6 +141,11 @@ public final class OhmegaConfig {
             String SHOW_HOVER_TOOLTIP_DESCRIPTION = """
                     If true, will display a tooltip box of the type of accessory slot when it is hovered over""";
             boolean SHOW_HOVER_TOOLTIP_DEFAULT = true;
+            // - - -
+            String RENDER_ACCESSORIES_KEY = "renderAccessories";
+            String RENDER_ACCESSORIES_DESCRIPTION = """
+                    A global accessory rendering option. If true, will render accessories on entities when applicable, or not at all if false""";
+            boolean RENDER_ACCESSORIES_DEFAULT = true;
             // - - -
             String BACKGROUND_ALPHA_KEY = "background_alpha";
             String BACKGROUND_ALPHA_DESCRIPTION = """
@@ -262,6 +268,7 @@ public final class OhmegaConfig {
                     IntLazySavedValue maxColumnSlots,
                     IntLazySavedValue maxColumnRenderSlots,
                     BooleanLazySavedValue showHoverTooltip,
+                    BooleanLazySavedValue renderAccessories,
                     IntLazySavedValue backgroundAlpha,
                     IntLazySavedValue magneticsStrength,
                     IntLazySavedValue survivalExtensionX,
@@ -298,6 +305,7 @@ public final class OhmegaConfig {
                     maxColumnSlots.pull();
                     maxColumnRenderSlots.pull();
                     showHoverTooltip.pull();
+                    renderAccessories.pull();
                     backgroundAlpha.pull();
                     magneticsStrength.pull();
                     survivalExtensionX.pull();

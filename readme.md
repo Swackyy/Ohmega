@@ -21,7 +21,7 @@ The following table describes features and the mod's version requirement in whic
 | Custom slot types   | >=1.3   | Full, data-driven       | Yes           |
 | Per-player slots    | >=1.6   | Dynamic, broad commands | No            |
 | Data generation     | >=1.5.8 | Accessory types, lang   | Yes           |
-| Key-bound slots     | Any     | Built-in, dynamic       | No            |
+| Key-bound slots     | Any     | Built-in, dynamic       | Yes           |
 | Accessory events    | >=1.1   | Full (>=1.6)            | Partial       |
 | Attribute modifiers | >=1.1   | Full, conditional       | Yes           |
 | Custom screens      | >=1.6   | Full (exp)              | Yes           |

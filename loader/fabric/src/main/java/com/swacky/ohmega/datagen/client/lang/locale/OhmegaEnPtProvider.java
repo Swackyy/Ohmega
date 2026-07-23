@@ -174,6 +174,11 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 "Show Look Scribble",
                 """
                     If aye, will show a scribble box o' th' type o' doubloon slot when it is hovered over""");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
+                "Show Doubloons",
+                """
+                    If aye, will show doubloons on ye crew when makin' sense, or stows em away if nay""");
         // Edit UI
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_EDIT_UI,
@@ -352,7 +357,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Allow Hide Doubloons",
                 """
-                    Will prevent crew from hidin' doubloons if nay, so that they always be out""");
+                    Will prevent ye crew from hidin' doubloons if nay, so that they always be out""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
                 "Inject Vanilla Clear",

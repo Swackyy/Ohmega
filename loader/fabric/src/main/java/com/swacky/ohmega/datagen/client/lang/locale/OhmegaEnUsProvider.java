@@ -148,6 +148,10 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Show Hover Tooltip",
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_DESCRIPTION);
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
+                "Render Accessories",
+                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_DESCRIPTION);
         // Edit UI
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_EDIT_UI,

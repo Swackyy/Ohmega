@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.client.screen.widget.ExtensionScreenButton;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.client.screen.SnapLine;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public final class ToggleExtensionButton extends ExtensionScreenButton implements IEditUiElement {
-    public static final String TRANSLATION_KEY = Ohmega.MODID + ".widget.toggle_extension";
+    public static final String TRANSLATION_KEY = OhmegaClient.widgetTranslationKey("toggle_extension");
 
     private final LazyPosition position;
     private final AccessoryScreenExtension extension;

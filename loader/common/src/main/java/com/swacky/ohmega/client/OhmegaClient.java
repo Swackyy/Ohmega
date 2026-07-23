@@ -61,4 +61,8 @@ public final class OhmegaClient {
             throw new IllegalStateException("Client service loading called either before Client bootstrapping or on the wrong distribution");
         }
     }
+
+    public static String widgetTranslationKey(String key) {
+        return Ohmega.MODID + ".widget." + key;
+    }
 }

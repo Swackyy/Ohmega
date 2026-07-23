@@ -15,7 +15,7 @@ import org.jspecify.annotations.NonNull;
 
 public final class CrowdinButton extends HoverableButton {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/crowdin_button.png");
-    public static final String TRANSLATION_KEY = Ohmega.MODID + ".widget.crowdin";
+    public static final String TRANSLATION_KEY = OhmegaClient.widgetTranslationKey("crowdin");
 
     private final Screen parentScreen;
 

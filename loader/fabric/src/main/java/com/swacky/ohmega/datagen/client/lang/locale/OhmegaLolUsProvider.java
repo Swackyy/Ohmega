@@ -174,6 +174,11 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
                 "Show Meower",
                 """
                     If yiss, showz a meower box ov teh flavr ov kit-cat slot when it is meowed on""");
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
+                "Show Kit-catz",
+                """
+                    If yiss, showz kit-catz on catz wen wantz, never wantz if naw""");
         // Edit UI
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_EDIT_UI,

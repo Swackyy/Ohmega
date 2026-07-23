@@ -72,6 +72,9 @@ public final class OhmegaConfigImpl {
             BooleanLazySavedValue showHoverTooltip = wrap(builder
                     .comment(SHOW_HOVER_TOOLTIP_DESCRIPTION)
                     .define(SHOW_HOVER_TOOLTIP_KEY, SHOW_HOVER_TOOLTIP_DEFAULT));
+            BooleanLazySavedValue renderAccessories = wrap(builder
+                    .comment(RENDER_ACCESSORIES_DESCRIPTION)
+                    .define(RENDER_ACCESSORIES_KEY, RENDER_ACCESSORIES_DEFAULT));
 
             builder.push(SECTION_EDIT_UI);
 
@@ -184,6 +187,7 @@ public final class OhmegaConfigImpl {
                     maxColumnSlots,
                     maxColumnRenderSlots,
                     showHoverTooltip,
+                    renderAccessories,
                     backgroundAlpha,
                     magneticsStrength,
                     survivalExtensionX,

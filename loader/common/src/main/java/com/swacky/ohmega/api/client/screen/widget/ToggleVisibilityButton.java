@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.client.screen.widget;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
+import com.swacky.ohmega.client.OhmegaClient;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -17,7 +18,7 @@ import org.jspecify.annotations.NonNull;
  */
 public final class ToggleVisibilityButton extends ExtensionRelativeButton {
     private static final Identifier LOCATION = Ohmega.id("textures/gui/container/accessory_inventory/toggle_visibility_button.png");
-    public static final String TRANSLATION_KEY = Ohmega.MODID + ".widget.toggle_visibility";
+    public static final String TRANSLATION_KEY = OhmegaClient.widgetTranslationKey("toggle_visibility");
 
     private final Player player;
     private final AccessoryData data;
