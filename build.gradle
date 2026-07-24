@@ -19,7 +19,8 @@ idea {
 File secretsFile = file("secrets.properties")
 
 if (secretsFile.exists()) {
-    secretsFile.withInputStream { stream -> {
+    secretsFile.withInputStream { stream ->
+        {
             Properties secrets = new Properties()
 
             secrets.load(stream)
@@ -77,27 +78,37 @@ if (secretsFile.exists()) {
         }
     }
 
+    evaluationDependsOn(":loader:common")
+    evaluationDependsOn(":loader:fabric")
+
     // Publishes the mod to the following platforms:
     // Maven central repository
     // CurseForge
     // Modrinth
-    // todo: see if this new code works
+    // todo: this still doesn't run the datagen but it does publish ig
     tasks.register("completeRelease") {
         group = "publishing"
 
-        TaskProvider<Task> datagenTask = tasks.named("runDatagen")
-
-        dependsOn datagenTask
-
         subprojects.each { sub ->
-            sub.tasks.matching {
-                it.name == "publishMods"
-            }.configureEach { publishTask ->
-                publishTask.mustRunAfter datagenTask
+            //noinspection ConfigurationAvoidance
+            Task publishTask = sub.tasks.findByName "publishMods"
+
+            if (publishTask != null) {
                 dependsOn publishTask
             }
         }
 
         finalizedBy("publishMavenCentral")
+    }
+
+    TaskProvider<Task> datagenTask = project(":loader:fabric").tasks.named("runDatagen")
+
+    subprojects.each { sub ->
+        sub.tasks.matching {
+            it.name == "publishMods"
+        }.configureEach { publishTask ->
+            //dependsOn datagenTask
+            mustRunAfter datagenTask
+        }
     }
 }
