@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
@@ -389,8 +390,6 @@ public final class OhmegaConfig {
             List<? extends String> slotTypes = data.defaultSlotTypes().getObject();
             List<AccessoryType> list;
 
-            // todo: respect new config option here
-
             if (slotTypes != null) {
                 int size = slotTypes.size();
                 list = new ArrayList<>(size);
@@ -403,7 +402,7 @@ public final class OhmegaConfig {
                     for (String id : slotTypes) {
                         AccessoryType type = AccessoryTypeManager.get(Identifier.parse(id));
 
-                        if (type != AccessoryType.NONE) {
+                        if (type != AccessoryType.NONE && (!data.shrinkDefaultSlotTypes().get() || Accessories.isTypeUsed(type))) {
                             list.add(type);
                         }
                     }

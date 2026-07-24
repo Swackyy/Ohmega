@@ -100,8 +100,8 @@ public final class CommonCallbacks {
     }
 
     public static void onServerConfigLoad() {
-        OhmegaConfig.Server.revalidateCached();
         Accessories.surveyRegistry();
+        OhmegaConfig.Server.revalidateCached();
     }
 
     public static void onServerConfigReload() {

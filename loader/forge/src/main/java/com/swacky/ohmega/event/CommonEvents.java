@@ -47,6 +47,13 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void onConfigLoad(ModConfigEvent.Loading event) {
+        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+            CommonCallbacks.onServerConfigLoad();
+        }
+    }
+
+    @SubscribeEvent
     public static void onConfigReload(ModConfigEvent.Reloading event) {
         if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
             CommonCallbacks.onServerConfigReload();

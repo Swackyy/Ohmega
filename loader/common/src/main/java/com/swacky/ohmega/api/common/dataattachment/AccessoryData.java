@@ -154,14 +154,18 @@ public final class AccessoryData {
             AccessoryDataEntry entry = entries.get(i);
             ItemStack stack = entry.getStack();
 
-            //if (AccessoryHelper.isActive(stack)) {
+            if (AccessoryHelper.isActive(stack)) {
                 entry.doEquip(entity, stack, i, EquipContext.ATTACH);
-            //}
+            }
         }
 
         if (!entity.level().isClientSide()) {
             if (isTrackingDefault()) {
                 DEFAULT_TRACKERS.add(entity);
+
+                if (!typesCache.equals(OhmegaConfig.Server.getDefaultSlotTypes())) {
+                    defaultSlots(entity, EquipContext.ATTACH);
+                }
             }
 
             if (entity instanceof ServerPlayer player) {

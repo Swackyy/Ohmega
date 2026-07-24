@@ -11,6 +11,7 @@ import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import net.minecraft.client.multiplayer.ClientConfigurationPacketListenerImpl;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
@@ -20,7 +21,7 @@ import net.minecraftforge.network.SimpleChannel;
 import java.util.Objects;
 
 public final class OhmegaNetworkingImpl implements OhmegaNetworking.Service {
-    private static SimpleChannel channel;
+    public static SimpleChannel channel;
 
     @Override
     public void sendC2S(CustomPacketPayload packet) {
@@ -66,5 +67,9 @@ public final class OhmegaNetworkingImpl implements OhmegaNetworking.Service {
         });
 
         OhmegaNetworkingImpl.channel = net.build();
+    }
+
+    public static void send(Connection connection, CustomPacketPayload packet) {
+        channel.send(packet, connection);
     }
 }

@@ -123,6 +123,8 @@ public final class Accessories {
      * Used internally to cache the effective {@link AccessoryType}s of every
      */
     public static void surveyRegistry() {
+        BOUND_TYPES.clear();
+
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof IAccessory accessory) {
                 bind(item, accessory);
@@ -168,5 +170,20 @@ public final class Accessories {
         }
 
         return AccessoryType.NONE;
+    }
+
+    /**
+     * Checks the surveyed data for if a given {@link AccessoryType} actually has any accessory items bound with it
+     * @param type the {@link AccessoryType} to check the usage of
+     * @return {@code true} if the type is used at all, does not include cascading and as such only views the immediate bound type, {@code false} otherwise
+     */
+    public static boolean isTypeUsed(@NonNull AccessoryType type) {
+        for (List<AccessoryType> list : BOUND_TYPES.values()) {
+            if (list.contains(type)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
