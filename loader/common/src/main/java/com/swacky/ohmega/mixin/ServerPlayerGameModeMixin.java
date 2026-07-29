@@ -2,8 +2,8 @@ package com.swacky.ohmega.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.Accessory;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +29,7 @@ abstract class ServerPlayerGameModeMixin {
             Accessory accessory = Accessories.get(stack.getItem());
 
             if (accessory != null && accessory.preferVanillaUse(stack)) {
-                InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
+                InteractionResult candidate = OhmegaDataAttachments.getData(player).tryEquip(player, stack);
 
                 if (candidate.consumesAction()) {
                     return candidate;

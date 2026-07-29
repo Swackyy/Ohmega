@@ -2,12 +2,11 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.Accessory;
+import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
@@ -124,7 +123,7 @@ public final class CommonEvents {
         Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null && !accessory.preferVanillaUse(stack)) {
-            InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
+            InteractionResult candidate = OhmegaDataAttachments.getData(player).tryEquip(player, stack);
 
             if (candidate.consumesAction()) {
                 return candidate;

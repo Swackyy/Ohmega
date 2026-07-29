@@ -39,7 +39,7 @@ if (secretsFile.exists()) {
             }
         }
 
-        String auth = Base64.getEncoder().encodeToString("${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes())
+        String auth = Base64.getEncoder().encodeToString "${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes()
 
         doLast {
             HttpClient client = HttpClient.newHttpClient();
@@ -67,19 +67,19 @@ if (secretsFile.exists()) {
                     if (uploadStatus == 200) {
                         println "Successfully published to Maven Central"
                     } else {
-                        System.err.println("Status code ${uploadStatus} -- Failed to flush and publish, reason:${uploadResponse.body()}")
+                        System.err.println "Status code ${uploadStatus} -- Failed to flush and publish, reason:${uploadResponse.body()}"
                     }
                 } else {
-                    System.err.println("No open repository found for namespace: 'io.github.swackyy'")
+                    System.err.println "No open repository found for namespace: 'io.github.swackyy'"
                 }
             } else {
-                System.err.println("Status code ${getStatus} -- Failed to get repositories, reason:${getResponse.body()}")
+                System.err.println "Status code ${getStatus} -- Failed to get repositories, reason:${getResponse.body()}"
             }
         }
     }
 
-    evaluationDependsOn(":loader:common")
-    evaluationDependsOn(":loader:fabric")
+    evaluationDependsOn ":loader:common"
+    evaluationDependsOn ":loader:fabric"
 
     // Publishes the mod to the following platforms:
     // Maven central repository
@@ -98,10 +98,10 @@ if (secretsFile.exists()) {
             }
         }
 
-        finalizedBy("publishMavenCentral")
+        finalizedBy "publishMavenCentral"
     }
 
-    TaskProvider<Task> datagenTask = project(":loader:fabric").tasks.named("runDatagen")
+    TaskProvider<Task> datagenTask = project(":loader:fabric").tasks.named "runDatagen"
 
     subprojects.each { sub ->
         sub.tasks.matching {

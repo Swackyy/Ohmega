@@ -5,14 +5,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
-import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.config.OhmegaConfig;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncDataPacket;
@@ -26,11 +25,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -154,7 +156,7 @@ public final class AccessoryData {
             AccessoryDataEntry entry = entries.get(i);
             ItemStack stack = entry.getStack();
 
-            if (AccessoryHelper.isActive(stack)) {
+            if (OhmegaDataComponents.isActive(stack)) {
                 entry.doEquip(entity, stack, i, EquipContext.ATTACH);
             }
         }
@@ -394,7 +396,7 @@ public final class AccessoryData {
         int size = size();
 
         for (int i = 0; i < size; i++) {
-            AccessoryHelper.setSlot(entries.get(i).getStack(), i);
+            entries.get(i).getStack().set(OhmegaDataComponents.getSlotIndex(), i);
         }
     }
 
@@ -716,5 +718,200 @@ public final class AccessoryData {
                 new int[]{index, max},
                 Optional.of(type),
                 context));
+    }
+
+    /**
+     * Utility function to add attribute modifiers to a {@link LivingEntity}
+     * @param entity {@link LivingEntity} to add/remove modifiers to/from
+     * @param modifiers to add or remove
+     * @param add if {@code true}, will add the attribute modifiers to the {@link LivingEntity},
+     * if {@code false} existing ones will be removed
+     */
+    public static void changeModifiers(@NonNull LivingEntity entity, @Nullable ItemAttributeModifiers modifiers, boolean add) {
+        if (modifiers != null) {
+            for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
+                AttributeInstance attribute = entity.getAttribute(entry.attribute());
+
+                if (attribute != null) {
+                    if (add) {
+                        if (!attribute.hasModifier(entry.modifier().id())) {
+                            attribute.addTransientModifier(entry.modifier());
+                        }
+                    } else {
+                        attribute.removeModifier(entry.modifier());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the active state of an accessory item.
+     * @param entity the entity wearing (or going to equip) the accessory
+     * @param index the slot index that the {@link ItemStack} is in
+     * @param stack {@link ItemStack} to set active state of
+     * @param value {@code true} if active, {@code false} if inactive
+     */
+    public void setActive(@NonNull LivingEntity entity, int index, @NonNull ItemStack stack, boolean value) {
+        stack.set(OhmegaDataComponents.getActive(), value);
+
+        if (value) {
+            ItemAttributeModifiers modifiers = getEntry(index).getType().getAttributeModifiers().getActive();
+
+            stack.set(OhmegaDataComponents.getSlotActiveModifiers(), modifiers);
+            changeModifiers(entity, modifiers, true);
+        } else {
+            // This separate approach is needed, prevents a strange crash
+            changeModifiers(entity, stack.get(OhmegaDataComponents.getSlotActiveModifiers()), false);
+        }
+
+        changeModifiers(entity, stack.get(OhmegaDataComponents.getAccessoryActiveModifiers()), value);
+    }
+
+    /**
+     * Sets the active state of an accessory item.
+     * Slot index is inferred by the data component automatically stored on the {@link ItemStack}
+     * @param entity the entity wearing (or going to equip) the accessory
+     * @param stack {@link ItemStack} to set active state of
+     * @param value {@code true} if active, {@code false} if inactive
+     */
+    public void setActive(@NonNull LivingEntity entity, @NonNull ItemStack stack, boolean value) {
+        setActive(entity, OhmegaDataComponents.getSlotIndex(stack), stack, value);
+    }
+
+    /**
+     * Finds the first open index of
+     * @param type {@link AccessoryType} of index to find
+     * @return index of the first open index matching the type, or {@code -1} if none is found
+     */
+    public int getFirstOpenSlot(@NonNull AccessoryType type) {
+        int size = size();
+
+        for (int i = 0; i < size; i++) {
+            AccessoryDataEntry entry = getEntry(i);
+
+            if (entry.getType().equals(type) && entry.getStack().isEmpty()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Used when trying to equip an accessory via right-clicking the held item
+     * @param entity {@link LivingEntity} to equip the accessory on
+     * @param stack the right-clicked held {@link ItemStack}
+     * @return {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
+     */
+    public @NonNull InteractionResult tryEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
+        Item item = stack.getItem();
+        Accessory accessory = Accessories.get(item);
+
+        if (accessory != null) {
+            int index = getFirstOpenSlot(Accessories.getType(entity, item));
+
+            if (index >= 0) {
+                ItemStack stack0 = stack.copyWithCount(1);
+
+                if (getEntry(index).setStack(entity, stack0, index, EquipContext.USE_HELD)) {
+                    stack.consume(1, entity);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+
+        return InteractionResult.PASS;
+    }
+
+    /**
+     * Checks if two accessories are compatible with each other by testing both ways
+     * @param first one accessory {@link ItemStack}
+     * @param second a second accessory {@link ItemStack}
+     * @return {@code true} if both are compatible with each other, {@code false} otherwise
+     */
+    public static boolean compatibleWith(@NonNull ItemStack first, @NonNull ItemStack second) {
+        Accessory firstAccessory = Accessories.get(first.getItem());
+
+        if (firstAccessory != null) {
+            Accessory secondAccessory = Accessories.get(second.getItem());
+
+            if (secondAccessory != null) {
+                return firstAccessory.compatibleWith(first, second) && secondAccessory.compatibleWith(second, first);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if an accessory is able to be worn, testing the target accessory {@link ItemStack} against every other worn accessory
+     * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the entity
+     * @return {@code true} if the target accessory is compatible with every other worn accessory, {@code false} otherwise
+     */
+
+    public boolean compatibleWith(@NonNull ItemStack stack) {
+        for (AccessoryDataEntry entry : getEntries()) {
+            ItemStack other = entry.getStack();
+
+            if (!other.isEmpty() && !compatibleWith(stack, other))  {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory that match a given filter
+     * @param filter A predicate filter to allow or deny elements from the returned list
+     * @return every matching {@link ItemStack} in the entity's accessory inventory
+     * @apiNote This operation destroys the CPU caching and annoys the GC which can build up to create a noticeable performance impact if called frequently.
+     * If possible, either do not use this method or cache its result
+     */
+    public @NonNull List<ItemStack> getStacksFiltered(@NonNull Predicate<ItemStack> filter) {
+        List<ItemStack> filteredStacks = new ArrayList<>(size());
+
+        for (AccessoryDataEntry entry : getEntries()) {
+            ItemStack stack = entry.getStack();
+
+            if (filter.test(stack)) {
+                filteredStacks.add(stack);
+            }
+        }
+
+        return filteredStacks;
+    }
+
+    /**
+     * Check if an entity is wearing a certain {@link Item} in an accessory slot
+     * @param item the item to find
+     * @return {@code true} if found, {@code false} otherwise
+     */
+    public boolean hasAccessory(@NonNull Item item) {
+        for (AccessoryDataEntry entry : getEntries()) {
+            if (entry.getStack().getItem() == item) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the first {@link ItemStack} of a certain item
+     * @param item the item to find
+     * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
+     */
+    public @NonNull ItemStack getStack(@NonNull Item item) {
+        for (AccessoryDataEntry entry : getEntries()) {
+            ItemStack stack = entry.getStack();
+
+            if (stack.getItem() == item) {
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 }

@@ -4,9 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
@@ -103,7 +104,7 @@ public final class AccessoryDataEntry {
         Item item = stack.getItem();
         Accessory accessory = Accessories.get(item);
 
-        if (accessory != null && (AccessoryHelper.compatibleWith(entity, stack) || ItemStack.isSameItem(this.stack, stack))) {
+        if (accessory != null && (OhmegaDataAttachments.getData(entity).compatibleWith(stack) || ItemStack.isSameItem(this.stack, stack))) {
             return Accessories.getType(entity, item).equals(type) && accessory.canEquip(entity, stack, context);
         }
 
@@ -200,8 +201,8 @@ public final class AccessoryDataEntry {
         Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null) {
-            AccessoryHelper.setNoSlot(stack);
-            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), false);
+            stack.remove(OhmegaDataComponents.getSlotIndex());
+            AccessoryData.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), false);
             accessory.onUnequip(entity, stack, context);
         }
     }
@@ -226,9 +227,9 @@ public final class AccessoryDataEntry {
         Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null) {
-            AccessoryHelper.setSlot(stack, index);
-            AccessoryHelper.changeModifiers(entity, type.getAttributeModifiers().getPassive(), true);
-            AccessoryHelper.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
+            stack.set(OhmegaDataComponents.getSlotIndex(), index);
+            AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), true);
+            AccessoryData.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
             accessory.onEquip(entity, stack, context);
 
             if (context == EquipContext.USE_HELD) {
@@ -269,7 +270,7 @@ public final class AccessoryDataEntry {
             doUnequip(entity, this.stack, context);
 
             if (stack.isEmpty()) {
-                AccessoryHelper.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
+                AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
             }
 
             this.stack = stack;
@@ -278,7 +279,7 @@ public final class AccessoryDataEntry {
                 onChanged(player);
             }
 
-            if (forceOnEquip || AccessoryHelper.isActive(stack)) {
+            if (forceOnEquip || OhmegaDataComponents.isActive(stack)) {
                 doEquip(entity, stack, index, context);
             }
 
@@ -342,7 +343,7 @@ public final class AccessoryDataEntry {
 
         if (!ItemStack.isSameItemSameComponents(this.stack, stack)) {
             doUnequip(entity, stack, context);
-            AccessoryHelper.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
+            AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
         }
 
         return stack;

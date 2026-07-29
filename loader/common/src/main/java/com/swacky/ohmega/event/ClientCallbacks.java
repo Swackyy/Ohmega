@@ -299,7 +299,7 @@ public final class ClientCallbacks {
                 OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().toggleExtensionButtonStyle().getObject();
                 AbstractContainerScreen<?> containerScreen = extension.getScreen();
 
-                List<AccessorySlot> slots = extension.getMenuExtension().getSlots();
+                List<AccessorySlot> slots = extension.getMenuExtension().getAccessoryMenu().getSlots();
 
                 if (slots != null && !slots.isEmpty() && style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
                     consumer.accept(new ToggleExtensionButton(containerScreen, extension, style));

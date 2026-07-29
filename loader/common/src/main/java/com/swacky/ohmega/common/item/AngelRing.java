@@ -1,7 +1,8 @@
 package com.swacky.ohmega.common.item;
 
 import com.swacky.ohmega.api.client.item.AccessoryHelperClient;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
@@ -39,7 +40,7 @@ public class AngelRing extends Item implements IAccessory {
     // Activates the accessory upon equipping
     @Override
     public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
-        AccessoryHelper.setActive(entity, stack, true);
+        OhmegaDataAttachments.getData(entity).setActive(entity, stack, true);
     }
 
     // Deactivates and prevents a player in survival from flying upon un-equipping
@@ -50,14 +51,14 @@ public class AngelRing extends Item implements IAccessory {
             player.getAbilities().flying = false;
         }
 
-        AccessoryHelper.setActive(entity, stack, false);
+        OhmegaDataAttachments.getData(entity).setActive(entity, stack, false);
     }
 
     // Tick method is needed here as there are so many edge cases to account for, it is easier to just use the tick method
     @Override
     public void accessoryTick(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
         if (entity instanceof Player player && !(player.isCreative() || player.isSpectator())) {
-            if (AccessoryHelper.isActive(stack)) {
+            if (OhmegaDataComponents.isActive(stack)) {
                 player.getAbilities().mayfly = true;
             } else {
                 player.getAbilities().mayfly = false;
@@ -69,7 +70,7 @@ public class AngelRing extends Item implements IAccessory {
     // Toggle the accessory being active when the keybind is pressed
     @Override
     public boolean onKeybindUse(@NonNull Player player, @NonNull ItemStack stack) {
-        AccessoryHelper.toggleActive(player, stack);
+        OhmegaDataAttachments.getData(player).setActive(player, stack, !OhmegaDataComponents.isActive(stack));
         return true;
     }
 
@@ -77,7 +78,7 @@ public class AngelRing extends Item implements IAccessory {
     // No super() call as it may be confusing if active when enchanted, and is not intended to be enchantable.
     @Override
     public boolean isFoil(@NonNull ItemStack stack) {
-        return AccessoryHelper.isActive(stack);
+        return OhmegaDataComponents.isActive(stack);
     }
 
     // The sound to be played when equipped using a right-click

@@ -1,10 +1,10 @@
 package com.swacky.ohmega.common.block.dispenser;
 
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.EquipContext;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,10 +33,11 @@ public class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBehavior 
 
         if (!entities.isEmpty()) {
             for (LivingEntity entity : entities) {
-                int index = AccessoryHelper.getFirstOpenSlot(entity, Accessories.getType(entity, stack.getItem()));
+                AccessoryData data = OhmegaDataAttachments.getData(entity);
+                int index = data.getFirstOpenSlot(Accessories.getType(entity, stack.getItem()));
 
                 if (index >= 0) {
-                    AccessoryDataEntry entry = OhmegaDataAttachments.getData(entity).getEntry(index);
+                    AccessoryDataEntry entry = data.getEntry(index);
 
                     if (entry.isItemValid(entity, stack, EquipContext.DISPENSE)) {
                         entry.setStack(entity, stack.split(1), index, EquipContext.DISPENSE);

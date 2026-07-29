@@ -4,6 +4,7 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryHelper;
@@ -38,7 +39,7 @@ public final class AccessoryHelperClient {
         Player player = Minecraft.getInstance().player;
 
         if (player != null) {
-            int slot = AccessoryHelper.getSlot(stack);
+            int slot = OhmegaDataComponents.getSlotIndex(stack);
             AccessoryData data = OhmegaDataAttachments.getData(player);
             AccessoryType type;
 

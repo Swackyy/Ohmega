@@ -4,10 +4,9 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
-import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.item.Accessories;
+import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.common.menu.AccessorySlot;
 import com.swacky.ohmega.common.menu.ServerAccessoryMenuExtension;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -308,7 +307,8 @@ public final class AccessoryMenus {
                 }
             } else {
                 Item item = stack.getItem();
-                int openIndex = AccessoryHelper.getFirstOpenSlot(player, Accessories.getType(player, item));
+                AccessoryData data = OhmegaDataAttachments.getData(player);
+                int openIndex = data.getFirstOpenSlot(Accessories.getType(player, item));
 
                 if (Accessories.get(item) != null && index > 8 && index < 45 && openIndex >= 0 && menu.getSlot(46 + openIndex).mayPlace(stack0)) { // Inventory -> accessory
                     if (!menu.moveItemStackTo(stack, 46, 52, false)) {
@@ -316,7 +316,6 @@ public final class AccessoryMenus {
                     }
                 } else {
                     if (index > 45 && index < 52) { // Accessory -> inventory
-                        AccessoryData data = OhmegaDataAttachments.getData(player);
                         ItemStack stack1 = tryMoveItemStackTo(player, menu, data, stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) {
