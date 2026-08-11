@@ -2,6 +2,7 @@ package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.init.OhmegaItems;
 import com.swacky.ohmega.common.command.node.ClearCommand;
@@ -24,6 +25,7 @@ public final class Ohmega {
     public static final String MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE = "This method was called without a defined functional method body. Implement it in your mixin class";
 
     private static boolean bootstrapped = false;
+    private static int nonLinearServicesCount = 0;
     private static int servicesCount = 0;
 
     public static void bootstrap() {
@@ -32,12 +34,18 @@ public final class Ohmega {
 
             // Bootstrap services
             OhmegaCriteriaTriggers.bootstrap();
+            OhmegaDataAttachments.bootstrap();
             OhmegaDataComponents.bootstrap();
             OhmegaItems.bootstrap();
             OhmegaConfig.Server.bootstrap();
             OhmegaHooks.bootstrap();
             OhmegaNetworking.bootstrap();
-            LOGGER.info("Successfully loaded {} common services", servicesCount);
+
+            if (nonLinearServicesCount == 0) {
+                LOGGER.info("Loaded {} common services", servicesCount);
+            } else {
+                LOGGER.info("Loaded {} common services ({} non-linear)", servicesCount, nonLinearServicesCount);
+            }
 
             // Register command nodes
             OhmegaCommandNodes.register(ClearCommand.ELEMENT_ROOT, ClearCommand::new);
@@ -51,17 +59,21 @@ public final class Ohmega {
     }
 
     public static <T> T loadService(Class<T> clazz) {
-        if (bootstrapped) {
-            String name = clazz.getName();
-            T service = ServiceLoader.load(clazz).findFirst().orElseThrow(() ->
-                    new RuntimeException("Could not load service '" + name + "' as no implementation was found"));
-            servicesCount++;
+        String serviceName = clazz.getName();
+        T impl = ServiceLoader.load(clazz).findFirst().orElseThrow(() ->
+                new RuntimeException("Could not load service '" + serviceName + "' as no implementation was found"));
+        String implName = impl.getClass().getName();
 
-            LOGGER.debug("Loaded implementation '{}' for service '{}'", service.getClass().getName(), name);
-            return service;
+        if (bootstrapped) {
+            LOGGER.debug("Loaded implementation '{}' for service '{}'", implName, serviceName);
         } else {
-            throw new IllegalStateException("Common service loading called before Common bootstrapping");
+            nonLinearServicesCount++;
+            LOGGER.debug("Non-linearly loaded implementation '{}' for service '{}'", implName, serviceName);
         }
+
+        servicesCount++;
+
+        return impl;
     }
 
     public static Identifier id(String path) {

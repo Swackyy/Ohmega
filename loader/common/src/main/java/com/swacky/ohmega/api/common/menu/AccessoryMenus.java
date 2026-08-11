@@ -187,7 +187,7 @@ public final class AccessoryMenus {
      * @param reverseDirection move back to front, starting from the end index -1 (to retain exclusivity)
      * @return the {@link ItemStack} that has been moved, or {@link ItemStack#EMPTY} if nothing changed
      */
-    public static @NonNull ItemStack tryMoveItemStackTo(@NonNull Player player, @NonNull AbstractContainerMenu menu, @NonNull AccessoryData data, @NonNull ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+    public static @NonNull ItemStack tryMoveItemStackTo(@NonNull Player player, @NonNull AbstractContainerMenu menu, @NonNull ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
         int i = startIndex;
 
         if (reverseDirection) {
@@ -307,8 +307,7 @@ public final class AccessoryMenus {
                 }
             } else {
                 Item item = stack.getItem();
-                AccessoryData data = OhmegaDataAttachments.getData(player);
-                int openIndex = data.getFirstOpenSlot(Accessories.getType(player, item));
+                int openIndex = OhmegaDataAttachments.getData(player).getFirstOpenSlot(Accessories.getType(player, item));
 
                 if (Accessories.get(item) != null && index > 8 && index < 45 && openIndex >= 0 && menu.getSlot(46 + openIndex).mayPlace(stack0)) { // Inventory -> accessory
                     if (!menu.moveItemStackTo(stack, 46, 52, false)) {
@@ -316,7 +315,7 @@ public final class AccessoryMenus {
                     }
                 } else {
                     if (index > 45 && index < 52) { // Accessory -> inventory
-                        ItemStack stack1 = tryMoveItemStackTo(player, menu, data, stack, 9, 45, false);
+                        ItemStack stack1 = tryMoveItemStackTo(player, menu, stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) {
                             AccessoryDataEntry.doUnequip(player, stack1, EquipContext.SLOT);

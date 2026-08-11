@@ -145,6 +145,143 @@ public final class AccessoryData {
         return typesCache;
     }
 
+
+    /**
+     * Find the first {@link ItemStack} of a certain item
+     * @param item the item to find
+     * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
+     */
+    public @NonNull ItemStack getStack(@NonNull Item item) {
+        for (AccessoryDataEntry entry : getEntries()) {
+            ItemStack stack = entry.getStack();
+
+            if (stack.getItem() == item) {
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Check if an entity is wearing a certain {@link Item} in an accessory slot
+     * @param item the item to find
+     * @return {@code true} if found, {@code false} otherwise
+     */
+    public boolean hasAccessory(@NonNull Item item) {
+        for (AccessoryDataEntry entry : getEntries()) {
+            if (entry.getStack().getItem() == item) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory that match a given filter
+     * @param filter A predicate filter to allow or deny elements from the returned list
+     * @return every matching {@link ItemStack} in the entity's accessory inventory
+     * @apiNote This operation destroys the CPU caching and annoys the GC which can build up to create a noticeable performance impact if called frequently.
+     * If possible, either do not use this method or cache its result
+     */
+    public @NonNull List<ItemStack> getStacksFiltered(@NonNull Predicate<ItemStack> filter) {
+        List<ItemStack> filteredStacks = new ArrayList<>(size());
+
+        for (AccessoryDataEntry entry : getEntries()) {
+            ItemStack stack = entry.getStack();
+
+            if (filter.test(stack)) {
+                filteredStacks.add(stack);
+            }
+        }
+
+        return filteredStacks;
+    }
+
+    /**
+     * Checks if two accessories are compatible with each other by testing both ways
+     * @param first one accessory {@link ItemStack}
+     * @param second a second accessory {@link ItemStack}
+     * @return {@code true} if both are compatible with each other, {@code false} otherwise
+     */
+    public static boolean compatibleWith(@NonNull ItemStack first, @NonNull ItemStack second) {
+        Accessory firstAccessory = Accessories.get(first.getItem());
+
+        if (firstAccessory != null) {
+            Accessory secondAccessory = Accessories.get(second.getItem());
+
+            if (secondAccessory != null) {
+                return firstAccessory.compatibleWith(first, second) && secondAccessory.compatibleWith(second, first);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if an accessory is able to be worn, testing the target accessory {@link ItemStack} against every other worn accessory
+     * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the entity
+     * @return {@code true} if the target accessory is compatible with every other worn accessory, {@code false} otherwise
+     */
+
+    public boolean compatibleWith(@NonNull ItemStack stack) {
+        for (AccessoryDataEntry entry : getEntries()) {
+            ItemStack other = entry.getStack();
+
+            if (!other.isEmpty() && !compatibleWith(stack, other))  {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Finds the first open index of
+     * @param type {@link AccessoryType} of index to find
+     * @return index of the first open index matching the type, or {@code -1} if none is found
+     */
+    public int getFirstOpenSlot(@NonNull AccessoryType type) {
+        int size = size();
+
+        for (int i = 0; i < size; i++) {
+            AccessoryDataEntry entry = getEntry(i);
+
+            if (entry.getType().equals(type) && entry.getStack().isEmpty()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Used when trying to equip an accessory via right-clicking the held item
+     * @param entity {@link LivingEntity} to equip the accessory on
+     * @param stack the right-clicked held {@link ItemStack}
+     * @return {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
+     */
+    public @NonNull InteractionResult tryEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
+        Item item = stack.getItem();
+        Accessory accessory = Accessories.get(item);
+
+        if (accessory != null) {
+            int index = getFirstOpenSlot(Accessories.getType(entity, item));
+
+            if (index >= 0) {
+                ItemStack stack0 = stack.copyWithCount(1);
+
+                if (getEntry(index).setStack(entity, stack0, index, EquipContext.USE_HELD)) {
+                    stack.consume(1, entity);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+
+        return InteractionResult.PASS;
+    }
+
     /**
      * Called internally when attaching this data storage to the target entity, only necessary for players
      * @param entity the {@link LivingEntity} the data is being attached to
@@ -297,7 +434,7 @@ public final class AccessoryData {
      * @param entity the entity that this data instance belongs to
      * @param filter the predicate to test against every {@link ItemStack} removal candidate
      * @param max the maximum number of items to remove (cumulative)
-     * @param context the context surrounding this clear invocation
+     * @param context the context surrounding this invocation
      * @return the total number of items cleared
      */
     public int clearMatchingItems(@NonNull LivingEntity entity, @Nullable Predicate<ItemStack> filter, int max, @NonNull EquipContext context) {
@@ -320,7 +457,7 @@ public final class AccessoryData {
                 }
 
                 if (max < 0 || removed + count <= max) {
-                    AccessoryDataEntry.doUnequip(entity, stack, context);
+                    entry.doUnequip(entity, context);
                     indexes.add(i);
                 }
 
@@ -343,7 +480,7 @@ public final class AccessoryData {
 
     /**
      * Mirrors another {@link AccessoryData}'s stored data with this instance, this does not call any {@link IAccessory} methods.
-     * This is a shallow copy, use {@link #copyFrom(AccessoryData, boolean)} for a deep copy
+     * This is a shallow copy, use {@link #copyFrom(AccessoryData)} for a deep copy
      * @param other the other instance to mirror with
      */
     public void mirror(@NonNull AccessoryData other) {
@@ -356,7 +493,7 @@ public final class AccessoryData {
      * This is a deep copy, use {@link #mirror(AccessoryData)} for a shallow copy
      * @param other the other instance to copy from
      */
-    public void copyFrom(@NonNull AccessoryData other, boolean slotsOnly) {
+    public void copyFrom(@NonNull AccessoryData other) {
         trackingDefault.setValue(other.trackingDefault.booleanValue());
         ArrayList<@NonNull AccessoryDataEntry> otherEntries = other.entries;
 
@@ -364,12 +501,68 @@ public final class AccessoryData {
         entries = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
-            if (slotsOnly) {
-                entries.add(new AccessoryDataEntry(otherEntries.get(i).getType()));
+            entries.add(otherEntries.get(i).copy());
+        }
+    }
+
+    /**
+     * Copies from another {@link AccessoryData}'s stored data into this instance, calling relevant {@link IAccessory} methods.
+     * This is a deep copy, use {@link #mirror(AccessoryData)} for a shallow copy
+     * @param entity the entity that this data instance belongs to
+     * @param other the other instance to copy from
+     * @param context the context surrounding this invocation
+     */
+    public void copyFrom(@NonNull LivingEntity entity, @NonNull AccessoryData other, @NonNull EquipContext context) {
+        trackingDefault.setValue(other.trackingDefault.booleanValue());
+        ArrayList<@NonNull AccessoryDataEntry> otherEntries = other.entries;
+
+        int newSize = otherEntries.size();
+        ServerPlayer player;
+
+        if (entity instanceof ServerPlayer serverPlayer) {
+            player = serverPlayer;
+        } else {
+            player = null;
+        }
+
+        ArrayList<@NonNull AccessoryDataEntry> newEntries = new ArrayList<>(newSize);
+
+        for (int i = 0; i < newSize; i++) {
+            ItemStack oldStack;
+
+            if (entries.size() > i) {
+                oldStack = entries.get(i).getStack();
             } else {
-                entries.add(otherEntries.get(i).copy());
+                oldStack = ItemStack.EMPTY;
+            }
+
+            AccessoryDataEntry newEntry = otherEntries.get(i).copy();
+
+            if (!ItemStack.matches(oldStack, newEntry.getStack())) {
+                AccessoryDataEntry.doUnequip(entity, oldStack, context);
+                newEntry.doEquip(entity, newEntry.getStack(), i, context);
+
+                if (player != null) {
+                    newEntry.onChanged(player);
+                }
+            }
+
+            newEntries.add(newEntry);
+        }
+
+        int oldSize = entries.size();
+
+        for (int i = newSize; i < oldSize; i++) {
+            AccessoryDataEntry entry = entries.get(i);
+
+            entry.doUnequip(entity, context);
+
+            if (player != null) {
+                entry.onChanged(player);
             }
         }
+
+        entries = newEntries;
     }
 
     /**
@@ -761,7 +954,6 @@ public final class AccessoryData {
             stack.set(OhmegaDataComponents.getSlotActiveModifiers(), modifiers);
             changeModifiers(entity, modifiers, true);
         } else {
-            // This separate approach is needed, prevents a strange crash
             changeModifiers(entity, stack.get(OhmegaDataComponents.getSlotActiveModifiers()), false);
         }
 
@@ -777,141 +969,5 @@ public final class AccessoryData {
      */
     public void setActive(@NonNull LivingEntity entity, @NonNull ItemStack stack, boolean value) {
         setActive(entity, OhmegaDataComponents.getSlotIndex(stack), stack, value);
-    }
-
-    /**
-     * Finds the first open index of
-     * @param type {@link AccessoryType} of index to find
-     * @return index of the first open index matching the type, or {@code -1} if none is found
-     */
-    public int getFirstOpenSlot(@NonNull AccessoryType type) {
-        int size = size();
-
-        for (int i = 0; i < size; i++) {
-            AccessoryDataEntry entry = getEntry(i);
-
-            if (entry.getType().equals(type) && entry.getStack().isEmpty()) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    /**
-     * Used when trying to equip an accessory via right-clicking the held item
-     * @param entity {@link LivingEntity} to equip the accessory on
-     * @param stack the right-clicked held {@link ItemStack}
-     * @return {@link InteractionResult#SUCCESS} if equipped successfully, else {@link InteractionResult#PASS}
-     */
-    public @NonNull InteractionResult tryEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack) {
-        Item item = stack.getItem();
-        Accessory accessory = Accessories.get(item);
-
-        if (accessory != null) {
-            int index = getFirstOpenSlot(Accessories.getType(entity, item));
-
-            if (index >= 0) {
-                ItemStack stack0 = stack.copyWithCount(1);
-
-                if (getEntry(index).setStack(entity, stack0, index, EquipContext.USE_HELD)) {
-                    stack.consume(1, entity);
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-
-        return InteractionResult.PASS;
-    }
-
-    /**
-     * Checks if two accessories are compatible with each other by testing both ways
-     * @param first one accessory {@link ItemStack}
-     * @param second a second accessory {@link ItemStack}
-     * @return {@code true} if both are compatible with each other, {@code false} otherwise
-     */
-    public static boolean compatibleWith(@NonNull ItemStack first, @NonNull ItemStack second) {
-        Accessory firstAccessory = Accessories.get(first.getItem());
-
-        if (firstAccessory != null) {
-            Accessory secondAccessory = Accessories.get(second.getItem());
-
-            if (secondAccessory != null) {
-                return firstAccessory.compatibleWith(first, second) && secondAccessory.compatibleWith(second, first);
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if an accessory is able to be worn, testing the target accessory {@link ItemStack} against every other worn accessory
-     * @param stack accessory {@link ItemStack} to test against every other accessory currently worn by the entity
-     * @return {@code true} if the target accessory is compatible with every other worn accessory, {@code false} otherwise
-     */
-
-    public boolean compatibleWith(@NonNull ItemStack stack) {
-        for (AccessoryDataEntry entry : getEntries()) {
-            ItemStack other = entry.getStack();
-
-            if (!other.isEmpty() && !compatibleWith(stack, other))  {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Retrieve all of the {@link ItemStack}s in an entity's accessory inventory that match a given filter
-     * @param filter A predicate filter to allow or deny elements from the returned list
-     * @return every matching {@link ItemStack} in the entity's accessory inventory
-     * @apiNote This operation destroys the CPU caching and annoys the GC which can build up to create a noticeable performance impact if called frequently.
-     * If possible, either do not use this method or cache its result
-     */
-    public @NonNull List<ItemStack> getStacksFiltered(@NonNull Predicate<ItemStack> filter) {
-        List<ItemStack> filteredStacks = new ArrayList<>(size());
-
-        for (AccessoryDataEntry entry : getEntries()) {
-            ItemStack stack = entry.getStack();
-
-            if (filter.test(stack)) {
-                filteredStacks.add(stack);
-            }
-        }
-
-        return filteredStacks;
-    }
-
-    /**
-     * Check if an entity is wearing a certain {@link Item} in an accessory slot
-     * @param item the item to find
-     * @return {@code true} if found, {@code false} otherwise
-     */
-    public boolean hasAccessory(@NonNull Item item) {
-        for (AccessoryDataEntry entry : getEntries()) {
-            if (entry.getStack().getItem() == item) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Find the first {@link ItemStack} of a certain item
-     * @param item the item to find
-     * @return the found matching {@link ItemStack}, or else {@link ItemStack#EMPTY}
-     */
-    public @NonNull ItemStack getStack(@NonNull Item item) {
-        for (AccessoryDataEntry entry : getEntries()) {
-            ItemStack stack = entry.getStack();
-
-            if (stack.getItem() == item) {
-                return stack;
-            }
-        }
-
-        return ItemStack.EMPTY;
     }
 }

@@ -3,7 +3,6 @@ package com.swacky.ohmega.event;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaItems;
@@ -183,7 +182,7 @@ public final class CommonEvents {
         Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null && !accessory.preferVanillaUse(stack)) {
-            InteractionResult candidate = AccessoryHelper.tryEquip(player, stack);
+            InteractionResult candidate = OhmegaDataAttachments.getData(player).tryEquip(player, stack);
 
             if (candidate.consumesAction()) {
                 event.setCancellationResult(candidate);

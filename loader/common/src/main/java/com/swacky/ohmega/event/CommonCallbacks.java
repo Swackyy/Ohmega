@@ -47,7 +47,7 @@ public final class CommonCallbacks {
         AccessoryData data = OhmegaDataAttachments.getData(newPlayer);
 
         if (alive || shouldKeepInventory(oldPlayer)) {
-            data.copyFrom(OhmegaDataAttachments.getData(oldPlayer), false);
+            data.copyFrom(OhmegaDataAttachments.getData(oldPlayer));
         }
 
         AccessoryMenus.rebuildSlots(newPlayer.inventoryMenu, newPlayer);

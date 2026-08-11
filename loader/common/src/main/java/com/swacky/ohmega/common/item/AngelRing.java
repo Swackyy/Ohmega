@@ -1,6 +1,6 @@
 package com.swacky.ohmega.common.item;
 
-import com.swacky.ohmega.api.client.item.AccessoryHelperClient;
+import com.swacky.ohmega.api.client.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.EquipContext;
@@ -34,7 +34,7 @@ public class AngelRing extends Item implements IAccessory {
     @SuppressWarnings("deprecation")
     @Override
     public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, @NonNull TooltipFlag flag) {
-        tooltip.accept(AccessoryHelperClient.getBindTooltip(stack));
+        tooltip.accept(AccessoryHelper.getBindTooltip(stack));
     }
 
     // Activates the accessory upon equipping

@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.common.item;
 
-import com.swacky.ohmega.api.client.item.AccessoryHelperClient;
+import com.swacky.ohmega.api.client.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -110,7 +111,7 @@ public interface IAccessory {
      * Called when this accessory is worn and its corresponding slot's key-bind is pressed.
      * <p>
      * It is recommended that when this is overridden and used, that a tooltip will be provided,
-     * a component for the tooltip can be acquired from {@link AccessoryHelperClient#getBindTooltip(ItemStack)}.
+     * a component for the tooltip can be acquired from {@link AccessoryHelper#getBindTooltip(ItemStack)}.
      * @param player the {@link Player} wearing this accessory
      * @param stack {@link ItemStack} instance of the accessory in the slot which key-bind has been pressed
      * @return {@code true} if a packet should be sent to the server requesting this method to be invoked, {@code false} otherwise.
@@ -150,7 +151,7 @@ public interface IAccessory {
 
     /**
      * Determines if the vanilla {@link Item#use(Level, Player, InteractionHand)} will be preferred over Ohmega's built-in
-     * right-click to equip behaviour ({@link AccessoryHelper#tryEquip(LivingEntity, ItemStack)})
+     * right-click to equip behaviour ({@link AccessoryData#tryEquip(LivingEntity, ItemStack)})
      * @param stack the {@link ItemStack} of this accessory item which is right-clicked
      * @return
      * <ul>
@@ -160,7 +161,7 @@ public interface IAccessory {
      *     </li>
      *     <li>
      *         {@code false}: Ohmega's right-click to equip behaviour will run first, and will only call {@link Item#use(Level, Player, InteractionHand)}
-     *         if {@link AccessoryHelper#tryEquip(LivingEntity, ItemStack)} returns a non-consuming {@link InteractionResult}
+     *         if {@link AccessoryData#tryEquip(LivingEntity, ItemStack)} returns a non-consuming {@link InteractionResult}
      *     </li>
      * </ul>
      */

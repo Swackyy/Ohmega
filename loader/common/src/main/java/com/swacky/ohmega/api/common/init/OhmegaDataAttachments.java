@@ -5,14 +5,16 @@ import com.swacky.ohmega.common.Ohmega;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class OhmegaDataAttachments {
-    private static final Service SERVICE = Ohmega.loadService(Service.class);
+    private static final Service IMPL = Ohmega.loadService(Service.class);
+
+    public static void bootstrap() {}
 
     public static AccessoryData getData(LivingEntity entity) {
-        return SERVICE.getData(entity);
+        return IMPL.getData(entity);
     }
 
     public static void setData(LivingEntity entity, AccessoryData data) {
-        SERVICE.setData(entity, data);
+        IMPL.setData(entity, data);
     }
 
     public interface Service {

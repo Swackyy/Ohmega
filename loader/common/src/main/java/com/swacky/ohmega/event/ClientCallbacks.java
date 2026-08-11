@@ -2,7 +2,7 @@ package com.swacky.ohmega.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
-import com.swacky.ohmega.api.client.item.AccessoryHelperClient;
+import com.swacky.ohmega.api.client.item.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
@@ -189,7 +189,7 @@ public final class ClientCallbacks {
 
     public static void onItemTooltip(ItemStack stack, List<Component> tooltip) {
         if (Accessories.isBound(stack.getItem())) {
-            Component component = AccessoryHelperClient.getTypeTooltip(stack.getItem());
+            Component component = AccessoryHelper.getTypeTooltip(stack.getItem());
 
             if (component != null) {
                 tooltip.add(component);

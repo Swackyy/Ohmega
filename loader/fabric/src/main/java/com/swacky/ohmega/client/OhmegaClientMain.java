@@ -1,21 +1,22 @@
 package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
+import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.api.common.init.OhmegaItems;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.event.ClientEvents;
 import com.swacky.ohmega.network.OhmegaNetworking;
 import com.swacky.ohmega.network.S2C.SyncDataPacket;
-import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.network.S2C.SyncHiddenPacket;
-import com.swacky.ohmega.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.network.S2C.SyncKeybindUsePacket;
 import com.swacky.ohmega.network.S2C.SyncSlotsPacket;
+import com.swacky.ohmega.network.S2C.SyncStacksPacket;
+import com.swacky.ohmega.network.S2C.SyncTypesPacket;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;

@@ -130,7 +130,7 @@ public final class AccessoryDataEntry {
      */
     public void moveOrDropStack(@NonNull LivingEntity entity, @NonNull EquipContext context) {
         if (!stack.isEmpty()) {
-            doUnequip(entity, stack, context);
+            doUnequip(entity, context);
 
             if (!(entity instanceof Player player) || !player.addItem(stack)) {
                 entity.drop(stack, false, true);
@@ -143,6 +143,7 @@ public final class AccessoryDataEntry {
      * @param entity the entity that this entry belongs to
      * @param type the {@link AccessoryType} which this entry will be set to
      * @param context the context surrounding this invocation
+     * @apiNote This should probably not be getting called, but rather {@link AccessoryData#setSlots(LivingEntity, int, AccessoryType, int, EquipContext)}
      */
     public void setType(@NonNull LivingEntity entity, @NonNull AccessoryType type, @NonNull EquipContext context) {
         if (this.type != type && !isItemValid(entity, stack, type, context)) {
@@ -208,6 +209,16 @@ public final class AccessoryDataEntry {
     }
 
     /**
+     * Perform necessary operations that occur when un-equipping an accessory
+     * @param entity the entity un-equipping the accessory
+     * @param context the context surrounding this invocation
+     * @apiNote This is just a shortcut to the {@code static} {@link #doUnequip(LivingEntity, ItemStack, EquipContext)} version
+     */
+    public void doUnequip(@NonNull LivingEntity entity, @NonNull EquipContext context) {
+        doUnequip(entity, stack, context);
+    }
+
+    /**
      * Called on stack changes, currently just used to invoke criteria triggers
      * @param player the player that has changed this entry
      */
@@ -267,7 +278,7 @@ public final class AccessoryDataEntry {
      */
     private void doSetStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull EquipContext context, boolean forceOnEquip, boolean sync) {
         if (!ItemStack.matches(this.stack, stack)) {
-            doUnequip(entity, this.stack, context);
+            doUnequip(entity, context);
 
             if (stack.isEmpty()) {
                 AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
@@ -275,12 +286,13 @@ public final class AccessoryDataEntry {
 
             this.stack = stack;
 
-            if (entity instanceof ServerPlayer player) {
-                onChanged(player);
-            }
-
+            // todo: maybe remove the active check
             if (forceOnEquip || OhmegaDataComponents.isActive(stack)) {
                 doEquip(entity, stack, index, context);
+            }
+
+            if (entity instanceof ServerPlayer player) {
+                onChanged(player);
             }
 
             if (sync) {
@@ -342,7 +354,7 @@ public final class AccessoryDataEntry {
         }
 
         if (!ItemStack.isSameItemSameComponents(this.stack, stack)) {
-            doUnequip(entity, stack, context);
+            doUnequip(entity, context);
             AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
         }
 

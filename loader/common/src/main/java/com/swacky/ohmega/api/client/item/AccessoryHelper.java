@@ -7,7 +7,6 @@ import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.ChatFormatting;
@@ -22,9 +21,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Client version of {@link AccessoryHelper} to keep the JVM happy
+ * Contains some client-only utility methods for accessory items that don't really fit anywhere else within the API.
+ * If you can think of a better place to put these methods, I'd be open to refactors
  */
-public final class AccessoryHelperClient {
+public final class AccessoryHelper {
     /**
      * A utility method used to get a description for key-bound capable accessories
      * @param stack {@link ItemStack} instance of an accessory

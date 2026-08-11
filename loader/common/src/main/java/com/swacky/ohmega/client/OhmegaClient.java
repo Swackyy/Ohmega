@@ -24,6 +24,7 @@ public final class OhmegaClient {
     public static final Identifier PACK_DARK_ID = Ohmega.id("dark");
 
     private static boolean bootstrapped = false;
+    private static int nonLinearServicesCount = 0;
     private static int servicesCount = 0;
 
     public static void bootstrap() {
@@ -34,7 +35,12 @@ public final class OhmegaClient {
             AccessoryRenderStateData.bootstrap();
             OhmegaBinds.bootstrap();
             OhmegaConfig.Client.bootstrap();
-            LOGGER.info("Successfully loaded {} client services", servicesCount);
+
+            if (nonLinearServicesCount == 0) {
+                LOGGER.info("Loaded {} client services", servicesCount);
+            } else {
+                LOGGER.info("Loaded {} client services ({} non-linear)", servicesCount, nonLinearServicesCount);
+            }
 
             // Register extension
             AccessoryExtensions.registerExtension(DEFAULT_EXTENSION_ID, DefaultMenuExtension::new, DefaultScreenExtension::new);
@@ -49,17 +55,21 @@ public final class OhmegaClient {
     }
 
     public static <T> T loadService(Class<T> clazz) {
-        if (bootstrapped) {
-            String name = clazz.getName();
-            T service = ServiceLoader.load(clazz).findFirst().orElseThrow(() ->
-                    new RuntimeException("Could not load service '" + name + "' as no implementation was found"));
-            servicesCount++;
+        String name = clazz.getName();
+        T impl = ServiceLoader.load(clazz).findFirst().orElseThrow(() ->
+                new RuntimeException("Could not load service '" + name + "' as no implementation was found"));
+        String implName = impl.getClass().getName();
 
-            LOGGER.debug("Loaded implementation '{}' for service '{}'", service.getClass().getName(), name);
-            return service;
+        if (bootstrapped) {
+            LOGGER.debug("Loaded implementation '{}' for service '{}'", implName, name);
         } else {
-            throw new IllegalStateException("Client service loading called either before Client bootstrapping or on the wrong distribution");
+            nonLinearServicesCount++;
+            LOGGER.debug("Non-linearly loaded implementation '{}' for service '{}'", implName, name);
         }
+
+        servicesCount++;
+
+        return impl;
     }
 
     public static String widgetTranslationKey(String key) {

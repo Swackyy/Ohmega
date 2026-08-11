@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.common.item.datacomponent;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.swacky.ohmega.api.common.item.AccessoryHelper;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,26 +16,26 @@ import org.jspecify.annotations.NonNull;
 /**
  * A class for adding default {@link AttributeModifier}s to accessory slots to apply when items are in them
  * <p>
- * Supports attributes added when an item is in the slot (passive), and when in the slot but also active ({@link AccessoryHelper#isActive(ItemStack)}
+ * Supports attributes added when an item is in the slot (passive), and when in the slot but also active ({@link OhmegaDataComponents#isActive(ItemStack)}
  */
 // todo: refactor uses of this and reevaluate the existence of this class
-public final class AccessoryModifiers {
-    public static final @NonNull AccessoryModifiers EMPTY = Builder.EMPTY.build();
+public final class AccessorySlotModifiers {
+    public static final @NonNull AccessorySlotModifiers EMPTY = Builder.EMPTY.build();
 
-    public static final @NonNull Codec<AccessoryModifiers> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ItemAttributeModifiers.CODEC.fieldOf("passive").forGetter(AccessoryModifiers::getPassive),
-            ItemAttributeModifiers.CODEC.fieldOf("active").forGetter(AccessoryModifiers::getActive)
-    ).apply(builder, AccessoryModifiers::new));
+    public static final @NonNull Codec<AccessorySlotModifiers> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+            ItemAttributeModifiers.CODEC.fieldOf("passive").forGetter(AccessorySlotModifiers::getPassive),
+            ItemAttributeModifiers.CODEC.fieldOf("active").forGetter(AccessorySlotModifiers::getActive)
+    ).apply(builder, AccessorySlotModifiers::new));
 
-    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryModifiers> STREAM_CODEC = StreamCodec.composite(
-            ItemAttributeModifiers.STREAM_CODEC, AccessoryModifiers::getPassive,
-            ItemAttributeModifiers.STREAM_CODEC, AccessoryModifiers::getActive,
-            AccessoryModifiers::new);
+    public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessorySlotModifiers> STREAM_CODEC = StreamCodec.composite(
+            ItemAttributeModifiers.STREAM_CODEC, AccessorySlotModifiers::getPassive,
+            ItemAttributeModifiers.STREAM_CODEC, AccessorySlotModifiers::getActive,
+            AccessorySlotModifiers::new);
 
     private final @NonNull ItemAttributeModifiers passiveModifiers;
     private final @NonNull ItemAttributeModifiers activeModifiers;
 
-    private AccessoryModifiers(@NonNull ItemAttributeModifiers passiveModifiers, @NonNull ItemAttributeModifiers activeModifiers) {
+    private AccessorySlotModifiers(@NonNull ItemAttributeModifiers passiveModifiers, @NonNull ItemAttributeModifiers activeModifiers) {
         this.passiveModifiers = passiveModifiers;
         this.activeModifiers = activeModifiers;
     }
@@ -83,7 +83,7 @@ public final class AccessoryModifiers {
         }
 
         /**
-         * @return all default attribute modifiers that will be applied when built ({@link #build()}) into a {@link AccessoryModifiers}
+         * @return all default attribute modifiers that will be applied when built ({@link #build()}) into a {@link AccessorySlotModifiers}
          */
         @SuppressWarnings("unused")
         public @NonNull ItemAttributeModifiers getPassiveModifiers() {
@@ -91,7 +91,7 @@ public final class AccessoryModifiers {
         }
 
         /**
-         * @return all default attribute modifiers that will only be applied when the accessory is active when built ({@link #build()}) into a {@link AccessoryModifiers}
+         * @return all default attribute modifiers that will only be applied when the accessory is active when built ({@link #build()}) into a {@link AccessorySlotModifiers}
          */
         @SuppressWarnings("unused")
         public @NonNull ItemAttributeModifiers getActiveModifiers() {
@@ -108,10 +108,10 @@ public final class AccessoryModifiers {
 
         /**
          * Called internally
-         * @return the built {@link AccessoryModifiers}
+         * @return the built {@link AccessorySlotModifiers}
          */
-        public @NonNull AccessoryModifiers build() {
-            return new AccessoryModifiers(passiveModifiers.build(), activeModifiers.build());
+        public @NonNull AccessorySlotModifiers build() {
+            return new AccessorySlotModifiers(passiveModifiers.build(), activeModifiers.build());
         }
     }
 }

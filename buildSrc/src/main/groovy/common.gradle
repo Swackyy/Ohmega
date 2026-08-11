@@ -18,7 +18,7 @@ java {
     targetCompatibility = javaVersion
     toolchain.languageVersion = javaVersion
 
-    // This artifact isn't used, it is just to error out if any Javadoc '{@link ...}' references are correct
+    // This artifact isn't used, it is just to error out if any Javadoc '{@link ...}' references are incorrect
     withJavadocJar()
     withSourcesJar()
 }

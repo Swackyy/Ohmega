@@ -17,7 +17,7 @@ public final class OhmegaDataAttachmentsImpl implements OhmegaDataAttachments.Se
 
     @Override
     public void setData(LivingEntity entity, AccessoryData data) {
-        getData(entity).copyFrom(data, false);
+        getData(entity).copyFrom(data);
     }
 
     public static boolean isAccessoryDataPresent(LivingEntity entity) {

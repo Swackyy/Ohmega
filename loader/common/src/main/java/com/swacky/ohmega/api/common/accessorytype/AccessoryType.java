@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.common.accessorytype;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.swacky.ohmega.api.common.item.datacomponent.AccessoryModifiers;
+import com.swacky.ohmega.api.common.item.datacomponent.AccessorySlotModifiers;
 import com.swacky.ohmega.api.util.codec.OhmegaCodecs;
 import com.swacky.ohmega.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaTags;
@@ -41,7 +41,7 @@ public final class AccessoryType {
             Identifier.CODEC.fieldOf("id").forGetter(AccessoryType::getId),
             Codec.BOOL.fieldOf(ALLOW_FALLBACK_KEY).forGetter(AccessoryType::allowFallback),
             Codec.BOOL.fieldOf(ALLOW_REFERENCE_KEY).forGetter(AccessoryType::allowReference),
-            AccessoryModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(AccessoryType::getAttributeModifiers),
+            AccessorySlotModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(AccessoryType::getAttributeModifiers),
             Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(AccessoryType::displayHoverText),
             Identifier.CODEC.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(AccessoryType::getEmptySlotLocation),
             OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(AccessoryType::getHoverTextColour),
@@ -56,7 +56,7 @@ public final class AccessoryType {
             Identifier.STREAM_CODEC, AccessoryType::getId,
             ByteBufCodecs.BOOL, AccessoryType::allowFallback,
             ByteBufCodecs.BOOL, AccessoryType::allowReference,
-            AccessoryModifiers.STREAM_CODEC, AccessoryType::getAttributeModifiers,
+            AccessorySlotModifiers.STREAM_CODEC, AccessoryType::getAttributeModifiers,
             ByteBufCodecs.BOOL, AccessoryType::displayHoverText,
             Identifier.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
@@ -91,7 +91,7 @@ public final class AccessoryType {
     private final @NonNull Identifier id;
     private final boolean allowFallback;
     private final boolean allowReference;
-    private final @NonNull AccessoryModifiers attributeModifiers;
+    private final @NonNull AccessorySlotModifiers attributeModifiers;
     private final boolean displayHoverText;
     private final @NonNull Identifier emptySlotLocation;
     private final int hoverTextColour;
@@ -114,7 +114,7 @@ public final class AccessoryType {
             @NonNull Identifier id,
             boolean allowFallback,
             boolean allowReference,
-            @NonNull AccessoryModifiers attributeModifiers,
+            @NonNull AccessorySlotModifiers attributeModifiers,
             boolean displayHoverText,
             @NonNull Identifier emptySlotLocation,
             int hoverTextColour,
@@ -157,7 +157,7 @@ public final class AccessoryType {
      * Get the attribute modifiers to apply when an item is in a slot of this type
      * @return any attribute modifiers to apply along with it
      */
-    public @NonNull AccessoryModifiers getAttributeModifiers() {
+    public @NonNull AccessorySlotModifiers getAttributeModifiers() {
         return attributeModifiers;
     }
 
@@ -262,7 +262,7 @@ public final class AccessoryType {
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
         public static final @NonNull Codec<Builder> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                AccessoryModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(inst -> inst.attributeModifiers),
+                AccessorySlotModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(inst -> inst.attributeModifiers),
                 Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(inst -> inst.displayHoverText),
                 Codec.STRING.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(inst -> inst.emptySlotPath),
                 OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(inst -> inst.hoverTextColour),
@@ -275,7 +275,7 @@ public final class AccessoryType {
 
         private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
 
-        private @NonNull AccessoryModifiers attributeModifiers;
+        private @NonNull AccessorySlotModifiers attributeModifiers;
         private boolean displayHoverText;
         private @NonNull String emptySlotPath;
         private int hoverTextColour;
@@ -284,7 +284,7 @@ public final class AccessoryType {
         private int priority;
 
         private Builder(
-                @NonNull AccessoryModifiers attributeModifiers,
+                @NonNull AccessorySlotModifiers attributeModifiers,
                 boolean displayHoverText,
                 @NonNull String emptySlotPath,
                 int hoverTextColour,
@@ -301,7 +301,7 @@ public final class AccessoryType {
         }
 
         public Builder() {
-            this.attributeModifiers = AccessoryModifiers.EMPTY;
+            this.attributeModifiers = AccessorySlotModifiers.EMPTY;
             this.displayHoverText = true;
             this.emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
             this.hoverTextColour = 0xffffff;
@@ -315,7 +315,7 @@ public final class AccessoryType {
          * @param modifiers attribute modifiers to apply
          * @return the current builder instance
          */
-        public @NonNull Builder attributeModifiers(@NonNull AccessoryModifiers modifiers) {
+        public @NonNull Builder attributeModifiers(@NonNull AccessorySlotModifiers modifiers) {
             attributeModifiers = modifiers;
 
             return this;
