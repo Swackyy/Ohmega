@@ -1,0 +1,70 @@
+plugins {
+    id "idea"
+    id "ohmega-loader-impl"
+    id "net.minecraftforge.gradle"
+}
+
+String nativeMixinConfigName = mixinConfigName project
+String nativeApiMixinConfigName = mixinConfigName apiProject()
+String commonMixinConfigName = mixinConfigName commonImplProject()
+
+// Fixes a nuisance with FG7 and IntelliJ symbol resolution for the native API module
+// Could not tell you why this works, it just does
+tasks.withType(JavaCompile).configureEach {
+    classpath += apiProject().sourceSets.main.output
+}
+
+minecraft {
+    mappings channel: "official", version: mcV
+
+    accessTransformer = true
+
+    runs {
+        configureEach {
+            mods {
+                create("${modId}") {
+                    source commonImplProject().apiProject().sourceSets.main
+                    source commonImplProject().sourceSets.main
+                    source apiProject().sourceSets.main
+                    source sourceSets.main
+                }
+            }
+
+            args "--mixin.config", nativeMixinConfigName
+            args "--mixin.config", nativeApiMixinConfigName
+            args "--mixin.config", commonMixinConfigName
+            environment "MOD_CLASSES": "{source_roots}"
+            systemProperty "eventbus.api.strictRuntimeChecks", "true"
+            systemProperty "forge.enabledGameTestNamespaces", modId
+            systemProperty "mixin.debug.export", "true"
+            workingDir.convention layout.projectDirectory.dir("run")
+        }
+
+        register("client")
+
+        register("server") {
+            args "--nogui"
+        }
+    }
+}
+
+repositories {
+    minecraft.mavenizer it
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+}
+
+evaluationDependsOn(':module:platform:forge:forge-api')
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${mcV}-${loaderForgeV}")
+    annotationProcessor "net.minecraftforge:eventbus-validator:7.0.5"
+}
+
+jar {
+    manifest {
+        attributes([
+                "MixinConfigs": [ nativeMixinConfigName, nativeApiMixinConfigName, commonMixinConfigName ]
+        ])
+    }
+}

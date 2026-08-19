@@ -1,0 +1,13 @@
+plugins {
+    id "ohmega-module"
+    id "org.spongepowered.gradle.vanilla"
+}
+
+minecraft {
+    version mcV
+    accessWideners project("${commonProject().path}:impl").file("src/main/resources/common_aw.accesswidener")
+}
+
+dependencies {
+    compileOnly project(path: commonProject().path, configuration: "apiElements")
+}

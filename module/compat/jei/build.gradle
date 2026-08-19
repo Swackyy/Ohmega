@@ -1,0 +1,16 @@
+plugins {
+    id "java-library"
+    id "ohmega-compat"
+}
+
+repositories {
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
+}
+
+dependencies {
+    compatModuleDependency(it, "util_exclusion-zones")
+    compileOnlyApi "mezz.jei:jei-${mcV}-common-api:${compatJeiV}"
+}

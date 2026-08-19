@@ -1,0 +1,151 @@
+plugins {
+    id "me.modmuss50.mod-publish-plugin"
+    id "ohmega-platform-impl"
+}
+
+repositories {
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+}
+
+dependencies {
+    moduleDependency it, commonImplProject()
+
+    if (runtimeEnabledSpark.toBoolean()) {
+        runtimeOnly "maven.modrinth:spark:${sparkV}-${project.parent.name}"
+    }
+}
+
+processResources {
+    String modDesc = modSummary
+
+    if (project.name == "forge") {
+        modDesc += """
+Help translate the mod here if possible: ${crowdinUrl}
+View the source code here: ${gitUrl}
+Or visit the wiki here: ${gitUrl}/wiki
+And join the discord here: ${discordUrl}"""
+    }
+
+    if (!modChanges.empty) {
+        modDesc += "\n\nChanges this version:\n${modChanges}"
+    }
+
+    if (project.name == "fabric") {
+        modDesc = modDesc.replace('\n', "\\n").replace('"', "\\\"")
+    }
+
+    LinkedHashMap<String, String> replacements = [
+            crowdinUrl                           : crowdinUrl,
+            curseUrl                             : curseUrl,
+            discordUrl                           : discordUrl,
+            gitUrl                               : gitUrl,
+            javaV                                : javaV,
+            license                              : license,
+            loaderFabricForgeConfigApiPortVRange : loaderFabricForgeConfigApiPortVRange,
+            loaderFabricVRange                   : loaderFabricVRange,
+            loaderForgeV                         : loaderForgeV,
+            loaderForgeVRange                    : loaderForgeVRange,
+            loaderNeoV                           : loaderNeoV,
+            loaderNeoVRange                      : loaderNeoVRange,
+            mcVRangeMax                          : mcV,
+            mcVRangeMin                          : mcVRangeMin,
+            modAuthors                           : modAuthorsDisplay,
+            modChanges                           : modChanges,
+            modDesc                              : modDesc,
+            modId                                : modId,
+            modName                              : modName,
+            modrinthUrl                          : modrinthUrl,
+            modV                                 : modV
+    ]
+
+    inputs.properties replacements
+
+    filesMatching (["fabric.mod.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) {
+        expand replacements
+    }
+
+    from configurations.commonResources
+    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
+}
+
+jar {
+    from configurations.commonResources
+    exclude "**/${metaFileName(commonImplProject())}.accesswidener"
+    exclude "**/${metaFileName(commonImplProject().apiProject())}.accesswidener"
+    exclude "**/${metaFileName(apiProject())}.accesswidener"
+    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType(JavaCompile).configureEach {
+    source configurations.commonJava
+    dependsOn configurations.commonJava
+}
+
+tasks.named("sourcesJar", Jar) {
+    from commonImplProject().sourceSets.main.allSource
+    exclude "**/common_aw.accesswidener"
+    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
+}
+
+if (rootProject.file("secrets.properties").exists()) {
+    afterEvaluate {
+        publishMods {
+            String name = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
+
+            changelog = modChanges.replace("| ", "+ ")
+            displayName = "${modName} ${modV} ${name} ${mcV}"
+
+            file = tasks.named("jar").flatMap {
+                it.archiveFile
+            }
+
+            type = modV.contains("alpha") ? ALPHA : modV.contains("beta") ? BETA : STABLE
+
+            additionalFiles.from tasks.named("sourcesJar").flatMap {
+                it.archiveFile
+            }
+
+            modLoaders.add project.name
+
+            // todo: see if i can add sgui as bundled dep on fabric when polymer compat is on, and other optional deps
+            curseforge {
+                accessToken = findProperty("secretsCurseForgeToken")
+                clientRequired = true
+                projectId = "889368"
+                serverRequired = true
+
+                javaVersions.add JavaVersion.toVersion(javaV)
+
+                minecraftVersionRange {
+                    start = mcVRangeMin
+                    end = mcV
+                }
+
+                if (project.name == "fabric") {
+                    requires "fabric-api"
+                    requires "forge-config-api-port"
+                }
+            }
+
+            // todo: see if i can add sgui as bundled dep on fabric when polymer compat is on, and other optional deps
+            modrinth {
+                accessToken = findProperty("secretsModrinthToken")
+                projectId = "scvT0o5w"
+                version = modV
+
+                minecraftVersionRange {
+                    start = mcVRangeMin
+                    end = mcV
+                }
+
+                if (project.name == "fabric") {
+                    requires "fabric-api"
+                    requires "forge-config-api-port"
+                }
+            }
+        }
+    }
+}

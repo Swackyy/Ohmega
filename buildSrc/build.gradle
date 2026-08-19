@@ -1,6 +1,7 @@
 plugins {
     id "groovy-gradle-plugin"
     id "me.modmuss50.mod-publish-plugin" version "1.1.0" apply false
+    id "org.spongepowered.gradle.vanilla" version "0.3.2" apply false
 }
 
 repositories {
@@ -9,4 +10,5 @@ repositories {
 
 dependencies {
     implementation "me.modmuss50.mod-publish-plugin:me.modmuss50.mod-publish-plugin.gradle.plugin:1.1.0"
+    implementation "org.spongepowered.gradle.vanilla:org.spongepowered.gradle.vanilla.gradle.plugin:0.3.2"
 }

@@ -1,0 +1,118 @@
+plugins {
+    id "java-library"
+}
+
+group "com.swacky"
+version "${modV}-mc${mcV}"
+
+java {
+    JavaLanguageVersion javaVersion = JavaLanguageVersion.of(javaV)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    toolchain.languageVersion = javaVersion
+
+    // This artifact isn't used, it is just to error out if any Javadoc '{@link ...}' references are incorrect
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add "-Xlint:deprecation"
+    options.encoding = "UTF-8"
+    options.release.set JavaLanguageVersion.of(javaV).asInt()
+}
+
+jar {
+    exclude "**/.cache"
+}
+
+javadoc {
+    options {
+        tags = [
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
+        ]
+    }
+}
+
+tasks.named("javadocJar", Jar) {
+    archiveClassifier = "javadoc-unused"
+}
+
+tasks.named("sourcesJar", Jar) {
+    exclude "**/.cache"
+}
+
+tasks.named("compileTestJava") {
+    enabled = false
+}
+
+tasks.named("processTestResources") {
+    enabled = false
+}
+
+tasks.register("pseudoJavadocJar", Jar) {
+    archiveClassifier = "javadoc"
+}
+
+configurations {
+    commonJava {
+        canBeResolved true
+        canBeConsumed true
+    }
+
+    commonResources {
+        canBeResolved true
+        canBeConsumed true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.files
+}
+
+Project commonImplProject() {
+    return project(":module:platform:common:common")
+}
+
+static void includeProjectOutput(DependencyHandler handler, String projectPath) {
+    handler.commonJava handler.project(path: projectPath, configuration: "commonJava")
+    handler.commonResources handler.project(path: projectPath, configuration: "commonResources")
+}
+
+void moduleDependency(DependencyHandler handler, Project dependency) {
+    String fixedGroup = group
+
+    handler.compileOnlyApi (dependency) {
+        capabilities {
+            requireCapability "${fixedGroup}:${modId}-${dependency.name}"
+        }
+    }
+
+    includeProjectOutput handler, dependency.path
+}
+
+// todo: wrong (maybe??? idk anymore)
+void compatModuleDependency(DependencyHandler handler, String name) {
+    moduleDependency handler, "compat:${name}"
+}
+
+ext.commonImplProject = this.&commonImplProject
+ext.moduleDependency = this.&moduleDependency
+ext.compatModuleDependency = this.&compatModuleDependency
+
+void apiModuleDependency(DependencyHandler handler, Project apiProject) {
+    String fixedGroup = group
+
+    handler.compileOnlyApi (apiProject) {
+        capabilities {
+            requireCapability "${fixedGroup}:${modId}-${apiProject.name}"
+        }
+    }
+
+    includeProjectOutput handler, apiProject.path
+}
+
+ext.apiModuleDependency = this.&apiModuleDependency

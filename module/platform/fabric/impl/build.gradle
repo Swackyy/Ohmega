@@ -1,0 +1,119 @@
+plugins {
+    id "ohmega-loader-impl"
+    id "net.fabricmc.fabric-loom"
+}
+
+loom {
+    accessWidenerPath = accessWidenerFile(project)
+
+    runs {
+        configureEach {
+            systemProperties.put "mixin.debug.export", "true"
+            displayName = "Fabric ${it.name.capitalize()}"
+
+            runDirectory = file("run")
+            generateRunConfig = true
+        }
+
+        client {
+            client()
+
+            programArguments.addAll "--username", "Dev"
+        }
+
+        client2 {
+            client()
+
+            programArguments.addAll "--username", "AlsoDev"
+        }
+
+        server {
+            server()
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = "Architectury"
+        url = "https://maven.architectury.dev"
+    }
+
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
+
+    maven {
+        name = "Cassian"
+        url = "https://maven.cassian.cc"
+    }
+
+    maven {
+        name = "Fuzss"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven"
+    }
+
+    maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz"
+    }
+
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/releases"
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcV}"
+
+    implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+    api "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+
+    if (loaderFabricModMenuEnabled.toBoolean()) {
+        runtimeOnly "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+    }
+
+    /*if (compatEnabledJei.toBoolean()) {
+        compatModuleDependency(it, "jei")
+
+        if (runtimeEnabledJei.toBoolean()) {
+            runtimeOnly "mezz.jei:jei-${mcV}-fabric:${compatJeiV}"
+        }
+    }
+
+    if (compatEnabledPolymer.toBoolean()) {
+        compatModuleDependency(it, "polymer")
+        runtimeOnly include("eu.pb4:sgui:${compatPolymerSGuiV}+${mcV}")
+
+        if (runtimeEnabledPolymer.toBoolean()) {
+            runtimeOnly "eu.pb4:polymer-bundled:${compatPolymerV}+${mcV}"
+        }
+    }
+
+    if (compatEnabledRei.toBoolean()) {
+        compatModuleDependency(it, "rei-fabric")
+
+        if (runtimeEnabledRei.toBoolean()) {
+            runtimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${mcV}.${compatReiV}"
+        }
+    }
+
+    if (compatEnabledRrv.toBoolean()) {
+        compatModuleDependency(it, "rrv-fabric")
+
+        if (runtimeEnabledRrv.toBoolean()) {
+            runtimeOnly "cc.cassian.rrv:reliable-recipe-viewer-fabric:${compatRrvV}+${mcV}"
+        }
+    }*/
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
+        modId = project.modId
+        outputDirectory = file commonImplProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1].getAbsolutePath()
+    }
+}

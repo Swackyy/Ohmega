@@ -1,0 +1,17 @@
+plugins {
+    id "java-library"
+    id "ohmega-compat"
+}
+
+repositories {
+    maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz"
+    }
+}
+
+dependencies {
+    compileOnlyApi "eu.pb4:polymer-core:${compatPolymerV}+${mcV}"
+    compileOnlyApi "eu.pb4:polymer-resource-pack:${compatPolymerV}+${mcV}"
+    compileOnlyApi "eu.pb4:sgui:${compatPolymerSGuiV}+${mcV}"
+}

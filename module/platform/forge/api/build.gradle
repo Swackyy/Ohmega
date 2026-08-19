@@ -1,0 +1,18 @@
+plugins {
+    id "ohmega-loader-api"
+    id "net.minecraftforge.gradle"
+}
+
+minecraft {
+    accessTransformer = true
+}
+
+repositories {
+    minecraft.mavenizer it
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${mcV}-${loaderForgeV}")
+}

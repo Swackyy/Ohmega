@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "package": "com.swacky.ohmega.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ItemStackMixin",
+    "LivingEntityMixin",
+    "ServerConfigurationPacketListenerImplMixin"
+  ],
+  "client": [
+    "client.ClientCommonPacketListenerImplMixin",
+    "client.ClientPacketListenerMixin",
+    "client.Forge_AbstractContainerScreenMixin",
+    "client.Forge_InventoryScreenMixin",
+    "client.Forge_LivingEntityRendererMixin",
+    "client.KeyBindsList$KeyEntryMixin",
+    "client.LayerDefinitionsMixin",
+    "client.LivingEntityRenderStateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8.5"
+}

@@ -6,6 +6,9 @@ import java.net.http.HttpResponse
 
 plugins {
     id "idea"
+    id "java"
+    id "net.fabricmc.fabric-loom" version "${pluginLoomV}" apply false
+    id "net.minecraftforge.gradle" version "${pluginForgeV}"
     id "net.neoforged.moddev" version "${pluginNeoV}" apply false
 }
 
@@ -42,7 +45,7 @@ if (secretsFile.exists()) {
         String auth = Base64.getEncoder().encodeToString "${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes()
 
         doLast {
-            HttpClient client = HttpClient.newHttpClient();
+            HttpClient client = HttpClient.newHttpClient()
             HttpResponse<String> getResponse = client.send(HttpRequest.newBuilder()
                     .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/search/repositories"))
                     .header("Authorization", "Bearer ${auth}")
@@ -50,7 +53,7 @@ if (secretsFile.exists()) {
                     .build(), HttpResponse.BodyHandlers.ofString())
 
             // Success
-            int getStatus = getResponse.statusCode();
+            int getStatus = getResponse.statusCode()
 
             if (getStatus == 200) {
                 String key = new JsonSlurper().parseText(getResponse.body()).repositories[0]?.key
@@ -78,8 +81,7 @@ if (secretsFile.exists()) {
         }
     }
 
-    evaluationDependsOn ":loader:common"
-    evaluationDependsOn ":loader:fabric"
+    evaluationDependsOn "module:platform:common"
 
     // Publishes the mod to the following platforms:
     // Maven central repository
@@ -101,14 +103,16 @@ if (secretsFile.exists()) {
         finalizedBy "publishMavenCentral"
     }
 
-    TaskProvider<Task> datagenTask = project(":loader:fabric").tasks.named "runDatagen"
+    if (moduleEnabledFabric.toBoolean()) {
+        //TaskProvider<Task> datagenTask = project("module:platform:fabric:impl").tasks.named "runDatagen"
 
-    subprojects.each { sub ->
-        sub.tasks.matching {
-            it.name == "publishMods"
-        }.configureEach { publishTask ->
-            //dependsOn datagenTask
-            mustRunAfter datagenTask
+        subprojects.each { sub ->
+            sub.tasks.matching {
+                it.name == "publishMods"
+            }.configureEach { publishTask ->
+                //dependsOn datagenTask
+                mustRunAfter datagenTask
+            }
         }
     }
 }

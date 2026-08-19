@@ -1,0 +1,9 @@
+plugins {
+    id "ohmega-platform"
+    id "org.spongepowered.gradle.vanilla"
+}
+
+minecraft {
+    version mcV
+    accessWideners accessWidenerFile(project)
+}

@@ -1,0 +1,23 @@
+plugins {
+    id "ohmega-loader-api"
+    id "net.fabricmc.fabric-loom"
+}
+
+repositories {
+    maven {
+        name = "Fuzss"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven"
+    }
+}
+
+loom {
+    accessWidenerPath = accessWidenerFile(project)
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcV}"
+    compileOnly "net.fabricmc:fabric-loader:${loaderFabricV}"
+    // Implementation for ClassTweaker to apply transitively
+    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+    compileOnlyApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
+}

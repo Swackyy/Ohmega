@@ -10,7 +10,7 @@ build
 run
 
 # misc
-loader/common/src/generated/
+module/platform/common/impl/src/generated
 test
 remappedSrc
 runs

@@ -1,0 +1,15 @@
+plugins {
+    id "ohmega-platform"
+}
+
+dependencies {
+    apiModuleDependency it, apiProject()
+}
+
+Project apiProject() {
+    Project parent = project.parent
+
+    return parent.project("${parent.name}-api")
+}
+
+ext.apiProject = this.&apiProject

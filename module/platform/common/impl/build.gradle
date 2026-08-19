@@ -1,0 +1,23 @@
+plugins {
+    id "java-library"
+    id "ohmega-platform-impl"
+    id "org.spongepowered.gradle.vanilla"
+}
+
+minecraft {
+    version mcV
+    accessWideners accessWidenerFile(apiProject()), accessWidenerFile(project)
+}
+
+dependencies {
+    compileOnly "org.spongepowered:mixin:0.8.7"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.2"
+
+    implementation "org.ow2.asm:asm:9.9.1"
+
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
+}
+
+sourceSets.main.resources {
+    srcDir "src/generated/resources"
+}

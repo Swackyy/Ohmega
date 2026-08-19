@@ -1,0 +1,13 @@
+accessWidener v2 official
+
+extendable method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen extractSlotHighlightBack (Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V
+extendable method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen extractSlotHighlightFront (Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V
+accessible field net/minecraft/client/gui/screens/inventory/AbstractRecipeBookScreen recipeBookComponent Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;
+accessible class net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper
+accessible method net/minecraft/client/gui/screens/Screen init ()V
+accessible field net/minecraft/client/gui/screens/Screen minecraft Lnet/minecraft/client/Minecraft;
+accessible field net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl receivedRegistries Lnet/minecraft/core/RegistryAccess$Frozen;
+accessible field net/minecraft/world/inventory/AbstractContainerMenu stateId I
+accessible method net/minecraft/world/inventory/AbstractContainerMenu dropOrPlaceInInventory (Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V
+accessible class net/minecraft/world/inventory/ArmorSlot
+accessible method net/minecraft/world/inventory/CraftingMenu slotChangedCraftingGrid (Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/world/inventory/ResultContainer;Lnet/minecraft/world/item/crafting/RecipeHolder;)V

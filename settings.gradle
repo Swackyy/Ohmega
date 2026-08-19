@@ -31,16 +31,70 @@ plugins {
 
 rootProject.setName modName
 
-include "loader:common"
+include "module:platform:common:api"
+include "module:platform:common:impl"
 
 if (moduleEnabledFabric.toBoolean()) {
-    include "loader:fabric"
+    include "module:platform:fabric:api"
+    include "module:platform:fabric:impl"
 }
 
 if (moduleEnabledForge.toBoolean()) {
-    include "loader:forge"
+    include "module:platform:forge:api"
+    include "module:platform:forge:impl"
 }
 
 if (moduleEnabledNeo.toBoolean()) {
-    include "loader:neoforge"
+    include "module:platform:neoforge:api"
+    include "module:platform:neoforge:impl"
+}
+
+if (compatEnabledJei.toBoolean()) {
+    include "module:compat:util_exclusion-zones"
+    include "module:compat:jei"
+}
+
+if (compatEnabledPolymer.toBoolean()) {
+    include "module:compat:polymer"
+}
+
+if (compatEnabledRei.toBoolean()) {
+    include "module:compat:util_exclusion-zones"
+    include "module:compat:rei-common"
+    include "module:compat:rei-fabric"
+    include "module:compat:rei-neoforge"
+}
+
+if (compatEnabledRrv.toBoolean()) {
+    include "module:compat:util_exclusion-zones"
+    include "module:compat:rrv-fabric"
+    include "module:compat:rrv-neoforge"
+}
+
+gradle.settingsEvaluated {
+    rootProject.children.forEach { child ->
+        eval(child)
+    }
+}
+
+void eval(ProjectDescriptor child) {
+    ProjectDescriptor grandparent = child.parent.parent
+
+    if (grandparent != null) {
+        String originalName = child.name
+
+        if (grandparent.name == "platform") {
+            String parentName = child.parent.name
+
+            if (originalName == "api") {
+                child.setName "${parentName}-${originalName}"
+            } else if (originalName == "impl") {
+                child.setName parentName
+            }
+        }
+    }
+
+    child.children.forEach { subChild ->
+        eval subChild
+    }
 }

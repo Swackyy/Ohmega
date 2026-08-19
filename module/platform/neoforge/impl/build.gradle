@@ -1,0 +1,73 @@
+plugins {
+    id "ohmega-loader-impl"
+    id "net.neoforged.moddev"
+}
+
+neoForge {
+    version = loaderNeoV
+
+    accessTransformers {
+        file "src/main/resources/META-INF/accesstransformer.cfg"
+    }
+
+    mods {
+        "${modId}" {
+            sourceSet commonImplProject().apiProject().sourceSets.main
+            sourceSet commonImplProject().sourceSets.main
+            sourceSet apiProject().sourceSets.main
+            sourceSet sourceSets.main
+        }
+    }
+
+    runs {
+        configureEach {
+            ideName.set "NeoForge ${it.name.capitalize()} (${project.path})"
+            systemProperty "mixin.debug.export", "true"
+            systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
+        }
+
+        register("client") {
+            client()
+        }
+
+        register("server") {
+            server()
+
+            programArgument "--nogui"
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = "Architectury"
+        url = "https://maven.architectury.dev"
+    }
+
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
+}
+
+dependencies {
+    if (compatEnabledJei.toBoolean()) {
+        compatModuleDependency(it, "jei")
+
+        if (runtimeEnabledJei.toBoolean()) {
+            runtimeOnly "mezz.jei:jei-${mcV}-neoforge:${compatJeiV}"
+        }
+    }
+
+    if (compatEnabledRei.toBoolean()) {
+        compatModuleDependency(it, "rei-neoforge")
+
+        if (runtimeEnabledRei.toBoolean()) {
+            runtimeOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${mcV}.${compatReiV}"
+
+            constraints {
+                runtimeOnly("dev.architectury:architectury-neoforge:21.0.7")
+            }
+        }
+    }
+}
