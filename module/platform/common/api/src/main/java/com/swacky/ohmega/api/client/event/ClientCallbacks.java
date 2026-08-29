@@ -203,14 +203,16 @@ public final class ClientCallbacks {
                             }
                         }
 
-                        ItemStack stack = data.getEntry(j).getStack();
-                        Accessory accessory = Accessories.get(stack.getItem());
+                        if (j < data.size()) {
+                            ItemStack stack = data.getEntry(j).getStack();
+                            Accessory accessory = Accessories.get(stack.getItem());
 
-                        if (accessory != null) {
-                            boolean shouldNotifyServer = accessory.onKeybindUse(player, stack);
+                            if (accessory != null) {
+                                boolean shouldNotifyServer = accessory.onKeybindUse(player, stack);
 
-                            if (shouldNotifyServer) {
-                                OhmegaNetworking.sendC2S(new KeybindUsePacket(j));
+                                if (shouldNotifyServer) {
+                                    OhmegaNetworking.sendC2S(new KeybindUsePacket(j));
+                                }
                             }
                         }
                     }
