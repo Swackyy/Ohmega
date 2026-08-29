@@ -68,7 +68,6 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
-
     implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     api "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"

@@ -36,24 +36,16 @@ javadoc {
     }
 }
 
-tasks.named("javadocJar", Jar) {
-    archiveClassifier = "javadoc-unused"
-}
-
-tasks.named("sourcesJar", Jar) {
+tasks.named ("sourcesJar", Jar) {
     exclude "**/.cache"
 }
 
-tasks.named("compileTestJava") {
+tasks.named ("compileTestJava") {
     enabled = false
 }
 
-tasks.named("processTestResources") {
+tasks.named ("processTestResources") {
     enabled = false
-}
-
-tasks.register("pseudoJavadocJar", Jar) {
-    archiveClassifier = "javadoc"
 }
 
 configurations {

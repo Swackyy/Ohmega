@@ -26,11 +26,11 @@ neoForge {
             systemProperty "neoforge.enabledGameTestNamespaces", "${modId}"
         }
 
-        register("client") {
+        register ("client") {
             client()
         }
 
-        register("server") {
+        register ("server") {
             server()
 
             programArgument "--nogui"

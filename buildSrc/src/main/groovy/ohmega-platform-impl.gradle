@@ -6,6 +6,122 @@ dependencies {
     apiModuleDependency it, apiProject()
 }
 
+File secretsFile = rootProject.file("secrets.properties")
+
+if (secretsFile.exists()) {
+    secretsFile.withInputStream {
+        stream -> {
+            Properties secrets = new Properties()
+
+            secrets.load(stream)
+            secrets.forEach {
+                key, value -> project.ext.set((String) key, value)
+            }
+        }
+    }
+
+    afterEvaluate {
+        evaluationDependsOn apiProject().path
+
+        publishing {
+            publications {
+                mavenJava (MavenPublication) {
+                    groupId = "io.github.swackyy"
+                    artifactId = base.archivesName.get()
+                    version = "${modV}-mc${mcV}" // todo: *should* be unneeded to specify, test this
+
+                    artifact apiProject().tasks.named("jar")
+                    artifact apiProject().tasks.named("pseudoJavadocJar")
+                    artifact apiProject().tasks.named("sourcesJar")
+                    from components.java
+                    artifact tasks.named("pseudoJavadocJar")
+
+                    artifacts.removeAll { artifact ->
+                        artifact.classifier == "javadoc-unused"
+                    }
+
+                    pom {
+                        name = "${modName} ${project.name.capitalize()}"
+                        description = modSummary
+                        url = gitUrl
+
+                        withXml {
+                            Object dependencies = asNode().dependencies[0]
+
+                            if (dependencies != null) {
+                                List targets = dependencies.dependency.findAll { dep ->
+                                    String groupId = dep.groupId.text()
+
+                                    groupId.contains("jei") ||
+                                            groupId.contains("minecraftforge") ||
+                                            dep.artifactId.text().contains("spark")
+                                }
+
+                                targets.each { dep ->
+                                    dependencies.remove(dep)
+                                }
+                            }
+                        }
+
+                        licenses {
+                            //noinspection GroovyAssignabilityCheck
+                            license {
+                                name = license
+                            }
+                        }
+
+                        scm {
+                            url = "github.com"
+                            connection = "scm:git:git:github.com"
+                            developerConnection = "scm:git:ssh://github.com"
+                        }
+
+                        developers {
+                            developer {
+                                id = "swackyy"
+                                name = modAuthorsDisplay
+                            }
+                        }
+                    }
+
+                    suppressPomMetadataWarningsFor("apiElements")
+                    suppressPomMetadataWarningsFor("javadocElements")
+                    suppressPomMetadataWarningsFor("runtimeElements")
+                    suppressPomMetadataWarningsFor("sourcesElements")
+                }
+            }
+
+            repositories {
+                maven {
+                    name = "MavenCentral"
+                    url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2"
+
+                    credentials {
+                        username = getProperty("secretsMavenCentralUsername")
+                        password = getProperty("secretsMavenCentralPassword")
+                    }
+                }
+            }
+        }
+
+        plugins.withType(MavenPublishPlugin).configureEach {
+            signing {
+                String id = findProperty("secretsSigningId")
+                String key = findProperty("secretsSigningKey")
+                String password = findProperty("secretsSigningPassword")
+
+                if (id && key && password) {
+                    useInMemoryPgpKeys(id, key, password)
+                    sign publishing.publications.mavenJava
+                } else {
+                    System.err.println "Could not sign project ${project.name}"
+                    required = false
+                }
+            }
+        }
+    }
+}
+
 Project apiProject() {
     Project parent = project.parent
 

@@ -5,23 +5,31 @@ plugins {
 }
 
 base {
-    archivesName.set "${modId}-${project.name}"
+    archivesName.set "${modId}-${project.parent.name}"
 }
 
 tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
 }
 
+tasks.named ("javadocJar", Jar) {
+    archiveClassifier = "javadoc-unused"
+}
+
+tasks.register ("pseudoJavadocJar", Jar) {
+    archiveClassifier = "javadoc"
+}
+
 processResources {
     LinkedHashMap<String, String> replacements = [
-            modId: modId,
-            packFormatMaxV: packFormatMaxV,
-            packFormatMinV: packFormatMinV
+            modId          : modId,
+            packFormatMaxV : packFormatMaxV,
+            packFormatMinV : packFormatMinV
     ]
 
     inputs.properties replacements
 
-    filesMatching(["pack.mcmeta", "resourcepacks/*/pack.mcmeta"]) {
+    filesMatching (["pack.mcmeta", "resourcepacks/*/pack.mcmeta"]) {
         expand replacements
     }
 }
@@ -29,119 +37,8 @@ processResources {
 // todo: possibly move to a plugin so i can defer application
 ["apiElements", "runtimeElements", "sourcesElements"].each { variant ->
     configurations."${variant}".outgoing {
-        capability "${group}:${base.archivesName.get()}:${version}"
+        capability "${group}:${modId}-${project.name}:${version}"
         //capability "${group}:${modId}-${project.name}:${version}"
-    }
-}
-
-File secretsFile = rootProject.file("secrets.properties")
-
-if (secretsFile.exists()) {
-    secretsFile.withInputStream {
-        stream -> {
-            Properties secrets = new Properties()
-
-            secrets.load(stream)
-            secrets.forEach {
-                key, value -> project.ext.set((String) key, value)
-            }
-        }
-    }
-
-    afterEvaluate {
-        publishing {
-            publications {
-                mavenJava(MavenPublication) {
-                    groupId = "io.github.swackyy"
-                    artifactId = base.archivesName.get()
-                    version = "${modV}-mc${mcV}" // *should* be unneeded to specify
-
-                    from components.java
-                    artifact tasks.named("pseudoJavadocJar")
-
-                    artifacts.removeAll { artifact ->
-                        artifact.classifier == "javadoc-unused"
-                    }
-
-                    pom {
-                        name = "${modName} ${project.name.capitalize()}"
-                        description = modSummary
-                        url = gitUrl
-
-                        withXml {
-                            Object dependencies = asNode().dependencies[0]
-
-                            if (dependencies != null) {
-                                List targets = dependencies.dependency.findAll { dep ->
-                                    String groupId = dep.groupId.text()
-
-                                    groupId.contains("jei") ||
-                                            groupId.contains("minecraftforge") ||
-                                            dep.artifactId.text().contains("spark")
-                                }
-
-                                targets.each { dep ->
-                                    dependencies.remove(dep)
-                                }
-                            }
-                        }
-
-                        licenses {
-                            //noinspection GroovyAssignabilityCheck
-                            license {
-                                name = license
-                            }
-                        }
-
-                        scm {
-                            url = "github.com"
-                            connection = "scm:git:git:github.com"
-                            developerConnection = "scm:git:ssh://github.com"
-                        }
-
-                        developers {
-                            developer {
-                                id = "swackyy"
-                                name = modAuthorsDisplay
-                            }
-                        }
-                    }
-
-                    suppressPomMetadataWarningsFor("apiElements")
-                    suppressPomMetadataWarningsFor("javadocElements")
-                    suppressPomMetadataWarningsFor("runtimeElements")
-                    suppressPomMetadataWarningsFor("sourcesElements")
-                }
-            }
-
-            repositories {
-                maven {
-                    name = "MavenCentral"
-                    url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2"
-
-                    credentials {
-                        username = getProperty("secretsMavenCentralUsername")
-                        password = getProperty("secretsMavenCentralPassword")
-                    }
-                }
-            }
-        }
-
-        plugins.withType(MavenPublishPlugin).configureEach {
-            signing {
-                String id = findProperty("secretsSigningId")
-                String key = findProperty("secretsSigningKey")
-                String password = findProperty("secretsSigningPassword")
-
-                if (id && key && password) {
-                    useInMemoryPgpKeys(id, key, password)
-                    sign publishing.publications.mavenJava
-                } else {
-                    System.err.println "Could not sign project ${project.name}"
-                    required = false
-                }
-            }
-        }
     }
 }
 

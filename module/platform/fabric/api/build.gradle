@@ -17,7 +17,7 @@ loom {
 dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
     compileOnly "net.fabricmc:fabric-loader:${loaderFabricV}"
-    // Implementation for ClassTweaker to apply transitively
+    // Implementation for ClassTweaker to apply
     implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
     compileOnlyApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 }

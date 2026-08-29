@@ -32,7 +32,7 @@ minecraft {
     runs {
         configureEach {
             mods {
-                create("${modId}") {
+                create ("${modId}") {
                     source commonImplProject().apiProject().sourceSets.main
                     source commonImplProject().sourceSets.main
                     source apiProject().sourceSets.main
@@ -52,7 +52,7 @@ minecraft {
 
         register("client")
 
-        register("server") {
+        register ("server") {
             args "--nogui"
         }
     }

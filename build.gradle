@@ -33,7 +33,7 @@ if (secretsFile.exists()) {
         }
     }
 
-    tasks.register("publishMavenCentral") {
+    tasks.register ("publishMavenCentral") {
         group = "publishing"
 
         subprojects.each { sub ->
@@ -88,7 +88,7 @@ if (secretsFile.exists()) {
     // CurseForge
     // Modrinth
     // todo: this still doesn't run the datagen but it does publish ig
-    tasks.register("completeRelease") {
+    tasks.register ("completeRelease") {
         group = "publishing"
 
         subprojects.each { sub ->

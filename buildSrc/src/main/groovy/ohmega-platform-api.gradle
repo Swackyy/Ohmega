@@ -1,0 +1,15 @@
+plugins {
+    id "ohmega-platform"
+}
+
+jar {
+    archiveClassifier = "api"
+}
+
+tasks.named ("pseudoJavadocJar", Jar) {
+    archiveClassifier = "api-javadoc"
+}
+
+tasks.named ("sourcesJar", Jar) {
+    archiveClassifier = "api-sources"
+}
