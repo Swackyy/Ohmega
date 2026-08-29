@@ -2,11 +2,14 @@ package com.swacky.ohmega.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.config.OhmegaConfig;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,6 +43,55 @@ abstract class InventoryMixin {
     private int clearOrCountMatchingItems(int original, @Local(argsOnly = true) Predicate<ItemStack> filter, @Local(argsOnly = true) int max) {
         if (OhmegaConfig.Server.getData().injectVanillaClear().get()) {
             original += OhmegaDataAttachments.getData(player).clearMatchingItems(player, filter, max, EquipContext.UNKNOWN);
+        }
+
+        return original;
+    }
+
+    @ModifyReturnValue(
+            method = "contains(Lnet/minecraft/world/item/ItemStack;)Z",
+            at = @At(
+                    value = "RETURN",
+                    ordinal = 1))
+    private boolean contains(boolean original, @Local(argsOnly = true) ItemStack searchStack) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(player).getEntries()) {
+            ItemStack stack = entry.getStack();
+
+            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, searchStack)) {
+                return true;
+            }
+        }
+
+        return original;
+    }
+
+    @ModifyReturnValue(
+            method = "contains(Lnet/minecraft/tags/TagKey;)Z",
+            at = @At(
+                    value = "RETURN",
+                    ordinal = 1))
+    private boolean contains(boolean original, @Local(argsOnly = true) TagKey<Item> tag) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(player).getEntries()) {
+            ItemStack stack = entry.getStack();
+
+            if (!stack.isEmpty() && stack.is(tag)) {
+                return true;
+            }
+        }
+
+        return original;
+    }
+
+    @ModifyReturnValue(
+            method = "contains(Ljava/util/function/Predicate;)Z",
+            at = @At(
+                    value = "RETURN",
+                    ordinal = 1))
+    private boolean contains(boolean original, @Local(argsOnly = true) Predicate<ItemStack> filter) {
+        for (AccessoryDataEntry entry : OhmegaDataAttachments.getData(player).getEntries()) {
+            if (filter.test(entry.getStack())) {
+                return true;
+            }
         }
 
         return original;
