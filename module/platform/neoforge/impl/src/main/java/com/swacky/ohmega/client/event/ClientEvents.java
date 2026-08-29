@@ -10,7 +10,7 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.config.OhmegaConfigImpl;

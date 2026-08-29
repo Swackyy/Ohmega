@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.client.renderer.ILivingAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.LivingRenderContext;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.client.model.HaloModel;
-import com.swacky.ohmega.api.common.item.AngelRing;
+import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartNames;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

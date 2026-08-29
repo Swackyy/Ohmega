@@ -7,7 +7,7 @@ import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.init.OhmegaBinds;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.config.OhmegaConfigImpl;
 import net.minecraft.client.Minecraft;

@@ -1,8 +1,11 @@
-package com.swacky.ohmega.api.common.item;
+package com.swacky.ohmega.common.item;
 
 import com.swacky.ohmega.api.client.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.IAccessory;
+import com.swacky.ohmega.api.common.item.SoundData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;

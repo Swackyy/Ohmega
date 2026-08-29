@@ -1,7 +1,7 @@
 package com.swacky.ohmega.datagen.server;
 
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.common.init.OhmegaTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;

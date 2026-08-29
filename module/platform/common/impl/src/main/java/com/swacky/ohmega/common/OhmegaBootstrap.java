@@ -6,7 +6,7 @@ import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.common.command.node.ClearCommand;

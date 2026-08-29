@@ -1,6 +1,7 @@
-package com.swacky.ohmega.api.common.init;
+package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;

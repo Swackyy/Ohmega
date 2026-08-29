@@ -4,7 +4,7 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.event.CommonCallbacks;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.network.C2S.KeybindUsePacket;
@@ -31,6 +31,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -62,6 +63,13 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void onEntityJoin(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof LivingEntity entity) {
+            OhmegaDataAttachments.getData(entity).onAttach(entity);
+        }
+    }
+
+    @SubscribeEvent
     public static void onLivingDropItems(LivingDropsEvent event) {
         CommonCallbacks.onLivingDeath(event.getEntity(), event.getDrops());
     }
@@ -89,13 +97,6 @@ public final class CommonEvents {
     public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             CommonCallbacks.onPlayerChangeDimension(player);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            OhmegaDataAttachments.getData(player).onAttach(player);
         }
     }
 

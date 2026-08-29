@@ -34,7 +34,7 @@ abstract class ServerPlayerMixin extends Player {
 
     @ModifyVariable(method = "<init>", at = @At(value = "RETURN"), argsOnly = true)
     private MinecraftServer init(MinecraftServer server) {
-        containerSynchronizer = new ContainerSynchroniserWrapper(containerSynchronizer, inventoryMenu);
+        //containerSynchronizer = new ContainerSynchroniserWrapper(containerSynchronizer, inventoryMenu);
         return server;
     }
 

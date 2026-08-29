@@ -52,7 +52,7 @@ public final class Ohmega {
 
         if (!locked) {
             T impl = ServiceLoader.load(clazz).findFirst().orElseThrow(() ->
-                    new RuntimeException("Could not load service '" + serviceName + "' as no implementation was found"));
+                    new RuntimeException("Could not load service '" + serviceName + "' as no implementation was found. Ensure your workspace contains Ohmega on the runtime classpath"));
             String implName = impl.getClass().getName();
 
             if (bootstrapped) {

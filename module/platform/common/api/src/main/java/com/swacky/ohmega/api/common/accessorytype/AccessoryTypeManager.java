@@ -112,6 +112,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
                         for (Map.Entry<String, AccessoryType.Builder> entry : opt.get().getFirst().entrySet()) {
                             AccessoryType type = entry.getValue().build(namespace, entry.getKey());
 
+                            // todo: prioritise namespaces better here
                             map.put(type.getId(), type);
 
                             if (typeCount++ == 0) {

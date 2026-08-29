@@ -2,7 +2,7 @@ package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaBinds;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;

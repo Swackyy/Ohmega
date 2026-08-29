@@ -14,6 +14,16 @@ tasks.withType(JavaCompile).configureEach {
     classpath += apiProject().sourceSets.main.output
 }
 
+// Fixes a nuisance with FG7 not pulling in generated resources from the common impl module
+// Could not tell you why this works, it just does
+sourceSets {
+    main {
+        resources {
+            srcDirs += commonImplProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1]
+        }
+    }
+}
+
 minecraft {
     mappings channel: "official", version: mcV
 

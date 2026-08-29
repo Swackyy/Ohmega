@@ -1,8 +1,7 @@
 package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaItems;
-import com.swacky.ohmega.api.common.item.AngelRing;
+import com.swacky.ohmega.common.item.AngelRing;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;

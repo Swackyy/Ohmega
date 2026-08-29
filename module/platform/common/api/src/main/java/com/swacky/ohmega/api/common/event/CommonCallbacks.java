@@ -83,8 +83,8 @@ public final class CommonCallbacks {
         AccessoryData.DEFAULT_TRACKERS.remove(entity);
     }
 
-    public static void onLivingPostTick(LivingEntity living) {
-        OhmegaDataAttachments.getData(living).tick(living);
+    public static void onLivingPostTick(LivingEntity entity) {
+        OhmegaDataAttachments.getData(entity).tick(entity);
     }
 
     public static void onLivingTrack(ServerPlayer tracker, LivingEntity tracked) {

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 // todo: possibly split nested classes and move to api package
+// todo: again, for the love of god, split this >:(
 public final class OhmegaConfig {
     public static final class Client {
         private static final Service IMPL = OhmegaClient.loadService(Service.class);

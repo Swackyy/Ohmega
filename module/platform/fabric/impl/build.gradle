@@ -9,10 +9,11 @@ loom {
     runs {
         configureEach {
             systemProperties.put "mixin.debug.export", "true"
-            displayName = "Fabric ${it.name.capitalize()}"
 
-            runDirectory = file("run")
+            displayName = "Fabric ${it.name.capitalize()}"
             generateRunConfig = true
+            preferGradleTask = true
+            runDirectory = file("run")
         }
 
         client {

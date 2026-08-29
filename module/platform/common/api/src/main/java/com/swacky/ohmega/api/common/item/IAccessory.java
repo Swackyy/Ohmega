@@ -17,7 +17,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The base interface for all accessory items.
- * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or {@link AngelRing} for examples
+ * <a href="https://github.com/Swackyy/Ohmega/wiki">Refer to the wiki</a> or the example Angel Ring item for examples
  * <p>
  * To make an item an accessory, either:
  * <ul>
