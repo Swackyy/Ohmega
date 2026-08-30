@@ -128,7 +128,7 @@ public final class AccessoryContainer {
                 accessory.onUnequip(player, stack);
             }
 
-            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), true);
+            AccessoryHelper.changeModifiers(player, AccessoryHelper.getModifiers(stack).getPassive(), false);
             AccessoryHelper.setNoSlot(stack);
         }
     }
