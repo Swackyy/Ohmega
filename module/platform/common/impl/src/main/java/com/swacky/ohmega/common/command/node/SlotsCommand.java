@@ -148,7 +148,7 @@ public final class SlotsCommand implements ICommandNode {
                                 .executes(SlotsCommand::untrackWithTargets)));
     }
 
-    private static int doAdd(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, AccessoryType type, int amount) throws CommandSyntaxException {
+    private static int doAdd(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, AccessoryType type, int amount) {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         for (LivingEntity target : targets) {
@@ -189,7 +189,7 @@ public final class SlotsCommand implements ICommandNode {
         return doAdd(context, targets, type, amount);
     }
 
-    private static int doClear(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, Predicate<AccessoryType> filter, int max) throws CommandSyntaxException {
+    private static int doClear(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, Predicate<AccessoryType> filter, int max) {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
         int[] count = {0};
 
@@ -257,7 +257,7 @@ public final class SlotsCommand implements ICommandNode {
         return doClear(context, targets, filter, max);
     }
 
-    private static int doDefault(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) throws CommandSyntaxException {
+    private static int doDefault(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         for (LivingEntity target : targets) {
@@ -449,7 +449,7 @@ public final class SlotsCommand implements ICommandNode {
         return doInherit(context, other, targets, min, max);
     }
 
-    private static int doInsert(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, AccessoryType type, int amount) throws CommandSyntaxException {
+    private static int doInsert(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, AccessoryType type, int amount) {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         int size = targets.size();
@@ -508,7 +508,7 @@ public final class SlotsCommand implements ICommandNode {
         return doInsert(context, targets, index, type, amount);
     }
 
-    private static int doRemove(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, int amount, Predicate<AccessoryType> filter) throws CommandSyntaxException {
+    private static int doRemove(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, int amount, Predicate<AccessoryType> filter) {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         int size = targets.size();
@@ -573,7 +573,7 @@ public final class SlotsCommand implements ICommandNode {
         return doRemove(context, targets, index, amount, type);
     }
 
-    private static int doSet(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, AccessoryType type, int max) throws CommandSyntaxException {
+    private static int doSet(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, AccessoryType type, int max) {
         CommandSourceStack source = context.getSource();
 
         if (index <= max) {
@@ -692,7 +692,7 @@ public final class SlotsCommand implements ICommandNode {
         return doTracking(context, target);
     }
 
-    private static int doUntrack(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) throws CommandSyntaxException {
+    private static int doUntrack(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         for (LivingEntity target : targets) {

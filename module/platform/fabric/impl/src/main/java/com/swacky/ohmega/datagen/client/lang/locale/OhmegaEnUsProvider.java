@@ -70,7 +70,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s in index %s of their accessory inventory");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s of %s entities' accessory inventories to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
-        builder.add(ItemCommand.TYPE_GET_FEEDBACK, "Item '%s' has default accessory type '%s'");
+        builder.add(ItemCommand.TYPE_FEEDBACK, "Item '%s' has default accessory type '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Entity %s has the following items in their accessory inventory: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Entity %s has no items in their accessory inventory");
@@ -167,17 +167,17 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
                 "Magnetics Strength",
                 OhmegaConfig.Client.Service.MAGNETICS_STRENGTH_DESCRIPTION);
         // Positions
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
+                "Toggle Extension Button",
+                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Edit");
         // Survival
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_POSITIONS,
                 "Positions",
                 OhmegaConfig.Client.Service.SECTION_POSITIONS_DESCRIPTION);
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_POSITIONS, "Edit");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
-                "Toggle Extension Button",
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Edit");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_SURVIVAL,
                 "Survival Inventory",
@@ -372,7 +372,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When active:");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%1$s %2$s");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
         internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Edit UI Magnetics");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Edit UI Nudge Down");

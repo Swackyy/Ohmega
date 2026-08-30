@@ -81,7 +81,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Cat %s haz %s in place %s ov der kit-cat inventori");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Maded item in place %s ov %s catz' kit-cat inventoriz to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Maded stack in place %s ov cat %s'z kit-cat inventori to %s %s");
-        builder.add(ItemCommand.TYPE_GET_FEEDBACK, "Fing '%s' haz defolt kit-cat flavr '%s'");
+        builder.add(ItemCommand.TYPE_FEEDBACK, "Fing '%s' haz defolt kit-cat flavr '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Cat %s haz teh following fingz in der kit-cat inventori: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Cat %s haz no fingz in der kit-cat inventori");
@@ -126,95 +126,96 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
                 "Friendz Mode",
-                "Kilz or respinz sum gud but mostly not der fingz dat can make bettr yur der fingz sumtimez");
+                """
+                        Kilz or respinz sum gud but mostly not der fingz dat can make bettr yur der fingz sumtimez""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_KEY,
                 "Makez Tranzlation Fing Show",
                 """
-                    If yiss, will fly a flag bearin' to Ohmegawd Crowdin translations on sailing a sea.
-                    Diz be automatically maded to naw after teh first pop-up, so it only show once""");
+                        If yiss, will fly a flag bearin' to Ohmegawd Crowdin translations on sailing a sea.
+                        Diz be automatically maded to naw after teh first pop-up, so it only show once""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Kit-cat Box Buton Style",
                 """
-                    Style ov teh kit-cat inventori buton
-                    DEFAULT: Teh bestst Ohmegawd buton style
-                    LEGACY: A Curios/Baubles inspird buton dat apeerz next to teh cat model in teh inventori
-                    TAG_LEFT: A smol tag-lik buton dat iz appearin' just off teh top left corner ov teh inventori
-                    TAG_RIGHT: A smol tag-like buton appearing just off teh top right corner ov teh inventori
-                    HIDDEN: Itz not ther""");
+                        Style ov teh kit-cat inventori buton
+                        DEFAULT: Teh bestst Ohmegawd buton style
+                        LEGACY: A Curios/Baubles inspird buton dat apeerz next to teh cat model in teh inventori
+                        TAG_LEFT: A smol tag-lik buton dat iz appearin' just off teh top left corner ov teh inventori
+                        TAG_RIGHT: A smol tag-like buton appearing just off teh top right corner ov teh inventori
+                        HIDDEN: Itz not ther""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
                 "Kit-cat Box Flavr",
                 """
-                    Teh kit-cat inventori flavr to use, other fings can add der own kit-cat inventoriz, which can be putz here""");
+                        Teh kit-cat inventori flavr to use, other fings can add der own kit-cat inventoriz, which can be putz here""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Putter Direcshon",
                 """
-                    Teh direcshon dat kit-cat slotz will be fillingz up in""");
+                        Teh direcshon dat kit-cat slotz will be fillingz up in""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
                 "MOST SCRATCHEZPOSTZ",
                 """
-                    TEH MOST SCRATCHEZPOSTZ TO HAV""");
+                        TEH MOST SCRATCHEZPOSTZ TO HAV""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
                 "MOST SCRATCHEZPOSTZ SLOTZ",
                 """
-                    TEH MOST NUMBR OF SLOTZ FER SCRATCHEZPOSTZ
-                    If scratchd out, a new SCRATCHEZPOST will be made iv it doezn't iz more den 'maxColumns'""");
+                        TEH MOST NUMBR OF SLOTZ FER SCRATCHEZPOSTZ
+                        If scratchd out, a new SCRATCHEZPOST will be made iv it doezn't iz more den 'maxColumns'""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "MOST SCRATCHEZPOSTZ SEEIN' SLOTZ",
                 """
-                    TEH MOST NUMBR OF SLOTZ YU SEE FER A SCRATCHEZPOST""");
+                        TEH MOST NUMBR OF SLOTZ YU SEE FER A SCRATCHEZPOST""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Show Meower",
                 """
-                    If yiss, showz a meower box ov teh flavr ov kit-cat slot when it is meowed on""");
+                        If yiss, showz a meower box ov teh flavr ov kit-cat slot when it is meowed on""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
                 "Show Kit-catz",
                 """
-                    If yiss, showz kit-catz on catz wen wantz, never wantz if naw""");
+                        If yiss, showz kit-catz on catz wen wantz, never wantz if naw""");
         // Edit UI
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_EDIT_UI,
                 "Kit-cat Box Pokinz",
                 """
-                    Haz sum Kit-cat box pokin' setinz""");
+                        Haz sum Kit-cat box pokin' setinz""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_EDIT_UI, "Claw");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.BACKGROUND_ALPHA_KEY,
                 "Backgrownd Alfa",
                 """
-                    Teh alfaness fer teh backgrownd ov teh Kit-cat box pokin'""");
+                        Teh alfaness fer teh backgrownd ov teh Kit-cat box pokin'""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAGNETICS_STRENGTH_KEY,
                 "Fridj Strength",
                 """
-                    How much cat needz to poke at a fridj fing to nock it off""");
+                        How much cat needz to poke at a fridj fing to nock it off""");
         // Positions
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
+                "Kit-cat Box Button",
+                """
+                        Haz positionz fer teh kit-cat box buton""");
+        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Claw");
         // Survival
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_POSITIONS,
                 "Placez",
                 """
-                    Makes wher sum Ohmegawd fings be putted in placez""");
+                        Makes wher sum Ohmegawd fings be putted in placez""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_POSITIONS, "Claw");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
-                "Kit-cat Box Button",
-                """
-                    Haz positionz fer teh kit-cat box buton""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Claw");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_SURVIVAL,
                 "Sirvivil Inventori",
                 """
-                    Haz positionz fer teh sirvivil inventori""");
+                        Haz positionz fer teh sirvivil inventori""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_SURVIVAL, "Claw");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_KEY,
@@ -269,7 +270,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.SECTION_CREATIVE,
                 "Haxxer Inventori",
                 """
-                    Haz positionz fer teh haxxer inventori""");
+                        Haz positionz fer teh haxxer inventori""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_CREATIVE, "Claw");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_KEY,
@@ -326,43 +327,43 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Defolt Slot Flavrz",
                 """
-                    Makez teh flavrz and numbr ov slotz to defolt to fer teh kit-cat inventori""");
+                        Makez teh flavrz and numbr ov slotz to defolt to fer teh kit-cat inventori""");
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Claw");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
                 "Shrink Typical Slot Types",
                 """
-                    If yiss, makez teh defolt slot flavrz be smolr smartzly.
-                    Diss meanz dat iv a kit-cat flavr be aliv but no fingz be tagged wif it, all fingz ov teh flavr will be killd from teh defolt slotz""");
+                        If yiss, makez teh defolt slot flavrz be smolr smartzly.
+                        Diss meanz dat iv a kit-cat flavr be aliv but no fingz be tagged wif it, all fingz ov teh flavr will be killd from teh defolt slotz""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Kee-bound Slot Kit-cat Flavrz",
                 """
-                    Defines teh flavrz ov kit-catz dat can be kee blinded""");
+                        Defines teh flavrz ov kit-catz dat can be kee blinded""");
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Claw");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Keep Kit-catz Behaviour",
                 """
-                    Makez how kit-catz drop from ded catz
-                    DEFAULT: Uses teh vanilla 'keepInventory' gemrul
-                    ALWAYS_ON: No drop kit-catz on dieding
-                    ALWAYS_OFF: Drop kit-catz on dieding ALL TEIM""");
+                        Makez how kit-catz drop from ded catz
+                        DEFAULT: Uses teh vanilla 'keepInventory' gemrul
+                        ALWAYS_ON: No drop kit-catz on dieding
+                        ALWAYS_OFF: Drop kit-catz on dieding ALL TEIM""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "No Kit-cat Flavrz",
                 """
-                    If yiss, there be no kit-cat flavrz dat will be used, and dey will all be VERY BLAND az 'ohmega:generic' flavr""");
+                        If yiss, there be no kit-cat flavrz dat will be used, and dey will all be VERY BLAND az 'ohmega:generic' flavr""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Make Alow Hide Kit-catz",
                 """
-                    If naw will make catz no abl to hide kit-catz""");
+                        If naw will make catz no abl to hide kit-catz""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
                 "SCRATCH Vanilla Clear",
                 """
-                    Scratchez teh kit-cat clearingz to teh vanilla inventori clearingz""");
+                        Scratchez teh kit-cat clearingz to teh vanilla inventori clearingz""");
 
         // Datapack
         internalHelper.addDataPackDescription("Fing fingz fer Ohmegawd");
@@ -376,7 +377,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "Wen meow:");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%1$s %2$s");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
         internalHelper.add(OhmegaBinds.CATEGORY, "Ohmegawd");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Kit-cat Box Pokinz Fridj");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Kit-cat Box Pokinz Nudge Less Dis Way");

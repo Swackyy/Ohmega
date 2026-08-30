@@ -46,7 +46,7 @@ public final class ItemCommand implements ICommandNode {
     public static final String GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
     public static final String SET_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
     public static final String SET_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
-    public static final String TYPE_GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TYPE).feedback();
+    public static final String TYPE_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TYPE).feedback();
 
     @SuppressWarnings("unchecked")
     private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(object -> {
@@ -154,7 +154,7 @@ public final class ItemCommand implements ICommandNode {
     private static int type(CommandContext<CommandSourceStack> context) {
         Item item = ItemArgument.getItem(context, ARGUMENT_ITEM).item().value();
 
-        context.getSource().sendSuccess(() -> Component.translatable(TYPE_GET_FEEDBACK,
+        context.getSource().sendSuccess(() -> Component.translatable(TYPE_FEEDBACK,
                 Component.literal(item.toString()).withStyle(ChatFormatting.GREEN),
                 Component.literal(Accessories.getType(null, item).toString()).withStyle(ChatFormatting.GREEN)
         ), true);

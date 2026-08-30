@@ -81,7 +81,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Lubber %s has %s in index %s o' their doubloon chest");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s o' %s lubbers' doubloon chests t' %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s o' lubber %s's doubloon chest t' %s %s");
-        builder.add(ItemCommand.TYPE_GET_FEEDBACK, "Treasure '%s' has default doubloon type '%s'");
+        builder.add(ItemCommand.TYPE_FEEDBACK, "Treasure '%s' has default doubloon type '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Lubber %s has th' following treasures in their doubloon chest: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Lubber %s has no treasures in their doubloon chest");
@@ -126,95 +126,96 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
                 "Compatibility Mode",
-                "Disables or reworks some useful yet mostly infrequent occur'nces that might improve yer magic jar compatibility in rare cases");
+                """
+                        Disables or reworks some useful yet mostly infrequent occur'nces that might improve yer magic jar compatibility in rare cases""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_KEY,
                 "Fly Translation Flag",
                 """
-                    If aye, will fly a flag bearin' t' Ohmega Crowdin translations on sailing a sea.
-                    Thar be automatically set t' nay after th' first pop-up, making it only fly once""");
+                        If aye, will fly a flag bearin' t' Ohmega Crowdin translations on sailing a sea.
+                        Thar be automatically set t' nay after th' first pop-up, making it only fly once""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Switch Chest Press'r Style",
                 """
-                    Style o' th' doubloon chest press'r
-                    DEFAULT: Th' typical Ohmega press'r style
-                    LEGACY: A Curios/Baubles inspired press'r that draws next t' th' player model in th' loot bag
-                    TAG_LEFT: A small tag-like press'r appearing just off th' top left corner o' th' loot bag
-                    TAG_RIGHT: A small tag-like press'r appearing just off th' top right corner o' th' loot bag
-                    HIDDEN: Will not draw, use th' dedicated keybind t' open th' doubloon chest instead""");
+                        Style o' th' doubloon chest press'r
+                        DEFAULT: Th' typical Ohmega press'r style
+                        LEGACY: A Curios/Baubles inspired press'r that draws next t' th' player model in th' loot bag
+                        TAG_LEFT: A small tag-like press'r appearing just off th' top left corner o' th' loot bag
+                        TAG_RIGHT: A small tag-like press'r appearing just off th' top right corner o' th' loot bag
+                        HIDDEN: Will not draw, use th' dedicated keybind t' open th' doubloon chest instead""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
                 "Doubloon Chest Mark'r",
                 """
-                    Th' doubloon chest type t' use, other magic jars can register custom doubloon chests, which can be put here""");
+                        Th' doubloon chest type t' use, other magic jars can register custom doubloon chests, which can be put here""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
                 "Fill bearin'",
                 """
-                    Th' bearin' that doubloon slots will fill up in""");
+                        Th' bearin' that doubloon slots will fill up in""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
                 "Most Masts",
                 """
-                    Th' most masts t' render""");
+                        Th' most masts t' render""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
                 "Most Mast Slots",
                 """
-                    Th' most number o' slots per mast
-                    If buckled, a new mast will be made if it does not be more than 'maxColumns'""");
+                        Th' most number o' slots per mast
+                        If buckled, a new mast will be made if it does not be more than 'maxColumns'""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Most Mast Draw Slots",
                 """
-                    Th' maximum number o' slots t' draw per mast""");
+                        Th' maximum number o' slots t' draw per mast""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Show Look Scribble",
                 """
-                    If aye, will show a scribble box o' th' type o' doubloon slot when it is hovered over""");
+                        If aye, will show a scribble box o' th' type o' doubloon slot when it is hovered over""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
                 "Show Doubloons",
                 """
-                    If aye, will show doubloons on ye crew when makin' sense, or stows em away if nay""");
+                        If aye, will show doubloons on ye crew when makin' sense, or stows em away if nay""");
         // Edit UI
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_EDIT_UI,
                 "Draft UI",
                 """
-                    Contains some ship log scribbles pertaining t' th' Draft UI""");
+                        Contains some ship log scribbles pertaining t' th' Draft UI""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_EDIT_UI, "Steer");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.BACKGROUND_ALPHA_KEY,
                 "Background Alpha",
                 """
-                    Th' alpha value fer th' background o' th' Draft UI""");
+                        Th' alpha value fer th' background o' th' Draft UI""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.MAGNETICS_STRENGTH_KEY,
                 "Spookies Strength",
                 """
-                    Th' most small box distance where spooky lines will be want'd fer snappin'""");
+                        Th' most small box distance where spooky lines will be want'd fer snappin'""");
         // Positions
+        internalHelper.addConfigOption(
+                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
+                "Switch Chest Press'r",
+                """
+                        Holds map coordinates fer th' toggle extension press'r""");
+        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Steer");
         // Survival
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_POSITIONS,
                 "Positions",
                 """
-                    Makes where certain Ohmega elements be put on diff'rent screens""");
+                        Makes where certain Ohmega elements be put on diff'rent screens""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_POSITIONS, "Steer");
-        internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
-                "Switch Chest Press'r",
-                """
-                    Holds map coordinates fer th' toggle extension press'r""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Steer");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SECTION_SURVIVAL,
                 "Swashbuckler's Loot Bag",
                 """
-                    Holds map coordinates fer th' swashbuckler's loot bag""");
+                        Holds map coordinates fer th' swashbuckler's loot bag""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_SURVIVAL, "Steer");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_KEY,
@@ -269,7 +270,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 OhmegaConfig.Client.Service.SECTION_CREATIVE,
                 "Aimless Sailor's Loot bag",
                 """
-                    Holds map coordinates fer th' aimless sailor's loot bag""");
+                        Holds map coordinates fer th' aimless sailor's loot bag""");
         internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_CREATIVE, "Steer");
         internalHelper.addConfigOption(
                 OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_KEY,
@@ -326,43 +327,43 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Typical Slot Types",
                 """
-                    States th' types and number o' slots t' default t' fer th' doubloon loot bag""");
+                        States th' types and number o' slots t' default t' fer th' doubloon loot bag""");
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Steer");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
                 "Shrink Typical Slot Types",
                 """
-                    If aye, will automatically shrink th' default slot types thinkin' on known treasures' types.
-                    Thar means that if a doubloon type exists but no treasures be tagged with it, all things o' th' type will be removed from th' default slot list""");
+                        If aye, will automatically shrink th' default slot types thinkin' on known treasures' types.
+                        Thar means that if a doubloon type exists but no treasures be tagged with it, all things o' th' type will be removed from th' default slot list""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Key-bound Slot Types",
                 """
-                    Defines th' types o' doubloons that can be key-bound""");
+                        Defines th' types o' doubloons that can be key-bound""");
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Steer");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Keep Doubloons Behaviour",
                 """
-                    States how t' handle crew death in terms o' dropping doubloons
-                    DEFAULT: Uses th' vanilla 'keepInventory' game-rule
-                    ALWAYS_ON: Will ne'er drop doubloons on death
-                    ALWAYS_OFF: Will always drop doubloons on death""");
+                        States how t' handle crew death in terms o' dropping doubloons
+                        DEFAULT: Uses th' vanilla 'keepInventory' game-rule
+                        ALWAYS_ON: Will ne'er drop doubloons on death
+                        ALWAYS_OFF: Will always drop doubloons on death""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Disable Doubloon Types",
                 """
-                    If aye, there be no doubloon types that will be used, and they will all be overridden by cap'n's orders, changing them all t' 'ohmega:generic'""");
+                        If aye, there be no doubloon types that will be used, and they will all be overridden by cap'n's orders, changing them all t' 'ohmega:generic'""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Allow Hide Doubloons",
                 """
-                    Will prevent ye crew from hidin' doubloons if nay, so that they always be out""");
+                        Will prevent ye crew from hidin' doubloons if nay, so that they always be out""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
                 "Inject Vanilla Clear",
                 """
-                    Pirates th' doubloon clearin' int' vanilla loot bag clearin'""");
+                        Pirates th' doubloon clearin' int' vanilla loot bag clearin'""");
 
         // Datapack
         internalHelper.addDataPackDescription("Magic Jar treasures fer Ohmega");
@@ -376,7 +377,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When goin':");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
-        builder.add(KEY_BIND_ACCESSORY_TYPE, "%1$s %2$s");
+        builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
         internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Draft UI Spookies");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Draft UI Nudge off th' Plank");
