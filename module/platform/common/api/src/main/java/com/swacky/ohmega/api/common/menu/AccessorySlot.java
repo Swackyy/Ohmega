@@ -22,14 +22,14 @@ import java.util.Optional;
 
 /**
  * Base accessory slot, extend to add your own custom slot behaviour for your accessory extension(s).
- * By default, this class provides all the functionality required for the slot to function properly and as intended and so is not {@code abstract}
+ * By default, this class provides all the functionality required for the slot to function properly and as intended
  * @apiNote Although this class resides within the {@code common} directory, custom slots will only be provided on the client,
- * and a default implementation will be used for the server.
+ * and this class will be used as the default implementation for the server, hence it not being {@code abstract}.
  * This should not cause issues as custom slots should only be modifying client-specific behaviour.
  * To enforce this, many methods have been marked with the {@code final} qualifier.
  * When modifying these safe methods, you can safely avoid using a logical side guard as custom slot types are guaranteed to only exist on the client
  */
-public class AccessorySlot extends Slot {
+public class AccessorySlot extends Slot implements IAccessorySlot {
     private static final Container EMPTY_CONTAINER = new SimpleContainer(0);
 
     protected final Player player;
@@ -48,16 +48,8 @@ public class AccessorySlot extends Slot {
         this.originalY = y;
     }
 
-    public final AccessoryType getType() {
+    public final @NonNull AccessoryType getType() {
         return type;
-    }
-
-    public final int getOriginalX() {
-        return originalX;
-    }
-
-    public final int getOriginalY() {
-        return originalY;
     }
 
     public final void applyOffset(int xo, int yo) {

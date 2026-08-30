@@ -10,8 +10,10 @@ import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.client.screen.SnapLine;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
+import com.swacky.ohmega.api.common.menu.IAccessorySlot;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -152,17 +154,32 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
                     value = "NEW",
                     target = "(Lnet/minecraft/world/inventory/Slot;III)Lnet/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper;"))
     private CreativeModeInventoryScreen.SlotWrapper selectTab(Slot slot, int index, int x, int y, Operation<CreativeModeInventoryScreen.SlotWrapper> handle) {
-        if (menu instanceof IAccessoryMenu accessoryMenu && slot instanceof AccessorySlot) {
+        if (menu instanceof IAccessoryMenu accessoryMenu && slot instanceof IAccessorySlot accessorySlot) {
             List<AccessorySlot> slots = accessoryMenu.getSlots();
 
             if (slots != null) {
                 slot = slots.get(slot.getContainerSlot());
                 slot.index = index;
-                x = slot.x;
-                y = slot.y;
+
+                return new AccessorySlotWrapper(slot, accessorySlot);
             }
         }
 
         return handle.call(slot, index, x, y);
+    }
+
+    private static final class AccessorySlotWrapper extends CreativeModeInventoryScreen.SlotWrapper implements IAccessorySlot {
+        private final IAccessorySlot accessorySlot;
+
+        public AccessorySlotWrapper(Slot slot, IAccessorySlot accessorySlot) {
+            super(slot, slot.index, slot.x, slot.y);
+
+            this.accessorySlot = accessorySlot;
+        }
+
+        @Override
+        public @NonNull AccessoryType getType() {
+            return accessorySlot.getType();
+        }
     }
 }

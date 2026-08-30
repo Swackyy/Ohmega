@@ -2,6 +2,7 @@ package com.swacky.ohmega.mixin;
 
 import com.mojang.authlib.GameProfile;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
+import com.swacky.ohmega.api.common.menu.IAccessorySlot;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +43,7 @@ abstract class ServerPlayerMixin extends Player {
         @Override
         public void sendInitialData(@NonNull AbstractContainerMenu container, List<ItemStack> stacks, @NonNull ItemStack carried, int @NonNull [] data) {
             for (int i = stacks.size() - 1; i >= 0; i--) {
-                if (menu.getSlot(i) instanceof AccessorySlot) {
+                if (menu.getSlot(i) instanceof IAccessorySlot) {
                     stacks.remove(i);
                 }
             }
