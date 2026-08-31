@@ -64,7 +64,7 @@ public final class CommonEvents {
     }
 
     private static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
-        CommonCallbacks.onClonePlayer(oldPlayer, newPlayer, alive);
+        CommonCallbacks.onClonePlayer(oldPlayer, newPlayer);
     }
 
     private static void onConfigLoad(ModConfig config) {

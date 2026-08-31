@@ -5,8 +5,7 @@ import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.swacky.ohmega.api.common.menu.AccessorySlot;
-import com.swacky.ohmega.api.common.menu.IAccessorySlot;
+import com.swacky.ohmega.api.common.menu.IAccessorySlotProvider;
 import net.minecraft.network.Connection;
 import net.minecraft.network.TickablePacketListener;
 import net.minecraft.network.protocol.game.GameProtocols;
@@ -44,6 +43,6 @@ abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListe
             return true;
         }
 
-        return player.inventoryMenu.slots.get(slotNum) instanceof IAccessorySlot;
+        return player.inventoryMenu.slots.get(slotNum) instanceof IAccessorySlotProvider;
     }
 }

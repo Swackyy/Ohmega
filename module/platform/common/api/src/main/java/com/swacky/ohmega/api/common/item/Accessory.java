@@ -113,6 +113,11 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
+    public boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity) {
+        return OhmegaHooks.shouldDropOnDeath(stack, entity, inner.shouldDropOnDeath(stack, entity));
+    }
+
+    @Override
     public boolean allowWalkOnPowderSnow(@NonNull ItemStack stack) {
         return OhmegaHooks.allowWalkOnPowderSnow(stack, inner.allowWalkOnPowderSnow(stack));
     }

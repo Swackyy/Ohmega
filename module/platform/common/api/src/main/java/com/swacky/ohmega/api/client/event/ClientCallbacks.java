@@ -121,12 +121,8 @@ public final class ClientCallbacks {
     }
 
     public static void onItemTooltip(ItemStack stack, List<Component> tooltip) {
-        if (Accessories.isBound(stack.getItem())) {
-            Component component = AccessoryHelper.getTypeTooltip(stack.getItem());
-
-            if (component != null) {
-                tooltip.add(component);
-            }
+        if (!OhmegaConfig.Server.getData().disableAccessoryTypes().get() && Accessories.isBound(stack.getItem())) {
+            tooltip.add(AccessoryHelper.getTypeTooltip(stack.getItem()));
         }
     }
 
@@ -312,8 +308,8 @@ public final class ClientCallbacks {
 
         OhmegaBinds.rebuildSlotKeys();
 
-        for (List<KeyMapping> immutableList : OhmegaBinds.getSlotKeys().values()) {
-            list.addAll(immutableList);
+        for (ArrayList<KeyMapping> bindList : OhmegaBinds.getSlotKeys().values()) {
+            list.addAll(bindList);
         }
 
         Options options = Minecraft.getInstance().options;

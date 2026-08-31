@@ -1,9 +1,9 @@
 package com.swacky.ohmega.common.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
 import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
 import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
@@ -21,6 +21,7 @@ import com.swacky.ohmega.api.common.event.AccessoryMobVisibilityEvent;
 import com.swacky.ohmega.api.common.event.AccessoryOverrideTypesEvent;
 import com.swacky.ohmega.api.common.event.AccessoryPreferInventoryTickEvent;
 import com.swacky.ohmega.api.common.event.AccessoryPreferVanillaUseEvent;
+import com.swacky.ohmega.api.common.event.AccessoryShouldDropOnDeathEvent;
 import com.swacky.ohmega.api.common.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUseEvent;
@@ -202,6 +203,14 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
         return AccessoryRenderEvent.Pre.BUS.post(new AccessoryRenderEvent.Pre(context));
+    }
+
+    @Override
+    public boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original) {
+        AccessoryShouldDropOnDeathEvent event = new AccessoryShouldDropOnDeathEvent(stack, entity, original);
+
+        AccessoryShouldDropOnDeathEvent.BUS.post(event);
+        return event.returnValue;
     }
 
     @Override

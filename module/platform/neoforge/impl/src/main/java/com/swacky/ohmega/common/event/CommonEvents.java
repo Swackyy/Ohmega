@@ -45,7 +45,7 @@ import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 public final class CommonEvents {
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
-        CommonCallbacks.onClonePlayer((ServerPlayer) event.getOriginal(), (ServerPlayer) event.getEntity(), event.isWasDeath());
+        CommonCallbacks.onClonePlayer((ServerPlayer) event.getOriginal(), (ServerPlayer) event.getEntity());
     }
 
     @SubscribeEvent

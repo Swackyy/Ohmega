@@ -23,7 +23,6 @@ import java.util.function.Consumer;
  * This is simply a test and example accessory; its code may be used as a reference to create your own
  * <p>
  * You may also add a recipe to this if desired for survival use, or change how it functions through the use of events provided by the API
- * @apiNote Although this is technically an implementation of the API, it is in the {@code api} package as others may use extend from it if desired
  */
 public class AngelRing extends Item implements IAccessory {
     public AngelRing(Properties properties) {

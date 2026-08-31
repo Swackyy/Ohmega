@@ -5,9 +5,6 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypePredicateArgument;
-import com.swacky.ohmega.common.event.CommonEvents;
-import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.api.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.api.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.api.network.C2S.SetHiddenPacket;
@@ -19,6 +16,9 @@ import com.swacky.ohmega.api.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.api.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.api.util.LogicalSide;
+import com.swacky.ohmega.common.event.CommonEvents;
+import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -100,6 +100,7 @@ public final class OhmegaMain implements ModInitializer {
                 invoker.accept(container.getEntrypoint());
             } catch (EntrypointException _) {
                 // no op
+                // todo: probably log this
             } catch (Throwable t) {
                 exception = ExceptionUtil.gatherExceptions(t,
                         exception,

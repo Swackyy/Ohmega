@@ -6,6 +6,10 @@ jar {
     archiveClassifier = "api"
 }
 
+tasks.named ("javadocJar", Jar) {
+    archiveClassifier = "api-javadoc-unused"
+}
+
 tasks.named ("pseudoJavadocJar", Jar) {
     archiveClassifier = "api-javadoc"
 }

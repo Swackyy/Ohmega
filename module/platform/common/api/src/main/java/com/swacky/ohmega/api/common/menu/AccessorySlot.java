@@ -29,7 +29,7 @@ import java.util.Optional;
  * To enforce this, many methods have been marked with the {@code final} qualifier.
  * When modifying these safe methods, you can safely avoid using a logical side guard as custom slot types are guaranteed to only exist on the client
  */
-public class AccessorySlot extends Slot implements IAccessorySlot {
+public class AccessorySlot extends Slot implements IAccessorySlotProvider {
     private static final Container EMPTY_CONTAINER = new SimpleContainer(0);
 
     protected final Player player;
@@ -218,6 +218,11 @@ public class AccessorySlot extends Slot implements IAccessorySlot {
     @Override
     public final boolean isFake() {
         return super.isFake();
+    }
+
+    @Override
+    public @NonNull AccessorySlot getAccessorySlot() {
+        return this;
     }
 
     public interface Factory {

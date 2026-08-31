@@ -1,12 +1,12 @@
 package com.swacky.ohmega.common.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
+import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
+import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.event.OhmegaHooks;
-import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.common.event.AccessoryAllowWalkOnPowderSnowEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncModuloEvent;
@@ -16,18 +16,19 @@ import com.swacky.ohmega.api.common.event.AccessoryCanUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryCompatibleWithEvent;
 import com.swacky.ohmega.api.common.event.AccessoryEquipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryEquipSoundEvent;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
 import com.swacky.ohmega.api.common.event.AccessoryIsPiglinSafeEvent;
-import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
 import com.swacky.ohmega.api.common.event.AccessoryMobVisibilityEvent;
 import com.swacky.ohmega.api.common.event.AccessoryOverrideTypesEvent;
 import com.swacky.ohmega.api.common.event.AccessoryPreferInventoryTickEvent;
 import com.swacky.ohmega.api.common.event.AccessoryPreferVanillaUseEvent;
-import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
+import com.swacky.ohmega.api.common.event.AccessoryShouldDropOnDeathEvent;
 import com.swacky.ohmega.api.common.event.AccessoryTickEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUseEvent;
+import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.event.RegisterAccessoryTypesEvent;
+import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.SoundData;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -171,6 +172,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
         return NeoForge.EVENT_BUS.post(new AccessoryRenderEvent.Pre(context)).isCanceled();
+    }
+
+    @Override
+    public boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original) {
+        return NeoForge.EVENT_BUS.post(new AccessoryShouldDropOnDeathEvent(stack, entity, original)).returnValue;
     }
 
     @Override

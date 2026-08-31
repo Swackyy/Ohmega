@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Contains some client-only utility methods for accessory items that don't really fit anywhere else within the API.
@@ -106,13 +105,7 @@ public final class AccessoryHelper {
      * @param item accessory item
      * @return example: "Accessory Type: Utility"
      */
-    public static @Nullable MutableComponent getTypeTooltip(@NonNull Item item) {
-        AccessoryType type = Accessories.getType(Minecraft.getInstance().player, item);
-
-        if (type.displayHoverText()) {
-            return Component.translatable("accessory_type", type.getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
-        }
-
-        return null;
+    public static @NonNull MutableComponent getTypeTooltip(@NonNull Item item) {
+        return Component.translatable("accessory_type", Accessories.getType(Minecraft.getInstance().player, item).getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
     }
 }

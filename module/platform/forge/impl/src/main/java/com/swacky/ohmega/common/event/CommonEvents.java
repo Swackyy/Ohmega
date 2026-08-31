@@ -42,7 +42,7 @@ public final class CommonEvents {
         Player oldPlayer = event.getOriginal();
 
         oldPlayer.reviveCaps();
-        CommonCallbacks.onClonePlayer((ServerPlayer) oldPlayer, (ServerPlayer) event.getEntity(), !event.isWasDeath());
+        CommonCallbacks.onClonePlayer((ServerPlayer) oldPlayer, (ServerPlayer) event.getEntity());
         oldPlayer.invalidateCaps();
     }
 

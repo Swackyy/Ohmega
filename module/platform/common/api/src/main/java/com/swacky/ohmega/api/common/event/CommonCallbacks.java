@@ -23,9 +23,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.gamerules.GameRules;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public final class CommonCallbacks {
     public static double getVisibilityPercentModifier(LivingEntity entity, Entity targetingEntity) {
@@ -43,13 +41,8 @@ public final class CommonCallbacks {
         return multiplier;
     }
 
-    public static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
-        AccessoryData data = OhmegaDataAttachments.getData(newPlayer);
-
-        if (alive || shouldKeepInventory(oldPlayer)) {
-            data.copyFrom(OhmegaDataAttachments.getData(oldPlayer));
-        }
-
+    public static void onClonePlayer(ServerPlayer oldPlayer, ServerPlayer newPlayer) {
+        OhmegaDataAttachments.getData(newPlayer).copyFrom(OhmegaDataAttachments.getData(oldPlayer));
         AccessoryMenus.rebuildSlots(newPlayer.inventoryMenu, newPlayer);
     }
 
@@ -58,26 +51,22 @@ public final class CommonCallbacks {
             AccessoryData data = OhmegaDataAttachments.getData(entity);
             int size = data.size();
 
-            for (AccessoryDataEntry entry : data.getEntries()) {
+            for (int i = 0; i < size; i++) {
+                AccessoryDataEntry entry = data.getEntry(i);
                 ItemStack stack = entry.getStack();
+                Accessory accessory = Accessories.get(stack.getItem());
 
-                if (!stack.isEmpty()) {
+                if (accessory != null && accessory.shouldDropOnDeath(stack, entity)) {
                     ItemEntity itemEntity = entity.createItemStackToDrop(stack, true, false);
 
                     if (itemEntity != null) {
                         itemEntity.setDefaultPickUpDelay();
                         itemDrops.add(itemEntity);
                     }
+
+                    entry.setStack(entity, ItemStack.EMPTY, i, EquipContext.DEATH, true, false);
                 }
             }
-
-            List<ItemStack> stacks0 = new ArrayList<>(size);
-
-            for (int i = 0; i < size; i++) {
-                stacks0.add(ItemStack.EMPTY);
-            }
-
-            data.setStacksRange(entity, 0, size, stacks0, EquipContext.DEATH, false);
         }
 
         AccessoryData.DEFAULT_TRACKERS.remove(entity);

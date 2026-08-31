@@ -11,6 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -173,11 +175,22 @@ public interface IAccessory {
      * <p>
      * This is a replacement for the vanilla method to ensure easier compatibility and to add volume and pitch control
      * @param stack the {@link ItemStack} of this accessory item being worn
-     * @return sound to be played
+     * @return sound to be played, if present, or {@code null} to not play any sound
      */
     @Nullable
     default SoundData getEquipSound(@NonNull ItemStack stack) {
         return null;
+    }
+
+    /**
+     * Determines whether this item should be dropped when the {@link LivingEntity} wearing it dies.
+     * This does not take priority over the keep inventory config behaviour returning {@code true} from any path
+     * @param stack the {@link ItemStack} of this accessory item being worn
+     * @param entity the {@link LivingEntity} wearing this accessory
+     * @return {@code true} if this item should drop on death, {@code false} otherwise
+     */
+    default boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity) {
+        return !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP);
     }
 
     /**

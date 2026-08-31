@@ -7,9 +7,8 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
-import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
-import com.swacky.ohmega.api.common.menu.IAccessorySlot;
+import com.swacky.ohmega.api.common.menu.IAccessorySlotProvider;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -106,12 +105,12 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
                 return;
             }
 
-            if (
-                    OhmegaConfig.Client.getData().showHoverTooltip().get() &&
-                    hoveredSlot instanceof IAccessorySlot slot &&
-                    !slot.hasItem() &&
-                    menu.getCarried().isEmpty()) {
-                gui.setTooltipForNextFrame(slot.getType().getTranslation(), mx, my);
+            if (OhmegaConfig.Client.getData().showHoverTooltip().get() && hoveredSlot instanceof IAccessorySlotProvider provider) {
+                AccessorySlot slot = provider.getAccessorySlot();
+
+                if (slot.getType().displayHoverText() && !slot.hasItem() && menu.getCarried().isEmpty()) {
+                    gui.setTooltipForNextFrame(slot.getType().getTranslation(), mx, my);
+                }
             }
         }
     }

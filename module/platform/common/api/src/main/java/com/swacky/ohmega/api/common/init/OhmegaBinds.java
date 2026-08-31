@@ -14,8 +14,10 @@ import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class OhmegaBinds {
     private static final Service INST = OhmegaClient.loadService(Service.class);
@@ -39,7 +41,7 @@ public final class OhmegaBinds {
     public static final KeyMapping OPEN_ACCESSORY_INVENTORY = key("open_accessory_inventory", GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping OPEN_EDIT_UI = key("open_edit_ui", GLFW.GLFW_KEY_LEFT_BRACKET);
 
-    private static IdentityHashMap<AccessoryType, ArrayList<KeyMapping>> SLOT_KEYS = new IdentityHashMap<>();
+    private static Map<AccessoryType, ArrayList<KeyMapping>> SLOT_KEYS = Map.of();
     private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
 
     private static KeyMapping key(String key, int defaultKey) {
@@ -60,7 +62,7 @@ public final class OhmegaBinds {
         if (player != null) {
             ImmutableSet<AccessoryType> keyBoundSlotTypes = OhmegaConfig.Server.getKeyboundSlotTypes();
             int keyboundSize = keyBoundSlotTypes.size();
-            SLOT_KEYS = new IdentityHashMap<>(keyboundSize);
+            SLOT_KEYS = new HashMap<>(keyboundSize);
             IdentityHashMap<AccessoryType, Integer> typeCountMap = new IdentityHashMap<>(keyboundSize);
             AccessoryData data = OhmegaDataAttachments.getData(player);
             int slotsSize = data.size();
@@ -102,7 +104,7 @@ public final class OhmegaBinds {
         }
     }
 
-    public static IdentityHashMap<AccessoryType, ArrayList<KeyMapping>> getSlotKeys() {
+    public static Map<AccessoryType, ArrayList<KeyMapping>> getSlotKeys() {
         return SLOT_KEYS;
     }
 

@@ -118,6 +118,10 @@ public final class OhmegaHooks {
         return IMPL.renderAccessoryPre(context);
     }
 
+    public static boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original) {
+        return IMPL.shouldDropOnDeath(stack, entity, original);
+    }
+
     public static boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
         return IMPL.unequip(entity, stack, context);
     }
@@ -168,6 +172,8 @@ public final class OhmegaHooks {
         void renderAccessoryPost(AccessoryRenderContext<?, ?> context);
 
         boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context);
+
+        boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original);
 
         boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context);
     }

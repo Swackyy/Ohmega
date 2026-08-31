@@ -1,7 +1,6 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.api.common.menu.AccessorySlot;
-import com.swacky.ohmega.api.common.menu.IAccessorySlot;
+import com.swacky.ohmega.api.common.menu.IAccessorySlotProvider;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -32,7 +31,7 @@ abstract class AbstractContainerMenuMixin {
                     target = "Lnet/minecraft/world/inventory/ContainerSynchronizer;sendSlotChange(Lnet/minecraft/world/inventory/AbstractContainerMenu;ILnet/minecraft/world/item/ItemStack;)V"),
             cancellable = true)
     private void synchronizeSlotToRemote(int i, ItemStack current, Supplier<ItemStack> currentCopy, CallbackInfo ci) {
-        if (slots.get(i) instanceof IAccessorySlot) {
+        if (slots.get(i) instanceof IAccessorySlotProvider) {
             ci.cancel();
         }
     }
