@@ -111,8 +111,8 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         builder.add(SlotsCommand.SET_FEEDBACK_SINGLE, "Установлено слот для аксесуарів з індексом %s в інвентарі аксесуарів %s для типу «%s»");
         builder.add(SlotsCommand.TRACKING_FEEDBACK_DEFAULT, "%s відстежує усталені слоти для аксесуарів");
         builder.add(SlotsCommand.TRACKING_FEEDBACK_NONE, "%s не відстежує будь-які інші слоти для аксесуарів");
-        /*builder.add(SlotsCommand.UNTRACK_FEEDBACK_MULTIPLE, "Untracked %s entities' accessory slots");
-        builder.add(SlotsCommand.UNTRACK_FEEDBACK_SINGLE, "Untracked entity %s's accessory slots");*/ // todo
+        builder.add(SlotsCommand.UNTRACK_FEEDBACK_MULTIPLE, "Не відстежуються слоти для аксесуарів %s сутностей");
+        builder.add(SlotsCommand.UNTRACK_FEEDBACK_SINGLE, "Не відстежуються слоти для аксесуарів %s");
         // Type
         builder.add(TypesCommand.LIST_FEEDBACK, "У цьому світі розпізнано %s типів аксесуарів: %s");
         builder.add(TypesCommand.QUERY_FEEDBACK, "Тип аксесуара «%s» має такі властивості: %s");
@@ -328,10 +328,12 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
                 """
                         Визначає типи та кількість слотів, що використовуються усталено для інвентарю аксесуарів""");
         internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Редагувати");
-        /*internalHelper.addConfigOption(
+        internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
-                "Shrink Default Slot Types",
-                OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES);*/ // todo
+                "Зменшити усталені типи слотів",
+                """
+                        Якщо ввімкнено, усталені типи слотів автоматично скорочуватимуться відповідно до типів зареєстрованих предметів.
+                        Це означає, що якщо певний тип аксесуара існує, але жоден предмет не має відповідного теґу, усі екземпляри цього типу будуть видалені зі списку усталених слотів""");
         internalHelper.addConfigOption(
                 OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Типи слотів, прив’язані до клавіш",
