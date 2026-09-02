@@ -82,14 +82,18 @@ public final class OhmegaMain implements ModInitializer {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ohmega.id(Ohmega.MODID), AccessoryTypeManager.getInstance());
 
         // Custom entrypoint invocation
-        invokeEntrypoints("ohmega-common", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint));
+        FabricLoader loader = FabricLoader.getInstance();
+
+        loader.invokeEntrypoints("ohmega-common", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint));
+        invokeEntrypointsUnsafe("ohmega-common-unsafe", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint));
 
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
-            invokeEntrypoints("ohmega-server", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint));
+            loader.invokeEntrypoints("ohmega-server", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint));
+            invokeEntrypointsUnsafe("ohmega-server-unsafe", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint));
         }
     }
 
-    public static <T> void invokeEntrypoints(String key, Class<T> type, Consumer<T> invoker) {
+    public static <T> void invokeEntrypointsUnsafe(String key, Class<T> type, Consumer<T> invoker) {
         RuntimeException exception = null;
         Collection<EntrypointContainer<T>> entrypoints = FabricLoaderImpl.INSTANCE.getEntrypointContainers(key, type);
 

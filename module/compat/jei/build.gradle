@@ -1,6 +1,6 @@
 plugins {
-    id "java-library"
     id "ohmega-compat"
+    id "java-library"
 }
 
 repositories {
@@ -11,6 +11,6 @@ repositories {
 }
 
 dependencies {
-    compatModuleDependency(it, "util_exclusion-zones")
+    compatModuleDependency it, "util:util-exclusion-zone"
     compileOnlyApi "mezz.jei:jei-${mcV}-common-api:${compatJeiV}"
 }

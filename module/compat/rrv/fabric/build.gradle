@@ -1,0 +1,22 @@
+plugins {
+    id "java-library"
+    id "ohmega-compat"
+}
+
+repositories {
+    maven {
+        name = "Cassian"
+        url = "https://maven.cassian.cc"
+    }
+}
+
+dependencies {
+    compatModuleDependency it, "rrv:rrv-common"
+    compileOnlyApi "cc.cassian.rrv:reliable-recipe-viewer-fabric:${compatRrvV}+${mcV}"
+}
+
+Project fabricImplProject = platformImplProject("fabric")
+
+evaluationDependsOn fabricImplProject.path
+fabricImplProject.extraMixinConfigs += mixinConfigName compatProject("rrv:rrv-common")
+fabricImplProject.extraMixinConfigs += mixinConfigName project

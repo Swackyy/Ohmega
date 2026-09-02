@@ -87,6 +87,7 @@ public final class OhmegaClientMain implements ClientModInitializer {
                 FabricLoader.getInstance().getModContainer(Ohmega.MODID).orElseThrow(),
                 PackActivationType.NORMAL);
 
-        OhmegaMain.invokeEntrypoints("ohmega-client", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint));
+        FabricLoader.getInstance().invokeEntrypoints("ohmega-client", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint));
+        OhmegaMain.invokeEntrypointsUnsafe("ohmega-client-unsafe", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint));
     }
 }

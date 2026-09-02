@@ -4,24 +4,15 @@ plugins {
     id "net.minecraftforge.gradle"
 }
 
+Project commonImplProject = commonImplProject()
 String nativeMixinConfigName = mixinConfigName project
 String nativeApiMixinConfigName = mixinConfigName apiProject()
-String commonMixinConfigName = mixinConfigName commonImplProject()
+String commonMixinConfigName = mixinConfigName commonImplProject
 
 // Fixes a nuisance with FG7 and IntelliJ symbol resolution for the native API module
 // Could not tell you why this works, it just does
 tasks.withType(JavaCompile).configureEach {
     classpath += apiProject().sourceSets.main.output
-}
-
-// Fixes a nuisance with FG7 not pulling in generated resources from the common impl module
-// Could not tell you why this works, it just does
-sourceSets {
-    main {
-        resources {
-            srcDirs += commonImplProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1]
-        }
-    }
 }
 
 minecraft {
@@ -33,8 +24,8 @@ minecraft {
         configureEach {
             mods {
                 create ("${modId}") {
-                    source commonImplProject().apiProject().sourceSets.main
-                    source commonImplProject().sourceSets.main
+                    source commonImplProject.apiProject().sourceSets.main
+                    source commonImplProject.sourceSets.main
                     source apiProject().sourceSets.main
                     source sourceSets.main
                 }
@@ -63,8 +54,6 @@ repositories {
     maven fg.forgeMaven
     maven fg.minecraftLibsMaven
 }
-
-evaluationDependsOn(':module:platform:forge:forge-api')
 
 dependencies {
     implementation minecraft.dependency("net.minecraftforge:forge:${mcV}-${loaderForgeV}")

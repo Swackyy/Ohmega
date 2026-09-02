@@ -103,7 +103,7 @@ if (secretsFile.exists()) {
         finalizedBy "publishMavenCentral"
     }
 
-    if (moduleEnabledFabric.toBoolean()) {
+    if (loaderEnabledFabric.toBoolean()) {
         //TaskProvider<Task> datagenTask = project("module:platform:fabric:impl").tasks.named "runDatagen"
 
         subprojects.each { sub ->

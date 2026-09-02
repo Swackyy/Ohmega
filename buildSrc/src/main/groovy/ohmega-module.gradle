@@ -47,6 +47,12 @@ tasks.named ("processTestResources") {
     enabled = false
 }
 
+["apiElements", "runtimeElements", "sourcesElements"].each { variant ->
+    configurations."${variant}".outgoing {
+        capability "${group}:${modId}-${project.name}:${version}"
+    }
+}
+
 configurations {
     commonJava {
         canBeResolved true
@@ -64,13 +70,45 @@ artifacts {
     commonResources sourceSets.main.resources.sourceDirectories.files
 }
 
-Project commonImplProject() {
-    return project(":module:platform:common:common")
-}
-
 static void includeProjectOutput(DependencyHandler handler, String projectPath) {
     handler.commonJava handler.project(path: projectPath, configuration: "commonJava")
     handler.commonResources handler.project(path: projectPath, configuration: "commonResources")
+}
+
+File accessWidenerFile(Project project) {
+    return project.file("src/main/resources/${metaFileName(project)}.accesswidener")
+}
+
+void apiModuleDependency(DependencyHandler handler, Project apiProject) {
+    String fixedGroup = group
+
+    handler.compileOnlyApi (apiProject) {
+        capabilities {
+            requireCapability "${fixedGroup}:${modId}-${apiProject.name}"
+        }
+    }
+
+    includeProjectOutput handler, apiProject.path
+}
+
+Project commonImplProject() {
+    return rootProject.project("module:platform:common:common")
+}
+
+void compatModuleDependency(DependencyHandler handler, String name) {
+    moduleDependency handler, compatProject(name)
+}
+
+Project compatProject(String name) {
+    rootProject.project("module:compat:${name}")
+}
+
+String metaFileName(Project project) {
+    return "${modId}_${project.name}"
+}
+
+String mixinConfigName(Project project) {
+    return "${metaFileName(project)}.mixins.json"
 }
 
 void moduleDependency(DependencyHandler handler, Project dependency) {
@@ -85,25 +123,16 @@ void moduleDependency(DependencyHandler handler, Project dependency) {
     includeProjectOutput handler, dependency.path
 }
 
-// todo: wrong (maybe??? idk anymore)
-void compatModuleDependency(DependencyHandler handler, String name) {
-    moduleDependency handler, "compat:${name}"
+Project platformImplProject(String name) {
+    return rootProject.project("module:platform:${name}:${name}")
 }
 
-ext.commonImplProject = this.&commonImplProject
-ext.moduleDependency = this.&moduleDependency
-ext.compatModuleDependency = this.&compatModuleDependency
-
-void apiModuleDependency(DependencyHandler handler, Project apiProject) {
-    String fixedGroup = group
-
-    handler.compileOnlyApi (apiProject) {
-        capabilities {
-            requireCapability "${fixedGroup}:${modId}-${apiProject.name}"
-        }
-    }
-
-    includeProjectOutput handler, apiProject.path
-}
-
+ext.accessWidenerFile = this.&accessWidenerFile
 ext.apiModuleDependency = this.&apiModuleDependency
+ext.commonImplProject = this.&commonImplProject
+ext.compatModuleDependency = this.&compatModuleDependency
+ext.compatProject = this.&compatProject
+ext.metaFileName = this.&metaFileName
+ext.mixinConfigName = this.&mixinConfigName
+ext.moduleDependency = this.&moduleDependency
+ext.platformImplProject = this.&platformImplProject

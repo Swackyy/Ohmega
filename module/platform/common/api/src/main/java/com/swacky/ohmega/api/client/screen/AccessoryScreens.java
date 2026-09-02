@@ -96,16 +96,24 @@ public final class AccessoryScreens {
      * Retrieve the "effective" screen if possible.
      * In more detail, if the current forefront screen is an {@link IEmbeddingScreen}, will return {@link IEmbeddingScreen#getEmbeddedScreen()},
      * however if that fails, it will simply return {@link Gui#screen()}
+     * @param screen the screen to test/extract the effective screen from
      * @return the use-effective accessory screen
      */
-    public static @Nullable Screen getEffectiveScreen() {
-        Screen screen = Minecraft.getInstance().gui.screen();
-
+    public static @Nullable Screen getEffectiveScreen(Screen screen) {
         if (screen instanceof IEmbeddingScreen embeddedScreen) {
             return embeddedScreen.getEmbeddedScreen();
         }
 
         return screen;
+    }
+
+    /**
+     * Retrieve the "effective" screen if possible
+     * @apiNote This method is just a shortcut to {@link #getEffectiveScreen(Screen)} passing the currently displayed screen as the parameter
+     * @return the use-effective accessory screen
+     */
+    public static @Nullable Screen getEffectiveScreen() {
+        return getEffectiveScreen(Minecraft.getInstance().gui.screen());
     }
 
     /**

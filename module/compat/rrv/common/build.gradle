@@ -1,0 +1,17 @@
+plugins {
+    id "java-library"
+    id "ohmega-compat"
+}
+
+repositories {
+    maven {
+        name = "Cassian"
+        url = "https://maven.cassian.cc"
+    }
+}
+
+dependencies {
+    compatModuleDependency it, "util:util-exclusion-zone"
+    // Using the Fabric specification in common as RRV does not ship a common artifact, it should be fine
+    compileOnly "cc.cassian.rrv:reliable-recipe-viewer-fabric:${compatRrvV}+${mcV}"
+}

@@ -1,0 +1,29 @@
+plugins {
+    id "java-library"
+    id "ohmega-compat"
+}
+
+repositories {
+    maven {
+        name = "Cassian"
+        url = "https://maven.cassian.cc"
+    }
+
+    maven {
+        name = "NeoForge"
+        url = "https://maven.neoforged.net/releases"
+    }
+}
+
+dependencies {
+    compatModuleDependency it, "rrv:rrv-common"
+    compileOnly "net.neoforged:neoforge:${loaderNeoV}"
+    compileOnly "net.neoforged:bus:8.0.5"
+    compileOnlyApi "cc.cassian.rrv:reliable-recipe-viewer-neoforge:${compatRrvV}+${mcV}"
+}
+
+Project neoforgeImplProject = platformImplProject("neoforge")
+
+evaluationDependsOn neoforgeImplProject.path
+neoforgeImplProject.extraMixinConfigs += mixinConfigName compatProject("rrv:rrv-common")
+neoforgeImplProject.extraMixinConfigs += mixinConfigName project

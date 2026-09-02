@@ -21,7 +21,8 @@ abstract class ClientPacketListenerMixin extends ClientCommonPacketListenerImpl 
 
     @Inject(
             method = "clearLevel",
-            at = @At(value = "HEAD"))
+            at = @At(
+                    value = "HEAD"))
     private void clearLevel(CallbackInfo ci) {
         ClientCallbacks.onDisconnect(Minecraft.getInstance().options::load);
     }

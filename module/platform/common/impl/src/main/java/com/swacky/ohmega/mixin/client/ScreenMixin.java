@@ -27,7 +27,7 @@ abstract class ScreenMixin extends AbstractContainerEventHandler implements Rend
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;nextStratum()V",
                     ordinal = 1))
-    private void extractBackground(GuiGraphicsExtractor gui, int mx, int my, float partialTicks, CallbackInfo ci) {
+    private void extractRenderStateWithTooltipAndSubtitles(GuiGraphicsExtractor gui, int mx, int my, float partialTicks, CallbackInfo ci) {
         Screen screen = AccessoryScreens.getEffectiveScreen();
 
         if (screen instanceof IAccessoryScreen accessoryScreen) {

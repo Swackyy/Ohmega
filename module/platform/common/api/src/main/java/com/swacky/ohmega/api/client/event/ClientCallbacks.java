@@ -221,7 +221,8 @@ public final class ClientCallbacks {
         }
     }
 
-    // Post an event here
+    // todo: Post an event here
+    // todo: idk when i added this comment or what i meant but ill figure it out
     public static void onPostScreenInit(Screen screen, Consumer<AbstractWidget> consumer) {
         if (screen instanceof IAccessoryScreen accessoryScreen) {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();

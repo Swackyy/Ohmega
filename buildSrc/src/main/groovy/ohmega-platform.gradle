@@ -33,27 +33,3 @@ processResources {
         expand replacements
     }
 }
-
-// todo: possibly move to a plugin so i can defer application
-["apiElements", "runtimeElements", "sourcesElements"].each { variant ->
-    configurations."${variant}".outgoing {
-        capability "${group}:${modId}-${project.name}:${version}"
-        //capability "${group}:${modId}-${project.name}:${version}"
-    }
-}
-
-String metaFileName(Project project) {
-    return "${modId}_${project.name}"
-}
-
-File accessWidenerFile(Project project) {
-    return project.file("src/main/resources/${metaFileName(project)}.accesswidener")
-}
-
-String mixinConfigName(Project project) {
-    return "${metaFileName(project)}.mixins.json"
-}
-
-ext.metaFileName = this.&metaFileName
-ext.accessWidenerFile = this.&accessWidenerFile
-ext.mixinConfigName = this.&mixinConfigName

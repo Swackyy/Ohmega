@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "${modId}",
+  "id": "ohmega",
   "version": "${modV}",
   "name": "${modName}",
   "description": "${modDesc}",
@@ -13,36 +13,37 @@
     "issues": "${gitUrl}/issues"
   },
   "license": "${license}",
-  "icon": "${modId}.png",
+  "icon": "ohmega.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.swacky.${modId}.common.OhmegaMain"
+      "com.swacky.ohmega.common.OhmegaMain"
     ],
     "client": [
-      "com.swacky.${modId}.client.OhmegaClientMain"
+      "com.swacky.ohmega.client.OhmegaClientMain"
     ],
     "fabric-datagen": [
-      "com.swacky.${modId}.datagen.OhmegaDataGenerationMain"
+      "com.swacky.ohmega.datagen.OhmegaDataGenerationMain"
     ],
     "jei_mod_plugin": [
-      "com.swacky.${modId}.compat.jei.common.OhmegaJeiMain"
+      "com.swacky.ohmega.compat.jei.common.OhmegaJeiMain"
     ],
-    "ohmega-common": [
-      "com.swacky.${modId}.compat.polymer.common.OhmegaPolymerMain"
+    "ohmega-common-unsafe": [
+      "com.swacky.ohmega.compat.polymer.common.OhmegaPolymerMain"
     ],
     "rei_client": [
-      "com.swacky.${modId}.compat.rei.client.OhmegaReiClientMain"
+      "com.swacky.ohmega.compat.rei.client.OhmegaReiClientMain"
     ],
     "rrv_client": [
-      "com.swacky.${modId}.compat.rrv.client.OhmegaRrvClientMain"
+      "com.swacky.ohmega.compat.rrv.client.OhmegaRrvClientMain"
     ]
   },
   "mixins": [
-    "${modId}_common.mixins.json",
-    "${modId}_fabric.mixins.json"
+    "ohmega_common.mixins.json",
+    "ohmega_fabric.mixins.json"
+    ${extraMixinConfigs}
   ],
-  "accessWidener": "${modId}_fabric.accesswidener",
+  "accessWidener": "ohmega_fabric.accesswidener",
   "depends": {
     "fabricloader": "${loaderFabricVRange}",
     "minecraft": "~${mcVRangeMin}",
@@ -59,7 +60,9 @@
         "modmenu.modrinth": "${modrinthUrl}",
         "modmenu.wiki": "${gitUrl}/wiki"
       },
-      "badges": ["library"],
+      "badges": [
+        "library"
+      ],
       "update_checker": true
     }
   }

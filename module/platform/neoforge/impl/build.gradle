@@ -12,8 +12,10 @@ neoForge {
 
     mods {
         "${modId}" {
-            sourceSet commonImplProject().apiProject().sourceSets.main
-            sourceSet commonImplProject().sourceSets.main
+            Project commonImplProject = commonImplProject()
+
+            sourceSet commonImplProject.apiProject().sourceSets.main
+            sourceSet commonImplProject.sourceSets.main
             sourceSet apiProject().sourceSets.main
             sourceSet sourceSets.main
         }
@@ -48,11 +50,16 @@ repositories {
         name = "BlameJared"
         url = "https://maven.blamejared.com"
     }
+
+    maven {
+        name = "Cassian"
+        url = "https://maven.cassian.cc"
+    }
 }
 
 dependencies {
     if (compatEnabledJei.toBoolean()) {
-        compatModuleDependency(it, "jei")
+        compatModuleDependency it, "jei"
 
         if (runtimeEnabledJei.toBoolean()) {
             runtimeOnly "mezz.jei:jei-${mcV}-neoforge:${compatJeiV}"
@@ -60,7 +67,7 @@ dependencies {
     }
 
     if (compatEnabledRei.toBoolean()) {
-        compatModuleDependency(it, "rei-neoforge")
+        compatModuleDependency it, "rei:rei-neoforge"
 
         if (runtimeEnabledRei.toBoolean()) {
             runtimeOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${mcV}.${compatReiV}"
@@ -68,6 +75,14 @@ dependencies {
             constraints {
                 runtimeOnly("dev.architectury:architectury-neoforge:21.0.7")
             }
+        }
+    }
+
+    if (compatEnabledRrv.toBoolean()) {
+        compatModuleDependency it, "rrv:rrv-neoforge"
+
+        if (runtimeEnabledRrv.toBoolean()) {
+            runtimeOnly "cc.cassian.rrv:reliable-recipe-viewer-neoforge:${compatRrvV}+${mcV}"
         }
     }
 }

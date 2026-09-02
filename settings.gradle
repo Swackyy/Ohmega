@@ -25,32 +25,30 @@ pluginManagement {
     }
 }
 
-plugins {
-    id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
-}
-
-rootProject.setName modName
-
 include "module:platform:common:api"
 include "module:platform:common:impl"
 
-if (moduleEnabledFabric.toBoolean()) {
+boolean loaderEnabledFabric = loaderEnabledFabric.toBoolean()
+boolean loaderEnabledForge = loaderEnabledForge.toBoolean()
+boolean loaderEnabledNeo = loaderEnabledNeo.toBoolean()
+
+if (loaderEnabledFabric) {
     include "module:platform:fabric:api"
     include "module:platform:fabric:impl"
 }
 
-if (moduleEnabledForge.toBoolean()) {
+if (loaderEnabledForge) {
     include "module:platform:forge:api"
     include "module:platform:forge:impl"
 }
 
-if (moduleEnabledNeo.toBoolean()) {
+if (loaderEnabledNeo) {
     include "module:platform:neoforge:api"
     include "module:platform:neoforge:impl"
 }
 
 if (compatEnabledJei.toBoolean()) {
-    include "module:compat:util_exclusion-zones"
+    include "module:compat:util:exclusion-zone"
     include "module:compat:jei"
 }
 
@@ -59,16 +57,29 @@ if (compatEnabledPolymer.toBoolean()) {
 }
 
 if (compatEnabledRei.toBoolean()) {
-    include "module:compat:util_exclusion-zones"
-    include "module:compat:rei-common"
-    include "module:compat:rei-fabric"
-    include "module:compat:rei-neoforge"
+    include "module:compat:util:exclusion-zone"
+    include "module:compat:rei:common"
+
+    if (loaderEnabledFabric) {
+        include "module:compat:rei:fabric"
+    }
+
+    if (loaderEnabledNeo) {
+        include "module:compat:rei:neoforge"
+    }
 }
 
 if (compatEnabledRrv.toBoolean()) {
-    include "module:compat:util_exclusion-zones"
-    include "module:compat:rrv-fabric"
-    include "module:compat:rrv-neoforge"
+    include "module:compat:util:exclusion-zone"
+    include "module:compat:rrv:common"
+
+    if (loaderEnabledFabric) {
+        include "module:compat:rrv:fabric"
+    }
+
+    if (loaderEnabledNeo) {
+        include "module:compat:rrv:neoforge"
+    }
 }
 
 gradle.settingsEvaluated {
@@ -81,9 +92,12 @@ void eval(ProjectDescriptor child) {
     ProjectDescriptor grandparent = child.parent.parent
 
     if (grandparent != null) {
-        String originalName = child.name
+        String grandparentName = grandparent.name
 
-        if (grandparent.name == "platform") {
+        if (grandparentName == "compat") {
+            child.setName "${child.parent.name}-${child.name}"
+        } else if (grandparentName == "platform") {
+            String originalName = child.name
             String parentName = child.parent.name
 
             if (originalName == "api") {
@@ -98,3 +112,5 @@ void eval(ProjectDescriptor child) {
         eval subChild
     }
 }
+
+rootProject.setName modName

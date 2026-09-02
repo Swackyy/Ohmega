@@ -1,7 +1,7 @@
 package com.swacky.ohmega.compat.jei.common;
 
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.compat.util.ExclusionZoneProvider;
+import com.swacky.ohmega.compat.util.exclusionzone.ExclusionZoneProvider;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;

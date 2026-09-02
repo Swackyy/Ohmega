@@ -3,11 +3,31 @@ plugins {
     id "org.spongepowered.gradle.vanilla"
 }
 
+// There are no Javadocs (or not supposed to be) in compat modules,
+// so we don't need this causing random annoying issues
+tasks.named ("javadoc") {
+    enabled = false
+}
+
 minecraft {
     version mcV
-    accessWideners project("${commonProject().path}:impl").file("src/main/resources/common_aw.accesswidener")
+    accessWideners accessWidenerFile(commonImplProject())
+}
+
+repositories {
+    maven {
+        name = "Sponge"
+        url = "https://repo.spongepowered.org/repository/maven-public"
+    }
 }
 
 dependencies {
-    compileOnly project(path: commonProject().path, configuration: "apiElements")
+    Project commonImplProject = commonImplProject()
+
+    evaluationDependsOn commonImplProject.path
+    apiModuleDependency it, commonImplProject.apiProject()
+    compileOnly "org.spongepowered:mixin:0.8.7"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.2"
+    implementation "org.ow2.asm:asm:9.9.1"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.2"
 }

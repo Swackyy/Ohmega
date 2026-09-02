@@ -1,0 +1,16 @@
+plugins {
+    id "java-library"
+    id "ohmega-compat"
+}
+
+repositories {
+    maven {
+        name = "Architectury"
+        url = "https://maven.architectury.dev"
+    }
+}
+
+dependencies {
+    compatModuleDependency it, "rei:rei-common"
+    compileOnlyApi "me.shedaniel:RoughlyEnoughItems-api:${mcV}.${compatReiV}"
+}

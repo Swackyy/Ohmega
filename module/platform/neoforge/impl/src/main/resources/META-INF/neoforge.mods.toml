@@ -20,6 +20,7 @@ config="${modId}_neoforge.mixins.json"
 [[mixins]]
 config="${modId}_common.mixins.json"
 
+${extraMixinConfigs}
 
 [[dependencies.${modId}]]
 modId="neoforge"

@@ -18,57 +18,77 @@ dependencies {
     }
 }
 
-processResources {
-    String modDesc = modSummary
+ext.extraMixinConfigs = []
 
-    if (project.name == "forge") {
-        modDesc += """
+gradle.projectsEvaluated {
+    processResources {
+        String extraMixinConfigsProcessed = ""
+
+        if (!extraMixinConfigs.empty) {
+            for (String config : extraMixinConfigs) {
+                if (project.name == "fabric") {
+                    extraMixinConfigsProcessed += ",\"${config}\"\n"
+                } else if (project.name == "neoforge") {
+                    extraMixinConfigsProcessed += "[[mixins]]\nconfig=\"${config}\"\n"
+                }
+            }
+        }
+
+        String modDesc = modSummary
+
+        if (project.name == "forge") {
+            modDesc += """
 Help translate the mod here if possible: ${crowdinUrl}
 View the source code here: ${gitUrl}
 Or visit the wiki here: ${gitUrl}/wiki
 And join the discord here: ${discordUrl}"""
+        }
+
+        if (!modChanges.empty) {
+            modDesc += "\n\nChanges this version:\n${modChanges}"
+        }
+
+        if (project.name == "fabric") {
+            modDesc = modDesc.replace('\n', "\\n").replace('"', "\\\"")
+        }
+
+        LinkedHashMap<String, String> replacements = [
+                crowdinUrl                          : crowdinUrl,
+                curseUrl                            : curseUrl,
+                discordUrl                          : discordUrl,
+                extraMixinConfigs                   : extraMixinConfigsProcessed,
+                gitUrl                              : gitUrl,
+                javaV                               : javaV,
+                license                             : license,
+                loaderFabricForgeConfigApiPortVRange: loaderFabricForgeConfigApiPortVRange,
+                loaderFabricVRange                  : loaderFabricVRange,
+                loaderForgeV                        : loaderForgeV,
+                loaderForgeVRange                   : loaderForgeVRange,
+                loaderNeoV                          : loaderNeoV,
+                loaderNeoVRange                     : loaderNeoVRange,
+                mcVRangeMax                         : mcV,
+                mcVRangeMin                         : mcVRangeMin,
+                modAuthors                          : modAuthorsDisplay,
+                modChanges                          : modChanges,
+                modDesc                             : modDesc,
+                modId                               : modId,
+                modName                             : modName,
+                modrinthUrl                         : modrinthUrl,
+                modV                                : modV
+        ]
+
+        inputs.properties replacements
+
+        filesMatching(["fabric.mod.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) {
+            expand replacements
+        }
+
+        from configurations.commonResources
+        setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
+
+        // Fixes Forge and NeoForge not pulling in generated resources
+        from commonImplProject().sourceSets.main.resources.getSourceDirectories().getFiles()[1]
     }
-
-    if (!modChanges.empty) {
-        modDesc += "\n\nChanges this version:\n${modChanges}"
-    }
-
-    if (project.name == "fabric") {
-        modDesc = modDesc.replace('\n', "\\n").replace('"', "\\\"")
-    }
-
-    LinkedHashMap<String, String> replacements = [
-            crowdinUrl                           : crowdinUrl,
-            curseUrl                             : curseUrl,
-            discordUrl                           : discordUrl,
-            gitUrl                               : gitUrl,
-            javaV                                : javaV,
-            license                              : license,
-            loaderFabricForgeConfigApiPortVRange : loaderFabricForgeConfigApiPortVRange,
-            loaderFabricVRange                   : loaderFabricVRange,
-            loaderForgeV                         : loaderForgeV,
-            loaderForgeVRange                    : loaderForgeVRange,
-            loaderNeoV                           : loaderNeoV,
-            loaderNeoVRange                      : loaderNeoVRange,
-            mcVRangeMax                          : mcV,
-            mcVRangeMin                          : mcVRangeMin,
-            modAuthors                           : modAuthorsDisplay,
-            modChanges                           : modChanges,
-            modDesc                              : modDesc,
-            modId                                : modId,
-            modName                              : modName,
-            modrinthUrl                          : modrinthUrl,
-            modV                                 : modV
-    ]
-
-    inputs.properties replacements
-
-    filesMatching (["fabric.mod.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) {
-        expand replacements
-    }
-
-    from configurations.commonResources
-    setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
 jar {
