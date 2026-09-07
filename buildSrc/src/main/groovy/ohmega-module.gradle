@@ -55,13 +55,13 @@ tasks.named ("processTestResources") {
 
 configurations {
     commonJava {
-        canBeResolved true
         canBeConsumed true
+        canBeResolved true
     }
 
     commonResources {
-        canBeResolved true
         canBeConsumed true
+        canBeResolved true
     }
 }
 
@@ -70,6 +70,7 @@ artifacts {
     commonResources sourceSets.main.resources.sourceDirectories.files
 }
 
+// This only includes outputs into the impl projects, don't ask me how, but it is what I wanted it to do anyways :p
 static void includeProjectOutput(DependencyHandler handler, String projectPath) {
     handler.commonJava handler.project(path: projectPath, configuration: "commonJava")
     handler.commonResources handler.project(path: projectPath, configuration: "commonResources")
@@ -96,7 +97,16 @@ Project commonImplProject() {
 }
 
 void compatModuleDependency(DependencyHandler handler, String name) {
-    moduleDependency handler, compatProject(name)
+    Project dependency = compatProject name
+    String fixedGroup = group
+
+    handler.compileOnly (dependency) {
+        capabilities {
+            requireCapability "${fixedGroup}:${modId}-${dependency.name}"
+        }
+    }
+
+    includeProjectOutput handler, dependency.path
 }
 
 Project compatProject(String name) {
@@ -114,7 +124,8 @@ String mixinConfigName(Project project) {
 void moduleDependency(DependencyHandler handler, Project dependency) {
     String fixedGroup = group
 
-    handler.compileOnlyApi (dependency) {
+    // Export
+    handler.compileOnly (dependency) {
         capabilities {
             requireCapability "${fixedGroup}:${modId}-${dependency.name}"
         }

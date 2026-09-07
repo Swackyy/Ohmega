@@ -9,12 +9,6 @@ String nativeMixinConfigName = mixinConfigName project
 String nativeApiMixinConfigName = mixinConfigName apiProject()
 String commonMixinConfigName = mixinConfigName commonImplProject
 
-// Fixes a nuisance with FG7 and IntelliJ symbol resolution for the native API module
-// Could not tell you why this works, it just does
-tasks.withType(JavaCompile).configureEach {
-    classpath += apiProject().sourceSets.main.output
-}
-
 minecraft {
     mappings channel: "official", version: mcV
 

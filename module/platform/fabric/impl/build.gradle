@@ -70,7 +70,6 @@ dependencies {
     minecraft "com.mojang:minecraft:${mcV}"
     implementation "net.fabricmc:fabric-loader:${loaderFabricV}"
     implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
-    // todo: see if this needs to be transitive with "api"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${loaderFabricForgeConfigApiPortV}"
 
     if (loaderFabricModMenuEnabled.toBoolean()) {
@@ -87,10 +86,11 @@ dependencies {
 
     if (compatEnabledPolymer.toBoolean()) {
         compatModuleDependency it, "polymer"
-        runtimeOnly include("eu.pb4:sgui:${compatPolymerSGuiV}+${mcV}")
+        include "eu.pb4:sgui:${compatPolymerSGuiV}+${mcV}"
 
         if (runtimeEnabledPolymer.toBoolean()) {
             runtimeOnly "eu.pb4:polymer-bundled:${compatPolymerV}+${mcV}"
+            runtimeOnly "eu.pb4:sgui:${compatPolymerSGuiV}+${mcV}"
         }
     }
 

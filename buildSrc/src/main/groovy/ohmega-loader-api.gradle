@@ -1,5 +1,5 @@
 plugins {
-    id "ohmega-platform-api"
+    id "ohmega-platform"
 }
 
 dependencies {

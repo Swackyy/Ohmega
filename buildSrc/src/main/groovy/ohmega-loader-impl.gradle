@@ -115,7 +115,7 @@ if (rootProject.file("secrets.properties").exists()) {
         publishMods {
             String name = project.name == "neoforge" ? "NeoForge" : project.name.capitalize()
 
-            changelog = modChanges.replace("| ", "+ ")
+            changelog = modChanges.replace "| ", "+ "
             displayName = "${modName} ${modV} ${name} ${mcV}"
 
             file = tasks.named("jar").flatMap {
