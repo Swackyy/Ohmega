@@ -104,14 +104,14 @@ if (secretsFile.exists()) {
     }
 
     if (loaderEnabledFabric.toBoolean()) {
-        //TaskProvider<Task> datagenTask = project("module:platform:fabric:impl").tasks.named "runDatagen"
+        //TaskProvider<Task> datagenTask = project("module:platform:fabric:fabric").tasks.named "runDatagen"
 
         subprojects.each { sub ->
             sub.tasks.matching {
                 it.name == "publishMods"
             }.configureEach { publishTask ->
                 //dependsOn datagenTask
-                mustRunAfter datagenTask
+                //mustRunAfter datagenTask
             }
         }
     }
