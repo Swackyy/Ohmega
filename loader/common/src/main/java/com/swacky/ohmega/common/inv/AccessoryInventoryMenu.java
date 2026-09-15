@@ -9,6 +9,7 @@ import com.swacky.ohmega.common.init.OhmegaMenus;
 import com.swacky.ohmega.config.OhmegaConfig;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -223,7 +224,7 @@ public final class AccessoryInventoryMenu extends AbstractContainerMenu {
             slot.onTake(player, stack0);
 
             if (index == 0) {
-                player.drop(stack0, false);
+                player.drop(stack0, false, Prediction.PREDICTED);
             }
         }
 

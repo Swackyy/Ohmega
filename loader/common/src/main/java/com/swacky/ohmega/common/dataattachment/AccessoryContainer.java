@@ -14,6 +14,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -177,7 +178,8 @@ public final class AccessoryContainer {
             doUnequip(player, stack);
 
             if (!player.addItem(stack)) {
-                player.drop(stack, true);
+                // Not sure if this Prediction is correct
+                player.drop(stack, true, Prediction.PREDICTED);
             }
 
             onContentsChanged(index);
