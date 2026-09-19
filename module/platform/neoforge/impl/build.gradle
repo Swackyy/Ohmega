@@ -10,6 +10,8 @@ neoForge {
         file "src/main/resources/META-INF/accesstransformer.cfg"
     }
 
+    validateAccessTransformers = true
+
     mods {
         "${modId}" {
             Project commonImplProject = commonImplProject()

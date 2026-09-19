@@ -15,6 +15,7 @@ test
 remappedSrc
 runs
 *.bat
+/loader/
 
 # oh no you don't
 secrets.properties

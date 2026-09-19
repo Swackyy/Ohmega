@@ -29,10 +29,10 @@ interface RRVExtendedContainerScreenMixin {
         if (AccessoryScreens.getEffectiveScreen() instanceof AbstractContainerScreen<?> screen) {
             OverlayManager manager = OverlayManager.INSTANCE;
             List<Rect2i> rects = ExclusionZoneProvider.getExclusionZones(screen);
-            int newExclusionZonesSize = rects.size();
-            List<BlockingGuiComponent> newComponents = new ArrayList<>(newExclusionZonesSize);
+            int size = rects.size();
+            List<BlockingGuiComponent> newComponents = new ArrayList<>(size);
 
-            for (int i = 0; i < newExclusionZonesSize; i++) {
+            for (int i = 0; i < size; i++) {
                 Rect2i rect = rects.get(i);
 
                 newComponents.add(new BlockingGuiComponent(
@@ -43,7 +43,7 @@ interface RRVExtendedContainerScreenMixin {
                         rect.getHeight()));
             }
 
-            List<BlockingGuiComponent> currentComponents = manager.allGuiBlockings();
+            List<BlockingGuiComponent> currentComponents = manager.exclusionAreas();
             List<BlockingGuiComponent> currentComponentsFiltered = new ArrayList<>(currentComponents.size());
 
             for (BlockingGuiComponent component : currentComponents) {
@@ -54,10 +54,10 @@ interface RRVExtendedContainerScreenMixin {
                 }
             }
 
-            if (currentComponentsFiltered.size() != newExclusionZonesSize || !ohmega$containsAllIgnoreId(currentComponentsFiltered, newComponents)) {
-                manager.removeGuiBlocking(
+            if (currentComponentsFiltered.size() != size || !ohmega$containsAllIgnoreId(currentComponentsFiltered, newComponents)) {
+                manager.removeExclusionArea(
                         id -> id.getNamespace().equals(Ohmega.MODID) && id.getPath().startsWith(OhmegaRrvClient.EXCLUSION_ZONE_ID_PREFIX), false);
-                newComponents.forEach(manager::setGuiBlocking);
+                newComponents.forEach(manager::setExclusionArea);
                 manager.updateOverlaysAndWidgets(true);
             }
         }

@@ -16,7 +16,7 @@ abstract class NeoForgeClientEntrypointMixin {
     @Definition(id = "getScreen", method = "Lnet/neoforged/neoforge/client/event/ScreenEvent$Render$Background;getScreen()Lnet/minecraft/client/gui/screens/Screen;")
     @Expression("?.getScreen() instanceof ?")
     @WrapOperation(
-            method = "extractBackground",
+            method = "extractBackground(Lnet/neoforged/neoforge/client/event/ScreenEvent$Render$Background;)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/neoforged/neoforge/client/event/ScreenEvent$Render$Background;getScreen()Lnet/minecraft/client/gui/screens/Screen;"))
