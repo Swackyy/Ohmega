@@ -1,4 +1,4 @@
-package com.swacky.ohmega.api.common.init;
+package com.swacky.ohmega.api.client.init;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -6,6 +6,7 @@ import com.swacky.ohmega.api.client.OhmegaClient;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,8 @@ public final class OhmegaBinds {
         return INST.isInstance(other);
     }
 
-    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Ohmega.id(Ohmega.MODID));
+    public static final KeyMapping.Category CATEGORY_MAIN = KeyMapping.Category.register(Ohmega.id("main"));
+    public static final KeyMapping.Category CATEGORY_ACCESSORY_TYPES = KeyMapping.Category.register(Ohmega.id("accessory_types"));
 
     public static final KeyMapping EDIT_MAGNETICS = key("edit_magnetics", GLFW.GLFW_KEY_LEFT_CONTROL);
     public static final KeyMapping EDIT_NUDGE_DOWN = key("edit_nudge_down", GLFW.GLFW_KEY_DOWN);
@@ -45,7 +47,7 @@ public final class OhmegaBinds {
     private static List<KeyMapping> ORDERED_SLOT_KEYS = List.of();
 
     private static KeyMapping key(String key, int defaultKey) {
-        return new KeyMapping("key." + Ohmega.MODID + '.' + key, InputConstants.Type.KEYSYM, defaultKey, CATEGORY);
+        return new KeyMapping("key." + Ohmega.MODID + '.' + key, InputConstants.Type.KEYSYM, defaultKey, CATEGORY_MAIN);
     }
 
     private static void addMapping(AccessoryType type, int index, int key) {

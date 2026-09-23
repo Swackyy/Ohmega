@@ -7,7 +7,7 @@ import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -373,7 +373,8 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.CATEGORY_MAIN, "Ohmega");
+        internalHelper.add(OhmegaBinds.CATEGORY_ACCESSORY_TYPES, "Ohmega - Accessory Types");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Edit UI Magnetics");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Edit UI Nudge Down");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Edit UI Nudge Left");

@@ -5,7 +5,7 @@ import com.swacky.ohmega.api.client.command.OhmegaClientCommandNodes;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.HelpCommand;

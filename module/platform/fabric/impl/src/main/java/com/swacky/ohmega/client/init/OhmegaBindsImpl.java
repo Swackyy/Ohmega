@@ -1,6 +1,6 @@
-package com.swacky.ohmega.common.init;
+package com.swacky.ohmega.client.init;
 
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import net.minecraft.client.KeyMapping;
 
 @SuppressWarnings("unused")
@@ -17,7 +17,7 @@ public final class OhmegaBindsImpl implements OhmegaBinds.Service {
 
     private static class OhmegaKeyMapping extends KeyMapping {
         public OhmegaKeyMapping(String name, int key) {
-            super(name, key, OhmegaBinds.CATEGORY);
+            super(name, key, OhmegaBinds.CATEGORY_ACCESSORY_TYPES);
         }
     }
 }

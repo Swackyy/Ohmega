@@ -1,8 +1,8 @@
-package com.swacky.ohmega.common.init;
+package com.swacky.ohmega.client.init;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
@@ -21,7 +21,7 @@ public final class OhmegaBindsImpl implements OhmegaBinds.Service {
 
     private static class OhmegaKeyMapping extends KeyMapping {
         public OhmegaKeyMapping(String name, int key) {
-            super(name, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, OhmegaBinds.CATEGORY);
+            super(name, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, OhmegaBinds.CATEGORY_ACCESSORY_TYPES);
         }
 
         @Override

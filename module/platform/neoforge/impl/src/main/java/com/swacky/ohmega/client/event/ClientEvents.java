@@ -8,7 +8,7 @@ import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.client.model.HaloModel;
@@ -122,6 +122,8 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onKeybindRegistration(RegisterKeyMappingsEvent event) {
+        event.registerCategory(OhmegaBinds.CATEGORY_MAIN);
+        event.registerCategory(OhmegaBinds.CATEGORY_ACCESSORY_TYPES);
         event.register(OhmegaBinds.EDIT_MAGNETICS);
         event.register(OhmegaBinds.EDIT_NUDGE_DOWN);
         event.register(OhmegaBinds.EDIT_NUDGE_LEFT);
@@ -132,7 +134,6 @@ public final class ClientEvents {
         event.register(OhmegaBinds.EDIT_UNDO);
         event.register(OhmegaBinds.OPEN_ACCESSORY_INVENTORY);
         event.register(OhmegaBinds.OPEN_EDIT_UI);
-        event.registerCategory(OhmegaBinds.CATEGORY);
     }
 
     @SubscribeEvent

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.util.IntLazySavedValue;

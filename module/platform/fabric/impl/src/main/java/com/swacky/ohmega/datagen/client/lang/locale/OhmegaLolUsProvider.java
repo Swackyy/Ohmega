@@ -7,7 +7,7 @@ import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -378,7 +378,8 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmegawd");
+        internalHelper.add(OhmegaBinds.CATEGORY_MAIN, "Ohmegawd");
+        internalHelper.add(OhmegaBinds.CATEGORY_ACCESSORY_TYPES, "Ohmegawd - Kit-cat flavrz");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Kit-cat Box Pokinz Fridj");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Kit-cat Box Pokinz Nudge Less Dis Way");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Kit-cat Box Pokinz Nudge Less Dat Way");

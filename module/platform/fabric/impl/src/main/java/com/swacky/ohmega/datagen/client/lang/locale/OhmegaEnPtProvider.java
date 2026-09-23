@@ -7,7 +7,7 @@ import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -378,7 +378,8 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.CATEGORY_MAIN, "Ohmega");
+        internalHelper.add(OhmegaBinds.CATEGORY_ACCESSORY_TYPES, "Ohmega - Doubloon Types");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Draft UI Spookies");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Draft UI Nudge off th' Plank");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Draft UI Nudge Port");

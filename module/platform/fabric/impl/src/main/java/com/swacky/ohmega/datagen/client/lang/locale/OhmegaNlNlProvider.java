@@ -1,7 +1,7 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -45,7 +45,7 @@ public final class OhmegaNlNlProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.CATEGORY_MAIN, "Ohmega");
         internalHelper.add(OhmegaBinds.OPEN_ACCESSORY_INVENTORY, "Open/Sluit Accessoires Inventaris");
 
         // Config

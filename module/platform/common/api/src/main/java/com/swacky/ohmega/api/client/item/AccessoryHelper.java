@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.client.item;
 
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;

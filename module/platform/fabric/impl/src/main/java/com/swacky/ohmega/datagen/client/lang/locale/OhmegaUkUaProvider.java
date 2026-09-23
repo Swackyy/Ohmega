@@ -7,7 +7,7 @@ import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.common.init.OhmegaBinds;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
@@ -419,7 +419,7 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
-        internalHelper.add(OhmegaBinds.CATEGORY, "Ohmega");
+        internalHelper.add(OhmegaBinds.CATEGORY_MAIN, "Ohmega");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Редагувати інтерфейс Magnetics");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Змістити вниз");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Змістити вліво");
