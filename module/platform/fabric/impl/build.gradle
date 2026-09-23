@@ -12,7 +12,6 @@ loom {
 
             displayName = "Fabric ${it.name.capitalize()}"
             generateRunConfig = true
-            preferGradleTask = true
             runDirectory = file("run")
         }
 

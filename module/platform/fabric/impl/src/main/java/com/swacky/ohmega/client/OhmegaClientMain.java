@@ -2,10 +2,9 @@ package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.api.IOhmegaEntrypoint;
 import com.swacky.ohmega.api.client.OhmegaClient;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.client.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
 import com.swacky.ohmega.api.network.S2C.SyncHiddenPacket;
@@ -14,12 +13,13 @@ import com.swacky.ohmega.api.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.api.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.api.util.LogicalSide;
+import com.swacky.ohmega.client.event.ClientEvents;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
-import com.swacky.ohmega.client.event.ClientEvents;
 import com.swacky.ohmega.common.OhmegaMain;
+import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -81,13 +81,17 @@ public final class OhmegaClientMain implements ClientModInitializer {
         AccessoryRenderers.registerLiving(OhmegaItems.getAngelRing(), HaloRenderer::new);
         ModelLayerRegistry.registerModelLayer(HaloModel.LOCATION, HaloModel::createDefinition);
 
+        FabricLoader loader = FabricLoader.getInstance();
+
         // Resource packs
         ResourceLoader.registerBuiltinPack(
                 OhmegaClient.PACK_DARK_ID,
-                FabricLoader.getInstance().getModContainer(Ohmega.MODID).orElseThrow(),
+                loader.getModContainer(Ohmega.MODID).orElseThrow(),
                 PackActivationType.NORMAL);
 
-        FabricLoader.getInstance().invokeEntrypoints("ohmega-client", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint));
-        OhmegaMain.invokeEntrypointsUnsafe("ohmega-client-unsafe", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint));
+        loader.invokeEntrypoints("ohmega-client", IOhmegaEntrypoint.class, entrypoint ->
+                Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint, loader::isModLoaded));
+        OhmegaMain.invokeEntrypointsUnsafe("ohmega-client-unsafe", IOhmegaEntrypoint.class, entrypoint ->
+                Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint, loader::isModLoaded));
     }
 }

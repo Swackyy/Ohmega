@@ -3,6 +3,7 @@ package com.swacky.ohmega.compat.rrv.mixin;
 import cc.cassian.rrv.client.util.RRVExtendedContainerScreen;
 import cc.cassian.rrv.common.overlay.BlockingGuiComponent;
 import cc.cassian.rrv.common.overlay.OverlayManager;
+import cc.cassian.rrv.common.overlay.itemlist.view.ItemViewOverlay;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.compat.rrv.client.OhmegaRrvClient;
@@ -26,7 +27,7 @@ interface RRVExtendedContainerScreenMixin {
             at = @At(
                     value = "HEAD"))
     private static void updateSlots(CallbackInfo ci) {
-        if (AccessoryScreens.getEffectiveScreen() instanceof AbstractContainerScreen<?> screen) {
+        if (ItemViewOverlay.INSTANCE.isEnabled() && AccessoryScreens.getEffectiveScreen() instanceof AbstractContainerScreen<?> screen) {
             OverlayManager manager = OverlayManager.INSTANCE;
             List<Rect2i> rects = ExclusionZoneProvider.getExclusionZones(screen);
             int size = rects.size();
