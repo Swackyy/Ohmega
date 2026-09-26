@@ -29,7 +29,7 @@
       "com.swacky.ohmega.compat.jei.common.OhmegaJeiMain"
     ],
     "ohmega-common-unsafe": [
-      "com.swacky.ohmega.compat.polymer.common.OhmegaPolymerMain"
+      "com.swacky.ohmega.compat.polymer.OhmegaPolymerMain"
     ],
     "rei_client": [
       "com.swacky.ohmega.compat.rei.client.OhmegaReiClientMain"

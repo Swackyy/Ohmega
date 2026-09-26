@@ -1,12 +1,12 @@
 
-package com.swacky.ohmega.compat.polymer.common.command.node;
+package com.swacky.ohmega.compat.polymer.command.node;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
-import com.swacky.ohmega.compat.polymer.common.AccessorySGui;
+import com.swacky.ohmega.compat.polymer.AccessorySGui;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 

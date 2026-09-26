@@ -440,5 +440,8 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         builder.add(FlipEntityButton.TRANSLATION_KEY, "Змінити сутність");
         builder.add(ToggleExtensionButton.TRANSLATION_KEY, "Перемкнути розширення");
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Перемкнути видимість");
+
+        // Misc
+        builder.add(Ohmega.MODID + ".name", "Ohmega");
     }
 }

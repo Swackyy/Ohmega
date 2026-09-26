@@ -400,5 +400,8 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(FlipEntityButton.TRANSLATION_KEY, "Flip Lubber");
         builder.add(ToggleExtensionButton.TRANSLATION_KEY, "Switch Quart'rs");
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Switch Visibility");
+
+        // Misc
+        builder.add(Ohmega.MODID + ".name", "Ohmega");
     }
 }

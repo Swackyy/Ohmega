@@ -400,5 +400,8 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(FlipEntityButton.TRANSLATION_KEY, "Flip Cat");
         builder.add(ToggleExtensionButton.TRANSLATION_KEY, "Togl Kit-cat Box");
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Togl Yiss See No See");
+
+        // Misc
+        builder.add(Ohmega.MODID + ".name", "Ohmegawd");
     }
 }

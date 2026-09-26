@@ -1,8 +1,10 @@
-package com.swacky.ohmega.compat.polymer.common;
+package com.swacky.ohmega.compat.polymer;
 
+import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +19,11 @@ public class AccessorySGui extends SimpleGui {
 
         this.data = OhmegaDataAttachments.getData(player);
 
+        for (int i = 0; i < 9*6; i++) {
+            setSlot(i, GuiFiller.BACKGROUND);
+        }
+
+        setTitle(Component.translatable(Ohmega.MODID + ".name"));
         open();
     }
 

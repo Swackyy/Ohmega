@@ -395,5 +395,8 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(FlipEntityButton.TRANSLATION_KEY, "Flip Entity");
         builder.add(ToggleExtensionButton.TRANSLATION_KEY, "Toggle Extension");
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Toggle Visibility");
+
+        // Misc
+        builder.add(Ohmega.MODID + ".name", "Ohmega");
     }
 }
