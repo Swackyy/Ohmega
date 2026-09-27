@@ -3,10 +3,10 @@ package com.swacky.ohmega.common;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaArgumentTypes;
 import com.swacky.ohmega.client.OhmegaClientMain;
+import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import com.swacky.ohmega.common.init.OhmegaCriteriaTriggersImpl;
 import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
@@ -22,7 +22,7 @@ public final class OhmegaMain {
         OhmegaNetworkingImpl.bootstrap();
 
         // Config
-        context.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
+        context.registerConfig(ModConfig.Type.SERVER, OhmegaServerConfigImpl.getSpec());
 
         // Registration
         BusGroup group = context.getModBusGroup();

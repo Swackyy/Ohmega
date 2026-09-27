@@ -14,7 +14,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.function.Function;
 
 @OhmegaEntrypoint(LogicalSide.COMMON)
-public class OhmegaPolymerMain implements IOhmegaEntrypoint {
+public final class OhmegaPolymerMain implements IOhmegaEntrypoint {
     @Override
     public void invoke(@NonNull Function<String, Boolean> modLoaded) {
         if (modLoaded.apply("polymer-core")) {

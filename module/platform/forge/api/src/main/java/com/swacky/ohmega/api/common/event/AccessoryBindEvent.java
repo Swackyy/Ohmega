@@ -18,4 +18,4 @@ import net.minecraftforge.fml.event.IModBusEvent;
  *     <li>{@link MinecraftServer#runServer()}</li>
  * </ul>
  */
-public class AccessoryBindEvent implements IModBusEvent {}
+public final class AccessoryBindEvent implements IModBusEvent {}

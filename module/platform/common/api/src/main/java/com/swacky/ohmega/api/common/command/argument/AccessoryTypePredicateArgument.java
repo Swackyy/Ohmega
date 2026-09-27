@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  *     <li>{@link AccessoryType} lookup via their {@link Identifier} keys</li>
  * </ul>
  */
-public class AccessoryTypePredicateArgument extends ParserBasedArgument<AccessoryTypePredicateArgument.Result> {
+public final class AccessoryTypePredicateArgument extends ParserBasedArgument<AccessoryTypePredicateArgument.Result> {
     public static final @NonNull String KEY = "accessory_type_predicate";
     public static final @NonNull BooleanArgumentSerialiser<AccessoryTypePredicateArgument> SERIALISER = new BooleanArgumentSerialiser<>(
             AccessoryTypePredicateArgument::new, inst -> inst.referenceableOnly);

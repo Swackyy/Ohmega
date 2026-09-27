@@ -4,16 +4,17 @@ import com.google.common.reflect.TypeToken;
 import com.swacky.ohmega.api.client.OhmegaClient;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.event.ClientCallbacks;
-import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
 import com.swacky.ohmega.client.model.HaloModel;
+import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -92,7 +93,7 @@ public final class ClientEvents {
 
     @SubscribeEvent
     private static void onConfigLoad(ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (event.getConfig().getSpec() == OhmegaServerConfigImpl.getSpec()) {
             AccessoryTypeManager.runConfigLoadTasks();
         }
     }
@@ -101,16 +102,16 @@ public final class ClientEvents {
     public static void onConfigReload(ModConfigEvent.Reloading event) {
         IConfigSpec spec = event.getConfig().getSpec();
 
-        if (spec == OhmegaConfigImpl.Client.getSpec()) {
+        if (spec == OhmegaClientConfigImpl.getSpec()) {
             ClientCallbacks.onClientConfigReload();
-        } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
+        } else if (spec == OhmegaServerConfigImpl.getSpec()) {
             ClientCallbacks.onServerConfigReload(LOAD_FUNCTION);
         }
     }
 
     @SubscribeEvent
     public static void onConfigUnload(ModConfigEvent.Unloading event) {
-        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (event.getConfig().getSpec() == OhmegaServerConfigImpl.getSpec()) {
             ClientCallbacks.onServerConfigUnload(LOAD_FUNCTION);
         }
     }

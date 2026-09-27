@@ -4,9 +4,9 @@ import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaTags;
-import com.swacky.ohmega.api.config.OhmegaConfig;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.event.OhmegaHooks;
+import com.swacky.ohmega.api.common.init.OhmegaTags;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -157,7 +157,7 @@ public final class AccessoryTypeManager extends SimplePreparableReloadListener<M
         }
 
         if (!APPLY_TASKS.isEmpty()) {
-            if (OhmegaConfig.Server.isLoaded()) {
+            if (OhmegaServerConfig.isLoaded()) {
                 APPLY_TASKS.forEach(Runnable::run);
             } else {
                 CONFIG_LOAD_TASKS.addAll(APPLY_TASKS);

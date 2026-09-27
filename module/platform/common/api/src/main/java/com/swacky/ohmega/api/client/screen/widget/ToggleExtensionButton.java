@@ -1,11 +1,11 @@
 package com.swacky.ohmega.api.client.screen.widget;
 
 import com.swacky.ohmega.api.client.OhmegaClient;
+import com.swacky.ohmega.api.client.config.ButtonStyle;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.client.screen.SnapLine;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
@@ -25,7 +25,7 @@ public final class ToggleExtensionButton extends ExtensionScreenButton implement
     private final AccessoryScreenExtension extension;
     private final boolean highlightWhenHovered;
 
-    public ToggleExtensionButton(AbstractContainerScreen<?> screen, AccessoryScreenExtension extension, OhmegaConfig.Client.Service.ButtonStyle style) {
+    public ToggleExtensionButton(AbstractContainerScreen<?> screen, AccessoryScreenExtension extension, ButtonStyle style) {
         LazyPosition position = ((IAccessoryScreen) screen).getAccessoryExtensionToggleButtonPosition(style);
 
         super(screen, position, style.width, style.height, style.textureLocation, Component.translatable(TRANSLATION_KEY));

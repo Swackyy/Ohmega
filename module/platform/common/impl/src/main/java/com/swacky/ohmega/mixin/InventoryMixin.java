@@ -2,10 +2,10 @@ package com.swacky.ohmega.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +31,7 @@ abstract class InventoryMixin {
             at = @At(
                     value = "RETURN"))
     private void clearContent(CallbackInfo ci) {
-        if (OhmegaConfig.Server.getData().injectVanillaClear().get()) {
+        if (OhmegaServerConfig.getData().injectVanillaClear().get()) {
             OhmegaDataAttachments.getData(player).clearMatchingItems(player, null, -1, EquipContext.UNKNOWN);
         }
     }
@@ -41,7 +41,7 @@ abstract class InventoryMixin {
             at = @At(
                     value = "RETURN"))
     private int clearOrCountMatchingItems(int original, @Local(argsOnly = true) Predicate<ItemStack> filter, @Local(argsOnly = true) int max) {
-        if (OhmegaConfig.Server.getData().injectVanillaClear().get()) {
+        if (OhmegaServerConfig.getData().injectVanillaClear().get()) {
             original += OhmegaDataAttachments.getData(player).clearMatchingItems(player, filter, max, EquipContext.UNKNOWN);
         }
 

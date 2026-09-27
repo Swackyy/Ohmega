@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Simple command argument for {@link AccessoryType}s
  */
-public class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
+public final class AccessoryTypeArgument implements ArgumentType<AccessoryType> {
     public static final @NonNull String KEY = "accessory_type";
     public static final @NonNull BooleanArgumentSerialiser<AccessoryTypeArgument> SERIALISER = new BooleanArgumentSerialiser<>(
             AccessoryTypeArgument::new, inst -> inst.referenceableOnly);

@@ -1,9 +1,9 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -183,7 +183,7 @@ public abstract class AccessoryScreenExtension implements IEditUiElement {
      * @param value {@code true} to make the extension visible, {@code false} to hide it
      */
     public final void setVisible(boolean value) {
-        if (OhmegaConfig.Client.getData().compatibilityMode().get() && menuExtension.getAccessoryMenu().isAccessoryExtensionVisible() != value) {
+        if (OhmegaClientConfig.getData().compatibilityMode().get() && menuExtension.getAccessoryMenu().isAccessoryExtensionVisible() != value) {
             if (value) {
                 screen.imageWidth += getExtraWidth();
                 screen.imageHeight += getExtraHeight();

@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
-public class OhmegaCriteriaTriggersImpl implements OhmegaCriteriaTriggers.Service {
+public final class OhmegaCriteriaTriggersImpl implements OhmegaCriteriaTriggers.Service {
     private static final DeferredRegister<CriterionTrigger<?>> TRIGGERS = DeferredRegister.create(Registries.TRIGGER_TYPE, Ohmega.MODID);
 
     private static final RegistryObject<AccessoryChangeTrigger> ACCESSORY_CHANGE = register(ACCESSORY_CHANGE_KEY, AccessoryChangeTrigger::new);

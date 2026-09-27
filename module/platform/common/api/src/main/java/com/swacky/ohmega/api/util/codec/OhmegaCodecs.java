@@ -12,7 +12,7 @@ import java.util.function.Function;
  * Contains some general use {@link Codec}s that Ohmega may use internally,
  * but is placed in the {@code api} package in case they may be otherwise useful
  */
-public class OhmegaCodecs {
+public final class OhmegaCodecs {
     /**
      * Codec for more broad integer colour parsing, encoding as a string but decoding as an integer
      * This supports both integer literals and formats detailed in {@link Integer#decode(String)}

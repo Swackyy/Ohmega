@@ -21,7 +21,7 @@ import org.jspecify.annotations.NonNull;
  * Works fairly well on any living entity with a direct {@code "head"} child part, but does not dilate in account for outer layers,
  * and so will appear closer to the top of the head on a sheep for example
  */
-public class HaloRenderer implements ILivingAccessoryRenderer {
+public final class HaloRenderer implements ILivingAccessoryRenderer {
     private static final Identifier HALO_LOCATION = Ohmega.id("textures/accessory/halo.png");
 
     private final HaloModel model;

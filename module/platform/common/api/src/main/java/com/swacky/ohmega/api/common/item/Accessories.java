@@ -3,9 +3,9 @@ package com.swacky.ohmega.api.common.item;
 import com.google.common.collect.ImmutableList;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaTags;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -110,7 +110,7 @@ public final class Accessories {
 
         BOUND_ACCESSORIES.put(item, new Accessory(binding));
 
-        if (OhmegaConfig.Server.isLoaded()) {
+        if (OhmegaServerConfig.isLoaded()) {
             BOUND_TYPES.put(item, getEffectiveTypes(item));
         } else {
             TO_TYPE_QUERY.add(item);
@@ -146,7 +146,7 @@ public final class Accessories {
      * as instances are not guaranteed to be the same reference on an integrated server
      */
     public static @NonNull AccessoryType getType(@Nullable LivingEntity entity, @NonNull Item item) {
-        if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
+        if (OhmegaServerConfig.getData().disableAccessoryTypes().get()) {
             return AccessoryType.GENERIC.get();
         }
 

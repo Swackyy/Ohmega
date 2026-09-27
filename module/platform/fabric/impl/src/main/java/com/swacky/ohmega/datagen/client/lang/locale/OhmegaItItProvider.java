@@ -1,10 +1,11 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
-import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.config.OhmegaConfig;
+import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
 import com.swacky.ohmega.datagen.client.lang.OhmegaLangProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -53,11 +54,11 @@ public final class OhmegaItItProvider extends OhmegaLangProvider {
         // Client config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Client Ohmega", "Configurazione Client Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
+                OhmegaClientConfig.Service.COMPATIBILITY_MODE_KEY,
                 "Modalità Compatibilità",
                 "Disabilita alcune funzioni utili ma per lo più invisibili che possono migliorare la compatibilità delle mod in rari casi");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
+                OhmegaClientConfig.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Stile Pulsanti",
                 """
                         Stile del pulsante dell'inventario accessori
@@ -66,42 +67,42 @@ public final class OhmegaItItProvider extends OhmegaLangProvider {
                         TAG: Un piccolo pulsante simile ad un tag che appare appena fuori dall'angolo superiore dell'inventario
                         HIDDEN: Non mostrerà alcun pulsante, si utilizzi il tasto dedicato invece per aprire l'inventario accessori""");
         /*internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
+                OhmegaClientConfig.Service.FILL_DIRECTION_KEY,
                 "Lato Dell'Inventario",
                 "Il lato dell'inventario nel quale l'inventario accessori sarà posizionato");*/
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
+                OhmegaClientConfig.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Mostra suggerimento quando passa il cursore del mouse",
                 "Se vero, verrà visualizzato un suggerimento del tipo di index di accessori quando si passa sopra col mouse");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMNS_KEY,
                 "Numero Di Colonne Massime",
                 "Numero di colonne massime da renderizzare");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_SLOTS_KEY,
                 "Slot Massimi Per Colonna",
                 """
                         La quantità massima di index per colonna
                         Se superata, verrà creata una nuova colonna se non supera "maxColumns\"""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Slot Massimi Renderizzabili Per Colonna",
                 "La quantità massima di index da renderizzare per colonna");
 
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Server Ohmega", "Configurazione Server Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Tipi Di Slot",
                 "Definisce i tipi e il numero di index nell'inventario accessori");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Modifica");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY, "Modifica");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Associazione Tasti Tipi Di Slot",
                 "Definisce i tipi di accessori che possono essere associati ad un tasto");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Modifica");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY, "Modifica");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
+                OhmegaServerConfig.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Mantieni Comportamento Accessori",
                 """
                         Definisce come il drop degli accessori, in caso di morte del giocatore
@@ -109,7 +110,7 @@ public final class OhmegaItItProvider extends OhmegaLangProvider {
                         ALWAYS_ON: Non si perderanno mai gli accessori alla morte del giocatore
                         ALWAYS_OFF: Si perderanno sempre gli accessori alla morte del giocatore""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
+                OhmegaServerConfig.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Disabilita i Tipi D'Accessorio",
                 "Se vero, nessun tipo di accessorio sarà usato, e saranno tutti sovrascritti da \"ohmega:generic\"");
     }

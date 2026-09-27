@@ -1,10 +1,11 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
-import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.config.OhmegaConfig;
+import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
 import com.swacky.ohmega.datagen.client.lang.OhmegaLangProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -54,11 +55,11 @@ public final class OhmegaNlNlProvider extends OhmegaLangProvider {
         // Client config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Ohmega Client", "Ohmega Client Configuratie");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
+                OhmegaClientConfig.Service.COMPATIBILITY_MODE_KEY,
                 "Compatibiliteitsmodus",
                 "Schakelt wat nuttige, maar vooral onopvallende functies uit die de compatibiliteit in zeldzame gevallen verbeteren");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
+                OhmegaClientConfig.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Knop Stijl",
                 """
                         Stijl van de accessoire inventaris knop
@@ -67,42 +68,42 @@ public final class OhmegaNlNlProvider extends OhmegaLangProvider {
                         TAG: Een kleine markering die in de bovenste hoek van de inventaris staat
                         HIDDEN: Zal verborgen blijven, gebruik de toegewezen toets om de inventaris te openen""");
         /*internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
+                OhmegaClientConfig.Service.FILL_DIRECTION_KEY,
                 "Inventaris Zijde",
                 "De kant van de inventaris waar de accessoire inventaris geplaatst wordt");*/
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
+                OhmegaClientConfig.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Laat Zwevende Tooltips Zien",
                 "Indien waar, laat een tooltip scherm zien van het type accessoire vak als de muis erover zweeft");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMNS_KEY,
                 "Maximaal Aantal Kolommen",
                 "Het maximaal aantal kolommen om te renderen");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_SLOTS_KEY,
                 "Maximaal Kolom Vakken",
                 """
                         Het maximaal aantal vakken per kolom
                         Bij overschrijding zal een nieuwe kolom gemaakt worden als het niet "maxColumns" overschrijdt""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Maximaal Kolom Renderende Vakken",
                 "Het maximaal aantal slots dat per kolom wordt gerenderd");
 
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Configuratie");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Slot Types",
                 "Definieert de types en het aantal vakken in de accessoire inventaris");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Bewerken");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY, "Bewerken");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Toetsgebonden Slot Types",
                 "Definieert het type accessoires dat toetsgebonden kan worden");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Bewerken");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY, "Bewerken");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
+                OhmegaServerConfig.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Behouden van Gedrag Accessoires",
                 """
                         Definieert hoe om te gaan met sterven van spelers in de vorm van het laten vallen van accessoires
@@ -110,7 +111,7 @@ public final class OhmegaNlNlProvider extends OhmegaLangProvider {
                         ALWAYS_ON: Zal nooit de accessoires laten vallen bij sterven
                         ALWAYS_OFF: Zal altijd de accessoires laten vallen bij sterven""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
+                OhmegaServerConfig.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Accessoire Types Uitschakelen",
                 "Indien waar, zullen er geen accessoire types worden gebruikt, en worden ze allemaal overschreden en veranderd in \"ohmega:generic\"");
 

@@ -1,9 +1,10 @@
 package com.swacky.ohmega.compat.util.exclusionzone;
 
+import com.swacky.ohmega.api.client.config.ButtonStyle;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -52,9 +53,9 @@ public final class ExclusionZoneProvider {
                     rects = new ArrayList<>(2);
                 }
 
-                OhmegaConfig.Client.Service.ButtonStyle buttonStyle = OhmegaConfig.Client.getData().toggleExtensionButtonStyle().getObject();
+                ButtonStyle buttonStyle = OhmegaClientConfig.getData().toggleExtensionButtonStyle().getObject();
 
-                if (buttonStyle != null && buttonStyle != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
+                if (buttonStyle != null && buttonStyle != ButtonStyle.HIDDEN) {
                     LazyPosition buttonPosition = accessoryScreen.getAccessoryExtensionToggleButtonPosition(buttonStyle);
 
                     rects.add(new Rect2i(

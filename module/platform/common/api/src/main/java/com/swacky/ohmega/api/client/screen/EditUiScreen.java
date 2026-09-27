@@ -2,11 +2,11 @@ package com.swacky.ohmega.api.client.screen;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.util.IntLazySavedValue;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -673,7 +673,7 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
                         256,
                         256,
                         256,
-                        ARGB.white(OhmegaConfig.Client.getData().backgroundAlpha().get()));
+                        ARGB.white(OhmegaClientConfig.getData().backgroundAlpha().get()));
             }
         }
 

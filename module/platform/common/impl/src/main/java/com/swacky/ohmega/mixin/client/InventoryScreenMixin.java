@@ -1,12 +1,13 @@
 package com.swacky.ohmega.mixin.client;
 
+import com.swacky.ohmega.api.client.config.ButtonStyle;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IMixinEntityRenderingScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.client.screen.SnapLine;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -49,7 +50,7 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public @NonNull LazyPosition getAccessoryExtensionPosition() {
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
         return new LazyPosition(
                 data.survivalExtensionX(),
@@ -58,8 +59,8 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+    public @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(ButtonStyle style) {
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
         return switch (style) {
             case DEFAULT -> new LazyPosition(data.survivalToggleExtensionButtonDefaultX(), data.survivalToggleExtensionButtonDefaultY());
@@ -73,7 +74,7 @@ abstract class InventoryScreenMixin extends AbstractRecipeBookScreen<InventoryMe
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public @NonNull LazyPosition getFlipEntityButtonPosition() {
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
         return new LazyPosition(data.survivalFlipEntityButtonX(), data.survivalFlipEntityButtonY());
     }

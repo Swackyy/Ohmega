@@ -5,11 +5,11 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.event.CommonCallbacks;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import com.swacky.ohmega.api.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.common.init.OhmegaItems;
+import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
@@ -68,13 +68,13 @@ public final class CommonEvents {
     }
 
     private static void onConfigLoad(ModConfig config) {
-        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (config.getSpec() == OhmegaServerConfigImpl.getSpec()) {
             CommonCallbacks.onServerConfigLoad();
         }
     }
 
     private static void onConfigReload(ModConfig config) {
-        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (config.getSpec() == OhmegaServerConfigImpl.getSpec()) {
             CommonCallbacks.onServerConfigReload();
         }
     }

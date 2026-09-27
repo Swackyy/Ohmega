@@ -3,6 +3,8 @@ package com.swacky.ohmega.api.common.event;
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.command.OhmegaRootCommand;
+import com.swacky.ohmega.api.common.config.KeepAccessoriesBehaviour;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
@@ -10,7 +12,6 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
 import net.minecraft.commands.CommandBuildContext;
@@ -90,11 +91,11 @@ public final class CommonCallbacks {
 
     public static void onServerConfigLoad() {
         Accessories.surveyRegistry();
-        OhmegaConfig.Server.revalidateCached();
+        OhmegaServerConfig.revalidateCached();
     }
 
     public static void onServerConfigReload() {
-        OhmegaConfig.Server.getData().pull();
+        OhmegaServerConfig.getData().pull();
     }
 
     public static void onSetupAccessoryTypeManager() {
@@ -105,7 +106,7 @@ public final class CommonCallbacks {
 
     public static boolean shouldKeepInventory(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
-            OhmegaConfig.Server.Service.KeepAccessoriesBehaviour behaviour = OhmegaConfig.Server.getData().keepAccessoriesBehaviour().getObject();
+            KeepAccessoriesBehaviour behaviour = OhmegaServerConfig.getData().keepAccessoriesBehaviour().getObject();
 
             if (behaviour != null) {
                 return switch (behaviour) {

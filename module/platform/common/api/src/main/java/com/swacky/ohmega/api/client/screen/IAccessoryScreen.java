@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.config.ButtonStyle;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -44,13 +44,13 @@ public interface IAccessoryScreen {
 
     /**
      * The (x, y) position the {@link ToggleExtensionButton} will be added.
-     * You should use a {@code switch} statement to handle the case for each style (handling {@link OhmegaConfig.Client.Service.ButtonStyle#HIDDEN} is not needed,
+     * You should use a {@code switch} statement to handle the case for each style (handling {@link ButtonStyle#HIDDEN} is not needed,
      * and you should instead use a {@code case default} to finish)
      * @param style the button style currently in use
      * @return the position to add the {@link ToggleExtensionButton}
      * @apiNote Relative to {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
      */
-    @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style);
+    @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(ButtonStyle style);
 
     /**
      * A per-screen function that determines whether the extension should be shown.

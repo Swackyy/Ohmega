@@ -9,7 +9,7 @@ import java.util.function.IntSupplier;
 /**
  * Non-boxing integer implementation of {@link AbstractLazySavedValue}
  */
-public class IntLazySavedValue extends AbstractLazySavedValue<Integer> {
+public final class IntLazySavedValue extends AbstractLazySavedValue<Integer> {
     private final @Nullable IntSupplier getter;
     private final @Nullable IntBooleanBiConsumer setter;
 

@@ -15,7 +15,6 @@
     "PowderSnowBlockMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin",
-    "ServerPlayerMixin",
     "WorldLoaderMixin"
   ],
   "client": [

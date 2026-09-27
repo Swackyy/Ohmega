@@ -18,7 +18,7 @@ import com.swacky.ohmega.api.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.api.util.LogicalSide;
 import com.swacky.ohmega.common.event.CommonEvents;
 import com.swacky.ohmega.common.init.OhmegaDataAttachmentsImpl;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -48,7 +48,7 @@ public final class OhmegaMain implements ModInitializer {
         CommonEvents.bootstrap();
 
         // Config
-        ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
+        ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.SERVER, OhmegaServerConfigImpl.getSpec());
 
         // Networking
         // Send

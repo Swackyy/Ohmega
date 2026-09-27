@@ -14,7 +14,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 @JeiPlugin
-public class OhmegaJeiMain implements IModPlugin {
+public final class OhmegaJeiMain implements IModPlugin {
     @Override
     public @NonNull Identifier getPluginUid() {
         return Ohmega.id("jei");

@@ -4,6 +4,8 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.swacky.ohmega.api.client.config.ButtonStyle;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IMixinAccessoryScreen;
@@ -13,7 +15,6 @@ import com.swacky.ohmega.api.client.screen.SnapLine;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.common.menu.IAccessorySlotProvider;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -63,7 +64,7 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public @NonNull LazyPosition getAccessoryExtensionPosition() {
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
         return new LazyPosition(
                 data.creativeExtensionX(),
@@ -72,8 +73,8 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
 
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+    public @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(ButtonStyle style) {
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
         return switch (style) {
             case DEFAULT -> new LazyPosition(data.creativeToggleExtensionButtonDefaultX(), data.creativeToggleExtensionButtonDefaultY());
@@ -100,7 +101,7 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
     @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public @NonNull LazyPosition getFlipEntityButtonPosition() {
-        OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
         return new LazyPosition(data.creativeFlipEntityButtonX(), data.creativeFlipEntityButtonY());
     }

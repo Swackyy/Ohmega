@@ -1,13 +1,17 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.client.OhmegaClient;
+import com.swacky.ohmega.api.client.config.ButtonStyle;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.client.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
+import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
@@ -17,8 +21,6 @@ import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.config.OhmegaConfig;
-import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
 import com.swacky.ohmega.datagen.client.lang.OhmegaLangProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -27,6 +29,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public final class OhmegaUkUaProvider extends OhmegaLangProvider {
     private static final String SURVIVAL_INVENTORY = "інвентар виживання";
     private static final String CREATIVE_INVENTORY = "інвентар творчости";
@@ -123,18 +126,18 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         // Client
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Клієнт Ohmega", "Клієнтські налаштування Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
+                OhmegaClientConfig.Service.COMPATIBILITY_MODE_KEY,
                 "Режим сумісности",
                 """
                         Вимикає деякі корисні, але здебільшого непомітні функції, які можуть покращити сумісність модів у рідкісних випадках""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_KEY,
+                OhmegaClientConfig.Service.SHOW_TRANSLATION_TOAST_KEY,
                 "Показати спливне повідомлення перекладу",
                 """
                         Якщо ввімкнено, буде показано спливне повідомлення з посиланням на переклади Ohmega на Crowdin при приєднанні до світу.
                         Це автоматично вимикається після першого спливного вікна, тому воно показується лише один раз""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
+                OhmegaClientConfig.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Перемкнути стиль кнопки розширення",
                 """
                         Стиль кнопки розширення для аксесуарів
@@ -144,204 +147,204 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
                         TAG_RIGHT: Маленька кнопка у вигляді ярлика, що з’являється біля верхнього правого кута інвентарю
                         HIDDEN: Не показується, для відкриття розширення аксесуарів використовуйте призначену клавішу""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
+                OhmegaClientConfig.Service.ACCESSORY_EXTENSION_ID_KEY,
                 "ID розширення аксесуара",
                 """
                         Тип розширення аксесуара для використання, інші моди можуть реєструвати спеціальні розширення аксесуарів, які можна вибрати тут""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
+                OhmegaClientConfig.Service.FILL_DIRECTION_KEY,
                 "Напрямок заповнення",
                 """
                         Напрямок, у якому будуть заповнюватися слоти для аксесуарів""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMNS_KEY,
                 "Макс. стовпців",
                 """
                         Максимальна кількість стовпців для промальовування""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_SLOTS_KEY,
                 "Макс. слотів для стовпців",
                 """
                         Максимальна кількість слотів на стовпець.
                         Якщо перевищено, буде створено новий стовпець, якщо він не перевищує «maxColumns»""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Макс. слотів для промальовування стовпців",
                 """
                         Максимальна кількість слотів для промальовування в стовпцю""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
+                OhmegaClientConfig.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Показати спливну підказку наведення",
                 """
                         Якщо ввімкнено, буде видно спливну підказку типу слота для аксесуарів, коли на нього наведено курсор""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
+                OhmegaClientConfig.Service.RENDER_ACCESSORIES_KEY,
                 "Промальовування аксесуарів",
                 """
                         Глобальний параметр промальовування аксесуарів. Якщо ввімкнено, промальовуватиме аксесуари на сутностях, коли це доречно, або не промальовуватиме їх зовсім, якщо вимкнено""");
         // Edit UI
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_EDIT_UI,
+                OhmegaClientConfig.Service.SECTION_EDIT_UI,
                 "Редагувати інтерфейс",
                 """
                         Містить певні значення налаштування, що стосуються редагування інтерфейсу""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_EDIT_UI, "Редагувати");
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_EDIT_UI, "Редагувати");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BACKGROUND_ALPHA_KEY,
+                OhmegaClientConfig.Service.BACKGROUND_ALPHA_KEY,
                 "Прозорість тла",
                 """
                         Значення прозорости для тла інтерфейсу редагування""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAGNETICS_STRENGTH_KEY,
+                OhmegaClientConfig.Service.MAGNETICS_STRENGTH_KEY,
                 "Сила магнетизму",
                 """
                         Максимальна відстань у пікселях, у межах якої магнітні лінії враховуються для захоплення""");
         // Positions
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
+                OhmegaClientConfig.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
                 "Перемкнути кнопку розширення",
                 """
                         Містить позиції для перемикання кнопки розширення""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Редагувати");
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Редагувати");
         // Survival
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_POSITIONS,
+                OhmegaClientConfig.Service.SECTION_POSITIONS,
                 "Позиція",
                 """
                         Керує розташуванням певних елементів Ohmega на різних екранах""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_POSITIONS, "Редагувати");
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_POSITIONS, "Редагувати");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_SURVIVAL,
+                OhmegaClientConfig.Service.SECTION_SURVIVAL,
                 "Інвентар виживання",
                 """
                         Містить позиції для інвентарю виживання""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_SURVIVAL, "Редагувати");
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_SURVIVAL, "Редагувати");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_EXTENSION_X_KEY,
                 "Розширення X",
-                OhmegaConfig.Client.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_EXTENSION_Y_KEY,
                 "Розширення Y",
-                OhmegaConfig.Client.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Перемкнути усталене розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.DEFAULT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Перемкнути усталене розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.DEFAULT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Перемкнути старе розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.LEGACY.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Перемкнути старе розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.LEGACY.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Перемкнути лівий теґ розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_LEFT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Перемкнути лівий теґ розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_LEFT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Перемкнути правий теґ розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_RIGHT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Перемкнути правий теґ розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_RIGHT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY,
                 "Змінити X кнопки сутности",
-                OhmegaConfig.Client.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Змінити Y кнопки сутности",
-                OhmegaConfig.Client.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
         // Creative
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_CREATIVE,
+                OhmegaClientConfig.Service.SECTION_CREATIVE,
                 "Інвентар творчости",
                 """
                         Містить позицію для інвентарю творчости""");
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_CREATIVE, "Редагувати");
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_CREATIVE, "Редагувати");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_EXTENSION_X_KEY,
                 "Розширення X",
-                OhmegaConfig.Client.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_EXTENSION_Y_KEY,
                 "Розширення Y",
-                OhmegaConfig.Client.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Перемкнути усталене розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.DEFAULT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Перемкнути усталене розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.DEFAULT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Перемкнути старе розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.LEGACY.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Перемкнути старе розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.LEGACY.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Перемкнути лівий теґ розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_LEFT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Перемкнути лівий теґ розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_LEFT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Перемкнути правий теґ розширення X кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_RIGHT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Перемкнути правий теґ розширення Y кнопки",
-                OhmegaConfig.Client.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, OhmegaConfig.Client.Service.ButtonStyle.TAG_RIGHT.name));
+                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_KEY,
                 "Змінити X кнопки сутности",
-                OhmegaConfig.Client.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Змінити Y кнопки сутности",
-                OhmegaConfig.Client.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
+                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
 
         // Server
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Сервер Ohmega", "Серверні налаштування Ohmega");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Усталені типи слотів",
                 """
                         Визначає типи та кількість слотів, що використовуються усталено для інвентарю аксесуарів""");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Редагувати");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY, "Редагувати");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
                 "Зменшити усталені типи слотів",
                 """
                         Якщо ввімкнено, усталені типи слотів автоматично скорочуватимуться відповідно до типів зареєстрованих предметів.
                         Це означає, що якщо певний тип аксесуара існує, але жоден предмет не має відповідного теґу, усі екземпляри цього типу будуть видалені зі списку усталених слотів""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Типи слотів, прив’язані до клавіш",
                 """
                         Керує типами аксесуарів, які можна прив'язати до клавіші""");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Редагувати");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY, "Редагувати");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
+                OhmegaServerConfig.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Зберігати поведінку аксесуарів",
                 """
                         Керує тим, як упоратися зі смертю гравця з точки зору викидання аксесуарів.
@@ -349,17 +352,17 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
                         ALWAYS_ON: ніколи не викидає аксесуари після смерти.
                         ALWAYS_OFF: завжди викидає аксесуари після смерти""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
+                OhmegaServerConfig.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Вимкнути типи аксесуарів",
                 """
                         Якщо ввімкнено, фактично жодні типи аксесуарів не використовуватимуться, і всі вони будуть перевизначені, змінюючи їх усі на «ohmega:generic»""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
+                OhmegaServerConfig.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Дозволити приховування аксесуарів",
                 """
                         Завадить гравцям перемикати видимість своїх аксесуарів, якщо вимкнено, щоб вони завжди промальовувалися""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
+                OhmegaServerConfig.Service.INJECT_VANILLA_CLEAR_KEY,
                 "Додати до стандартного очищення",
                 """
                         Додає операцію очищення аксесуарів до стандартного коду очищення""");
@@ -420,6 +423,7 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
         internalHelper.add(OhmegaBinds.CATEGORY_MAIN, "Ohmega");
+        //internalHelper.add(OhmegaBinds.CATEGORY_ACCESSORY_TYPES, "Ohmega - Accessory Types");
         internalHelper.add(OhmegaBinds.EDIT_MAGNETICS, "Редагувати інтерфейс Magnetics");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_DOWN, "Змістити вниз");
         internalHelper.add(OhmegaBinds.EDIT_NUDGE_LEFT, "Змістити вліво");

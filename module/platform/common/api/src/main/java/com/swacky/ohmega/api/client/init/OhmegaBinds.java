@@ -5,9 +5,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.swacky.ohmega.api.client.OhmegaClient;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -62,7 +62,7 @@ public final class OhmegaBinds {
         LocalPlayer player = Minecraft.getInstance().player;
 
         if (player != null) {
-            ImmutableSet<AccessoryType> keyBoundSlotTypes = OhmegaConfig.Server.getKeyboundSlotTypes();
+            ImmutableSet<AccessoryType> keyBoundSlotTypes = OhmegaServerConfig.getKeyboundSlotTypes();
             int keyboundSize = keyBoundSlotTypes.size();
             SLOT_KEYS = new HashMap<>(keyboundSize);
             IdentityHashMap<AccessoryType, Integer> typeCountMap = new IdentityHashMap<>(keyboundSize);
@@ -70,7 +70,7 @@ public final class OhmegaBinds {
             int slotsSize = data.size();
             ORDERED_SLOT_KEYS = new ArrayList<>(slotsSize);
 
-            if (OhmegaConfig.Server.getData().disableAccessoryTypes().get()) {
+            if (OhmegaServerConfig.getData().disableAccessoryTypes().get()) {
                 for (int i = 0; i < slotsSize; i++) {
                     addMapping(AccessoryType.GENERIC.get(), i, GLFW.GLFW_KEY_UNKNOWN);
                 }

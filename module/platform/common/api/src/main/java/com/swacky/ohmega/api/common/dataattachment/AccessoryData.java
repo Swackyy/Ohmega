@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -12,7 +13,6 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
 import com.swacky.ohmega.api.network.S2C.SyncSlotsPacket;
@@ -94,7 +94,7 @@ public final class AccessoryData {
      * </ul>
      */
     public AccessoryData() {
-        List<AccessoryType> types = OhmegaConfig.Server.getDefaultSlotTypes();
+        List<AccessoryType> types = OhmegaServerConfig.getDefaultSlotTypes();
         int size = types.size();
         ArrayList<AccessoryDataEntry> entries = new ArrayList<>(size);
 
@@ -302,7 +302,7 @@ public final class AccessoryData {
             if (isTrackingDefault()) {
                 DEFAULT_TRACKERS.add(entity);
 
-                if (!typesCache.equals(OhmegaConfig.Server.getDefaultSlotTypes())) {
+                if (!typesCache.equals(OhmegaServerConfig.getDefaultSlotTypes())) {
                     defaultSlots(entity, EquipContext.ATTACH);
                 }
             }

@@ -1,9 +1,9 @@
 package com.swacky.ohmega.api.client.ui;
 
 import com.swacky.ohmega.api.client.OhmegaClient;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.NonNull;
@@ -59,7 +59,7 @@ public final class AccessoryExtensions {
      * @return the currently in-use menu extension factory
      */
     public static AccessoryMenuExtension.@NonNull Factory getActiveMenuFactory() {
-        String rawId = OhmegaConfig.Client.getData().accessoryExtensionId().getObject();
+        String rawId = OhmegaClientConfig.getData().accessoryExtensionId().getObject();
 
         if (rawId != null) {
             Identifier id = Identifier.tryParse(rawId);
@@ -77,7 +77,7 @@ public final class AccessoryExtensions {
      * @return the currently in-use menu extension factory
      */
     public static AccessoryScreenExtension.@NonNull Factory getActiveScreenFactory() {
-        String rawId = OhmegaConfig.Client.getData().accessoryExtensionId().getObject();
+        String rawId = OhmegaClientConfig.getData().accessoryExtensionId().getObject();
 
         if (rawId != null) {
             Identifier id = Identifier.tryParse(rawId);

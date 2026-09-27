@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Non-boxing byte implementation of {@link AbstractLazySavedValue}
  */
-public class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
+public final class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
     private final @Nullable ByteSupplier getter;
     private final @Nullable ByteBooleanBiConsumer setter;
 

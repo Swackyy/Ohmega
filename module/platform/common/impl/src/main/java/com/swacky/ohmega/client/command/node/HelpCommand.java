@@ -7,7 +7,7 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
 
 // todo: write this
-public class HelpCommand implements IClientCommandNode {
+public final class HelpCommand implements IClientCommandNode {
     public static final String ELEMENT_ROOT = "help";
 
     public <T extends SharedSuggestionProvider> HelpCommand(CommandBuildContext context, LiteralArgumentBuilder<T> builder, IClientCommandSource.Factory<T> sourceFactory) {

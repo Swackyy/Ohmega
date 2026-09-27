@@ -1,13 +1,13 @@
 package com.swacky.ohmega.api.client.item;
 
-import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -62,7 +62,7 @@ public final class AccessoryHelper {
             boolean flag = false;
 
             if (accessory != null) {
-                for (AccessoryType keyboundType : OhmegaConfig.Server.getKeyboundSlotTypes()) {
+                for (AccessoryType keyboundType : OhmegaServerConfig.getKeyboundSlotTypes()) {
                     if (data.getTypes().contains(keyboundType)) {
                         flag = true;
                         break;

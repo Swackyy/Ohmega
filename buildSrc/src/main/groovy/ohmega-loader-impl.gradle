@@ -3,6 +3,9 @@ plugins {
     id "ohmega-platform-impl"
 }
 
+// Fixes some strange behaviour
+evaluationDependsOn apiProject().path
+
 repositories {
     maven {
         name = "Modrinth"

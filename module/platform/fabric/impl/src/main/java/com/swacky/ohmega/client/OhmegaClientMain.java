@@ -13,13 +13,13 @@ import com.swacky.ohmega.api.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.api.network.S2C.SyncTypesPacket;
 import com.swacky.ohmega.api.util.LogicalSide;
+import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
 import com.swacky.ohmega.client.event.ClientEvents;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.OhmegaMain;
 import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -42,7 +42,7 @@ public final class OhmegaClientMain implements ClientModInitializer {
         ClientEvents.bootstrap();
 
         // Config
-        ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.CLIENT, OhmegaConfigImpl.Client.getSpec());
+        ConfigRegistry.INSTANCE.register(Ohmega.MODID, ModConfig.Type.CLIENT, OhmegaClientConfigImpl.getSpec());
         ConfigScreenFactoryRegistry.INSTANCE.register(Ohmega.MODID, (modId, parentScreen) -> {
             ConfigurationScreen configScreen = new ConfigurationScreen(modId, parentScreen);
 

@@ -4,11 +4,11 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.event.CommonCallbacks;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
+import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import com.swacky.ohmega.common.dataattachment.AccessoryDataProvider;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,14 +48,14 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onConfigLoad(ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (event.getConfig().getSpec() == OhmegaServerConfigImpl.getSpec()) {
             CommonCallbacks.onServerConfigLoad();
         }
     }
 
     @SubscribeEvent
     public static void onConfigReload(ModConfigEvent.Reloading event) {
-        if (event.getConfig().getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (event.getConfig().getSpec() == OhmegaServerConfigImpl.getSpec()) {
             CommonCallbacks.onServerConfigReload();
         }
     }

@@ -1,10 +1,10 @@
 package com.swacky.ohmega.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -20,7 +20,7 @@ abstract class RecipeBookComponentMixin implements GuiEventListener, Renderable,
             at = @At(
                     value = "RETURN"))
     private int updateScreenPosition(int original) {
-        if (OhmegaConfig.Client.getData().compatibilityMode().get()) {
+        if (OhmegaClientConfig.getData().compatibilityMode().get()) {
             Screen screen = AccessoryScreens.getEffectiveScreen();
 
             if (screen instanceof IAccessoryScreen accessoryScreen) {

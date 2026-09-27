@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.common.dataattachment;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
@@ -11,7 +12,6 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.network.C2S.SetHiddenPacket;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
@@ -183,7 +183,7 @@ public final class AccessoryDataEntry {
      * @param index the slot index of this data entry
      */
     public void toggleHidden(@NonNull LivingEntity entity, int index) {
-        if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
+        if (OhmegaServerConfig.getData().allowHideAccessories().get()) {
             hidden = !hidden;
 
             if (entity.level().isClientSide()) {

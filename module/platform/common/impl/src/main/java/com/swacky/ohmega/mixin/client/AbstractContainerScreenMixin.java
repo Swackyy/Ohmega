@@ -3,13 +3,13 @@ package com.swacky.ohmega.mixin.client;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
 import com.swacky.ohmega.api.common.menu.IAccessorySlotProvider;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
@@ -105,7 +105,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
                 return;
             }
 
-            if (OhmegaConfig.Client.getData().showHoverTooltip().get() && hoveredSlot instanceof IAccessorySlotProvider provider) {
+            if (OhmegaClientConfig.getData().showHoverTooltip().get() && hoveredSlot instanceof IAccessorySlotProvider provider) {
                 AccessorySlot slot = provider.getAccessorySlot();
 
                 if (slot.getType().displayHoverText() && !slot.hasItem() && menu.getCarried().isEmpty()) {
@@ -141,7 +141,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
             at = @At(
                     value = "INVOKE", target = "Ljava/util/List;clear()V"))
     private void init(CallbackInfo ci) {
-        if (OhmegaConfig.Client.getData().compatibilityMode().get() && this instanceof IAccessoryScreen screen) {
+        if (OhmegaClientConfig.getData().compatibilityMode().get() && this instanceof IAccessoryScreen screen) {
             AccessoryScreenExtension extension = screen.getAccessoryExtension();
 
             if (extension != null && screen.isAccessoryExtensionVisible()) {

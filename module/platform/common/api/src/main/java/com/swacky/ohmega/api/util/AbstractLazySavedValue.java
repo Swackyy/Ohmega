@@ -6,7 +6,8 @@ import org.jspecify.annotations.Nullable;
  * Templates a 2-way lazy saved value scheme, allowing for lazily fetching an initial value and having deferred serialisation
  * @param <T> the value type to store, possibly primitive and in such a case the primitive-specific implementations should be used when applicable
  */
-public abstract class AbstractLazySavedValue<T> {
+public sealed abstract class AbstractLazySavedValue<T> permits BooleanLazySavedValue, ByteLazySavedValue, DoubleLazySavedValue, IntLazySavedValue,
+        LazySavedValue, LongLazySavedValue {
     protected boolean initialised = false;
 
     /**

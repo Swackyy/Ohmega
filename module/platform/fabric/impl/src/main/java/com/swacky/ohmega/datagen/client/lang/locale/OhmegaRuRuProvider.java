@@ -1,10 +1,11 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
-import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.config.OhmegaConfig;
+import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
 import com.swacky.ohmega.datagen.client.lang.OhmegaLangProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -18,6 +19,7 @@ public final class OhmegaRuRuProvider extends OhmegaLangProvider {
         super(output, "ru_ru", lookup);
     }
 
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
         InternalLangHelper internalHelper = new InternalLangHelper(builder);
@@ -52,11 +54,11 @@ public final class OhmegaRuRuProvider extends OhmegaLangProvider {
         // Client config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Ohmega Клиент", "Конфигурация Ohmega Клиент");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
+                OhmegaClientConfig.Service.COMPATIBILITY_MODE_KEY,
                 "Режим Совместимости",
                 "Отключает некоторые полезные, но малозаметные функции, которые могут улучшить совместимость с другими модами в редких случаях");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
+                OhmegaClientConfig.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Стиль Кнопки",
                 """
                         Стиль кнопки, открывающей панель аксессуаров
@@ -65,42 +67,42 @@ public final class OhmegaRuRuProvider extends OhmegaLangProvider {
                         TAG: Маленькая кнопка-ярлык, выступающая за верхний угол инвентаря
                         HIDDEN: Не отображать. Вместо кнопки использовать горячую клавишу для открытия панели аксессуаров""");
         /*internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
+                OhmegaClientConfig.Service.FILL_DIRECTION_KEY,
                 "Сторона Панели",
                 "Сторона, с которой панель аксессуаров будет отображаться");*/
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
+                OhmegaClientConfig.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Отображать Подсказку При Наведении",
                 "Если включено, при наведении на аксессуар будет отображаться подсказка с его типом");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMNS_KEY,
                 "Максимум Столбцов",
                 "Максимальное количество отображаемых столбцов");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_SLOTS_KEY,
                 "Максимум Ячеек в Столбце",
                 """
                         Максимальное количество ячеек в одном столбце
                         Если превышено, будет создана новая колонка, если не превышено максимальное количество столбцов""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Максимум Видимых Ячеек в Столбце",
                 "Максимальное количество отображаемых ячеек в одном столбце");
 
         // Server config
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Сервер", "Конфигурация Ohmega Сервер");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Типы Ячеек",
                 "Определяет типы и количество ячеек для аксессуаров");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Изменить");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY, "Изменить");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Типы Слотов с Горячей Клавишей",
                 "Определяет типы аксессуаров, которые могут быть использованы с помощью горячей клавиши");
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Изменить");
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY, "Изменить");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
+                OhmegaServerConfig.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Поведение Аксессуаров При Смерти",
                 """
                         Определяет поведение аксессуаров в случае смерти игрока
@@ -108,7 +110,7 @@ public final class OhmegaRuRuProvider extends OhmegaLangProvider {
                         ALWAYS_ON: Никогда не выпадать при смерти
                         ALWAYS_OFF: Всегда выпадать при смерти""");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
+                OhmegaServerConfig.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Не Использовать Типы Аксессуаров",
                 "Если включено, типы аксессуаров не будут использоваться, и все они будут перезаписаны с заменой на \"ohmega:generic\"");
 

@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
-import com.swacky.ohmega.api.config.OhmegaConfig;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 
 /**
  * Represents a line where magnetics should try to snap onto
@@ -16,7 +16,7 @@ public record SnapLine(boolean vertical, int value) {
      */
     public int test(int testValue, int delta) {
         int startDistance = Math.abs(testValue - value);
-        int maximumDistance = OhmegaConfig.Client.getData().magneticsStrength().get();
+        int maximumDistance = OhmegaClientConfig.getData().magneticsStrength().get();
         int closestDistance = Integer.MAX_VALUE;
         int returnValue = -1;
         int centreDistance = Math.abs(testValue + delta / 2 - value);

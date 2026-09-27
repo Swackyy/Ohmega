@@ -1,6 +1,7 @@
 package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.renderer.HumanoidRenderContext;
@@ -8,9 +9,9 @@ import com.swacky.ohmega.api.client.renderer.IHumanoidAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.ILivingAccessoryRenderer;
 import com.swacky.ohmega.api.client.renderer.LivingRenderContext;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.event.OhmegaHooks;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
@@ -39,13 +40,13 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
     @SuppressWarnings("unchecked")
     @Override
     public void submit(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, int packedLight, @NonNull T state, float yRot, float xRot) {
-        if (OhmegaConfig.Client.getData().renderAccessories().get()) {
+        if (OhmegaClientConfig.getData().renderAccessories().get()) {
             AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
             if (data != null && !OhmegaHooks.renderAccessoryLayer(state, poseStack)) {
                 SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
                 ArrayList<AccessoryDataEntry> entries = data.entries();
-                boolean flag = OhmegaConfig.Server.isLoaded() && OhmegaConfig.Server.getData().allowHideAccessories().get();
+                boolean flag = OhmegaServerConfig.isLoaded() && OhmegaServerConfig.getData().allowHideAccessories().get();
 
                 for (AccessoryDataEntry entry : entries) {
                     ItemStack stack = entry.getStack();

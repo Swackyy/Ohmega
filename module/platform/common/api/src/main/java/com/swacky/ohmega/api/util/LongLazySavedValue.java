@@ -9,7 +9,7 @@ import java.util.function.LongSupplier;
 /**
  * Non-boxing long implementation of {@link AbstractLazySavedValue}
  */
-public class LongLazySavedValue extends AbstractLazySavedValue<Long> {
+public final class LongLazySavedValue extends AbstractLazySavedValue<Long> {
     private final @Nullable LongSupplier getter;
     private final @Nullable LongBooleanBiConsumer setter;
 

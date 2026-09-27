@@ -1,15 +1,15 @@
 package com.swacky.ohmega.datagen.client.lang.locale;
 
 import com.swacky.ohmega.api.client.OhmegaClient;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
-import com.swacky.ohmega.api.client.init.OhmegaBinds;
-import com.swacky.ohmega.common.init.OhmegaItems;
-import com.swacky.ohmega.api.config.OhmegaConfig;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
@@ -19,6 +19,7 @@ import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.datagen.client.lang.InternalLangHelper;
 import com.swacky.ohmega.datagen.client.lang.OhmegaLangProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -113,211 +114,211 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         // Client
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_CLIENT, "Ohmega Client", "Ohmega Client Config");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_KEY,
+                OhmegaClientConfig.Service.COMPATIBILITY_MODE_KEY,
                 "Compatibility Mode",
-                OhmegaConfig.Client.Service.COMPATIBILITY_MODE_DESCRIPTION);
+                OhmegaClientConfig.Service.COMPATIBILITY_MODE_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_KEY,
+                OhmegaClientConfig.Service.SHOW_TRANSLATION_TOAST_KEY,
                 "Show Translation Toast",
-                OhmegaConfig.Client.Service.SHOW_TRANSLATION_TOAST_DESCRIPTION);
+                OhmegaClientConfig.Service.SHOW_TRANSLATION_TOAST_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
+                OhmegaClientConfig.Service.TOGGLE_EXTENSION_BUTTON_STYLE_KEY,
                 "Toggle Extension Button Style",
-                OhmegaConfig.Client.Service.TOGGLE_EXTENSION_BUTTON_STYLE_DESCRIPTION);
+                OhmegaClientConfig.Service.TOGGLE_EXTENSION_BUTTON_STYLE_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_KEY,
+                OhmegaClientConfig.Service.ACCESSORY_EXTENSION_ID_KEY,
                 "Accessory Extension ID",
-                OhmegaConfig.Client.Service.ACCESSORY_EXTENSION_ID_DESCRIPTION);
+                OhmegaClientConfig.Service.ACCESSORY_EXTENSION_ID_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.FILL_DIRECTION_KEY,
+                OhmegaClientConfig.Service.FILL_DIRECTION_KEY,
                 "Fill direction",
-                OhmegaConfig.Client.Service.FILL_DIRECTION_DESCRIPTION);
+                OhmegaClientConfig.Service.FILL_DIRECTION_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMNS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMNS_KEY,
                 "Max Columns",
-                OhmegaConfig.Client.Service.MAX_COLUMNS_DESCRIPTION);
+                OhmegaClientConfig.Service.MAX_COLUMNS_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_SLOTS_KEY,
                 "Max Column Slots",
-                OhmegaConfig.Client.Service.MAX_COLUMN_SLOTS_DESCRIPTION);
+                OhmegaClientConfig.Service.MAX_COLUMN_SLOTS_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
+                OhmegaClientConfig.Service.MAX_COLUMN_RENDER_SLOTS_KEY,
                 "Max Column Render Slots",
-                OhmegaConfig.Client.Service.MAX_COLUMN_RENDER_SLOTS_DESCRIPTION);
+                OhmegaClientConfig.Service.MAX_COLUMN_RENDER_SLOTS_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_KEY,
+                OhmegaClientConfig.Service.SHOW_HOVER_TOOLTIP_KEY,
                 "Show Hover Tooltip",
-                OhmegaConfig.Client.Service.SHOW_HOVER_TOOLTIP_DESCRIPTION);
+                OhmegaClientConfig.Service.SHOW_HOVER_TOOLTIP_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_KEY,
+                OhmegaClientConfig.Service.RENDER_ACCESSORIES_KEY,
                 "Render Accessories",
-                OhmegaConfig.Client.Service.RENDER_ACCESSORIES_DESCRIPTION);
+                OhmegaClientConfig.Service.RENDER_ACCESSORIES_DESCRIPTION);
         // Edit UI
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_EDIT_UI,
+                OhmegaClientConfig.Service.SECTION_EDIT_UI,
                 "Edit UI",
-                OhmegaConfig.Client.Service.SECTION_EDIT_UI_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_EDIT_UI, "Edit");
+                OhmegaClientConfig.Service.SECTION_EDIT_UI_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_EDIT_UI, "Edit");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.BACKGROUND_ALPHA_KEY,
+                OhmegaClientConfig.Service.BACKGROUND_ALPHA_KEY,
                 "Background Alpha",
-                OhmegaConfig.Client.Service.BACKGROUND_ALPHA_DESCRIPTION);
+                OhmegaClientConfig.Service.BACKGROUND_ALPHA_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.MAGNETICS_STRENGTH_KEY,
+                OhmegaClientConfig.Service.MAGNETICS_STRENGTH_KEY,
                 "Magnetics Strength",
-                OhmegaConfig.Client.Service.MAGNETICS_STRENGTH_DESCRIPTION);
+                OhmegaClientConfig.Service.MAGNETICS_STRENGTH_DESCRIPTION);
         // Positions
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
+                OhmegaClientConfig.Service.SECTION_TOGGLE_EXTENSION_BUTTON,
                 "Toggle Extension Button",
-                OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Edit");
+                OhmegaClientConfig.Service.SECTION_TOGGLE_EXTENSION_BUTTON_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_TOGGLE_EXTENSION_BUTTON, "Edit");
         // Survival
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_POSITIONS,
+                OhmegaClientConfig.Service.SECTION_POSITIONS,
                 "Positions",
-                OhmegaConfig.Client.Service.SECTION_POSITIONS_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_POSITIONS, "Edit");
+                OhmegaClientConfig.Service.SECTION_POSITIONS_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_POSITIONS, "Edit");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_SURVIVAL,
+                OhmegaClientConfig.Service.SECTION_SURVIVAL,
                 "Survival Inventory",
-                OhmegaConfig.Client.Service.SECTION_SURVIVAL_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_SURVIVAL, "Edit");
+                OhmegaClientConfig.Service.SECTION_SURVIVAL_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_SURVIVAL, "Edit");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_EXTENSION_X_KEY,
                 "Extension X",
-                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_X_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_EXTENSION_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_EXTENSION_Y_KEY,
                 "Extension Y",
-                OhmegaConfig.Client.Service.SURVIVAL_EXTENSION_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_EXTENSION_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Toggle Extension Button Default X",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Toggle Extension Button Default Y",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Toggle Extension Button Legacy X",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Toggle Extension Button Legacy Y",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Toggle Extension Button Tag Left X",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Toggle Extension Button Tag Left Y",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Toggle Extension Button Tag Right X",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Toggle Extension Button Tag Right Y",
-                OhmegaConfig.Client.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY,
                 "Flip Entity Button X",
-                OhmegaConfig.Client.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY,
+                OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Flip Entity Button Y",
-                OhmegaConfig.Client.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_DESCRIPTION);
         // Creative
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.SECTION_CREATIVE,
+                OhmegaClientConfig.Service.SECTION_CREATIVE,
                 "Creative Inventory",
-                OhmegaConfig.Client.Service.SECTION_CREATIVE_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Client.Service.SECTION_CREATIVE, "Edit");
+                OhmegaClientConfig.Service.SECTION_CREATIVE_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaClientConfig.Service.SECTION_CREATIVE, "Edit");
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_EXTENSION_X_KEY,
                 "Extension X",
-                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_X_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_EXTENSION_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_EXTENSION_Y_KEY,
                 "Extension Y",
-                OhmegaConfig.Client.Service.CREATIVE_EXTENSION_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_EXTENSION_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Toggle Extension Button Default X",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Toggle Extension Button Default Y",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Toggle Extension Button Legacy X",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Toggle Extension Button Legacy Y",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Toggle Extension Button Tag Left X",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Toggle Extension Button Tag Left Y",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Toggle Extension Button Tag Right X",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Toggle Extension Button Tag Right Y",
-                OhmegaConfig.Client.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_KEY,
+                OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_KEY,
                 "Flip Entity Button X",
-                OhmegaConfig.Client.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Client.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY,
+                OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Flip Entity Button Y",
-                OhmegaConfig.Client.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_DESCRIPTION);
+                OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_DESCRIPTION);
 
         // Server
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Server", "Ohmega Server Config");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY,
                 "Default Slot Types",
-                OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.DEFAULT_SLOT_TYPES_KEY, "Edit");
+                OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.DEFAULT_SLOT_TYPES_KEY, "Edit");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.SHRINK_DEFAULT_SLOT_TYPES_KEY,
                 "Shrink Default Slot Types",
-                OhmegaConfig.Server.Service.SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION);
+                OhmegaServerConfig.Service.SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY,
+                OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY,
                 "Key-bound Slot Types",
-                OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_DESCRIPTION);
-        internalHelper.addConfigButton(OhmegaConfig.Server.Service.KEYBOUND_SLOT_TYPES_KEY, "Edit");
+                OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_DESCRIPTION);
+        internalHelper.addConfigButton(OhmegaServerConfig.Service.KEYBOUND_SLOT_TYPES_KEY, "Edit");
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
+                OhmegaServerConfig.Service.KEEP_ACCESSORIES_BEHAVIOUR_KEY,
                 "Keep Accessories Behaviour",
-                OhmegaConfig.Server.Service.KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION);
+                OhmegaServerConfig.Service.KEEP_ACCESSORIES_BEHAVIOUR_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_KEY,
+                OhmegaServerConfig.Service.DISABLE_ACCESSORY_TYPES_KEY,
                 "Disable Accessory Types",
-                OhmegaConfig.Server.Service.DISABLE_ACCESSORY_TYPES_DESCRIPTION);
+                OhmegaServerConfig.Service.DISABLE_ACCESSORY_TYPES_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_KEY,
+                OhmegaServerConfig.Service.ALLOW_HIDE_ACCESSORIES_KEY,
                 "Allow Hide Accessories",
-                OhmegaConfig.Server.Service.ALLOW_HIDE_ACCESSORIES_DESCRIPTION);
+                OhmegaServerConfig.Service.ALLOW_HIDE_ACCESSORIES_DESCRIPTION);
         internalHelper.addConfigOption(
-                OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_KEY,
+                OhmegaServerConfig.Service.INJECT_VANILLA_CLEAR_KEY,
                 "Inject Vanilla Clear",
-                OhmegaConfig.Server.Service.INJECT_VANILLA_CLEAR_DESCRIPTION);
+                OhmegaServerConfig.Service.INJECT_VANILLA_CLEAR_DESCRIPTION);
 
         // ConfigurationScreen Forge port UI translations
         // Titles

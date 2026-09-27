@@ -3,6 +3,9 @@ package com.swacky.ohmega.api.client.event;
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.command.OhmegaClientRootCommand;
+import com.swacky.ohmega.api.client.config.ButtonStyle;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.item.AccessoryHelper;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
@@ -16,15 +19,14 @@ import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.event.CommonCallbacks;
-import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.util.BooleanLazySavedValue;
@@ -80,9 +82,11 @@ public final class ClientCallbacks {
     }
 
     public static void onClientConfigReload() {
-        OhmegaConfig.Client.getData().pull();
+        OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
 
-        if (!OhmegaConfig.Client.getData().compatibilityMode().get()) {
+        data.pull();
+
+        if (!data.compatibilityMode().get()) {
             Minecraft mc = Minecraft.getInstance();
             LocalPlayer player = mc.player;
             Gui gui = mc.gui;
@@ -121,7 +125,7 @@ public final class ClientCallbacks {
     }
 
     public static void onItemTooltip(ItemStack stack, List<Component> tooltip) {
-        if (!OhmegaConfig.Server.getData().disableAccessoryTypes().get() && Accessories.isBound(stack.getItem())) {
+        if (!OhmegaServerConfig.getData().disableAccessoryTypes().get() && Accessories.isBound(stack.getItem())) {
             tooltip.add(AccessoryHelper.getTypeTooltip(stack.getItem()));
         }
     }
@@ -129,7 +133,7 @@ public final class ClientCallbacks {
     public static void onJoinWorld(Minecraft mc) {
         CommonCallbacks.onSetupAccessoryTypeManager();
 
-        BooleanLazySavedValue option = OhmegaConfig.Client.getData().showTranslationToast();
+        BooleanLazySavedValue option = OhmegaClientConfig.getData().showTranslationToast();
 
         if (option.get()) {
             mc.gui.toastManager().addToast(new SystemToast(
@@ -178,7 +182,7 @@ public final class ClientCallbacks {
                 }
 
                 List<KeyMapping> mappings = OhmegaBinds.getMappings();
-                Set<AccessoryType> keyboundSlotTypes = OhmegaConfig.Server.getKeyboundSlotTypes();
+                Set<AccessoryType> keyboundSlotTypes = OhmegaServerConfig.getKeyboundSlotTypes();
                 AccessoryData data = OhmegaDataAttachments.getData(player);
 
                 if (mappings.isEmpty() || keyboundSlotTypes.isEmpty() || data.isEmpty()) {
@@ -228,12 +232,12 @@ public final class ClientCallbacks {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
             if (extension != null) {
-                OhmegaConfig.Client.Service.ButtonStyle style = OhmegaConfig.Client.getData().toggleExtensionButtonStyle().getObject();
+                ButtonStyle style = OhmegaClientConfig.getData().toggleExtensionButtonStyle().getObject();
                 AbstractContainerScreen<?> containerScreen = extension.getScreen();
 
                 List<AccessorySlot> slots = extension.getMenuExtension().getAccessoryMenu().getSlots();
 
-                if (slots != null && !slots.isEmpty() && style != OhmegaConfig.Client.Service.ButtonStyle.HIDDEN) {
+                if (slots != null && !slots.isEmpty() && style != ButtonStyle.HIDDEN) {
                     consumer.accept(new ToggleExtensionButton(containerScreen, extension, style));
                 }
 
@@ -253,7 +257,7 @@ public final class ClientCallbacks {
     public static void onServerConfigReload(Runnable loadFunction) {
         AccessoryTypeManager.runConfigLoadTasks();
 
-        if (OhmegaConfig.Client.isLoaded()) {
+        if (OhmegaClientConfig.isLoaded()) {
             if (AccessoryTypeManager.getTypes().isEmpty()) {
                 AccessoryTypeManager.deferApply(() -> ClientCallbacks.reloadRegisteredKeybinds(loadFunction));
             } else {

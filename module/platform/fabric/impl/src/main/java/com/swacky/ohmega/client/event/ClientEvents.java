@@ -7,7 +7,8 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
-import com.swacky.ohmega.config.OhmegaConfigImpl;
+import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
+import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -59,7 +60,7 @@ public final class ClientEvents {
     }
 
     private static void onConfigLoad(ModConfig config) {
-        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (config.getSpec() == OhmegaServerConfigImpl.getSpec()) {
             AccessoryTypeManager.runConfigLoadTasks();
         }
     }
@@ -67,15 +68,15 @@ public final class ClientEvents {
     private static void onConfigReload(ModConfig config) {
         IConfigSpec spec = config.getSpec();
 
-        if (spec == OhmegaConfigImpl.Client.getSpec()) {
+        if (spec == OhmegaClientConfigImpl.getSpec()) {
             ClientCallbacks.onClientConfigReload();
-        } else if (spec == OhmegaConfigImpl.Server.getSpec()) {
+        } else if (spec == OhmegaServerConfigImpl.getSpec()) {
             ClientCallbacks.onServerConfigReload(LOAD_FUNCTION);
         }
     }
 
     private static void onConfigUnload(ModConfig config) {
-        if (config.getSpec() == OhmegaConfigImpl.Server.getSpec()) {
+        if (config.getSpec() == OhmegaServerConfigImpl.getSpec()) {
             ClientCallbacks.onServerConfigUnload(LOAD_FUNCTION);
         }
     }

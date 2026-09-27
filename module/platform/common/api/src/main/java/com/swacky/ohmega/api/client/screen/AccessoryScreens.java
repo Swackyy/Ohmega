@@ -1,12 +1,12 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.api.config.OhmegaConfig;
-import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -85,7 +85,7 @@ public final class AccessoryScreens {
 
             AccessoryScreenExtension extension = attachExtension(screen, menuExtension, accessoryScreen);
 
-            if (OhmegaConfig.Client.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
+            if (OhmegaClientConfig.getData().compatibilityMode().get() && accessoryScreen.isAccessoryExtensionVisible()) {
                 screen.imageWidth += extension.getExtraWidth();
                 screen.imageHeight += extension.getExtraHeight();
             }

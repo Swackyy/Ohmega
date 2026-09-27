@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
  * <p>
  * Adds custom splashes but merges the output with the vanilla one to prevent overriding it completely
  */
-public class OhmegaSplashProvider implements DataProvider {
+public final class OhmegaSplashProvider implements DataProvider {
     private final FabricPackOutput output;
     private final Set<String> data = new TreeSet<>();
 

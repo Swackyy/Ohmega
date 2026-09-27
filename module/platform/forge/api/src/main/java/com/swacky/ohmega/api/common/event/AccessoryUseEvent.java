@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jspecify.annotations.NonNull;
 
-public class AccessoryUseEvent extends MutableEvent implements Cancellable {
+public final class AccessoryUseEvent extends MutableEvent implements Cancellable {
     public static final CancellableEventBus<@NonNull AccessoryUseEvent> BUS = CancellableEventBus.create(AccessoryUseEvent.class);
 
     public final Player player;

@@ -11,7 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.MenuType;
 
-public class AccessorySGui extends SimpleGui {
+public final class AccessorySGui extends SimpleGui {
     private final AccessoryData data;
 
     public AccessorySGui(ServerPlayer player) {

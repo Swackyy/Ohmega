@@ -4,6 +4,7 @@ import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -12,7 +13,6 @@ import com.swacky.ohmega.api.common.item.EquipContext;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import com.swacky.ohmega.api.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.api.network.C2S.SetExtensionVisiblePacket;
 import com.swacky.ohmega.api.network.C2S.SetHiddenPacket;
@@ -75,7 +75,7 @@ public final class OhmegaNetworking {
         }
 
         public static void handleSetHidden(SetHiddenPacket packet, ServerPlayer player) {
-            if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
+            if (OhmegaServerConfig.getData().allowHideAccessories().get()) {
                 int index = packet.index();
                 boolean value = packet.value();
 

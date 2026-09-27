@@ -9,7 +9,7 @@ import java.util.function.BooleanSupplier;
 /**
  * Non-boxing boolean implementation of {@link AbstractLazySavedValue}
  */
-public class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
+public final class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
     private final @Nullable BooleanSupplier getter;
     private final @Nullable BooleanBooleanBiConsumer setter;
 

@@ -1,12 +1,14 @@
 package com.swacky.ohmega.client.screen;
 
+import com.swacky.ohmega.api.client.config.FillDirection;
+import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IEntityRenderingExtension;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -39,7 +41,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
         int size = OhmegaDataAttachments.getData(getMenuExtension().getOwner()).size();
 
         if (size > 0) {
-            OhmegaConfig.Client.Service.Data data = OhmegaConfig.Client.getData();
+            OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
             int maxRenderSlots = data.maxColumnRenderSlots().get();
             int maxColumnSlots = data.maxColumnSlots().get();
             int maxColumns = data.maxColumns().get();
@@ -55,7 +57,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
             lastColumnSlots = 0;
         }
 
-        if (OhmegaConfig.Server.getData().allowHideAccessories().get()) {
+        if (OhmegaServerConfig.getData().allowHideAccessories().get()) {
             int index = 0;
 
             for (int i = 0; i < renderColumns; i++) {
@@ -194,7 +196,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public boolean hasClickedOutside(double mx, double my) {
-        if (OhmegaConfig.Client.getData().fillDirection().getObject() == OhmegaConfig.Client.Service.FillDirection.LEFT) {
+        if (OhmegaClientConfig.getData().fillDirection().getObject() == FillDirection.LEFT) {
             // todo
         } else {
             // Left border

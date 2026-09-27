@@ -9,7 +9,7 @@ import java.util.function.DoubleSupplier;
 /**
  * Non-boxing double implementation of {@link AbstractLazySavedValue}
  */
-public class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
+public final class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
     private final @Nullable DoubleSupplier getter;
     private final @Nullable DoubleBooleanBiConsumer setter;
 

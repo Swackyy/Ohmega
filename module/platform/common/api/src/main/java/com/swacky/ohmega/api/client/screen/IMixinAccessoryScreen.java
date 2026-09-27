@@ -1,7 +1,7 @@
 package com.swacky.ohmega.api.client.screen;
 
+import com.swacky.ohmega.api.client.config.ButtonStyle;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.config.OhmegaConfig;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -29,7 +29,7 @@ public interface IMixinAccessoryScreen extends IAccessoryScreen {
     }
 
     @Override
-    default @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(OhmegaConfig.Client.Service.ButtonStyle style) {
+    default @NonNull LazyPosition getAccessoryExtensionToggleButtonPosition(ButtonStyle style) {
         throw new IllegalStateException(Ohmega.MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE);
     }
 }

@@ -15,7 +15,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-public class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBehavior {
+public final class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBehavior {
     private static final AccessoryDispenseItemBehaviour INSTANCE = new AccessoryDispenseItemBehaviour();
 
     private AccessoryDispenseItemBehaviour() {}
