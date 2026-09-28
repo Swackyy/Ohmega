@@ -1,9 +1,3 @@
-import groovy.json.JsonSlurper
-
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-
 plugins {
     id "idea"
     id "java"
@@ -31,76 +25,6 @@ if (secretsFile.exists()) {
                 key, value -> project.ext.set((String) key, value)
             }
         }
-    }
-
-    tasks.register ("publishMavenCentral") {
-        group = "publishing"
-
-        subprojects.each { sub ->
-            sub.plugins.withType(MavenPublishPlugin).configureEach {
-                dependsOn sub.tasks.named("publish")
-            }
-        }
-
-        String auth = Base64.getEncoder().encodeToString "${findProperty("secretsMavenCentralUsername")}:${findProperty("secretsMavenCentralPassword")}".getBytes()
-
-        doLast {
-            HttpClient client = HttpClient.newHttpClient()
-            HttpResponse<String> getResponse = client.send(HttpRequest.newBuilder()
-                    .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/search/repositories"))
-                    .header("Authorization", "Bearer ${auth}")
-                    .GET()
-                    .build(), HttpResponse.BodyHandlers.ofString())
-
-            // Success
-            int getStatus = getResponse.statusCode()
-
-            if (getStatus == 200) {
-                String key = new JsonSlurper().parseText(getResponse.body()).repositories[0]?.key
-
-                if (key) {
-                    HttpResponse<String> uploadResponse = client.send(HttpRequest.newBuilder()
-                            .uri(URI.create("https://ossrh-staging-api.central.sonatype.com/manual/upload/repository/${key}?publishingType=AUTOMATIC"))
-                            .header("Authorization", "Bearer ${auth}")
-                            .POST(HttpRequest.BodyPublishers.noBody())
-                            .build(), HttpResponse.BodyHandlers.ofString())
-
-                    int uploadStatus = uploadResponse.statusCode()
-
-                    if (uploadStatus == 200) {
-                        println "Successfully published to Maven Central"
-                    } else {
-                        System.err.println "Status code ${uploadStatus} -- Failed to flush and publish, reason:${uploadResponse.body()}"
-                    }
-                } else {
-                    System.err.println "No open repository found for namespace: 'io.github.swackyy'"
-                }
-            } else {
-                System.err.println "Status code ${getStatus} -- Failed to get repositories, reason:${getResponse.body()}"
-            }
-        }
-    }
-
-    evaluationDependsOn "module:platform:common"
-
-    // Publishes the mod to the following platforms:
-    // Maven central repository
-    // CurseForge
-    // Modrinth
-    // todo: this still doesn't run the datagen but it does publish ig
-    tasks.register ("completeRelease") {
-        group = "publishing"
-
-        subprojects.each { sub ->
-            //noinspection ConfigurationAvoidance
-            Task publishTask = sub.tasks.findByName "publishMods"
-
-            if (publishTask != null) {
-                dependsOn publishTask
-            }
-        }
-
-        finalizedBy "publishMavenCentral"
     }
 
     if (loaderEnabledFabric.toBoolean()) {

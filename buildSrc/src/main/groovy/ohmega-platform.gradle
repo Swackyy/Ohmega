@@ -34,25 +34,24 @@ processResources {
     }
 }
 
-File secretsFile = rootProject.file("secrets.properties")
-
-if (secretsFile.exists()) {
-    secretsFile.withInputStream {
-        stream -> {
-            Properties secrets = new Properties()
-
-            secrets.load(stream)
-            secrets.forEach {
-                key, value -> project.ext.set((String) key, value)
-            }
-        }
-    }
-
+if (rootProject.file("secrets.properties").exists()) {
     afterEvaluate {
         publishing {
+            repositories {
+                maven {
+                    name = "Novatores"
+                    url = "https://maven.novatores.net"
+
+                    credentials {
+                        username = getProperty "secretsNovatoresUsername"
+                        password = getProperty "secretsNovatoresPassword"
+                    }
+                }
+            }
+
             publications {
-                mavenJava (MavenPublication) {
-                    groupId = "io.github.swackyy"
+                maven (MavenPublication) {
+                    groupId = "com.swacky"
                     artifactId = base.archivesName.get()
 
                     from components.java
@@ -88,7 +87,7 @@ if (secretsFile.exists()) {
                                 }
 
                                 targets.each { dep ->
-                                    dependencies.remove(dep)
+                                    dependencies.remove dep
                                 }
                             }
                         }
@@ -100,12 +99,6 @@ if (secretsFile.exists()) {
                             }
                         }
 
-                        scm {
-                            url = "github.com"
-                            connection = "scm:git:git:github.com"
-                            developerConnection = "scm:git:ssh://github.com"
-                        }
-
                         developers {
                             developer {
                                 id = "swackyy"
@@ -114,35 +107,23 @@ if (secretsFile.exists()) {
                         }
                     }
 
-                    suppressPomMetadataWarningsFor("apiElements")
-                    suppressPomMetadataWarningsFor("javadocElements")
-                    suppressPomMetadataWarningsFor("runtimeElements")
-                    suppressPomMetadataWarningsFor("sourcesElements")
-                }
-            }
-
-            repositories {
-                maven {
-                    name = "MavenCentral"
-                    url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2"
-
-                    credentials {
-                        username = getProperty("secretsMavenCentralUsername")
-                        password = getProperty("secretsMavenCentralPassword")
-                    }
+                    suppressPomMetadataWarningsFor "apiElements"
+                    suppressPomMetadataWarningsFor "javadocElements"
+                    suppressPomMetadataWarningsFor "runtimeElements"
+                    suppressPomMetadataWarningsFor "sourcesElements"
                 }
             }
         }
 
         plugins.withType(MavenPublishPlugin).configureEach {
             signing {
-                String id = findProperty("secretsSigningId")
-                String key = findProperty("secretsSigningKey")
-                String password = findProperty("secretsSigningPassword")
+                String id = findProperty "secretsSigningId"
+                String key = findProperty "secretsSigningKey"
+                String password = findProperty "secretsSigningPassword"
 
                 if (id && key && password) {
-                    useInMemoryPgpKeys(id, key, password)
-                    sign publishing.publications.mavenJava
+                    useInMemoryPgpKeys id, key, password
+                    sign publishing.publications.maven
                 } else {
                     System.err.println "Could not sign project ${project.name}"
                     required = false
