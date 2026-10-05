@@ -24,6 +24,11 @@ public abstract class AccessoryTypeProvider implements DataProvider {
     private final @NonNull String namespace;
     private final @NonNull Map<String, AccessoryType.Builder> data = new TreeMap<>();
 
+    /**
+     * Constructs the provider with the given arguments
+     * @param output likely passed by your data generation library somehow
+     * @param namespace usually a string literal and not a variable parameter, but you can do what you like
+     */
     public AccessoryTypeProvider(@NonNull PackOutput output, @NonNull String namespace) {
         this.output = output;
         this.namespace = namespace;
@@ -42,7 +47,8 @@ public abstract class AccessoryTypeProvider implements DataProvider {
             JsonObject json = new JsonObject();
 
             data.forEach((id, type) -> json.add(id, AccessoryType.Builder.CODEC.encodeStart(JsonOps.INSTANCE, type).getPartialOrThrow()));
-            return DataProvider.saveStable(cache, json, output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
+            return DataProvider.saveStable(
+                    cache, json, output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(namespace).resolve(AccessoryTypeManager.LOCATION));
         }
 
         return CompletableFuture.allOf();
@@ -55,7 +61,7 @@ public abstract class AccessoryTypeProvider implements DataProvider {
 
     /**
      * Add a new accessory type to be generated
-     * @param name name of this type, e.g: "normal", "utility"
+     * @param name name of this type, e.g: {@code "normal"}, {@code "utility"}
      * @param builder contains the data pertaining to the accessory type
      */
     protected void add(@NonNull String name, AccessoryType.@NonNull Builder builder) {
@@ -63,8 +69,9 @@ public abstract class AccessoryTypeProvider implements DataProvider {
     }
 
     /**
-     * Same as the above method, does not differentiate by namespace. If you wish to add accessory types for another namespace,
-     * use another instance of {@link AccessoryTypeProvider} passing in a different namespace to the {@code super}
+     * Exactly the same as the above method and does NOT differentiate by namespace passed via the {@link Identifier} parameter.
+     * If you wish to add accessory types for another namespace, use another instance of {@link AccessoryTypeProvider},
+     * passing in a different namespace to the {@code super} call in your constructor
      */
     protected void add(@NonNull Identifier id, AccessoryType.@NonNull Builder builder) {
         add(id.getPath(), builder);

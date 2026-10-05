@@ -9,9 +9,13 @@ tasks.named ("javadoc") {
     enabled = false
 }
 
+Project commonImplProject = commonImplProject()
+
+evaluationDependsOn commonImplProject.path
+
 minecraft {
     version mcV
-    accessWideners accessWidenerFile(commonImplProject())
+    accessWideners accessWidenerFile(commonImplProject.apiProject())
 }
 
 repositories {
@@ -22,9 +26,6 @@ repositories {
 }
 
 dependencies {
-    Project commonImplProject = commonImplProject()
-
-    evaluationDependsOn commonImplProject.path
     apiModuleDependency it, commonImplProject.apiProject()
     compileOnly "org.spongepowered:mixin:0.8.7"
     compileOnly "io.github.llamalad7:mixinextras-common:0.5.2"

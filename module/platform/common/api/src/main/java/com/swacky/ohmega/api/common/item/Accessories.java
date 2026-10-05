@@ -16,6 +16,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,19 +42,15 @@ public final class Accessories {
     private static @NonNull List<AccessoryType> getEffectiveTypes(@NonNull Item item) {
         List<AccessoryType> list = new ArrayList<>();
 
+        // 1. Linearly collect matching types without worrying about order yet
         for (Map.Entry<AccessoryType, TagKey<Item>> entry : OhmegaTags.getTags().entrySet()) {
             AccessoryType candidate = entry.getKey();
-
             if (candidate.allowReference() && item.builtInRegistryHolder().is(entry.getValue())) {
-                int index = 0;
-
-                while (index < list.size() && list.get(index).getPriority() <= candidate.getPriority()) {
-                    index++;
-                }
-
-                list.add(index, candidate);
+                list.add(candidate);
             }
         }
+
+        list.sort(Comparator.comparingInt(AccessoryType::getTypePriority));
 
         BooleanObjectPair<AccessoryType> override = AccessoryTypeManager.getTypeOverride(item);
 
@@ -153,14 +150,16 @@ public final class Accessories {
         List<AccessoryType> candidates = BOUND_TYPES.get(item);
 
         if (candidates != null) {
-            ImmutableList<AccessoryType> types = OhmegaDataAttachments.getData(entity).getTypes();
-            int size = candidates.size();
+            if (entity != null) {
+                ImmutableList<AccessoryType> types = OhmegaDataAttachments.getData(entity).getTypes();
+                int size = candidates.size();
 
-            for (int i = 0; i < size; i++) {
-                AccessoryType candidate = candidates.get(i);
+                for (int i = 0; i < size; i++) {
+                    AccessoryType candidate = candidates.get(i);
 
-                if (types.contains(candidate) && (i == 0 || candidate.allowFallback())) {
-                    return candidate;
+                    if (types.contains(candidate) && (i == 0 || candidate.allowFallback())) {
+                        return candidate;
+                    }
                 }
             }
 

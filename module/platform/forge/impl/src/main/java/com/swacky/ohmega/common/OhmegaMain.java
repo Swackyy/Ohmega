@@ -1,7 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.init.OhmegaArgumentTypes;
+import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
 import com.swacky.ohmega.client.OhmegaClientMain;
 import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import com.swacky.ohmega.common.init.OhmegaCriteriaTriggersImpl;

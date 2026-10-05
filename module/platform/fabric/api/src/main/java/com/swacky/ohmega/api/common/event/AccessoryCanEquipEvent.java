@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.common.event;
 
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,5 +17,5 @@ public interface AccessoryCanEquipEvent {
         }
     );
 
-    boolean process(LivingEntity entity, ItemStack stack, EquipContext context, boolean original);
+    boolean process(LivingEntity entity, ItemStack stack, AccessoryContext context, boolean original);
 }

@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -56,7 +56,7 @@ public final class ClearCommand implements ICommandNode {
         int[] count = {0};
 
         for (LivingEntity target : targets) {
-            count[0] += OhmegaDataAttachments.getData(target).clearMatchingItems(target, filter, max, EquipContext.COMMAND);
+            count[0] += OhmegaDataAttachments.getData(target).clearMatchingItems(target, filter, max, AccessoryContext.COMMAND);
         }
 
         int size = targets.size();

@@ -6,7 +6,7 @@ plugins {
 
 minecraft {
     version mcV
-    accessWideners accessWidenerFile(apiProject()), accessWidenerFile(project)
+    accessWideners accessWidenerFile(apiProject())
 }
 
 dependencies {

@@ -9,7 +9,6 @@ import com.swacky.ohmega.api.util.codec.OhmegaCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -20,6 +19,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -29,23 +30,29 @@ import java.util.function.Supplier;
  */
 public final class AccessoryType {
     // Keys
-    public static final @NonNull String ALLOW_FALLBACK_KEY = "allowFallback";
-    public static final @NonNull String ALLOW_REFERENCE_KEY = "allowReference";
-    public static final @NonNull String ATTRIBUTE_MODIFIERS_KEY = "attributeModifiers";
-    public static final @NonNull String DISPLAY_HOVER_TEXT_KEY = "displayHoverText";
-    public static final @NonNull String EMPTY_SLOT_TEXTURE_KEY = "emptySlotTexture";
-    public static final @NonNull String HOVER_TEXT_COLOUR_KEY = "hoverTextColor";
-    public static final @NonNull String PRIORITY_KEY = "priority";
+    private static final @NonNull String ADVANCEMENT_REWARDS_KEY = "advancement_rewards";
+    private static final @NonNull String ALLOW_FALLBACK_KEY = "allow_fallback";
+    private static final @NonNull String ALLOW_REFERENCE_KEY = "allow_reference";
+    private static final @NonNull String ATTRIBUTE_MODIFIERS_KEY = "attribute_modifiers";
+    private static final @NonNull String DEFAULT_SLOTS_KEY = "default_slots";
+    private static final @NonNull String DISPLAY_HOVER_TEXT_KEY = "display_hover_text";
+    private static final @NonNull String EMPTY_SLOT_TEXTURE_KEY = "empty_slot_texture";
+    private static final @NonNull String HOVER_TEXT_COLOUR_KEY = "hover_text_color";
+    private static final @NonNull String SLOT_PRIORITY_KEY = "slot_priority";
+    private static final @NonNull String TYPE_PRIORITY_KEY = "type_priority";
 
     public static final @NonNull Codec<AccessoryType> INITIALISER_CODEC = RecordCodecBuilder.create(builder -> builder.group(
             Identifier.CODEC.fieldOf("id").forGetter(AccessoryType::getId),
+            AdvancementSlotRewards.CODEC.fieldOf(ADVANCEMENT_REWARDS_KEY).forGetter(AccessoryType::getAdvancementRewards),
             Codec.BOOL.fieldOf(ALLOW_FALLBACK_KEY).forGetter(AccessoryType::allowFallback),
             Codec.BOOL.fieldOf(ALLOW_REFERENCE_KEY).forGetter(AccessoryType::allowReference),
             AccessorySlotModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(AccessoryType::getAttributeModifiers),
+            Codec.INT.fieldOf(DEFAULT_SLOTS_KEY).forGetter(AccessoryType::getDefaultSlots),
             Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(AccessoryType::displayHoverText),
             Identifier.CODEC.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(AccessoryType::getEmptySlotLocation),
             OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(AccessoryType::getHoverTextColour),
-            Codec.INT.fieldOf(PRIORITY_KEY).forGetter(AccessoryType::getPriority)
+            Codec.INT.fieldOf(SLOT_PRIORITY_KEY).forGetter(AccessoryType::getSlotPriority),
+            Codec.INT.fieldOf(TYPE_PRIORITY_KEY).forGetter(AccessoryType::getTypePriority)
     ).apply(builder, AccessoryType::new));
 
     public static final @NonNull Codec<AccessoryType> CODEC = Identifier.CODEC.xmap(
@@ -54,13 +61,16 @@ public final class AccessoryType {
 
     public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryType> INITIALISER_STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC, AccessoryType::getId,
+            AdvancementSlotRewards.STREAM_CODEC, AccessoryType::getAdvancementRewards,
             ByteBufCodecs.BOOL, AccessoryType::allowFallback,
             ByteBufCodecs.BOOL, AccessoryType::allowReference,
             AccessorySlotModifiers.STREAM_CODEC, AccessoryType::getAttributeModifiers,
+            ByteBufCodecs.VAR_INT, AccessoryType::getDefaultSlots,
             ByteBufCodecs.BOOL, AccessoryType::displayHoverText,
             Identifier.STREAM_CODEC, AccessoryType::getEmptySlotLocation,
             ByteBufCodecs.INT, AccessoryType::getHoverTextColour,
-            ByteBufCodecs.INT, AccessoryType::getPriority,
+            ByteBufCodecs.INT, AccessoryType::getSlotPriority,
+            ByteBufCodecs.INT, AccessoryType::getTypePriority,
             AccessoryType::new);
 
     public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, List<AccessoryType>> LIST_INITIALISER_STREAM_CODEC = INITIALISER_STREAM_CODEC.apply(
@@ -76,11 +86,10 @@ public final class AccessoryType {
     public static final @NonNull Identifier NORMAL_ID  = Ohmega.id("normal");
     public static final @NonNull Identifier UTILITY_ID = Ohmega.id("utility");
     public static final @NonNull Identifier SPECIAL_ID = Ohmega.id("special");
-
     // A placeholder or "unknown" accessory type. Do not use this
     public static final @NonNull AccessoryType NONE = new Builder()
             .preventReference()
-            .priority(Integer.MAX_VALUE)
+            .typePriority(Integer.MAX_VALUE)
             .build(NONE_ID);
     // Deferred to ensure they are not 'ohmega:none'
     public static final @NonNull Supplier<AccessoryType> GENERIC = () -> AccessoryTypeManager.get(GENERIC_ID);
@@ -89,44 +98,57 @@ public final class AccessoryType {
     public static final @NonNull Supplier<AccessoryType> SPECIAL = () -> AccessoryTypeManager.get(SPECIAL_ID);
 
     private final @NonNull Identifier id;
+    private final @NonNull AdvancementSlotRewards advancementSlotRewards;
     private final boolean allowFallback;
     private final boolean allowReference;
     private final @NonNull AccessorySlotModifiers attributeModifiers;
+    private final int defaultSlots;
     private final boolean displayHoverText;
     private final @NonNull Identifier emptySlotLocation;
     private final int hoverTextColour;
-    private final int priority;
+    private final int slotPriority;
+    private final int typePriority;
 
     /**
-     * Called internally by Ohmega to construct accessory types.
-     * If you wish to create a type in code, use the {@link Builder}
+     * Called internally by Ohmega to construct accessory types from parsed data.
+     * If you wish to create a type in code (for data-generation), use the {@link Builder}
      * @param id unique identifier for this type
+     * @param advancementSlotRewards numbers of slots to grant of this accessory type when matching advancements are achieved
      * @param allowFallback allows accessories to default to this as a fallback type
      * @param allowReference allows this type to be able to be explicitly referenced in most ways in-game
      * @param attributeModifiers any attribute modifiers to apply along with it
+     * @param defaultSlots the number of slots to suggest to the default accessory slots list of this type
      * @param displayHoverText whether text should be displayed when hovering over a slot of this type. May be overridden globally by a client config option
      * @param emptySlotLocation the location of the texture to display when a slot of this type is empty
      * @param hoverTextColour the colour of the text displayed when hovering. Only for when {@code displayHoverText} is {@code true}
-     * @param priority the priority index for this type to use if an item is tagged with multiple different types.
-     *                 Lower indexes technically mean higher priority
+     * @param slotPriority the priority index for use in the ordering of accessory slots, more specifically, for the default slot types.
+     *                     A lower priority index technically signifies a higher priority
+     * @param typePriority the priority index for this type to use if an item is tagged with multiple different types.
+     *                     A lower priority index technically signifies a higher priority
      */
     private AccessoryType(
             @NonNull Identifier id,
+            @NonNull AdvancementSlotRewards advancementSlotRewards,
             boolean allowFallback,
             boolean allowReference,
             @NonNull AccessorySlotModifiers attributeModifiers,
+            int defaultSlots,
             boolean displayHoverText,
             @NonNull Identifier emptySlotLocation,
             int hoverTextColour,
-            int priority) {
+            int slotPriority,
+            int typePriority) {
         this.id = id;
+        this.advancementSlotRewards = advancementSlotRewards;
         this.allowFallback = allowFallback;
         this.allowReference = allowReference;
         this.attributeModifiers = attributeModifiers;
+        this.defaultSlots = defaultSlots;
         this.displayHoverText = displayHoverText;
         this.emptySlotLocation = emptySlotLocation;
         this.hoverTextColour = hoverTextColour;
-        this.priority = priority;
+        this.slotPriority = slotPriority;
+        this.typePriority = typePriority;
     }
 
     /**
@@ -135,6 +157,15 @@ public final class AccessoryType {
      */
     public @NonNull Identifier getId() {
         return id;
+    }
+
+    /**
+     * Gets the {@link AdvancementSlotRewards} data structure,
+     * which contains data pertaining to granting slots of this type when specified advancements are achieved
+     * @return held advancement reward map
+     */
+    public @NonNull AdvancementSlotRewards getAdvancementRewards() {
+        return advancementSlotRewards;
     }
 
     /**
@@ -170,7 +201,15 @@ public final class AccessoryType {
     }
 
     /**
-     *  Get the empty slot texture location to use
+     * Get the number of slots to add to the default accessory slots list (by default, as it is inherently mutable)
+     * @return the number of slots to suggest to the default accessory slots list of this type
+     */
+    public int getDefaultSlots() {
+        return defaultSlots;
+    }
+
+    /**
+     * Get the empty slot texture location to use
      * @return the location of the texture to display when a slot of this type is empty
      */
     public @NonNull Identifier getEmptySlotLocation() {
@@ -186,12 +225,21 @@ public final class AccessoryType {
     }
 
     /**
-     *
-     * @return the priority index for this type to use if an item is tagged with multiple different types.
-     * Lower indexes technically mean higher priority
+     * Get the priority for use in the ordering of the default slot types list
+     * @return the priority index for use in the ordering of accessory slots, more specifically, for the default slot types.
+     * A lower priority index technically signifies a higher priority
      */
-    public int getPriority() {
-        return priority;
+    public int getSlotPriority() {
+        return slotPriority;
+    }
+
+    /**
+     * Get the priority for use in items' accessory type conflicts
+     * @return the priority index for this type to use if an item is tagged with multiple different types.
+     * A lower priority index technically signifies a higher priority
+     */
+    public int getTypePriority() {
+        return typePriority;
     }
 
     /**
@@ -207,7 +255,7 @@ public final class AccessoryType {
      * @return translatable content filled component for this type
      */
     public @NonNull MutableComponent getTranslation() {
-        return Component.translatable("accessory_type." + id.getNamespace() + "." + id.getPath()).withStyle(Style.EMPTY.withColor(getHoverTextColour()));
+        return Component.translatable(Ohmega.MODID + ".accessory_type." + id.getNamespace() + "." + id.getPath()).withColor(getHoverTextColour());
     }
 
     /**
@@ -224,7 +272,7 @@ public final class AccessoryType {
      * @return the item tag associated with this type
      * @apiNote Do not use this in data generation, refer to {@link OhmegaTags#get(Identifier)}
      */
-    public @NonNull TagKey<Item> getTag() {
+    public @NonNull TagKey<@NonNull Item> getTag() {
         return OhmegaTags.get(this);
     }
 
@@ -261,53 +309,101 @@ public final class AccessoryType {
      */
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder {
+        private static final @NonNull String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
+        private static final AdvancementSlotRewards ADVANCEMENT_REWARDS_DEFAULT = AdvancementSlotRewards.EMPTY;
+        private static final boolean ALLOW_FALLBACK_DEFAULT = true;
+        private static final boolean ALLOW_REFERENCE_DEFAULT = true;
+        private static final AccessorySlotModifiers ATTRIBUTE_MODIFIERS_DEFAULT = AccessorySlotModifiers.EMPTY;
+        private static final int DEFAULT_SLOTS_DEFAULT = 0;
+        private static final boolean DISPLAY_HOVER_TEXT_DEFAULT = true;
+        private static final String EMPTY_SLOT_TEXTURE_DEFAULT = Ohmega.id("accessory_slot_normal").toString();
+        private static final int HOVER_TEXT_COLOUR_DEFAULT = 0xffffff;
+        private static final int SLOT_PRIORITY_DEFAULT = 0;
+        private static final int TYPE_PRIORITY_DEFAULT = 0;
+
+        // Purely for data-generation
         public static final @NonNull Codec<Builder> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                AccessorySlotModifiers.CODEC.fieldOf(ATTRIBUTE_MODIFIERS_KEY).forGetter(inst -> inst.attributeModifiers),
-                Codec.BOOL.fieldOf(DISPLAY_HOVER_TEXT_KEY).forGetter(inst -> inst.displayHoverText),
-                Codec.STRING.fieldOf(EMPTY_SLOT_TEXTURE_KEY).forGetter(inst -> inst.emptySlotPath),
-                OhmegaCodecs.COLOUR_INT.fieldOf(HOVER_TEXT_COLOUR_KEY).forGetter(inst -> inst.hoverTextColour),
-                Codec.BOOL.fieldOf(ALLOW_FALLBACK_KEY).forGetter(inst -> inst.allowFallback),
-                Codec.BOOL.fieldOf(ALLOW_REFERENCE_KEY).forGetter(inst -> inst.allowReference),
-                Codec.INT.fieldOf(PRIORITY_KEY).forGetter(inst -> inst.priority)
+                AdvancementSlotRewards.CODEC.optionalFieldOf(ADVANCEMENT_REWARDS_KEY, ADVANCEMENT_REWARDS_DEFAULT).forGetter(inst -> inst.advancementSlotRewards),
+                Codec.BOOL.optionalFieldOf(ALLOW_FALLBACK_KEY, ALLOW_FALLBACK_DEFAULT).forGetter(inst -> inst.allowFallback),
+                Codec.BOOL.optionalFieldOf(ALLOW_REFERENCE_KEY, ALLOW_REFERENCE_DEFAULT).forGetter(inst -> inst.allowReference),
+                AccessorySlotModifiers.CODEC.optionalFieldOf(ATTRIBUTE_MODIFIERS_KEY, ATTRIBUTE_MODIFIERS_DEFAULT).forGetter(inst -> inst.attributeModifiers),
+                Codec.INT.optionalFieldOf(DEFAULT_SLOTS_KEY, DEFAULT_SLOTS_DEFAULT).forGetter(inst -> inst.defaultSlots),
+                Codec.BOOL.optionalFieldOf(DISPLAY_HOVER_TEXT_KEY, DISPLAY_HOVER_TEXT_DEFAULT).forGetter(inst -> inst.displayHoverText),
+                Codec.STRING.optionalFieldOf(EMPTY_SLOT_TEXTURE_KEY, EMPTY_SLOT_TEXTURE_DEFAULT).forGetter(inst -> inst.emptySlotPath),
+                OhmegaCodecs.COLOUR_INT.optionalFieldOf(HOVER_TEXT_COLOUR_KEY, HOVER_TEXT_COLOUR_DEFAULT).forGetter(inst -> inst.hoverTextColour),
+                Codec.INT.optionalFieldOf(SLOT_PRIORITY_KEY, SLOT_PRIORITY_DEFAULT).forGetter(inst -> inst.slotPriority),
+                Codec.INT.optionalFieldOf(TYPE_PRIORITY_KEY, TYPE_PRIORITY_DEFAULT).forGetter(inst -> inst.typePriority)
         ).apply(builder, Builder::new));
 
         public static final @NonNull Codec<Map<String, Builder>> MAP_CODEC = Codec.unboundedMap(Codec.STRING, CODEC);
 
-        private static final String LOCATION_PREFIX = "container/slot/"; // Mojang sometimes changes this
-
+        private @NonNull AdvancementSlotRewards advancementSlotRewards;
+        private boolean allowFallback;
+        private boolean allowReference;
         private @NonNull AccessorySlotModifiers attributeModifiers;
+        private int defaultSlots;
         private boolean displayHoverText;
         private @NonNull String emptySlotPath;
         private int hoverTextColour;
-        private boolean allowFallback;
-        private boolean allowReference;
-        private int priority;
+        private int slotPriority;
+        private int typePriority;
 
         private Builder(
+                @NonNull AdvancementSlotRewards advancementSlotRewards,
+                boolean allowFallback,
+                boolean allowReference,
                 @NonNull AccessorySlotModifiers attributeModifiers,
+                int defaultSlots,
                 boolean displayHoverText,
                 @NonNull String emptySlotPath,
                 int hoverTextColour,
-                boolean allowFallback,
-                boolean allowReference,
-                int priority) {
+                int slotPriority,
+                int typePriority) {
+            this.advancementSlotRewards = advancementSlotRewards;
+            this.allowFallback = allowFallback;
+            this.allowReference = allowReference;
             this.attributeModifiers = attributeModifiers;
+            this.defaultSlots = defaultSlots;
             this.displayHoverText = displayHoverText;
             this.emptySlotPath = emptySlotPath;
             this.hoverTextColour = hoverTextColour;
-            this.allowFallback = allowFallback;
-            this.allowReference = allowReference;
-            this.priority = priority;
+            this.slotPriority = slotPriority;
+            this.typePriority = typePriority;
         }
 
         public Builder() {
-            this.attributeModifiers = AccessorySlotModifiers.EMPTY;
-            this.displayHoverText = true;
-            this.emptySlotPath = Ohmega.id("accessory_slot_normal").toString();
-            this.hoverTextColour = 0xffffff;
-            this.allowFallback = true;
-            this.allowReference = true;
-            this.priority = 0;
+            this.advancementSlotRewards = ADVANCEMENT_REWARDS_DEFAULT;
+            this.allowFallback = ALLOW_FALLBACK_DEFAULT;
+            this.allowReference = ALLOW_REFERENCE_DEFAULT;
+            this.attributeModifiers = ATTRIBUTE_MODIFIERS_DEFAULT;
+            this.defaultSlots = DEFAULT_SLOTS_DEFAULT;
+            this.displayHoverText = DISPLAY_HOVER_TEXT_DEFAULT;
+            this.emptySlotPath = EMPTY_SLOT_TEXTURE_DEFAULT;
+            this.hoverTextColour = HOVER_TEXT_COLOUR_DEFAULT;
+            this.slotPriority = SLOT_PRIORITY_DEFAULT;
+            this.typePriority = TYPE_PRIORITY_DEFAULT;
+        }
+
+        /**
+         * Add a number of slots of this type when specified advancements are achieved
+         * @param rewards advancement reward map to apply
+         * @return the current builder instance
+         */
+        public @NonNull Builder advancementRewards(@NonNull AdvancementSlotRewards rewards) {
+            advancementSlotRewards = rewards;
+
+            return this;
+        }
+
+        /**
+         * Add a number of slots of this type when specified advancements are achieved
+         * Shortcut method to {@link #advancementRewards(AdvancementSlotRewards)}, supplying a builder in to {@link Consumer} method reference
+         * @param factory method reference accepting a {@link AdvancementSlotRewards.Builder},
+         *                finishing with returning the result of {@link AdvancementSlotRewards.Builder#build()}
+         * @return the current builder instance
+         */
+        public @NonNull Builder advancementRewards(@NonNull Function<AdvancementSlotRewards.@NonNull Builder, @NonNull AdvancementSlotRewards> factory) {
+            return advancementRewards(factory.apply(new AdvancementSlotRewards.Builder()));
         }
 
         /**
@@ -317,6 +413,27 @@ public final class AccessoryType {
          */
         public @NonNull Builder attributeModifiers(@NonNull AccessorySlotModifiers modifiers) {
             attributeModifiers = modifiers;
+
+            return this;
+        }
+
+        /**
+         * Add some attribute modifiers to apply when an item is in a slot of this type.
+         * @param factory method reference accepting a {@link AccessorySlotModifiers.Builder},
+         *                finishing with returning the result of {@link AccessorySlotModifiers.Builder#build()}
+         * @return the current builder instance
+         */
+        public @NonNull Builder attributeModifiers(@NonNull Function<AccessorySlotModifiers.@NonNull Builder, @NonNull AccessorySlotModifiers> factory) {
+            return attributeModifiers(factory.apply(new AccessorySlotModifiers.Builder()));
+        }
+
+        /**
+         * Set the number of slots to add to the default slots list
+         * @param defaultSlots number of slots to add (by default) of this type
+         * @return the current builder instance
+         */
+        public @NonNull Builder defaultSlots(int defaultSlots) {
+            this.defaultSlots = defaultSlots;
 
             return this;
         }
@@ -397,13 +514,25 @@ public final class AccessoryType {
         }
 
         /**
-         * Set the priority index of the accessory type.
-         * Lower values technically mean higher priority
+         * Set the priority for use in the ordering of the default slot types list
          * @param priority index to set as
          * @return the current builder instance
+         * @apiNote A lower priority index technically signifies a higher priority
          */
-        public @NonNull Builder priority(int priority) {
-            this.priority = priority;
+        public @NonNull Builder slotPriority(int priority) {
+            this.slotPriority = priority;
+
+            return this;
+        }
+
+        /**
+         * Set the priority for use in items' accessory type conflicts
+         * @param priority index to set as
+         * @return the current builder instance
+         * @apiNote A lower priority index technically signifies a higher priority
+         */
+        public @NonNull Builder typePriority(int priority) {
+            this.typePriority = priority;
 
             return this;
         }
@@ -416,17 +545,26 @@ public final class AccessoryType {
          * @return the constructed accessory type
          */
         public @NonNull AccessoryType build(@NonNull String namespace, @NonNull String path) {
+            Identifier emptySlotPathProcessed;
+
+            if (emptySlotPath.indexOf(':') == -1) {
+                emptySlotPathProcessed = Identifier.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath);
+            } else {
+                emptySlotPathProcessed = Identifier.parse(emptySlotPath).withPrefix(LOCATION_PREFIX);
+            }
+
             return new AccessoryType(
                     Identifier.fromNamespaceAndPath(namespace, path),
+                    advancementSlotRewards,
                     allowFallback,
                     allowReference,
                     attributeModifiers,
+                    defaultSlots,
                     displayHoverText,
-                    emptySlotPath.indexOf(':') == -1 ?
-                            Identifier.fromNamespaceAndPath(namespace, LOCATION_PREFIX + emptySlotPath) :
-                            Identifier.parse(emptySlotPath).withPrefix(LOCATION_PREFIX),
+                    emptySlotPathProcessed,
                     hoverTextColour,
-                    priority);
+                    slotPriority,
+                    typePriority);
         }
 
         /**

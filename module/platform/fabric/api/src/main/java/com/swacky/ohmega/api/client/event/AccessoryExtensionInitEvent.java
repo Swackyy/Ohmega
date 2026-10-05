@@ -3,27 +3,26 @@ package com.swacky.ohmega.api.client.event;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.NonNull;
 
-public final class AccessoryExtensionRenderEvent {
+public final class AccessoryExtensionInitEvent {
     public interface Post {
         Event<Post> EVENT = EventFactory.createArrayBacked(Post.class,
-                listeners -> (gui, extension) -> {
+                listeners -> (extension, adder) -> {
                     for (Post listener : listeners) {
-                        listener.process(gui, extension);
+                        listener.process(extension, adder);
                     }
                 }
         );
 
-        void process(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
+        void process(@NonNull AccessoryScreenExtension extension, AccessoryScreenExtension.@NonNull WidgetAdder adder);
     }
 
     public interface Pre {
         Event<Pre> EVENT = EventFactory.createArrayBacked(Pre.class,
-            listeners -> (gui, extension) -> {
+            listeners -> (extension, adder) -> {
                 for (Pre listener : listeners) {
-                    if (listener.process(gui, extension)) {
+                    if (listener.process(extension, adder)) {
                         return true;
                     }
                 }
@@ -32,6 +31,6 @@ public final class AccessoryExtensionRenderEvent {
             }
         );
 
-        boolean process(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
+        boolean process(@NonNull AccessoryScreenExtension extension, AccessoryScreenExtension.@NonNull WidgetAdder adder);
     }
 }

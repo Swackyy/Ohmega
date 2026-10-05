@@ -32,7 +32,8 @@ import org.jspecify.annotations.NonNull;
  * Some common variables you can use in your renderers.
  * Also contains a few shortcuts to the most common methods to reduce verbosity
  */
-public abstract sealed class AccessoryRenderContext<T extends LivingEntityRenderState, U extends EntityModel<? super T>> permits HumanoidRenderContext, LivingRenderContext {
+public abstract sealed class AccessoryRenderContext<T extends LivingEntityRenderState, U extends EntityModel<? super T>> permits
+        HumanoidRenderContext, LivingRenderContext {
     public final @NonNull PoseStack poseStack;
     public final @NonNull SubmitNodeCollectorWrapper collector;
     public final @NonNull ItemStack stack;

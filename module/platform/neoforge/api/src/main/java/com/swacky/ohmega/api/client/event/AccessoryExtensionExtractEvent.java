@@ -10,22 +10,22 @@ import net.neoforged.bus.api.ICancellableEvent;
  * <p>
  * Cancelling only has effect when used in {@link Pre}, stopping the ticking of the item
  */
-public abstract sealed class AccessoryExtensionRenderEvent extends Event {
+public abstract sealed class AccessoryExtensionExtractEvent extends Event {
     public final GuiGraphicsExtractor gui;
     public final AccessoryScreenExtension extension;
 
-    public AccessoryExtensionRenderEvent(GuiGraphicsExtractor gui, AccessoryScreenExtension extension) {
+    public AccessoryExtensionExtractEvent(GuiGraphicsExtractor gui, AccessoryScreenExtension extension) {
         this.gui = gui;
         this.extension = extension;
     }
 
-    public static final class Post extends AccessoryExtensionRenderEvent {
+    public static final class Post extends AccessoryExtensionExtractEvent {
         public Post(GuiGraphicsExtractor gui, AccessoryScreenExtension extension) {
             super(gui, extension);
         }
     }
 
-    public static final class Pre extends AccessoryExtensionRenderEvent implements ICancellableEvent {
+    public static final class Pre extends AccessoryExtensionExtractEvent implements ICancellableEvent {
         public Pre(GuiGraphicsExtractor gui, AccessoryScreenExtension extension) {
             super(gui, extension);
         }

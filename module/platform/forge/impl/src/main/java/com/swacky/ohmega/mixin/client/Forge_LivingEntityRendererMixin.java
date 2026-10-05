@@ -2,7 +2,7 @@ package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
-import com.swacky.ohmega.client.renderer.LivingEntityRenderStateExtension;
+import com.swacky.ohmega.mixinduck.client.LivingEntityRenderStateExtension;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 abstract class Forge_LivingEntityRendererMixin<T extends LivingEntity, U extends LivingEntityRenderState, V extends EntityModel<? super U>> extends EntityRenderer<T, U> implements RenderLayerParent<U, V> {
-
     private Forge_LivingEntityRendererMixin(EntityRendererProvider.Context context) {
         super(context);
     }

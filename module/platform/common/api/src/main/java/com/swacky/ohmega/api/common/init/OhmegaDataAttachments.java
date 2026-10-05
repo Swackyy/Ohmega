@@ -2,14 +2,16 @@ package com.swacky.ohmega.api.common.init;
 
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.util.LoaderService;
 import net.minecraft.world.entity.LivingEntity;
+import org.jspecify.annotations.NonNull;
 
 public final class OhmegaDataAttachments {
     private static final Service IMPL = Ohmega.loadService(Service.class);
 
     public static void bootstrap() {}
 
-    public static AccessoryData getData(LivingEntity entity) {
+    public static AccessoryData getData(@NonNull LivingEntity entity) {
         return IMPL.getData(entity);
     }
 
@@ -17,6 +19,7 @@ public final class OhmegaDataAttachments {
         IMPL.setData(entity, data);
     }
 
+    @LoaderService
     public interface Service {
         AccessoryData getData(LivingEntity entity);
 

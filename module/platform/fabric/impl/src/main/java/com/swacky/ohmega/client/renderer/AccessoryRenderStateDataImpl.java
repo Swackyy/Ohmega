@@ -3,12 +3,13 @@ package com.swacky.ohmega.client.renderer;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import org.jspecify.annotations.NonNull;
 
 public final class AccessoryRenderStateDataImpl implements AccessoryRenderStateData.Service {
     public static final RenderStateDataKey<AccessoryRenderStateData> KEY = RenderStateDataKey.create(ID::toString);
 
     @Override
-    public AccessoryRenderStateData getData(LivingEntityRenderState state) {
+    public AccessoryRenderStateData getData(@NonNull LivingEntityRenderState state) {
         return state.getData(KEY);
     }
 }

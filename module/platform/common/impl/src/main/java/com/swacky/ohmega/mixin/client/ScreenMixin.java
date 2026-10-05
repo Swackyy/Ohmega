@@ -44,9 +44,9 @@ abstract class ScreenMixin extends AbstractContainerEventHandler implements Rend
                         position.x().get() + containerScreen.leftPos,
                         position.y().get() + containerScreen.topPos);
 
-                if (!OhmegaHooks.renderAccessoryExtensionPre(gui, extension)) {
+                if (!OhmegaHooks.extractAccessoryExtensionPre(gui, extension)) {
                     extension.extractExtension(gui);
-                    OhmegaHooks.renderAccessoryExtensionPost(gui, extension);
+                    OhmegaHooks.extractAccessoryExtensionPost(gui, extension);
                 }
 
                 pose.popMatrix();

@@ -4,6 +4,7 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.datagen.server.AccessoryTypeProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 
 public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
     public OhmegaAccessoryTypeProvider(PackOutput output) {
@@ -17,15 +18,21 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
                 .emptySlotPath("accessory_slot_generic")
                 .preventFallback()
                 .preventReference()
-                .priority(Integer.MAX_VALUE));
+                .typePriority(Integer.MAX_VALUE));
         add(AccessoryType.NORMAL_ID, new AccessoryType.Builder()
+                .defaultSlots(3)
                 .emptySlotPath("accessory_slot_normal")
-                .priority(Integer.MAX_VALUE));
+                .slotPriority(1000)
+                .typePriority(3000));
         add(AccessoryType.UTILITY_ID, new AccessoryType.Builder()
+                .defaultSlots(2)
                 .emptySlotPath("accessory_slot_utility")
-                .priority(Integer.MAX_VALUE - 1));
+                .slotPriority(2000)
+                .typePriority(2000));
         add(AccessoryType.SPECIAL_ID, new AccessoryType.Builder()
+                .defaultSlots(1)
                 .emptySlotPath("accessory_slot_special")
-                .priority(Integer.MAX_VALUE - 2));
+                .slotPriority(3000)
+                .typePriority(1000));
     }
 }

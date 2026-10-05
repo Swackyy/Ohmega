@@ -14,10 +14,5 @@ public final class ServerAccessoryMenuExtension extends AccessoryMenuExtension {
     }
 
     @Override
-    public @NonNull AccessorySlot createSlot(@NonNull Player player, int index, int x, int y) {
-        return new AccessorySlot(player, index, x, y);
-    }
-
-    @Override
     public void addSlots(@NonNull SlotAdder adder, @NonNull AccessoryData data) {}
 }

@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.datagen.client;
 
+import com.swacky.ohmega.api.common.Ohmega;
 import net.minecraft.world.item.Item;
 import org.jspecify.annotations.NonNull;
 
@@ -24,17 +25,17 @@ public final class OhmegaLangHelper {
     /**
      * Adds translations for an accessory type
      * @param namespace specify an alternate namespace that does not match the {@link #namespace} field
-     * @param typeKey accessory type key, e.g: "normal", "utility"
+     * @param typeKey accessory type key, e.g: {@code "normal"}", {@code "utility"}
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */
     public void addType(@NonNull String namespace, @NonNull String typeKey, @NonNull String translation) {
-        adder.accept("accessory_type." + namespace + '.' + typeKey, translation);
+        adder.accept(Ohmega.MODID + ".accessory_type." + namespace + '.' + typeKey, translation);
         adder.accept("tag.item." + namespace + '.' + typeKey, translation);
     }
 
     /**
      * Adds translations for an accessory type
-     * @param typeKey accessory type key, e.g: "normal", "utility"
+     * @param typeKey accessory type key, e.g: {@code "normal"}", {@code "utility"}
      * @param translation the translation for the accessory type, e.g: "Normal", "Utility"
      */
     public void addType(@NonNull String typeKey, @NonNull String translation) {

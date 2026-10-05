@@ -29,7 +29,7 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
 import com.swacky.ohmega.api.network.C2S.KeybindUsePacket;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
-import com.swacky.ohmega.api.util.BooleanLazySavedValue;
+import com.swacky.ohmega.api.util.struct.BooleanLazySavedValue;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;

@@ -57,12 +57,12 @@ public final class InternalLangHelper {
         addConfigPort("type." + key, translation);
     }
 
-    public void addDataPackDescription(String translation) {
-        builder.add("dataPack." + Ohmega.MODID + ".description", translation);
+    public void addDataPackDescription(String key, String translation) {
+        builder.add("dataPack." + key + ".description", translation);
     }
 
     public void addDataPackDescription(Identifier key, String translation) {
-        builder.add("dataPack." + key.toDebugFileName() + ".description", translation);
+        addDataPackDescription(key.toDebugFileName(), translation);
     }
 
     public void addToast(String key, String translation) {

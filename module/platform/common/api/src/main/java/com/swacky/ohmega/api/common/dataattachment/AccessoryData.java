@@ -6,11 +6,12 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
+import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
@@ -43,10 +44,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
  * Storage holder for accessory-related data, attachable for any {@link LivingEntity}
+ * @apiNote Many functions here automatically synchronise their calls to the client, and as such, only one (server) invocation is needed
  */
 public final class AccessoryData {
     public static final @NonNull HashSet<LivingEntity> DEFAULT_TRACKERS = new HashSet<>();
@@ -90,7 +93,7 @@ public final class AccessoryData {
      * All data will be instantiated using their default values, or in more detail:
      * <ul>
      *     <li>Tracking default slots</li>
-     *     <li>Default initialised {@link AccessoryDataEntry} entries</li>
+     *     <li>Default initialised {@link AccessoryDataEntry} entries, with the {@link AccessoryContext#ATTACH} context</li>
      * </ul>
      */
     public AccessoryData() {
@@ -99,7 +102,7 @@ public final class AccessoryData {
         ArrayList<AccessoryDataEntry> entries = new ArrayList<>(size);
 
         for (AccessoryType type : types) {
-            entries.add(new AccessoryDataEntry(type));
+            entries.add(new AccessoryDataEntry(type, AccessoryContext.ATTACH));
         }
 
         this(true, entries);
@@ -272,7 +275,7 @@ public final class AccessoryData {
             if (index >= 0) {
                 ItemStack stack0 = stack.copyWithCount(1);
 
-                if (getEntry(index).setStack(entity, stack0, index, EquipContext.USE_HELD)) {
+                if (getEntry(index).setStack(entity, stack0, index, AccessoryContext.USE_HELD)) {
                     stack.consume(1, entity);
                     return InteractionResult.SUCCESS;
                 }
@@ -294,7 +297,7 @@ public final class AccessoryData {
             ItemStack stack = entry.getStack();
 
             if (OhmegaDataComponents.isActive(stack)) {
-                entry.doEquip(entity, stack, i, EquipContext.ATTACH);
+                entry.doEquip(entity, stack, i, AccessoryContext.ATTACH);
             }
         }
 
@@ -303,7 +306,7 @@ public final class AccessoryData {
                 DEFAULT_TRACKERS.add(entity);
 
                 if (!typesCache.equals(OhmegaServerConfig.getDefaultSlotTypes())) {
-                    defaultSlots(entity, EquipContext.ATTACH);
+                    defaultSlots(entity, AccessoryContext.ATTACH);
                 }
             }
 
@@ -313,6 +316,8 @@ public final class AccessoryData {
                 OhmegaNetworking.sendS2C(player, packet);
             }
         }
+
+        OhmegaHooks.attachData(this, entity);
     }
 
     /**
@@ -390,9 +395,9 @@ public final class AccessoryData {
      * @param indexes slot indexes relative to the accessory extension to set in
      * @param stacks the {@link ItemStack}s to set as matching the provided slot indexes
      * @param context the context surrounding this set invocation
-     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
+     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, AccessoryContext)} should be force-called, {@code false} otherwise
      */
-    public void setStacks(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks, @NonNull EquipContext context, boolean forceOnEquip) {
+    public void setStacks(@NonNull LivingEntity entity, int[] indexes, @NonNull List<ItemStack> stacks, @NonNull AccessoryContext context, boolean forceOnEquip) {
         int size = indexes.length;
 
         for (int i = 0; i < size; i++) {
@@ -413,9 +418,9 @@ public final class AccessoryData {
      * @param maxIndex maximum index to set in, exclusive
      * @param allStacks the stacks corresponding to the index range to set as
      * @param context the context surrounding this set invocation
-     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
+     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, AccessoryContext)} should be force-called, {@code false} otherwise
      */
-    public void setStacksRange(@NonNull LivingEntity entity, int minIndex, int maxIndex, @NonNull List<ItemStack> allStacks, @NonNull EquipContext context, boolean forceOnEquip) {
+    public void setStacksRange(@NonNull LivingEntity entity, int minIndex, int maxIndex, @NonNull List<ItemStack> allStacks, @NonNull AccessoryContext context, boolean forceOnEquip) {
         int size = maxIndex - minIndex;
         int[] indexes = new int[size];
         List<ItemStack> stacks = new ArrayList<>(size);
@@ -437,7 +442,7 @@ public final class AccessoryData {
      * @param context the context surrounding this invocation
      * @return the total number of items cleared
      */
-    public int clearMatchingItems(@NonNull LivingEntity entity, @Nullable Predicate<ItemStack> filter, int max, @NonNull EquipContext context) {
+    public int clearMatchingItems(@NonNull LivingEntity entity, @Nullable Predicate<ItemStack> filter, int max, @NonNull AccessoryContext context) {
         int size = size();
         int removed = 0;
         IntList indexes = new IntArrayList();
@@ -512,7 +517,7 @@ public final class AccessoryData {
      * @param other the other instance to copy from
      * @param context the context surrounding this invocation
      */
-    public void copyFrom(@NonNull LivingEntity entity, @NonNull AccessoryData other, @NonNull EquipContext context) {
+    public void copyFrom(@NonNull LivingEntity entity, @NonNull AccessoryData other, @NonNull AccessoryContext context) {
         trackingDefault.setValue(other.trackingDefault.booleanValue());
         ArrayList<@NonNull AccessoryDataEntry> otherEntries = other.entries;
 
@@ -623,7 +628,8 @@ public final class AccessoryData {
     }
 
     /**
-     * Removes slots from this data instance matching an optionally provided filter and up to a given maximum
+     * Removes slots from this data instance matching an optionally provided filter and up to a given maximum.
+     * Functionally equivalent to an inversely-traversing {@link #removeSlots(LivingEntity, int, int, Predicate, AccessoryContext)}
      * @param entity the {@link LivingEntity} this data instance is attached to
      * @param filter the filter for removals, or {@code null} to not filter by type
      * @param max the maximum amount of slots to remove, or {@code -1} to unlimit it
@@ -631,7 +637,7 @@ public final class AccessoryData {
      * @return the number of slots cleared
      * @apiNote This traverses the {@link #entries} list and subsequently removes entries in reverse order
      */
-    public int clearSlots(@NonNull LivingEntity entity, @Nullable Predicate<AccessoryType> filter, int max, @NonNull EquipContext context) {
+    public int clearSlots(@NonNull LivingEntity entity, @Nullable BiPredicate<@NonNull AccessoryType, @NonNull AccessoryContext> filter, int max, @NonNull AccessoryContext context) {
         untrackDefault(entity);
 
         int count;
@@ -657,7 +663,7 @@ public final class AccessoryData {
             } else {
                 count = 0;
 
-                for (int i = size() - 1; i >= 0 && count < max; i++) {
+                for (int i = size() - 1; i >= 0 && count < max; i--) {
                     count++;
 
                     entries.remove(i).moveOrDropStack(entity, context);
@@ -676,7 +682,9 @@ public final class AccessoryData {
             count = 0;
 
             for (int i = size() - 1; i >= 0 && (count < max || max < 0); i--) {
-                if (filter.test(entries.get(i).getType())) {
+                AccessoryDataEntry entry = entries.get(i);
+
+                if (filter.test(entry.getType(), entry.getContext())) {
                     count++;
 
                     entries.remove(i).moveOrDropStack(entity, context);
@@ -704,7 +712,7 @@ public final class AccessoryData {
      * @param entity the {@link LivingEntity} this data instance is attached to
      * @param context the context surrounding this invocation
      */
-    public void defaultSlots(@NonNull LivingEntity entity, @NonNull EquipContext context) {
+    public void defaultSlots(@NonNull LivingEntity entity, @NonNull AccessoryContext context) {
         trackingDefault.setTrue();
 
         if (!entity.level().isClientSide()) {
@@ -746,7 +754,7 @@ public final class AccessoryData {
      * @param max the maximum slot index to inherit from, exclusive, or {@code -1} to unlimit
      * @param context the context surrounding this invocation
      */
-    public void inheritSlots(@NonNull LivingEntity entity, @NonNull LivingEntity other, int min, int max, @NonNull EquipContext context) {
+    public void inheritSlots(@NonNull LivingEntity entity, @NonNull LivingEntity other, int min, int max, @NonNull AccessoryContext context) {
         untrackDefault(entity);
 
         AccessoryData otherData = OhmegaDataAttachments.getData(other);
@@ -764,7 +772,7 @@ public final class AccessoryData {
             if (size > i) {
                 entries.get(i).setType(entity, otherData.getEntry(i).getType(), context);
             } else {
-                entries.add(new AccessoryDataEntry(otherData.getEntry(i).getType()));
+                entries.add(new AccessoryDataEntry(otherData.getEntry(i).getType(), context));
             }
         }
 
@@ -785,7 +793,7 @@ public final class AccessoryData {
      * @param amount the number of slots to insert
      * @param context the context surrounding this invocation
      */
-    public void insertSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int amount, @NonNull EquipContext context) {
+    public void insertSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int amount, @NonNull AccessoryContext context) {
         untrackDefault(entity);
 
         int size = size();
@@ -796,7 +804,7 @@ public final class AccessoryData {
         for (int i = 0; i < amount; i++) {
             int entryIndex = index + i;
 
-            entries.add(entryIndex, new AccessoryDataEntry(type));
+            entries.add(entryIndex, new AccessoryDataEntry(type, context));
         }
 
         if (flag) {
@@ -818,10 +826,10 @@ public final class AccessoryData {
      * @param type the {@link AccessoryType} of the slots to insert
      * @param amount the number of slots to insert
      * @param context the context surrounding this invocation
-     * @apiNote Internally this is just a {@link #insertSlots(LivingEntity, int, AccessoryType, int, EquipContext)} call,
+     * @apiNote Internally this is just a {@link #insertSlots(LivingEntity, int, AccessoryType, int, AccessoryContext)} call,
      * with the {@code index} parameter passed as {@link #size()}
      */
-    public void addSlots(@NonNull LivingEntity entity, @NonNull AccessoryType type, int amount, @NonNull EquipContext context) {
+    public void addSlots(@NonNull LivingEntity entity, @NonNull AccessoryType type, int amount, @NonNull AccessoryContext context) {
         insertSlots(entity, size(), type, amount, context);
     }
 
@@ -834,7 +842,7 @@ public final class AccessoryData {
      * @param context the context surrounding this invocation
      * @return the number of slots removed
      */
-    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @Nullable Predicate<AccessoryType> filter, @NonNull EquipContext context) {
+    public int removeSlots(@NonNull LivingEntity entity, int index, int amount, @Nullable Predicate<AccessoryType> filter, @NonNull AccessoryContext context) {
         untrackDefault(entity);
 
         int size = size();
@@ -870,7 +878,7 @@ public final class AccessoryData {
      * @apiNote removes slots in reverse order, and as such this assumes that the {@code indexes} parameter will be a sorted array.
      * Providing a non-sorted array may lead to unexpected behaviour and index exception throws
      */
-    public void removeSlots(@NonNull LivingEntity entity, int @NonNull [] indexes, @NonNull EquipContext context) {
+    public void removeSlots(@NonNull LivingEntity entity, int @NonNull [] indexes, @NonNull AccessoryContext context) {
         untrackDefault(entity);
 
         for (int i = indexes.length - 1; i >= 0; i--) {
@@ -897,7 +905,7 @@ public final class AccessoryData {
      * @param max the maximum index to set the slots' types as, exclusive
      * @param context the context surrounding this invocation
      */
-    public void setSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int max, @NonNull EquipContext context) {
+    public void setSlots(@NonNull LivingEntity entity, int index, @NonNull AccessoryType type, int max, @NonNull AccessoryContext context) {
         untrackDefault(entity);
 
         for (int i = index; i <= max; i++) {

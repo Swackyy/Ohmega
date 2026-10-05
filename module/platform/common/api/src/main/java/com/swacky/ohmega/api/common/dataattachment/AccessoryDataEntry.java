@@ -9,7 +9,7 @@ import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.network.C2S.SetHiddenPacket;
@@ -39,6 +39,7 @@ import java.util.function.Function;
 public final class AccessoryDataEntry {
     public static final @NonNull Codec<AccessoryDataEntry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             AccessoryType.CODEC.fieldOf("type").forGetter(AccessoryDataEntry::getType),
+            AccessoryContext.CODEC.fieldOf("context").orElse(AccessoryContext.UNKNOWN).forGetter(AccessoryDataEntry::getContext),
             ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(AccessoryDataEntry::getStack),
             Codec.BOOL.fieldOf("hidden").forGetter(AccessoryDataEntry::isHidden)
     ).apply(builder, AccessoryDataEntry::new));
@@ -47,6 +48,7 @@ public final class AccessoryDataEntry {
 
     public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryDataEntry> STREAM_CODEC = StreamCodec.composite(
             AccessoryType.STREAM_CODEC, AccessoryDataEntry::getType,
+            AccessoryContext.STREAM_CODEC, AccessoryDataEntry::getContext,
             ItemStack.OPTIONAL_STREAM_CODEC, AccessoryDataEntry::getStack,
             ByteBufCodecs.BOOL, AccessoryDataEntry::isHidden,
             AccessoryDataEntry::new);
@@ -56,17 +58,20 @@ public final class AccessoryDataEntry {
             STREAM_CODEC);
 
     private @NonNull AccessoryType type;
+    private final @NonNull AccessoryContext context;
     private @NonNull ItemStack stack;
     private boolean hidden;
 
     /**
      * Private constructor used in codec deserialisation
      * @param type the {@link AccessoryType} of the slot corresponding to this instance
+     * @param context the context surrounding adding this entry
      * @param stack held {@link ItemStack}
      * @param hidden {@code true} if the accessory equipped in this entry should not be rendered
      */
-    private AccessoryDataEntry(@NonNull AccessoryType type, @NonNull ItemStack stack, boolean hidden) {
+    private AccessoryDataEntry(@NonNull AccessoryType type, @NonNull AccessoryContext context, @NonNull ItemStack stack, boolean hidden) {
         this.type = type;
+        this.context = context;
         this.stack = stack;
         this.hidden = hidden;
     }
@@ -75,9 +80,10 @@ public final class AccessoryDataEntry {
      * Public constructor used for adding to {@link AccessoryData}.
      * Initialises {@link #stack} with {@link ItemStack#EMPTY} and {@link #hidden} with {@code false}
      * @param type the {@link AccessoryType} of the slot corresponding to this instance
+     * @param context the context surrounding adding this entry
      */
-    public AccessoryDataEntry(@NonNull AccessoryType type) {
-        this(type, ItemStack.EMPTY, false);
+    public AccessoryDataEntry(@NonNull AccessoryType type, @NonNull AccessoryContext context) {
+        this(type, context, ItemStack.EMPTY, false);
     }
 
     /**
@@ -88,15 +94,23 @@ public final class AccessoryDataEntry {
         return type;
     }
 
+    /**
+     * Retrieve the context surrounding the initial adding of this entry
+     * @return the context surrounding adding this entry (persistent)
+     */
+    public @NonNull AccessoryContext getContext() {
+        return context;
+    }
+
     // todo: allow forwards simulation for removal of a type
     /**
      * Predicate function to assert validity of an {@link ItemStack} candidate to place it in a slot
      * @param entity the entity attempting to equip this item / this call is relevant towards
      * @param stack the {@link ItemStack} to check validity for
-     * @param context the context of this call
+     * @param context the context surrounding this invocation
      * @return {@code true} if valid, {@code false} if invalid
      */
-    public boolean isItemValid(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryType type, @NonNull EquipContext context) {
+    public boolean isItemValid(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryType type, @NonNull AccessoryContext context) {
         if (stack.isEmpty()) {
             return true;
         }
@@ -115,10 +129,10 @@ public final class AccessoryDataEntry {
      * Predicate function to assert validity of an {@link ItemStack} candidate to place it in a slot
      * @param entity the entity attempting to equip this item / this call is relevant towards
      * @param stack the {@link ItemStack} to check validity for
-     * @param context the context of this call
+     * @param context the context surrounding this invocation
      * @return {@code true} if valid, {@code false} if invalid
      */
-    public boolean isItemValid(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public boolean isItemValid(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         return isItemValid(entity, stack, type, context);
     }
 
@@ -128,7 +142,7 @@ public final class AccessoryDataEntry {
      * @param entity the entity that this entry belongs to
      * @param context the context surrounding this invocation
      */
-    public void moveOrDropStack(@NonNull LivingEntity entity, @NonNull EquipContext context) {
+    public void moveOrDropStack(@NonNull LivingEntity entity, @NonNull AccessoryContext context) {
         if (!stack.isEmpty()) {
             doUnequip(entity, context);
 
@@ -143,9 +157,9 @@ public final class AccessoryDataEntry {
      * @param entity the entity that this entry belongs to
      * @param type the {@link AccessoryType} which this entry will be set to
      * @param context the context surrounding this invocation
-     * @apiNote This should probably not be getting called, but rather {@link AccessoryData#setSlots(LivingEntity, int, AccessoryType, int, EquipContext)}
+     * @apiNote This should probably not be getting called, but rather {@link AccessoryData#setSlots(LivingEntity, int, AccessoryType, int, AccessoryContext)}
      */
-    public void setType(@NonNull LivingEntity entity, @NonNull AccessoryType type, @NonNull EquipContext context) {
+    public void setType(@NonNull LivingEntity entity, @NonNull AccessoryType type, @NonNull AccessoryContext context) {
         if (this.type != type && !isItemValid(entity, stack, type, context)) {
             moveOrDropStack(entity, context);
         }
@@ -198,7 +212,7 @@ public final class AccessoryDataEntry {
      * @param stack the accessory's {@link ItemStack} representation being un-equipped
      * @param context the context surrounding this invocation
      */
-    public static void doUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public static void doUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null) {
@@ -212,9 +226,9 @@ public final class AccessoryDataEntry {
      * Perform necessary operations that occur when un-equipping an accessory
      * @param entity the entity un-equipping the accessory
      * @param context the context surrounding this invocation
-     * @apiNote This is just a shortcut to the {@code static} {@link #doUnequip(LivingEntity, ItemStack, EquipContext)} version
+     * @apiNote This is just a shortcut to the {@code static} {@link #doUnequip(LivingEntity, ItemStack, AccessoryContext)} version
      */
-    public void doUnequip(@NonNull LivingEntity entity, @NonNull EquipContext context) {
+    public void doUnequip(@NonNull LivingEntity entity, @NonNull AccessoryContext context) {
         doUnequip(entity, stack, context);
     }
 
@@ -234,7 +248,7 @@ public final class AccessoryDataEntry {
      * @param index the slot index of this data entry
      * @param context the context surrounding this invocation
      */
-    public void doEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull EquipContext context) {
+    public void doEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull AccessoryContext context) {
         Accessory accessory = Accessories.get(stack.getItem());
 
         if (accessory != null) {
@@ -243,7 +257,7 @@ public final class AccessoryDataEntry {
             AccessoryData.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
             accessory.onEquip(entity, stack, context);
 
-            if (context == EquipContext.USE_HELD) {
+            if (context == AccessoryContext.USE_HELD) {
                 SoundData data = accessory.getEquipSound(stack);
 
                 if (data != null) {
@@ -273,10 +287,10 @@ public final class AccessoryDataEntry {
      * @param stack the {@link ItemStack} to set as in this entry
      * @param index the slot index of this data entry
      * @param context the context surrounding this invocation
-     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
+     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, AccessoryContext)} should be force-called, {@code false} otherwise
      * @param sync {@code true} if this invocation should be synced with clients
      */
-    private void doSetStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull EquipContext context, boolean forceOnEquip, boolean sync) {
+    private void doSetStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull AccessoryContext context, boolean forceOnEquip, boolean sync) {
         if (!ItemStack.matches(this.stack, stack)) {
             doUnequip(entity, context);
 
@@ -307,14 +321,14 @@ public final class AccessoryDataEntry {
      * @param stack the {@link ItemStack} to set as in the provided slot index
      * @param index the slot index of this data entry
      * @param context the context surrounding this invocation
-     * @param bypassValidation {@code true} will not check {@link #isItemValid(LivingEntity, ItemStack, EquipContext)} before setting
-     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, EquipContext)} should be force-called, {@code false} otherwise
-     * @return {@code true} if successful ({@link #isItemValid(LivingEntity, ItemStack, EquipContext)}
+     * @param bypassValidation {@code true} will not check {@link #isItemValid(LivingEntity, ItemStack, AccessoryContext)} before setting
+     * @param forceOnEquip {@code true} if {@link IAccessory#onEquip(LivingEntity, ItemStack, AccessoryContext)} should be force-called, {@code false} otherwise
+     * @return {@code true} if successful ({@link #isItemValid(LivingEntity, ItemStack, AccessoryContext)}
      * result if {@code bypassValidation} is {@code false}
      */
     // todo fix: Syncing with this is bugged as it will always call Accessory#onEquip afaik
     // todo update: confirmed, this happens because forceOnEquip = true from AccessorySlot#set, but its effects are only visible on Forge for some reason
-    public boolean setStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull EquipContext context, boolean bypassValidation, boolean forceOnEquip) {
+    public boolean setStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull AccessoryContext context, boolean bypassValidation, boolean forceOnEquip) {
         if (bypassValidation || isItemValid(entity, stack, context)) {
             doSetStack(entity, stack, index, context, forceOnEquip, true);
             return true;
@@ -330,9 +344,9 @@ public final class AccessoryDataEntry {
      * @param stack the {@link ItemStack} to set as in the provided slot index
      * @param index the slot index of this data entry
      * @param context the context surrounding this invocation
-     * @return the result of {@link #isItemValid(LivingEntity, ItemStack, EquipContext)}
+     * @return the result of {@link #isItemValid(LivingEntity, ItemStack, AccessoryContext)}
      */
-    public boolean setStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull EquipContext context) {
+    public boolean setStack(@NonNull LivingEntity entity, @NonNull ItemStack stack, int index, @NonNull AccessoryContext context) {
         return setStack(entity, stack, index, context, false, true);
     }
 
@@ -343,7 +357,7 @@ public final class AccessoryDataEntry {
      * @param context the context surrounding this invocation
      * @return the removed {@link ItemStack}
      */
-    public ItemStack remove(@NonNull LivingEntity entity, int amount, @NonNull EquipContext context) {
+    public ItemStack remove(@NonNull LivingEntity entity, int amount, @NonNull AccessoryContext context) {
         ItemStack stack;
 
         if (amount < 0) {
@@ -366,6 +380,6 @@ public final class AccessoryDataEntry {
      * @return a deep copy of all data stored within this entry, safe to mutate
      */
     public AccessoryDataEntry copy() {
-        return new AccessoryDataEntry(type, stack.copy(), hidden);
+        return new AccessoryDataEntry(type, context, stack.copy(), hidden);
     }
 }

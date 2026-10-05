@@ -1,48 +1,49 @@
-package com.swacky.ohmega.api.util;
+package com.swacky.ohmega.api.util.struct;
 
-import it.unimi.dsi.fastutil.bytes.ByteBooleanBiConsumer;
-import org.apache.commons.lang3.function.ByteSupplier;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-/**
- * Non-boxing byte implementation of {@link AbstractLazySavedValue}
- */
-public final class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
-    private final @Nullable ByteSupplier getter;
-    private final @Nullable ByteBooleanBiConsumer setter;
+import java.util.function.BooleanSupplier;
 
-    private byte value;
+/**
+ * Non-boxing boolean implementation of {@link AbstractLazySavedValue}
+ */
+public final class BooleanLazySavedValue extends AbstractLazySavedValue<Boolean> {
+    private final @Nullable BooleanSupplier getter;
+    private final @Nullable BooleanBooleanBiConsumer setter;
+
+    private boolean value;
 
     /**
-     * Construct a new {@link ByteLazySavedValue}
+     * Construct a new {@link BooleanLazySavedValue}
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public ByteLazySavedValue(@Nullable ByteSupplier getter, @Nullable ByteBooleanBiConsumer setter) {
+    public BooleanLazySavedValue(@Nullable BooleanSupplier getter, @Nullable BooleanBooleanBiConsumer setter) {
         this.getter = getter;
         this.setter = setter;
     }
 
     /**
-     * Construct a new variable-value {@link ByteLazySavedValue}
+     * Construct a new variable-value {@link BooleanLazySavedValue}
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static @NonNull ByteLazySavedValue of(byte value) {
-        ByteLazySavedValue instance = new ByteLazySavedValue(null, null);
+    public static @NonNull BooleanLazySavedValue of(boolean value) {
+        BooleanLazySavedValue instance = new BooleanLazySavedValue(null, null);
         instance.value = value;
 
         return instance;
     }
 
     @Override
-    public @NonNull Byte getObject() {
+    public @NonNull Boolean getObject() {
         return get();
     }
 
     @Override
-    public void setObject(@Nullable Byte value) {
+    public void setObject(@Nullable Boolean value) {
         if (value != null) {
             set(value);
         }
@@ -57,12 +58,12 @@ public final class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
      * Lazily get the stored value, non-boxed
      * @return the current value if it has already been fetched, else calls the {@link #getter} to initialise to the stored or default value
      */
-    public byte get() {
+    public boolean get() {
         if (!initialised) {
             initialised = true;
 
             if (getter != null) {
-                value = getter.getAsByte();
+                value = getter.getAsBoolean();
             }
         }
 
@@ -73,7 +74,7 @@ public final class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
      * Sets a value but strictly does not call the serialiser, non-boxed
      * @param value the new value to set to
      */
-    public void set(byte value) {
+    public void set(boolean value) {
         initialised = true;
         this.value = value;
     }
@@ -83,7 +84,7 @@ public final class ByteLazySavedValue extends AbstractLazySavedValue<Byte> {
      */
     public void pull() {
         if (getter != null) {
-            value = getter.getAsByte();
+            value = getter.getAsBoolean();
         }
     }
 

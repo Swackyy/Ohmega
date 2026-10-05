@@ -6,7 +6,7 @@ import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -32,13 +32,13 @@ import java.util.Optional;
 public class AccessorySlot extends Slot implements IAccessorySlotProvider {
     private static final Container EMPTY_CONTAINER = new SimpleContainer(0);
 
-    protected final Player player;
-    protected final AccessoryData handler;
-    private final AccessoryType type;
+    protected final @NonNull Player player;
+    protected final @NonNull AccessoryData handler;
+    private final @NonNull AccessoryType type;
     private final int originalX;
     private final int originalY;
 
-    public AccessorySlot(Player player, int index, int x, int y) {
+    public AccessorySlot(@NonNull Player player, int index, int x, int y) {
         super(EMPTY_CONTAINER, index, x, y);
 
         this.player = player;
@@ -46,15 +46,6 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
         this.type = handler.getEntry(index).getType();
         this.originalX = x;
         this.originalY = y;
-    }
-
-    public final @NonNull AccessoryType getType() {
-        return type;
-    }
-
-    public final void applyOffset(int xo, int yo) {
-        this.x = originalX + xo;
-        this.y = originalY + yo;
     }
 
     @Override
@@ -82,7 +73,7 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
         Accessory accessory = Accessories.get(item);
 
         if (accessory != null) {
-            return handler.getEntry(getContainerSlot()).isItemValid(player, stack, EquipContext.SLOT);
+            return handler.getEntry(getContainerSlot()).isItemValid(player, stack, AccessoryContext.SLOT);
         }
 
         return false;
@@ -129,12 +120,12 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
     @Override
     public final @NonNull ItemStack remove(int amount) {
-        return handler.getEntry(getContainerSlot()).remove(player, amount, EquipContext.SLOT);
+        return handler.getEntry(getContainerSlot()).remove(player, amount, AccessoryContext.SLOT);
     }
 
     @Override
     public final void set(@NonNull ItemStack stack) {
-        handler.getEntry(getContainerSlot()).setStack(player, stack, getContainerSlot(), EquipContext.SLOT);
+        handler.getEntry(getContainerSlot()).setStack(player, stack, getContainerSlot(), AccessoryContext.SLOT);
     }
 
     @Override
@@ -225,7 +216,16 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
         return this;
     }
 
+    public final @NonNull AccessoryType getType() {
+        return type;
+    }
+
+    public final void applyOffset(int xo, int yo) {
+        this.x = originalX + xo;
+        this.y = originalY + yo;
+    }
+
     public interface Factory {
-        @NonNull AccessorySlot construct(@NonNull Player player, int index, int x, int y);
+        @NonNull AccessorySlot construct(int index, int x, int y);
     }
 }

@@ -6,13 +6,11 @@ import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
 import com.swacky.ohmega.api.client.screen.SnapLine;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
@@ -37,13 +35,7 @@ public final class ToggleExtensionButton extends ExtensionScreenButton implement
 
     @Override
     public void onPress(@NonNull InputWithModifiers input) {
-        LocalPlayer player = Minecraft.getInstance().player;
-
-        if (player != null) {
-            boolean value = !accessoryScreen.isAccessoryExtensionVisible();
-
-            extension.setVisible(value);
-        }
+        extension.setVisible(!accessoryScreen.isAccessoryExtensionVisible());
     }
 
     @Override

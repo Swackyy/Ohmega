@@ -11,7 +11,7 @@ import java.util.ServiceLoader;
  * Contains some client-specific common code used throughout the mod that isn't enough to deserve a single dedicated class, so it instead got lumped in here
  */
 public final class OhmegaClient {
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final Identifier DEFAULT_EXTENSION_ID = Ohmega.id("default");
     public static final Identifier PACK_DARK_ID = Ohmega.id("dark");
     public static final String LINK_CROWDIN = "https://crowdin.com/project/ohmega";
@@ -63,6 +63,6 @@ public final class OhmegaClient {
     }
 
     public static String widgetTranslationKey(String key) {
-        return Ohmega.MODID + ".widget." + key;
+        return "widget." + Ohmega.MODID + '.' + key;
     }
 }

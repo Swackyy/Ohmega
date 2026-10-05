@@ -3,6 +3,10 @@ package com.swacky.ohmega.api.client.config;
 import com.swacky.ohmega.api.common.Ohmega;
 import net.minecraft.resources.Identifier;
 
+/**
+ * Style of the accessory extension toggle button.
+ * These values are sadly not extensible as there is no easy way to make it work well, and so for now, these are final
+ */
 public enum ButtonStyle {
     DEFAULT("default", 20, 18, true),
     LEGACY("legacy", 9, 9, true),

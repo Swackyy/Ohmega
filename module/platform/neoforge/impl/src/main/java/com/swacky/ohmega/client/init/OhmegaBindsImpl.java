@@ -31,7 +31,7 @@ public final class OhmegaBindsImpl implements OhmegaBinds.Service {
 
             return Component.translatable(
                     "key." + Ohmega.MODID + ".accessory_type",
-                    Component.translatable(key.substring(0, index).replace("key", "accessory_type")),
+                    Component.translatable(key.substring(0, index).replace("key", Ohmega.MODID + ".accessory_type")),
                     Integer.parseInt(key.substring(index + 1)) + 1);
         }
     }

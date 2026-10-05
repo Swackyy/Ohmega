@@ -1,4 +1,4 @@
-package com.swacky.ohmega.api.util;
+package com.swacky.ohmega.api.util.struct;
 
 import org.jspecify.annotations.Nullable;
 

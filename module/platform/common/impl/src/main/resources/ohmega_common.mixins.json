@@ -4,7 +4,10 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractContainerMenuMixin",
+    "Advancement_BuilderMixin",
+    "AdvancementHolderMixin",
     "DispenserBlockMixin",
+    "DisplayInfoMixin",
     "EnchantmentHelperMixin",
     "EntityMixin",
     "InventoryChangeTrigger_TriggerInstanceMixin",
@@ -12,6 +15,7 @@
     "InventoryMenuMixin",
     "InventoryMixin",
     "PiglinAiMixin",
+    "PlayerAdvancementsMixin",
     "PowderSnowBlockMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin",

@@ -3,9 +3,12 @@ package com.swacky.ohmega.api.client.renderer;
 import com.swacky.ohmega.api.client.OhmegaClient;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
+import com.swacky.ohmega.api.util.LoaderService;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -25,13 +28,14 @@ public record AccessoryRenderStateData(ArrayList<AccessoryDataEntry> entries) {
      * @param state the vanilla render state to pull data from
      * @return the stored {@link AccessoryRenderStateData} on the render state
      */
-    public static AccessoryRenderStateData getData(LivingEntityRenderState state) {
+    public static @Nullable AccessoryRenderStateData getData(LivingEntityRenderState state) {
         return IMPL.getData(state);
     }
 
+    @LoaderService
     public interface Service {
         Identifier ID = Ohmega.id("accessory_data");
 
-        AccessoryRenderStateData getData(LivingEntityRenderState state);
+        @Nullable AccessoryRenderStateData getData(@NonNull LivingEntityRenderState state);
     }
 }

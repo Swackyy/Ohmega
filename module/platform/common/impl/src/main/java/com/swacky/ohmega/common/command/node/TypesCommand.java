@@ -3,7 +3,6 @@ package com.swacky.ohmega.common.command.node;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.serialization.JsonOps;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.command.CommandHelper;
@@ -13,6 +12,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
@@ -59,10 +60,11 @@ public final class TypesCommand implements ICommandNode {
     private static int query(CommandContext<CommandSourceStack> context) {
         AccessoryType type = AccessoryTypeArgument.getType(context, ARGUMENT_TYPE);
 
-        context.getSource().sendSuccess(() -> Component.translatable(QUERY_FEEDBACK,
-                Component.literal(type.getId().toString()).withStyle(ChatFormatting.GREEN),
-                Component.literal(AccessoryType.INITIALISER_CODEC.encodeStart(JsonOps.INSTANCE, type).getOrThrow().toString()).withStyle(ChatFormatting.GREEN)
-        ), false);
+        AccessoryType.INITIALISER_CODEC.encodeStart(NbtOps.INSTANCE, type).resultOrPartial().ifPresent(tag ->
+                context.getSource().sendSuccess(() -> Component.translatable(QUERY_FEEDBACK,
+                        Component.literal(type.getId().toString()).withStyle(ChatFormatting.GREEN),
+                        NbtUtils.toPrettyComponent(tag)
+                ), false));
         return Command.SINGLE_SUCCESS;
     }
 }

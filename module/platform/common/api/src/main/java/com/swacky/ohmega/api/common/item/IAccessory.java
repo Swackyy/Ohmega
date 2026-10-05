@@ -60,14 +60,14 @@ public interface IAccessory {
      * @param stack the {@link ItemStack} of this accessory item being equipped
      * @param context context surrounding how the accessory was equipped
      */
-    default void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {}
+    default void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {}
 
     /**
      * Called upon the entity un-equipping the accessory
      * @param entity the {@link LivingEntity} un-equipping this accessory
      * @param stack the {@link ItemStack} of this accessory item being un-equipped
      */
-    default void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {}
+    default void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {}
 
     /**
      * Dictates if the entity can wear the accessory
@@ -76,7 +76,7 @@ public interface IAccessory {
      * @param context context surrounding how the accessory may be equipped
      * @return {@code true} if it should be allowed to be worn, {@code false} otherwise
      */
-    default boolean canEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    default boolean canEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         return true;
     }
 

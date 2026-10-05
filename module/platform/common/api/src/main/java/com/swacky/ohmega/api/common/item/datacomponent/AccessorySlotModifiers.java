@@ -19,11 +19,11 @@ import org.jspecify.annotations.NonNull;
  * Supports attributes added when an item is in the slot (passive), and when in the slot but also active ({@link OhmegaDataComponents#isActive(ItemStack)}
  */
 public final class AccessorySlotModifiers {
-    public static final @NonNull AccessorySlotModifiers EMPTY = Builder.EMPTY.build();
+    public static final @NonNull AccessorySlotModifiers EMPTY = new Builder().build();
 
     public static final @NonNull Codec<AccessorySlotModifiers> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ItemAttributeModifiers.CODEC.fieldOf("passive").forGetter(AccessorySlotModifiers::getPassive),
-            ItemAttributeModifiers.CODEC.fieldOf("active").forGetter(AccessorySlotModifiers::getActive)
+            ItemAttributeModifiers.CODEC.fieldOf("active").forGetter(AccessorySlotModifiers::getActive),
+            ItemAttributeModifiers.CODEC.fieldOf("passive").forGetter(AccessorySlotModifiers::getPassive)
     ).apply(builder, AccessorySlotModifiers::new));
 
     public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessorySlotModifiers> STREAM_CODEC = StreamCodec.composite(
@@ -31,34 +31,34 @@ public final class AccessorySlotModifiers {
             ItemAttributeModifiers.STREAM_CODEC, AccessorySlotModifiers::getActive,
             AccessorySlotModifiers::new);
 
-    private final @NonNull ItemAttributeModifiers passiveModifiers;
     private final @NonNull ItemAttributeModifiers activeModifiers;
+    private final @NonNull ItemAttributeModifiers passiveModifiers;
 
-    private AccessorySlotModifiers(@NonNull ItemAttributeModifiers passiveModifiers, @NonNull ItemAttributeModifiers activeModifiers) {
-        this.passiveModifiers = passiveModifiers;
+    private AccessorySlotModifiers(@NonNull ItemAttributeModifiers activeModifiers, @NonNull ItemAttributeModifiers passiveModifiers) {
         this.activeModifiers = activeModifiers;
-    }
-
-    public @NonNull ItemAttributeModifiers getPassive() {
-        return passiveModifiers;
+        this.passiveModifiers = passiveModifiers;
     }
 
     public @NonNull ItemAttributeModifiers getActive() {
         return activeModifiers;
     }
 
+    public @NonNull ItemAttributeModifiers getPassive() {
+        return passiveModifiers;
+    }
+
     public static class Builder {
-        public static final @NonNull Builder EMPTY = new Builder();
-
-        private ItemAttributeModifiers.@NonNull Builder passiveModifiers = ItemAttributeModifiers.builder();
         private ItemAttributeModifiers.@NonNull Builder activeModifiers = ItemAttributeModifiers.builder();
+        private ItemAttributeModifiers.@NonNull Builder passiveModifiers = ItemAttributeModifiers.builder();
 
-        private void add(@NonNull Holder<Attribute> attribute, @NonNull AttributeModifier modifier, boolean active) {
-            if (active) {
-                activeModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
-            } else {
-                passiveModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
-            }
+        /**
+         * Add a modifier to the accessory applied when the item is equipped and active
+         * @param attribute the attribute to modify
+         * @param modifier defines how the attribute supplied will be modified
+         */
+        public Builder addActive(@NonNull Holder<Attribute> attribute, @NonNull AttributeModifier modifier) {
+            activeModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
+            return this;
         }
 
         /**
@@ -67,26 +67,8 @@ public final class AccessorySlotModifiers {
          * @param modifier defines how the attribute supplied will be modified
          */
         public Builder addPassive(@NonNull Holder<Attribute> attribute, @NonNull AttributeModifier modifier) {
-            add(attribute, modifier, false);
+            passiveModifiers.add(attribute, modifier, EquipmentSlotGroup.ANY);
             return this;
-        }
-
-        /**
-         * Add a modifier to the accessory applied when the item is equipped and active
-         * @param attribute the attribute to modify
-         * @param modifier defines how the attribute supplied will be modified
-         */
-        public Builder addActive(@NonNull Holder<Attribute> attribute, @NonNull AttributeModifier modifier) {
-            add(attribute, modifier, true);
-            return this;
-        }
-
-        /**
-         * @return all default attribute modifiers that will be applied when built ({@link #build()}) into a {@link AccessorySlotModifiers}
-         */
-        @SuppressWarnings("unused")
-        public @NonNull ItemAttributeModifiers getPassiveModifiers() {
-            return passiveModifiers.build();
         }
 
         /**
@@ -95,6 +77,14 @@ public final class AccessorySlotModifiers {
         @SuppressWarnings("unused")
         public @NonNull ItemAttributeModifiers getActiveModifiers() {
             return activeModifiers.build();
+        }
+
+        /**
+         * @return all default attribute modifiers that will be applied when built ({@link #build()}) into a {@link AccessorySlotModifiers}
+         */
+        @SuppressWarnings("unused")
+        public @NonNull ItemAttributeModifiers getPassiveModifiers() {
+            return passiveModifiers.build();
         }
 
         /**
@@ -110,7 +100,7 @@ public final class AccessorySlotModifiers {
          * @return the built {@link AccessorySlotModifiers}
          */
         public @NonNull AccessorySlotModifiers build() {
-            return new AccessorySlotModifiers(passiveModifiers.build(), activeModifiers.build());
+            return new AccessorySlotModifiers(activeModifiers.build(), passiveModifiers.build());
         }
     }
 }

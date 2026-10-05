@@ -2,6 +2,7 @@ package com.swacky.ohmega.common.init;
 
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
+import com.swacky.ohmega.api.util.LoaderService;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -32,6 +33,7 @@ public final class OhmegaItems {
                 .stacksTo(1);
     }
 
+    @LoaderService
     public interface Service {
         String ANGEL_RING_KEY = "angel_ring";
 

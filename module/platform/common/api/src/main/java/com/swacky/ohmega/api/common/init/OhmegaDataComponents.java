@@ -2,6 +2,7 @@ package com.swacky.ohmega.api.common.init;
 
 import com.mojang.serialization.Codec;
 import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.util.LoaderService;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.item.ItemStack;
@@ -88,6 +89,7 @@ public final class OhmegaDataComponents {
         return stack.getOrDefault(getSlotActiveModifiers(), ItemAttributeModifiers.EMPTY);
     }
 
+    @LoaderService
     public interface Service {
         String ACCESSORY_ACTIVE_MODIFIERS_KEY = "accessory_active_modifiers";
         String ACTIVE_KEY = "active";

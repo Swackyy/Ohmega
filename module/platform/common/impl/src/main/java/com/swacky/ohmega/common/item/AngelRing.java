@@ -3,7 +3,7 @@ package com.swacky.ohmega.common.item;
 import com.swacky.ohmega.api.client.item.AccessoryHelper;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.item.SoundData;
 import net.minecraft.network.chat.Component;
@@ -39,13 +39,13 @@ public class AngelRing extends Item implements IAccessory {
 
     // Activates the accessory upon equipping
     @Override
-    public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         OhmegaDataAttachments.getData(entity).setActive(entity, stack, true);
     }
 
     // Deactivates and prevents a player in survival from flying upon un-equipping
     @Override
-    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         if (entity instanceof Player player && !(player.isCreative() || player.isSpectator())) {
             player.getAbilities().mayfly = false;
             player.getAbilities().flying = false;

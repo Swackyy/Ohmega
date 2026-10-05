@@ -11,7 +11,7 @@ import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypePredicateArgument;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
@@ -22,10 +22,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public final class SlotsCommand implements ICommandNode {
@@ -152,7 +154,7 @@ public final class SlotsCommand implements ICommandNode {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         for (LivingEntity target : targets) {
-            OhmegaDataAttachments.getData(target).addSlots(target, type, amount, EquipContext.COMMAND);
+            OhmegaDataAttachments.getData(target).addSlots(target, type, amount, AccessoryContext.COMMAND);
         }
 
         int size = targets.size();
@@ -194,7 +196,15 @@ public final class SlotsCommand implements ICommandNode {
         int[] count = {0};
 
         for (LivingEntity target : targets) {
-            count[0] += OhmegaDataAttachments.getData(target).clearSlots(target, filter, max, EquipContext.COMMAND);
+            BiPredicate<@NonNull AccessoryType, @NonNull AccessoryContext> biFilter;
+
+            if (filter == null) {
+                biFilter = null;
+            } else {
+                biFilter = (type, _) -> filter.test(type);
+            }
+
+            count[0] += OhmegaDataAttachments.getData(target).clearSlots(target, biFilter, max, AccessoryContext.COMMAND);
         }
 
         int size = targets.size();
@@ -261,7 +271,7 @@ public final class SlotsCommand implements ICommandNode {
         List<LivingEntity> targets = CommandHelper.convertLiving(entities);
 
         for (LivingEntity target : targets) {
-            OhmegaDataAttachments.getData(target).defaultSlots(target, EquipContext.COMMAND);
+            OhmegaDataAttachments.getData(target).defaultSlots(target, AccessoryContext.COMMAND);
         }
 
         int size = targets.size();
@@ -368,7 +378,7 @@ public final class SlotsCommand implements ICommandNode {
                 Component name = target.getDisplayName();
 
                 if (max < dataSize) {
-                    data.inheritSlots(target, otherTarget, min, max, EquipContext.COMMAND);
+                    data.inheritSlots(target, otherTarget, min, max, AccessoryContext.COMMAND);
 
                     if (min == 0 && max < 0) {
                         source.sendSuccess(() -> Component.translatable(INHERIT_FEEDBACK_SINGLE,
@@ -390,7 +400,7 @@ public final class SlotsCommand implements ICommandNode {
                 for (LivingEntity target : targets) {
                     AccessoryData data = OhmegaDataAttachments.getData(target);
 
-                    data.inheritSlots(target, otherTarget, min, Math.min(max, data.size()), EquipContext.COMMAND);
+                    data.inheritSlots(target, otherTarget, min, Math.min(max, data.size()), AccessoryContext.COMMAND);
                 }
 
                 if (min == 0 && max < 0) {
@@ -462,7 +472,7 @@ public final class SlotsCommand implements ICommandNode {
             Component name = target.getDisplayName();
 
             if (index < dataSize) {
-                data.insertSlots(target, index, type, amount, EquipContext.COMMAND);
+                data.insertSlots(target, index, type, amount, AccessoryContext.COMMAND);
 
                 source.sendSuccess(() -> Component.translatable(INSERT_FEEDBACK_SINGLE,
                         amount,
@@ -477,7 +487,7 @@ public final class SlotsCommand implements ICommandNode {
             for (LivingEntity target : targets) {
                 AccessoryData data = OhmegaDataAttachments.getData(target);
 
-                data.insertSlots(target, Math.min(index, data.size()), type, amount, EquipContext.COMMAND);
+                data.insertSlots(target, Math.min(index, data.size()), type, amount, AccessoryContext.COMMAND);
             }
 
             source.sendSuccess(() -> Component.translatable(INSERT_FEEDBACK_MULTIPLE,
@@ -521,7 +531,7 @@ public final class SlotsCommand implements ICommandNode {
             Component name = targets.getFirst().getDisplayName();
 
             if (index < dataSize) {
-                int count = data.removeSlots(target, index, amount, filter, EquipContext.COMMAND);
+                int count = data.removeSlots(target, index, amount, filter, AccessoryContext.COMMAND);
 
                 source.sendSuccess(() -> Component.translatable(REMOVE_FEEDBACK_SINGLE,
                         count,
@@ -537,7 +547,7 @@ public final class SlotsCommand implements ICommandNode {
                 AccessoryData data = OhmegaDataAttachments.getData(target);
                 int correctedIndex = Math.min(index, data.size());
 
-                count[0] += data.removeSlots(target, correctedIndex, amount, filter, EquipContext.COMMAND);
+                count[0] += data.removeSlots(target, correctedIndex, amount, filter, AccessoryContext.COMMAND);
             }
 
             source.sendSuccess(() -> Component.translatable(REMOVE_FEEDBACK_MULTIPLE,
@@ -588,7 +598,7 @@ public final class SlotsCommand implements ICommandNode {
 
                 if (index < dataSize) {
                     if (max < dataSize) {
-                        data.setSlots(target, index, type, max, EquipContext.COMMAND);
+                        data.setSlots(target, index, type, max, AccessoryContext.COMMAND);
 
                         if (index == max) {
                             source.sendSuccess(() -> Component.translatable(SET_FEEDBACK_SINGLE,
@@ -615,7 +625,7 @@ public final class SlotsCommand implements ICommandNode {
                     AccessoryData data = OhmegaDataAttachments.getData(target);
                     int dataSize = data.size();
 
-                    data.setSlots(target, Math.min(index, dataSize), type, Math.min(max, dataSize), EquipContext.COMMAND);
+                    data.setSlots(target, Math.min(index, dataSize), type, Math.min(max, dataSize), AccessoryContext.COMMAND);
                 }
 
                 if (index == max) {

@@ -13,48 +13,44 @@ public final class OhmegaByteBufCodecs {
     /**
      * Codec for an array of boolean primitives
      */
-    public static final @NonNull StreamCodec<ByteBuf, boolean[]> BOOLEAN_ARRAY = new StreamCodec<>() {
-        public boolean @NonNull [] decode(@NonNull ByteBuf buf) {
-            int size = VarInt.read(buf);
-            boolean[] values = new boolean[size];
+    public static final @NonNull StreamCodec<ByteBuf, boolean[]> BOOLEAN_ARRAY = StreamCodec.of(
+            (buf, values) -> {
+                VarInt.write(buf, values.length);
 
-            for (int i = 0; i < size; i++) {
-                values[i] = buf.readBoolean();
+                for (boolean value : values) {
+                    buf.writeBoolean(value);
+                }
+            }, buf -> {
+                int size = VarInt.read(buf);
+                boolean[] values = new boolean[size];
+
+                for (int i = 0; i < size; i++) {
+                    values[i] = buf.readBoolean();
+                }
+
+                return values;
             }
-
-            return values;
-        }
-
-        public void encode(@NonNull ByteBuf buf, boolean @NonNull [] values) {
-            VarInt.write(buf, values.length);
-
-            for (boolean value : values) {
-                buf.writeBoolean(value);
-            }
-        }
-    };
+    );
 
     /**
      * Codec for an array of {@link VarInt}s
      */
-    public static final @NonNull StreamCodec<ByteBuf, int[]> VAR_INT_ARRAY = new StreamCodec<>() {
-        public int @NonNull [] decode(@NonNull ByteBuf buf) {
-            int size = VarInt.read(buf);
-            int[] values = new int[size];
+    public static final @NonNull StreamCodec<ByteBuf, int[]> VAR_INT_ARRAY = StreamCodec.of(
+            (buf, values) -> {
+                VarInt.write(buf, values.length);
 
-            for (int i = 0; i < size; i++) {
-                values[i] = VarInt.read(buf);
+                for (int value : values) {
+                    VarInt.write(buf, value);
+                }
+            }, buf -> {
+                int size = VarInt.read(buf);
+                int[] values = new int[size];
+
+                for (int i = 0; i < size; i++) {
+                    values[i] = VarInt.read(buf);
+                }
+
+                return values;
             }
-
-            return values;
-        }
-
-        public void encode(@NonNull ByteBuf buf, int @NonNull [] values) {
-            VarInt.write(buf, values.length);
-
-            for (int value : values) {
-                VarInt.write(buf, value);
-            }
-        }
-    };
+    );
 }

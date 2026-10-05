@@ -1,4 +1,4 @@
-package com.swacky.ohmega.api.util;
+package com.swacky.ohmega.api.util.struct;
 
 import it.unimi.dsi.fastutil.objects.ObjectBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;

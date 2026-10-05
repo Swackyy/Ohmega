@@ -1,8 +1,8 @@
 package com.swacky.ohmega.common.config;
 
-import com.swacky.ohmega.api.util.BooleanLazySavedValue;
-import com.swacky.ohmega.api.util.IntLazySavedValue;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.util.struct.BooleanLazySavedValue;
+import com.swacky.ohmega.api.util.struct.IntLazySavedValue;
+import com.swacky.ohmega.api.util.struct.LazySavedValue;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 @SuppressWarnings("unused")

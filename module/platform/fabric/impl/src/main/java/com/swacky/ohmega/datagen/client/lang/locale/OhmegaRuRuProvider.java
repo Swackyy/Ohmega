@@ -22,12 +22,11 @@ public final class OhmegaRuRuProvider extends OhmegaLangProvider {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
+        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
         InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Datapack
-        internalHelper.addDataPackDescription("Ресурсы мода Ohmega");
-
-        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
+        internalHelper.addDataPackDescription(Ohmega.MODID, "Ресурсы мода Ohmega");
 
         // Item
         helper.addKeyboundItem(OhmegaItems.getAngelRing(),

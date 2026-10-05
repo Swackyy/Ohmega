@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 /**
  * Custom entrypoints should implement this class and override {@link #invoke(Function)} to execute optional dependency code
- * @apiNote If you are targeting Ohmega as a required dependency you should not be using this
+ * @apiNote If you are targeting Ohmega as a required dependency, you should not be using this
  */
 public interface IOhmegaEntrypoint {
     /**

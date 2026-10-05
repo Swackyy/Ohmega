@@ -8,6 +8,7 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.util.LoaderService;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -128,6 +129,7 @@ public final class OhmegaBinds {
         return ORDERED_SLOT_KEYS.size();
     }
 
+    @LoaderService
     public interface Service {
         KeyMapping createMapping(String name, int key);
 

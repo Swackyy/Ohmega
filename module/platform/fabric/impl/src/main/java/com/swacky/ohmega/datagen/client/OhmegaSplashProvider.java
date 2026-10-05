@@ -1,5 +1,6 @@
 package com.swacky.ohmega.datagen.client;
 
+import com.google.common.hash.Hashing;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
@@ -10,6 +11,7 @@ import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -49,6 +51,7 @@ public final class OhmegaSplashProvider implements DataProvider {
         add("ohmega/api/ package goes hard");
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public @NonNull CompletableFuture<?> run(@NonNull CachedOutput cache) {
         addSplashes();
@@ -59,27 +62,28 @@ public final class OhmegaSplashProvider implements DataProvider {
                     .resolve("texts")
                     .resolve("splashes.txt");
 
-            return CompletableFuture.runAsync(() -> {
+            return CompletableFuture.supplyAsync(() -> {
                 StringBuilder builder = new StringBuilder();
-
-                Optional<Path> vanilla = FabricLoader.getInstance().getModContainer(Identifier.DEFAULT_NAMESPACE).orElseThrow()
+                Optional<Path> optionalVanillaPath = FabricLoader.getInstance().getModContainer(Identifier.DEFAULT_NAMESPACE).orElseThrow()
                         .findPath("assets/" + Identifier.DEFAULT_NAMESPACE + "/texts/splashes.txt");
 
-                if (vanilla.isPresent()) {
+                optionalVanillaPath.ifPresent(vanillaPath -> {
                     try {
-                        builder.append(Files.readString(vanilla.get()));
+                        builder.append(Files.readString(vanillaPath));
                     } catch (IOException e) {
                         throw new RuntimeException("Could not merge vanilla splashes.txt file", e);
                     }
-                }
+                });
 
                 data.forEach(entry -> builder.append(entry).append('\n'));
+                return builder.toString();
+            }).thenAcceptAsync(content -> {
+                byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
 
                 try {
-                    Files.createDirectories(path.getParent());
-                    Files.writeString(path, builder.toString());
+                    cache.writeIfNeeded(path, bytes, Hashing.sha1().hashBytes(bytes));
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to write splashes.txt to file for namespace '" + output.getModId() + '\'', e);
+                    throw new RuntimeException(e);
                 }
             });
         }

@@ -16,6 +16,7 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
+import com.swacky.ohmega.common.command.node.DataCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
@@ -35,11 +36,11 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
     private static final String X_COORDINATE = "latitude";
     private static final String Y_COORDINATE = "longitude";
     private static final String EXTENSION_DESCRIPTION_TEMPLATE = """
-            Th' {0} o' th' doubloon chest in th' {1} menu, bearin' t' th' main quart'r o' th' current screen""";
+            Th' %s o' th' doubloon chest in th' %s menu, bearin' t' th' main quart'r o' th' current screen""";
     private static final String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
-            Th' {0} o' th' switch chest press'r in th' {1} menu when using th' ''{2}'' press'r style, bearin' t' th' main quart'r o' th' current screen""";
+            Th' %s o' th' switch chest press'r in th' %s menu when using th' '%s' press'r style, bearin' t' th' main quart'r o' th' current screen""";
     private static final String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
-            Th' {0} o' th' flip lubber press'r in th' {1} menu, bearin' t' th' main quart'r o' th' current screen""";
+            Th' %s o' th' flip lubber press'r in th' %s menu, bearin' t' th' main quart'r o' th' current screen""";
 
     public OhmegaEnPtProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "en_pt", lookup);
@@ -48,8 +49,8 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
-        InternalLangHelper internalHelper = new InternalLangHelper(builder);
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
+        InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Type 'yer Doubloon: %s");
@@ -66,11 +67,15 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown doubloon type: '%s'");
         builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Doubloon type '%s' be marked as non-specifiable, and this thing only accepts specifiable types");
+        // Nodes
         // Clear
         builder.add(ClearCommand.ROOT_EXCEPTION_MULTIPLE, "No matching treasures were found in %s lubbers' doubloon chests");
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching treasures were found in lubber %s's doubloon chest");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Took %s treasure(s) from %s lubbers' doubloon chests");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Took %s treasure(s) from lubber %s's doubloon chest");
+        // Data
+        builder.add(DataCommand.ROOT_FEEDBACK, "Lubber %s has th' followin' doubloon scroll: %s");
+        builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Lubber %s has th' followin' doubloon scroll entry in index %s: %s");
         // Extensions
         builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmega knows these %s doubloon quart'r(s): %s");
         // Info
@@ -222,51 +227,51 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_EXTENSION_X_KEY,
                 "Chest Latitude",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_EXTENSION_Y_KEY,
                 "Chest Longitude",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Switch Chest Press'r Default Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Switch Chest Press'r Default Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Switch Chest Press'r Legacy Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Switch Chest Press'r Legacy Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Switch Chest Press'r Tag Left Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Switch Chest Press'r Tag Left Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Switch Chest Press'r Tag Right Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Switch Chest Press'r Tag Right Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY,
                 "Flip Lubber Press'r Latitude",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Flip Lubber Press'r Longitude",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
         // Creative
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SECTION_CREATIVE,
@@ -277,51 +282,51 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_EXTENSION_X_KEY,
                 "Chest Latitude",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_EXTENSION_Y_KEY,
                 "Chest Longitude",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Switch Chest Press'r Default Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Switch Chest Press'r Default Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Switch Chest Press'r Legacy Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Switch Chest Press'r Legacy Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Switch Chest Press'r Tag Left Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Switch Chest Press'r Tag Left Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Switch Chest Press'r Tag Right Latitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Switch Chest Press'r Tag Right Longitude",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_KEY,
                 "Flip Lubber Press'r Latitude",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Flip Lubber Press'r Longitude",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
 
         // Server
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmega Cap'n", "Ohmega Cap'n's Log");
@@ -368,7 +373,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                         Pirates th' doubloon clearin' int' vanilla loot bag clearin'""");
 
         // Datapack
-        internalHelper.addDataPackDescription("Magic Jar treasures fer Ohmega");
+        internalHelper.addDataPackDescription(Ohmega.MODID, "Magic Jar treasures fer Ohmega");
         internalHelper.addDataPackDescription(OhmegaClient.PACK_DARK_ID, "Eye patch pack fer Ohmega");
 
         // Item
@@ -376,7 +381,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
                 "Davy Jones' Ring",
                 "Permits th' bearer t' plunder",
                 "Thunk %s t' switch plunder'n");
-        builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When goin':");
+        builder.add(KEY_ITEM_MODIFIERS_ACCESSORY_ACTIVE, "When goin':");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
@@ -394,8 +399,8 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         internalHelper.add(OhmegaBinds.OPEN_EDIT_UI, "Open/Shut Draft UI Quart'rs");
 
         // Toast
-        internalHelper.addToast("translation.title", "Ohmega translations");
-        internalHelper.addToast("translation.message", "Consider translating Ohmega on Crowdin through th' log menu");
+        internalHelper.addToast(KEY_TOAST_TRANSLATION_TITLE, "Ohmega translations");
+        internalHelper.addToast(KEY_TOAST_TRANSLATION_MESSAGE, "Consider translating Ohmega on Crowdin through th' log menu");
 
         // Widget
         builder.add(CrowdinButton.TRANSLATION_KEY, "Crowdin");
@@ -404,6 +409,6 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Switch Visibility");
 
         // Misc
-        builder.add(Ohmega.MODID + ".name", "Ohmega");
+        builder.add(KEY_NAME, "Ohmega");
     }
 }

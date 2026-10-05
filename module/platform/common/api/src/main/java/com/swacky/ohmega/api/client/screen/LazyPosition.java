@@ -1,6 +1,6 @@
 package com.swacky.ohmega.api.client.screen;
 
-import com.swacky.ohmega.api.util.IntLazySavedValue;
+import com.swacky.ohmega.api.util.struct.IntLazySavedValue;
 import org.jspecify.annotations.NonNull;
 
 /**

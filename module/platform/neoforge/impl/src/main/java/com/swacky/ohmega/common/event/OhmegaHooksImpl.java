@@ -1,13 +1,16 @@
 package com.swacky.ohmega.common.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionExtractEvent;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionInitEvent;
 import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
 import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.event.AccessoryAllowWalkOnPowderSnowEvent;
+import com.swacky.ohmega.api.common.event.AccessoryAttachDataEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncModuloEvent;
 import com.swacky.ohmega.api.common.event.AccessoryBindEvent;
@@ -27,7 +30,7 @@ import com.swacky.ohmega.api.common.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.event.RegisterAccessoryTypesEvent;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
@@ -71,6 +74,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public void attachData(AccessoryData data, LivingEntity entity) {
+        NeoForge.EVENT_BUS.post(new AccessoryAttachDataEvent(data, entity));
+    }
+
+    @Override
     public boolean autoSync(ItemStack stack, boolean original) {
         return NeoForge.EVENT_BUS.post(new AccessoryAutoSyncEvent(stack, original)).returnValue;
     }
@@ -78,11 +86,10 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public byte autoSyncModulo(ItemStack stack, byte original) {
         return NeoForge.EVENT_BUS.post(new AccessoryAutoSyncModuloEvent(stack, original)).returnValue;
-
     }
 
     @Override
-    public boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
+    public boolean canEquip(LivingEntity entity, ItemStack stack, AccessoryContext context, boolean original) {
         return NeoForge.EVENT_BUS.post(new AccessoryCanEquipEvent(entity, stack, context, original)).returnValue;
     }
 
@@ -97,13 +104,23 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public boolean equip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return NeoForge.EVENT_BUS.post(new AccessoryEquipEvent(entity, stack, context)).isCanceled();
     }
 
     @Override
     public SoundData equipSound(ItemStack stack, SoundData original) {
         return NeoForge.EVENT_BUS.post(new AccessoryEquipSoundEvent(stack, original)).returnValue;
+    }
+
+    @Override
+    public void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        NeoForge.EVENT_BUS.post(new AccessoryExtensionInitEvent.Post(extension, adder));
+    }
+
+    @Override
+    public boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        return NeoForge.EVENT_BUS.post(new AccessoryExtensionInitEvent.Pre(extension, adder)).isCanceled();
     }
 
     @Override
@@ -150,13 +167,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void renderAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        NeoForge.EVENT_BUS.post(new AccessoryExtensionRenderEvent.Post(gui, extension));
+    public void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        NeoForge.EVENT_BUS.post(new AccessoryExtensionExtractEvent.Post(gui, extension));
     }
 
     @Override
-    public boolean renderAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        return NeoForge.EVENT_BUS.post(new AccessoryExtensionRenderEvent.Pre(gui, extension)).isCanceled();
+    public boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        return NeoForge.EVENT_BUS.post(new AccessoryExtensionExtractEvent.Pre(gui, extension)).isCanceled();
     }
 
     @Override
@@ -180,7 +197,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return NeoForge.EVENT_BUS.post(new AccessoryUnequipEvent(entity, stack, context)).isCanceled();
     }
 }

@@ -98,9 +98,18 @@ public abstract class AccessoryMenuExtension {
         }
     }
 
-    // todo: doc
-    public @NonNull AccessorySlot createSlot(@NonNull Player player, int index, int x, int y) {
-        return new AccessorySlot(player, index, x, y);
+    /**
+     * Creates an {@link AccessorySlot} to place in the accessory extension
+     * @apiNote Due to constraints in how I designed this (on purpose) this will only show changes when on the client, hence,
+     * custom slots may only be defined on the client. This behaviour has already been documented in {@link AccessorySlot}
+     * @param index the slot index, relative to the accessory extension
+     * @param x (initial) x-coordinate of the slot
+     * @param y (initial) y-coordinate of the slot
+     * @return the default implementation of the accessory slot, change at your will,
+     * but know that custom slots will only apply on the client (see above)
+     */
+    public @NonNull AccessorySlot createSlot(int index, int x, int y) {
+        return new AccessorySlot(owner, index, x, y);
     }
 
     /**

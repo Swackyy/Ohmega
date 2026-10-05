@@ -18,7 +18,7 @@ import java.util.function.Function;
 // todo: kit out this and other classes moved to api with some clean nullability annotations
 public final class Ohmega {
     public static final String MODID = "ohmega";
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE = "This method was called without a defined functional method body. Implement it in your mixin class";
 
     private static boolean bootstrapped = false;

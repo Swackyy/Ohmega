@@ -1,10 +1,11 @@
 package com.swacky.ohmega.mixin.client;
 
-import com.swacky.ohmega.client.renderer.LivingEntityRenderStateExtension;
+import com.swacky.ohmega.mixinduck.client.LivingEntityRenderStateExtension;
 import com.swacky.ohmega.client.renderer.RenderStateDataKey;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -17,12 +18,12 @@ abstract class LivingEntityRenderStateMixin extends EntityRenderState implements
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T ohmega$getData(RenderStateDataKey<T> key) {
+    public <T> T ohmega$getData(@NonNull RenderStateDataKey<T> key) {
         return (T) ohmega$data.get(key);
     }
 
     @Override
-    public <T> void ohmega$setData(RenderStateDataKey<T> key, T value) {
+    public <T> void ohmega$setData(@NonNull RenderStateDataKey<T> key, @NonNull T value) {
         ohmega$data.put(key, value);
     }
 }

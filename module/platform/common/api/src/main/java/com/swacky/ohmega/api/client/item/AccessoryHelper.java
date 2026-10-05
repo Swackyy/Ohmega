@@ -1,6 +1,7 @@
 package com.swacky.ohmega.api.client.item;
 
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
+import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
@@ -21,7 +22,7 @@ import org.jspecify.annotations.NonNull;
 
 /**
  * Contains some client-only utility methods for accessory items that don't really fit anywhere else within the API.
- * If you can think of a better place to put these methods, I'd be open to refactors
+ * If you can think of a better place to put these methods, I'd be open to moving them
  */
 public final class AccessoryHelper {
     /**
@@ -106,6 +107,8 @@ public final class AccessoryHelper {
      * @return example: "Accessory Type: Utility"
      */
     public static @NonNull MutableComponent getTypeTooltip(@NonNull Item item) {
-        return Component.translatable("accessory_type", Accessories.getType(Minecraft.getInstance().player, item).getTranslation().getString()).withStyle(ChatFormatting.DARK_GRAY);
+        return Component.translatable(Ohmega.MODID + ".accessory_type",
+                Accessories.getType(Minecraft.getInstance().player, item).getTranslation().getString()
+        ).withStyle(ChatFormatting.DARK_GRAY);
     }
 }

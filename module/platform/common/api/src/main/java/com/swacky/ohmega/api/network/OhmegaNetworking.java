@@ -9,7 +9,7 @@ import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
@@ -22,6 +22,7 @@ import com.swacky.ohmega.api.network.S2C.SyncKeybindUsePacket;
 import com.swacky.ohmega.api.network.S2C.SyncSlotsPacket;
 import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
 import com.swacky.ohmega.api.network.S2C.SyncTypesPacket;
+import com.swacky.ohmega.api.util.LoaderService;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import net.minecraft.client.Minecraft;
@@ -36,6 +37,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 
+// todo: split nested classes here into dedicated files
 public final class OhmegaNetworking {
     private static final Service IMPL = Ohmega.loadService(Service.class);
 
@@ -89,6 +91,7 @@ public final class OhmegaNetworking {
             }
         }
 
+        @LoaderService
         public interface Service {
             void send(CustomPacketPayload packet);
         }
@@ -160,7 +163,7 @@ public final class OhmegaNetworking {
 
             if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
                 AccessoryData data = OhmegaDataAttachments.getData(entity);
-                EquipContext context = packet.context();
+                AccessoryContext context = packet.context();
 
                 switch (packet.action()) {
                     case CLEAR -> data.clearSlots(entity, null, packet.data()[0], context);
@@ -199,7 +202,7 @@ public final class OhmegaNetworking {
                 }
 
                 if (level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
-                    OhmegaDataAttachments.getData(entity).setStacks(entity, packet.indexes(), packet.stacks(), EquipContext.SYNC, packet.forceOnEquip());
+                    OhmegaDataAttachments.getData(entity).setStacks(entity, packet.indexes(), packet.stacks(), AccessoryContext.SYNC, packet.forceOnEquip());
                 }
             }
         }
@@ -212,6 +215,7 @@ public final class OhmegaNetworking {
         }
     }
 
+    @LoaderService
     public interface Service {
         void sendC2S(CustomPacketPayload packet);
 

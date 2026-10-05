@@ -61,13 +61,19 @@ public interface IEditUiElement {
     /**
      * Get the lines to snap to when using magnetics.
      * {@link SnapLine}s are not relative to the current screen,
-     * so you should use {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos}
+     * so you should offset by {@link AbstractContainerScreen#leftPos} and {@link AbstractContainerScreen#topPos} appropriately to anchor to it
+     * <p>
+     * Default implementation adds snap lines for:
+     * <ul>
+     *     <li>If {@link #isExtensionRelative()} returns {@code true} and the extension is visible: the borders of the accessory extension</li>
+     *     <li>Otherwise: the borders and the middle of the current screen</li>
+     * </ul>
      * @param screen parent screen
      * @param extension the screen's {@link AccessoryScreenExtension} instance
      * @return the list of {@link SnapLine}s that should be snapped to for use in magnetics
      */
     default @NonNull List<SnapLine> getSnapLines(@NonNull AbstractContainerScreen<?> screen, @NonNull AccessoryScreenExtension extension) {
-        if (isExtensionRelative()) {
+        if (isExtensionRelative() && extension.isVisible()) {
             LazyPosition position = extension.getElementPosition();
             int x = screen.leftPos + position.x().get();
             int y = screen.topPos + position.y().get();

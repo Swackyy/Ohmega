@@ -5,18 +5,15 @@ import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * This is not the accessory interface, but a wrapper class for it that is mostly handled internally by Ohmega,
- * you'll want to use {@link IAccessory} instead if creating an accessory,
- * however this wrapper may be stored as the return type of {@link Accessories#get(Item)}, hence its place in the {@code api} package
- * <p>
  * An immutable decorator class for {@link IAccessory} that wraps functions with corresponding event invocations.
  * Every accessory will be wrapped with this class.
+ * @apiNote This is not the accessory interface, but a wrapper class for it that is mostly handled internally by Ohmega,
+ * you'll want to use {@link IAccessory} instead if creating an accessory
  */
 public final class Accessory implements IAccessory {
     private final @NonNull IAccessory inner;
@@ -53,21 +50,21 @@ public final class Accessory implements IAccessory {
     }
 
     @Override
-    public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public void onEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         if (!OhmegaHooks.equip(entity, stack, context)) {
             inner.onEquip(entity, stack, context);
         }
     }
 
     @Override
-    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public void onUnequip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         if (!OhmegaHooks.unequip(entity, stack, context)) {
             inner.onUnequip(entity, stack, context);
         }
     }
 
     @Override
-    public boolean canEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull EquipContext context) {
+    public boolean canEquip(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
         return OhmegaHooks.canEquip(entity, stack, context, inner.canEquip(entity, stack, context));
     }
 

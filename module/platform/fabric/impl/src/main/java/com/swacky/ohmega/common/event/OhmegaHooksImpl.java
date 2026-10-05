@@ -2,12 +2,14 @@ package com.swacky.ohmega.common.event;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionExtractEvent;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionInitEvent;
 import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
 import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.event.AccessoryAllowWalkOnPowderSnowEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncModuloEvent;
@@ -15,6 +17,7 @@ import com.swacky.ohmega.api.common.event.AccessoryBindEvent;
 import com.swacky.ohmega.api.common.event.AccessoryCanEquipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryCanUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryCompatibleWithEvent;
+import com.swacky.ohmega.api.common.event.AccessoryDataAttachEvent;
 import com.swacky.ohmega.api.common.event.AccessoryEquipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryEquipSoundEvent;
 import com.swacky.ohmega.api.common.event.AccessoryIsPiglinSafeEvent;
@@ -28,7 +31,7 @@ import com.swacky.ohmega.api.common.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.event.RegisterAccessoryTypesEvent;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
@@ -68,6 +71,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
+    public void attachData(AccessoryData data, LivingEntity entity) {
+        AccessoryDataAttachEvent.EVENT.invoker().process(data, entity);
+    }
+
+    @Override
     public boolean autoSync(ItemStack stack, boolean original) {
         return AccessoryAutoSyncEvent.EVENT.invoker().process(stack, original);
     }
@@ -78,7 +86,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
+    public boolean canEquip(LivingEntity entity, ItemStack stack, AccessoryContext context, boolean original) {
         return AccessoryCanEquipEvent.EVENT.invoker().process(entity, stack, context, original);
     }
 
@@ -93,13 +101,23 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public boolean equip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return AccessoryEquipEvent.EVENT.invoker().process(entity, stack, context);
     }
 
     @Override
     public SoundData equipSound(ItemStack stack, SoundData original) {
         return AccessoryEquipSoundEvent.EVENT.invoker().process(stack, original);
+    }
+
+    @Override
+    public void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        AccessoryExtensionInitEvent.Post.EVENT.invoker().process(extension, adder);
+    }
+
+    @Override
+    public boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        return AccessoryExtensionInitEvent.Pre.EVENT.invoker().process(extension, adder);
     }
 
     @Override
@@ -144,13 +162,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void renderAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        AccessoryExtensionRenderEvent.Post.EVENT.invoker().process(gui, extension);
+    public void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        AccessoryExtensionExtractEvent.Post.EVENT.invoker().process(gui, extension);
     }
 
     @Override
-    public boolean renderAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        return AccessoryExtensionRenderEvent.Pre.EVENT.invoker().process(gui, extension);
+    public boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        return AccessoryExtensionExtractEvent.Pre.EVENT.invoker().process(gui, extension);
     }
 
     @Override
@@ -174,7 +192,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return AccessoryUnequipEvent.EVENT.invoker().process(entity, stack, context);
     }
 }

@@ -2,8 +2,8 @@ package com.swacky.ohmega.common.config;
 
 import com.swacky.ohmega.api.common.config.KeepAccessoriesBehaviour;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
-import com.swacky.ohmega.api.util.BooleanLazySavedValue;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.util.struct.BooleanLazySavedValue;
+import com.swacky.ohmega.api.util.struct.LazySavedValue;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jspecify.annotations.NonNull;
 
@@ -17,7 +17,7 @@ public final class OhmegaServerConfigImpl extends OhmegaConfigImpl implements Oh
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         LazySavedValue<List<? extends String>> defaultSlotTypes = wrap(builder
                 .comment(DEFAULT_SLOT_TYPES_DESCRIPTION)
-                .defineList(DEFAULT_SLOT_TYPES_KEY, DEFAULT_SLOT_TYPES_DEFAULT, () -> DEFAULT_SLOT_TYPES_NEW_VALUE_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
+                .defineListAllowEmpty(DEFAULT_SLOT_TYPES_KEY, DEFAULT_SLOT_TYPES_DEFAULT, () -> DEFAULT_SLOT_TYPES_NEW_VALUE_DEFAULT, ACCESSORY_TYPE_VALIDATOR));
         BooleanLazySavedValue shrinkDefaultSlotTypes = wrap(builder
                 .comment(SHRINK_DEFAULT_SLOT_TYPES_DESCRIPTION)
                 .define(SHRINK_DEFAULT_SLOT_TYPES_KEY, SHRINK_DEFAULT_SLOT_TYPES_DEFAULT));

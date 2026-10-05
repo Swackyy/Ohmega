@@ -23,12 +23,11 @@ public final class OhmegaNlNlProvider extends OhmegaLangProvider {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
+        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
         InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Datapack
-        internalHelper.addDataPackDescription("Bronnen voor Ohmega mod");
-
-        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
+        internalHelper.addDataPackDescription(Ohmega.MODID, "Bronnen voor Ohmega mod");
 
         // Item
         helper.addKeyboundItem(OhmegaItems.getAngelRing(),

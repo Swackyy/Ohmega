@@ -15,6 +15,7 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
+import com.swacky.ohmega.common.command.node.DataCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
@@ -36,8 +37,8 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
-        InternalLangHelper internalHelper = new InternalLangHelper(builder);
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
+        InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Accessory Type: %s");
@@ -47,6 +48,9 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         helper.addType(KEY_ACCESSORY_TYPE_UTILITY, "Utility");
         helper.addType(KEY_ACCESSORY_TYPE_SPECIAL, "Special");
 
+        // Advancements
+        builder.add(KEY_ADVANCEMENT_SLOT_REWARDS, "Grants the following accessory slots: %s");
+
         // Commands
         // Misc
         builder.add(CommandHelper.CONTEXT_HOVER, "(hover)");
@@ -54,11 +58,15 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown accessory type: '%s'");
         builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Accessory type '%s' is marked as non-specifiable, and this argument only accepts specifiable types");
+        // Nodes
         // Clear
         builder.add(ClearCommand.ROOT_EXCEPTION_MULTIPLE, "No matching items were found in %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching items were found in entity %s's accessory inventory");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Removed %s item(s) from %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Removed %s item(s) from entity %s's accessory inventory");
+        // Data
+        builder.add(DataCommand.ROOT_FEEDBACK, "Entity %s has the following attached accessory data: %s");
+        builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Entity %s has the following attached accessory data in index %s: %s");
         // Extensions
         builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmega recognises the following %s accessory extension(s): %s");
         // Info
@@ -362,7 +370,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigPort("restart.return.tooltip", "Your changes will have no effect until you restart!");
 
         // Datapack
-        internalHelper.addDataPackDescription("Mod resources for Ohmega");
+        internalHelper.addDataPackDescription(Ohmega.MODID, "Mod resources for Ohmega");
         internalHelper.addDataPackDescription(OhmegaClient.PACK_DARK_ID, "Dark mode pack for Ohmega");
 
         // Item
@@ -370,7 +378,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
                 "Angel Ring",
                 "Allows the wearer to fly",
                 "Press %s to toggle flight");
-        builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "When active:");
+        builder.add(KEY_ITEM_MODIFIERS_ACCESSORY_ACTIVE, "When active:");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
@@ -388,8 +396,8 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         internalHelper.add(OhmegaBinds.OPEN_EDIT_UI, "Open/Close Extension Edit UI");
 
         // Toast
-        internalHelper.addToast("translation.title", "Ohmega translations");
-        internalHelper.addToast("translation.message", "Consider translating Ohmega on Crowdin through the config menu");
+        internalHelper.addToast(KEY_TOAST_TRANSLATION_TITLE, "Ohmega translations");
+        internalHelper.addToast(KEY_TOAST_TRANSLATION_MESSAGE, "Consider translating Ohmega on Crowdin through the config menu");
 
         // Widget
         builder.add(CrowdinButton.TRANSLATION_KEY, "Crowdin");
@@ -398,6 +406,6 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Toggle Visibility");
 
         // Misc
-        builder.add(Ohmega.MODID + ".name", "Ohmega");
+        builder.add(KEY_NAME, "Ohmega");
     }
 }

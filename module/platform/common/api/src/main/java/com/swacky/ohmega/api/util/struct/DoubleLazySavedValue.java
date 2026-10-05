@@ -1,49 +1,49 @@
-package com.swacky.ohmega.api.util;
+package com.swacky.ohmega.api.util.struct;
 
-import it.unimi.dsi.fastutil.longs.LongBooleanBiConsumer;
+import it.unimi.dsi.fastutil.doubles.DoubleBooleanBiConsumer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.function.LongSupplier;
+import java.util.function.DoubleSupplier;
 
 /**
- * Non-boxing long implementation of {@link AbstractLazySavedValue}
+ * Non-boxing double implementation of {@link AbstractLazySavedValue}
  */
-public final class LongLazySavedValue extends AbstractLazySavedValue<Long> {
-    private final @Nullable LongSupplier getter;
-    private final @Nullable LongBooleanBiConsumer setter;
+public final class DoubleLazySavedValue extends AbstractLazySavedValue<Double> {
+    private final @Nullable DoubleSupplier getter;
+    private final @Nullable DoubleBooleanBiConsumer setter;
 
-    private long value;
+    private double value;
 
     /**
-     * Construct a new {@link LongLazySavedValue}
+     * Construct a new {@link DoubleLazySavedValue}
      * @param getter the initial value supplier
      * @param setter the serialisation value acceptor
      */
-    public LongLazySavedValue(@Nullable LongSupplier getter, @Nullable LongBooleanBiConsumer setter) {
+    public DoubleLazySavedValue(@Nullable DoubleSupplier getter, @Nullable DoubleBooleanBiConsumer setter) {
         this.getter = getter;
         this.setter = setter;
     }
 
     /**
-     * Construct a new variable-value {@link LongLazySavedValue}
+     * Construct a new variable-value {@link DoubleLazySavedValue}
      * @param value the initial value to set as
      * @return newly constructed instance
      */
-    public static @NonNull LongLazySavedValue constant(long value) {
-        LongLazySavedValue instance = new LongLazySavedValue(null, null);
+    public static @NonNull DoubleLazySavedValue of(double value) {
+        DoubleLazySavedValue instance = new DoubleLazySavedValue(null, null);
         instance.value = value;
 
         return instance;
     }
 
     @Override
-    public @NonNull Long getObject() {
+    public @NonNull Double getObject() {
         return get();
     }
 
     @Override
-    public void setObject(@Nullable Long value) {
+    public void setObject(@Nullable Double value) {
         if (value != null) {
             set(value);
         }
@@ -58,12 +58,12 @@ public final class LongLazySavedValue extends AbstractLazySavedValue<Long> {
      * Lazily get the stored value, non-boxed
      * @return the current value if it has already been fetched, else calls the {@link #getter} to initialise to the stored or default value
      */
-    public long get() {
+    public double get() {
         if (!initialised) {
             initialised = true;
 
             if (getter != null) {
-                value = getter.getAsLong();
+                value = getter.getAsDouble();
             }
         }
 
@@ -74,7 +74,7 @@ public final class LongLazySavedValue extends AbstractLazySavedValue<Long> {
      * Sets a value but strictly does not call the serialiser, non-boxed
      * @param value the new value to set to
      */
-    public void set(long value) {
+    public void set(double value) {
         initialised = true;
         this.value = value;
     }
@@ -84,7 +84,7 @@ public final class LongLazySavedValue extends AbstractLazySavedValue<Long> {
      */
     public void pull() {
         if (getter != null) {
-            value = getter.getAsLong();
+            value = getter.getAsDouble();
         }
     }
 

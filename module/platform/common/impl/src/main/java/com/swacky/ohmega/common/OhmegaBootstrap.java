@@ -9,6 +9,7 @@ import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.common.command.node.ClearCommand;
+import com.swacky.ohmega.common.command.node.DataCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
@@ -41,6 +42,7 @@ public final class OhmegaBootstrap {
 
             // Register command nodes
             OhmegaCommandNodes.register(ClearCommand.ELEMENT_ROOT, ClearCommand::new);
+            OhmegaCommandNodes.register(DataCommand.ELEMENT_ROOT, DataCommand::new);
             OhmegaCommandNodes.register(ItemCommand.ELEMENT_ROOT, ItemCommand::new);
             OhmegaCommandNodes.register(ItemsCommand.ELEMENT_ROOT, ItemsCommand::new);
             OhmegaCommandNodes.register(SlotsCommand.ELEMENT_ROOT, SlotsCommand::new);

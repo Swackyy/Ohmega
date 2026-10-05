@@ -7,9 +7,10 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.EquipContext;
-import com.swacky.ohmega.api.util.BooleanLazySavedValue;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
+import com.swacky.ohmega.api.util.LoaderService;
+import com.swacky.ohmega.api.util.struct.BooleanLazySavedValue;
+import com.swacky.ohmega.api.util.struct.LazySavedValue;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import org.jspecify.annotations.NonNull;
@@ -17,6 +18,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public final class OhmegaServerConfig {
     private static final @NonNull Service IMPL = Ohmega.loadService(Service.class);
@@ -64,7 +66,7 @@ public final class OhmegaServerConfig {
             defaultSlotTypes = list;
 
             for (LivingEntity tracker : AccessoryData.DEFAULT_TRACKERS) {
-                OhmegaDataAttachments.getData(tracker).defaultSlots(tracker, EquipContext.CONFIG);
+                OhmegaDataAttachments.getData(tracker).defaultSlots(tracker, AccessoryContext.CONFIG);
             }
         }
 
@@ -112,6 +114,7 @@ public final class OhmegaServerConfig {
         }
     }
 
+    @LoaderService
     public interface Service {
         @NonNull String GENERIC = AccessoryType.GENERIC_ID.toString();
         @NonNull String NORMAL = AccessoryType.NORMAL_ID.toString();
@@ -133,13 +136,7 @@ public final class OhmegaServerConfig {
         @NonNull String DEFAULT_SLOT_TYPES_KEY = "defaultSlotTypes";
         @NonNull String DEFAULT_SLOT_TYPES_DESCRIPTION = """
                 Defines the types and number of slots to default to for the accessory inventory""";
-        @NonNull List<String> DEFAULT_SLOT_TYPES_DEFAULT = List.of(
-                NORMAL,
-                NORMAL,
-                NORMAL,
-                UTILITY,
-                UTILITY,
-                SPECIAL);
+        @NonNull Supplier<List<? extends String>> DEFAULT_SLOT_TYPES_DEFAULT = AccessoryTypeManager::getDefaultSlotsStringList;
         @NonNull String DEFAULT_SLOT_TYPES_NEW_VALUE_DEFAULT = NORMAL;
         // - - -
         @NonNull String SHRINK_DEFAULT_SLOT_TYPES_KEY = "shrinkDefaultSlotTypes";

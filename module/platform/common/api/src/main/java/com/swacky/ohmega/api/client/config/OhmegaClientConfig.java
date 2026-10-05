@@ -2,13 +2,13 @@ package com.swacky.ohmega.api.client.config;
 
 import com.swacky.ohmega.api.client.OhmegaClient;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
-import com.swacky.ohmega.api.util.BooleanLazySavedValue;
-import com.swacky.ohmega.api.util.IntLazySavedValue;
-import com.swacky.ohmega.api.util.LazySavedValue;
+import com.swacky.ohmega.api.util.struct.BooleanLazySavedValue;
+import com.swacky.ohmega.api.util.struct.IntLazySavedValue;
+import com.swacky.ohmega.api.util.struct.LazySavedValue;
+import com.swacky.ohmega.api.util.LoaderService;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
-import java.text.MessageFormat;
 import java.util.function.Predicate;
 
 public final class OhmegaClientConfig {
@@ -30,13 +30,13 @@ public final class OhmegaClientConfig {
 
         System.arraycopy(args, 0, combinedArgs, 1, args.length);
         // todo: change this
-        return MessageFormat.format(template, combinedArgs);
+        return String.format(template, combinedArgs);
     }
 
-    public static @NonNull String createPositionDescription(String template, boolean x, String... args) {
+    public static @NonNull String createPositionDescription(String template, boolean isXAxis, String... args) {
         String axis;
 
-        if (x) {
+        if (isXAxis) {
             axis = "x-coordinate";
         } else {
             axis = "y-coordinate";
@@ -123,6 +123,7 @@ public final class OhmegaClientConfig {
         }
     }
 
+    @LoaderService
     public interface Service {
         @NonNull String SECTION_EDIT_UI = "edit_ui";
         @NonNull String SECTION_EDIT_UI_DESCRIPTION = """
@@ -142,11 +143,11 @@ public final class OhmegaClientConfig {
         @NonNull String SURVIVAL_INVENTORY = "survival inventory";
         @NonNull String CREATIVE_INVENTORY = "creative inventory";
         @NonNull String EXTENSION_DESCRIPTION_TEMPLATE = """
-                The {0} of the accessory extension in the {1} menu, relative to the main segment of the current screen""";
+                The %s of the accessory extension in the %s menu, relative to the main segment of the current screen""";
         @NonNull String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
-                The {0} of the toggle extension button in the {1} menu when using the ''{2}'' button style, relative to the main segment of the current screen""";
+                The %s of the toggle extension button in the %s menu when using the '%s' button style, relative to the main segment of the current screen""";
         @NonNull String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
-                The {0} of the flip entity button in the {1} menu, relative to the main segment of the current screen""";
+                The %s of the flip entity button in the %s menu, relative to the main segment of the current screen""";
         int POSITION_MIN = -2048;
         int POSITION_MAX = 2048;
         // - - -

@@ -11,6 +11,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Map;
 
+// todo: rework the object construction to just take a function reference.
+// there is literally 0 reason to construct any object here
 /**
  * Represents an extra node to add to the {@code /ohmega} command.
  * Use {@link OhmegaCommandNodes#register(String, Factory)} to register your command nodes

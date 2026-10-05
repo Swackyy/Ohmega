@@ -10,7 +10,7 @@ import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
@@ -65,7 +65,7 @@ public final class CommonCallbacks {
                         itemDrops.add(itemEntity);
                     }
 
-                    entry.setStack(entity, ItemStack.EMPTY, i, EquipContext.DEATH, true, false);
+                    entry.setStack(entity, ItemStack.EMPTY, i, AccessoryContext.DEATH, true, false);
                 }
             }
         }

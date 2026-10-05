@@ -5,8 +5,10 @@ import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
+import com.swacky.ohmega.api.util.LoaderService;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -42,6 +44,10 @@ public final class OhmegaHooks {
         return IMPL.allowWalkOnPowderSnow(stack, original);
     }
 
+    public static void attachData(AccessoryData data, LivingEntity entity) {
+        IMPL.attachData(data, entity);
+    }
+
     public static boolean autoSync(ItemStack stack, boolean original) {
         return IMPL.autoSync(stack, original);
     }
@@ -50,7 +56,7 @@ public final class OhmegaHooks {
         return IMPL.autoSyncModulo(stack, original);
     }
 
-    public static boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
+    public static boolean canEquip(LivingEntity entity, ItemStack stack, AccessoryContext context, boolean original) {
         return IMPL.canEquip(entity, stack, context, original);
     }
 
@@ -62,12 +68,20 @@ public final class OhmegaHooks {
         return IMPL.compatibleWith(stack, other, original);
     }
 
-    public static boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public static boolean equip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return IMPL.equip(entity, stack, context);
     }
 
     public static SoundData equipSound(ItemStack stack, SoundData original) {
         return IMPL.equipSound(stack, original);
+    }
+
+    public static void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        IMPL.extensionInitPost(extension, adder);
+    }
+
+    public static boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        return IMPL.extensionInitPre(extension, adder);
     }
 
     public static boolean isPiglinSafe(ItemStack stack, boolean original) {
@@ -98,12 +112,12 @@ public final class OhmegaHooks {
         return IMPL.registerAccessoryTypes();
     }
 
-    public static void renderAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        IMPL.renderAccessoryExtensionPost(gui, extension);
+    public static void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        IMPL.extractAccessoryExtensionPost(gui, extension);
     }
 
-    public static boolean renderAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        return IMPL.renderAccessoryExtensionPre(gui, extension);
+    public static boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        return IMPL.extractAccessoryExtensionPre(gui, extension);
     }
 
     public static boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack) {
@@ -122,10 +136,11 @@ public final class OhmegaHooks {
         return IMPL.shouldDropOnDeath(stack, entity, original);
     }
 
-    public static boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public static boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return IMPL.unequip(entity, stack, context);
     }
 
+    @LoaderService
     public interface Service {
         void accessoryBind();
 
@@ -135,19 +150,25 @@ public final class OhmegaHooks {
 
         boolean allowWalkOnPowderSnow(ItemStack stack, boolean original);
 
+        void attachData(AccessoryData data, LivingEntity entity);
+
         boolean autoSync(ItemStack stack, boolean original);
 
         byte autoSyncModulo(ItemStack stack, byte original);
 
-        boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original);
+        boolean canEquip(LivingEntity entity, ItemStack stack, AccessoryContext context, boolean original);
 
         boolean canUnequip(LivingEntity entity, ItemStack stack, boolean original);
 
         boolean compatibleWith(ItemStack stack, ItemStack other, boolean original);
 
-        boolean equip(LivingEntity entity, ItemStack stack, EquipContext context);
+        boolean equip(LivingEntity entity, ItemStack stack, AccessoryContext context);
 
         SoundData equipSound(ItemStack stack, SoundData original);
+
+        void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder);
+
+        boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder);
 
         boolean isPiglinSafe(ItemStack stack, boolean original);
 
@@ -163,9 +184,9 @@ public final class OhmegaHooks {
 
         Map<Identifier, AccessoryType> registerAccessoryTypes();
 
-        void renderAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
+        void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
 
-        boolean renderAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
+        boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
 
         boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack);
 
@@ -175,6 +196,6 @@ public final class OhmegaHooks {
 
         boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original);
 
-        boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context);
+        boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context);
     }
 }

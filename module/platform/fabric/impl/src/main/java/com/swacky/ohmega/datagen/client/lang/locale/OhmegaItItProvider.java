@@ -22,12 +22,11 @@ public final class OhmegaItItProvider extends OhmegaLangProvider {
 
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
+        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
         InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Datapack
-        internalHelper.addDataPackDescription("Risorse Mod per Ohmega");
-
-        OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
+        internalHelper.addDataPackDescription(Ohmega.MODID, "Risorse Mod per Ohmega");
 
         // Item
         helper.addKeyboundItem(OhmegaItems.getAngelRing(),

@@ -10,7 +10,7 @@ import com.swacky.ohmega.api.common.command.CommandHelper;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
@@ -105,7 +105,7 @@ public final class ItemCommand implements ICommandNode {
             AccessoryData data = OhmegaDataAttachments.getData(target);
 
             if (index >= 0 && index < data.size()) {
-                data.getEntry(index).setStack(target, new ItemStack(item, count), index, EquipContext.COMMAND, true, true);
+                data.getEntry(index).setStack(target, new ItemStack(item, count), index, AccessoryContext.COMMAND, true, true);
             } else {
                 throw INDEX_EXCEPTION.create(Pair.of(index, data.size()));
             }

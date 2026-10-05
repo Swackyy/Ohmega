@@ -43,7 +43,7 @@
     "ohmega_fabric.mixins.json"
     ${extraMixinConfigs}
   ],
-  "accessWidener": "ohmega_fabric.accesswidener",
+  "accessWidener": "ohmega_fabric-api.accesswidener",
   "depends": {
     "fabricloader": "${loaderFabricVRange}",
     "minecraft": "~${mcVRangeMin}",

@@ -4,7 +4,7 @@ import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,8 +39,8 @@ public final class AccessoryDispenseItemBehaviour extends DefaultDispenseItemBeh
                 if (index >= 0) {
                     AccessoryDataEntry entry = data.getEntry(index);
 
-                    if (entry.isItemValid(entity, stack, EquipContext.DISPENSE)) {
-                        entry.setStack(entity, stack.split(1), index, EquipContext.DISPENSE);
+                    if (entry.isItemValid(entity, stack, AccessoryContext.DISPENSE)) {
+                        entry.setStack(entity, stack.split(1), index, AccessoryContext.DISPENSE);
                         return stack;
                     }
                 }

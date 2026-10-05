@@ -1,13 +1,16 @@
 package com.swacky.ohmega.common.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionRenderEvent;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionExtractEvent;
+import com.swacky.ohmega.api.client.event.AccessoryExtensionInitEvent;
 import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
 import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
+import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.event.AccessoryAllowWalkOnPowderSnowEvent;
+import com.swacky.ohmega.api.common.event.AccessoryAttachDataEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncEvent;
 import com.swacky.ohmega.api.common.event.AccessoryAutoSyncModuloEvent;
 import com.swacky.ohmega.api.common.event.AccessoryBindEvent;
@@ -27,7 +30,7 @@ import com.swacky.ohmega.api.common.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.event.RegisterAccessoryTypesEvent;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
@@ -66,71 +69,62 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public boolean allowWalkOnPowderSnow(ItemStack stack, boolean original) {
-        AccessoryAllowWalkOnPowderSnowEvent event = new AccessoryAllowWalkOnPowderSnowEvent(stack, original);
+        return AccessoryAllowWalkOnPowderSnowEvent.BUS.fire(new AccessoryAllowWalkOnPowderSnowEvent(stack, original)).returnValue;
+    }
 
-        AccessoryAllowWalkOnPowderSnowEvent.BUS.post(event);
-        return event.returnValue;
+    @Override
+    public void attachData(AccessoryData data, LivingEntity entity) {
+        AccessoryAttachDataEvent.BUS.post(new AccessoryAttachDataEvent(data, entity));
     }
 
     @Override
     public boolean autoSync(ItemStack stack, boolean original) {
-        AccessoryAutoSyncEvent event = new AccessoryAutoSyncEvent(stack, original);
-
-        AccessoryAutoSyncEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryAutoSyncEvent.BUS.fire(new AccessoryAutoSyncEvent(stack, original)).returnValue;
     }
 
     @Override
     public byte autoSyncModulo(ItemStack stack, byte original) {
-        AccessoryAutoSyncModuloEvent event = new AccessoryAutoSyncModuloEvent(stack, original);
-
-        AccessoryAutoSyncModuloEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryAutoSyncModuloEvent.BUS.fire(new AccessoryAutoSyncModuloEvent(stack, original)).returnValue;
     }
 
     @Override
-    public boolean canEquip(LivingEntity entity, ItemStack stack, EquipContext context, boolean original) {
-        AccessoryCanEquipEvent event = new AccessoryCanEquipEvent(entity, stack, context, original);
-
-        AccessoryCanEquipEvent.BUS.post(event);
-        return event.returnValue;
+    public boolean canEquip(LivingEntity entity, ItemStack stack, AccessoryContext context, boolean original) {
+        return AccessoryCanEquipEvent.BUS.fire(new AccessoryCanEquipEvent(entity, stack, context, original)).returnValue;
     }
 
     @Override
     public boolean canUnequip(LivingEntity entity, ItemStack stack, boolean original) {
-        AccessoryCanUnequipEvent event = new AccessoryCanUnequipEvent(entity, stack, original);
-
-        AccessoryCanUnequipEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryCanUnequipEvent.BUS.fire(new AccessoryCanUnequipEvent(entity, stack, original)).returnValue;
     }
 
     @Override
     public boolean compatibleWith(ItemStack stack, ItemStack other, boolean original) {
-        AccessoryCompatibleWithEvent event = new AccessoryCompatibleWithEvent(stack, other, original);
-
-        AccessoryCompatibleWithEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryCompatibleWithEvent.BUS.fire(new AccessoryCompatibleWithEvent(stack, other, original)).returnValue;
     }
 
     @Override
-    public boolean equip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public boolean equip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return AccessoryEquipEvent.BUS.post(new AccessoryEquipEvent(entity, stack, context));
     }
 
     @Override
     public SoundData equipSound(ItemStack stack, SoundData original) {
-        AccessoryEquipSoundEvent event = new AccessoryEquipSoundEvent(stack, original);
+        return AccessoryEquipSoundEvent.BUS.fire(new AccessoryEquipSoundEvent(stack, original)).returnValue;
+    }
 
-        AccessoryEquipSoundEvent.BUS.post(event);
-        return event.returnValue;
+    @Override
+    public void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        AccessoryExtensionInitEvent.Post.BUS.post(new AccessoryExtensionInitEvent.Post(extension, adder));
+    }
+
+    @Override
+    public boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+        return AccessoryExtensionInitEvent.Pre.BUS.post(new AccessoryExtensionInitEvent.Pre(extension, adder));
     }
 
     @Override
     public boolean isPiglinSafe(ItemStack stack, boolean original) {
-        AccessoryIsPiglinSafeEvent event = new AccessoryIsPiglinSafeEvent(stack, original);
-
-        AccessoryIsPiglinSafeEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryIsPiglinSafeEvent.BUS.fire(new AccessoryIsPiglinSafeEvent(stack, original)).returnValue;
     }
 
     @Override
@@ -142,10 +136,7 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public double mobVisibility(ItemStack stack, Entity targetingEntity, double original) {
-        AccessoryMobVisibilityEvent event = new AccessoryMobVisibilityEvent(stack, targetingEntity, original);
-
-        AccessoryMobVisibilityEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryMobVisibilityEvent.BUS.fire(new AccessoryMobVisibilityEvent(stack, targetingEntity, original)).returnValue;
     }
 
     @Override
@@ -158,18 +149,12 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public boolean preferInventoryTick(ItemStack stack, boolean original) {
-        AccessoryPreferInventoryTickEvent event = new AccessoryPreferInventoryTickEvent(stack, original);
-
-        AccessoryPreferInventoryTickEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryPreferInventoryTickEvent.BUS.fire(new AccessoryPreferInventoryTickEvent(stack, original)).returnValue;
     }
 
     @Override
     public boolean preferVanillaUse(ItemStack stack, boolean original) {
-        AccessoryPreferVanillaUseEvent event = new AccessoryPreferVanillaUseEvent(stack, original);
-
-        AccessoryPreferVanillaUseEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryPreferVanillaUseEvent.BUS.fire(new AccessoryPreferVanillaUseEvent(stack, original)).returnValue;
     }
 
     @Override
@@ -181,13 +166,13 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void renderAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        AccessoryExtensionRenderEvent.Post.BUS.post(new AccessoryExtensionRenderEvent.Post(gui, extension));
+    public void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        AccessoryExtensionExtractEvent.Post.BUS.post(new AccessoryExtensionExtractEvent.Post(gui, extension));
     }
 
     @Override
-    public boolean renderAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        return AccessoryExtensionRenderEvent.Pre.BUS.post(new AccessoryExtensionRenderEvent.Pre(gui, extension));
+    public boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
+        return AccessoryExtensionExtractEvent.Pre.BUS.post(new AccessoryExtensionExtractEvent.Pre(gui, extension));
     }
 
     @Override
@@ -207,14 +192,11 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
     @Override
     public boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original) {
-        AccessoryShouldDropOnDeathEvent event = new AccessoryShouldDropOnDeathEvent(stack, entity, original);
-
-        AccessoryShouldDropOnDeathEvent.BUS.post(event);
-        return event.returnValue;
+        return AccessoryShouldDropOnDeathEvent.BUS.fire(new AccessoryShouldDropOnDeathEvent(stack, entity, original)).returnValue;
     }
 
     @Override
-    public boolean unequip(LivingEntity entity, ItemStack stack, EquipContext context) {
+    public boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return AccessoryUnequipEvent.BUS.post(new AccessoryUnequipEvent(entity, stack, context));
     }
 }

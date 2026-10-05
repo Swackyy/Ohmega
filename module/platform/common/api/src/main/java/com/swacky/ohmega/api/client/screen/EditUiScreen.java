@@ -7,7 +7,7 @@ import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.screen.widget.IEditUiElement;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
-import com.swacky.ohmega.api.util.IntLazySavedValue;
+import com.swacky.ohmega.api.util.struct.IntLazySavedValue;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -296,13 +296,13 @@ public final class EditUiScreen extends Screen implements IEmbeddingScreen {
     @Override
     public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean isDoubleClick) {
         if (isDoubleClick) {
-            Optional<GuiEventListener> child = embeddedScreen.getChildAt(event.x(), event.y());
+            Optional<GuiEventListener> optional = embeddedScreen.getChildAt(event.x(), event.y());
 
-            if (child.isPresent()) {
-                GuiEventListener widget = child.get();
+            if (optional.isPresent()) {
+                GuiEventListener child = optional.get();
 
-                if (widget.mouseClicked(event, false) && widget.shouldTakeFocusAfterInteraction()) {
-                    setFocused(widget);
+                if (child.mouseClicked(event, false) && child.shouldTakeFocusAfterInteraction()) {
+                    setFocused(child);
 
                     if (event.button() == 0) {
                         setDragging(true);

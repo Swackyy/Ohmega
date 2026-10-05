@@ -2,7 +2,7 @@ package com.swacky.ohmega.api.network.S2C;
 
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.util.codec.OhmegaByteBufCodecs;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,14 +13,14 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
-public record SyncSlotsPacket(Action action, int entityId, int[] data, Optional<AccessoryType> accessoryType, EquipContext context) implements CustomPacketPayload {
+public record SyncSlotsPacket(Action action, int entityId, int[] data, Optional<AccessoryType> accessoryType, AccessoryContext context) implements CustomPacketPayload {
     public static final Type<@NonNull SyncSlotsPacket> TYPE = new Type<>(Ohmega.id("sync_slots"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncSlotsPacket> CODEC = StreamCodec.composite(
             Action.STREAM_CODEC, SyncSlotsPacket::action,
             ByteBufCodecs.VAR_INT, SyncSlotsPacket::entityId,
             OhmegaByteBufCodecs.VAR_INT_ARRAY, SyncSlotsPacket::data,
             ByteBufCodecs.optional(AccessoryType.STREAM_CODEC), SyncSlotsPacket::accessoryType,
-            EquipContext.STREAM_CODEC, SyncSlotsPacket::context,
+            AccessoryContext.STREAM_CODEC, SyncSlotsPacket::context,
             SyncSlotsPacket::new);
 
     @Override
@@ -37,8 +37,10 @@ public record SyncSlotsPacket(Action action, int entityId, int[] data, Optional<
         REMOVE,
         SET;
 
+        private static final Action[] VALUES = values();
+
         public static final @NonNull StreamCodec<ByteBuf, Action> STREAM_CODEC = ByteBufCodecs.idMapper(
-                ordinal -> Action.values()[ordinal],
+                ordinal -> VALUES[ordinal],
                 Action::ordinal);
     }
 }

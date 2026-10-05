@@ -16,6 +16,7 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
+import com.swacky.ohmega.common.command.node.DataCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
@@ -35,11 +36,11 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
     private static final String X_COORDINATE = "dat way";
     private static final String Y_COORDINATE = "dis way";
     private static final String EXTENSION_DESCRIPTION_TEMPLATE = """
-            Teh {0} ov teh kit-cat inventori in teh {1} meneow, home iz teh main bit ov teh current fing""";
+            Teh %s ov teh kit-cat inventori in teh %s meneow, home iz teh main bit ov teh current fing""";
     private static final String TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE = """
-            Teh {0} ov teh kit-cat box buton in teh {1} meneow when using teh ''{2}'' buton style, home iz teh main bit ov teh current fing""";
+            Teh %s ov teh kit-cat box buton in teh %s meneow when using teh '%s' buton style, home iz teh main bit ov teh current fing""";
     private static final String FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE = """
-            Teh {0} ov teh flip cat buton in teh {1} meneow, home iz teh main bit ov teh current fing""";
+            Teh %s ov teh flip cat buton in teh %s meneow, home iz teh main bit ov teh current fing""";
 
     public OhmegaLolUsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, "lol_us", lookup);
@@ -48,8 +49,8 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider lookup, @NonNull TranslationBuilder builder) {
-        InternalLangHelper internalHelper = new InternalLangHelper(builder);
         OhmegaLangHelper helper = new OhmegaLangHelper(builder::add, Ohmega.MODID);
+        InternalLangHelper internalHelper = new InternalLangHelper(builder);
 
         // Accessory type
         builder.add(KEY_ACCESSORY_TYPE, "Kit-cat flavr: %s");
@@ -66,11 +67,15 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Cat doezn't know diz kit-cat flavr: '%s'");
         builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Kit-cat flavr '%s' izn't speakablez, diz only want speakablez flavrz");
+        // Nodes
         // Clear
         builder.add(ClearCommand.ROOT_EXCEPTION_MULTIPLE, "No findz dat in %s catz' kit-cat inventori");
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No findz dat in cat %s'z kit-cat inventori");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "SWIPD %s fing(z) fwom %s catz' kit-cat inventoriz");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "SWIPD %s fing(z) from cat %s'z kit-cat inventori");
+        // Data
+        builder.add(DataCommand.ROOT_FEEDBACK, "Cat %s haz diz kit-cat data: %s");
+        builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Cat %s haz diz kit-cat data in place %s: %s");
         // Extensions
         builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmegawd knowz deez %s kit-cat box(z): %s");
         // Info
@@ -222,51 +227,51 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_EXTENSION_X_KEY,
                 "Box Dat Way",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_EXTENSION_Y_KEY,
                 "Box Dis Way",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Kit-cat Box Buton Default Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Kit-cat Box Buton Default Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Kit-cat Box Buton Legacy Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Kit-cat Box Buton Legacy Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Kit-cat Box Buton Tag Left Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Kit-cat Box Buton Tag Left Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Kit-cat Box Buton Tag Right Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Kit-cat Box Buton Tag Right Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_X_KEY,
                 "Flip Cat Buton Dat Way",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, SURVIVAL_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SURVIVAL_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Flip Cat Buton Dis Way",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, SURVIVAL_INVENTORY));
         // Creative
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.SECTION_CREATIVE,
@@ -277,51 +282,51 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_EXTENSION_X_KEY,
                 "Box Dat Way",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_EXTENSION_Y_KEY,
                 "Box Dis Way",
-                OhmegaClientConfig.createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(EXTENSION_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_X_KEY,
                 "Kit-cat Box Buton Default Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_DEFAULT_Y_KEY,
                 "Kit-cat Box Buton Default Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.DEFAULT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_X_KEY,
                 "Kit-cat Box Buton Legacy Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_LEGACY_Y_KEY,
                 "Kit-cat Box Buton Legacy Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.LEGACY.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_X_KEY,
                 "Kit-cat Box Buton Tag Left Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_LEFT_Y_KEY,
                 "Kit-cat Box Buton Tag Left Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_LEFT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_X_KEY,
                 "Kit-cat Box Buton Tag Right Dat Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_TOGGLE_EXTENSION_BUTTON_TAG_RIGHT_Y_KEY,
                 "Kit-cat Box Buton Tag Right Dis Way",
-                OhmegaClientConfig.createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
+                createPositionDescription(TOGGLE_EXTENSION_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY, ButtonStyle.TAG_RIGHT.name));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_X_KEY,
                 "Flip Cat Buton Dat Way",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, X_COORDINATE, CREATIVE_INVENTORY));
         internalHelper.addConfigOption(
                 OhmegaClientConfig.Service.CREATIVE_FLIP_ENTITY_BUTTON_Y_KEY,
                 "Flip Cat Buton Dis Way",
-                OhmegaClientConfig.createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
+                createPositionDescription(FLIP_ENTITY_BUTTON_DESCRIPTION_TEMPLATE, Y_COORDINATE, CREATIVE_INVENTORY));
 
         // Server
         internalHelper.addConfigSection(KEY_CONFIG_SECTION_SERVER, "Ohmegawd Friendz", "Ohmegawd Friendz Setinz");
@@ -368,7 +373,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
                         Scratchez teh kit-cat clearingz to teh vanilla inventori clearingz""");
 
         // Datapack
-        internalHelper.addDataPackDescription("Fing fingz fer Ohmegawd");
+        internalHelper.addDataPackDescription(Ohmega.MODID, "Fing fingz fer Ohmegawd");
         internalHelper.addDataPackDescription(OhmegaClient.PACK_DARK_ID, "Tabi cat mod fer Ohmegawd");
 
         // Item
@@ -376,7 +381,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
                 "GOD CAT RING",
                 "Makes teh cat go wheeeeeeee",
                 "Tap %s to yiss or naw wheeeeeeee");
-        builder.add(Ohmega.MODID + ".item.modifiers.accessory_active", "Wen meow:");
+        builder.add(KEY_ITEM_MODIFIERS_ACCESSORY_ACTIVE, "Wen meow:");
 
         // Key-binds (type binds handled in OhmegaLangHelper)
         builder.add(KEY_BIND_ACCESSORY_TYPE, "%s %s");
@@ -394,8 +399,8 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         internalHelper.add(OhmegaBinds.OPEN_EDIT_UI, "Yiss/Naw Kit-cat Box Pokinz");
 
         // Toast
-        internalHelper.addToast("translation.title", "Ohmegawd tranzlatingz");
-        internalHelper.addToast("translation.message", "Fink abowt tranzlatingz Ohmegawd on Crowdinz frew teh Ohmegawd setinz meneow");
+        internalHelper.addToast(KEY_TOAST_TRANSLATION_TITLE, "Ohmegawd tranzlatingz");
+        internalHelper.addToast(KEY_TOAST_TRANSLATION_MESSAGE, "Fink abowt tranzlatingz Ohmegawd on Crowdinz frew teh Ohmegawd setinz meneow");
 
         // Widget
         builder.add(CrowdinButton.TRANSLATION_KEY, "Crowdinz");
@@ -404,6 +409,6 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(ToggleVisibilityButton.TRANSLATION_KEY, "Togl Yiss See No See");
 
         // Misc
-        builder.add(Ohmega.MODID + ".name", "Ohmegawd");
+        builder.add(KEY_NAME, "Ohmegawd");
     }
 }

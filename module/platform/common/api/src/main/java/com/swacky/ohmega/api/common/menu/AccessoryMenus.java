@@ -6,7 +6,7 @@ import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.EquipContext;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +48,7 @@ public final class AccessoryMenus {
      * Creates a list of pertaining to the accessory extension {@link AccessorySlot}s to (optionally) perform operations on through a callback
      * @param menu parent menu
      * @param owner player which this menu belongs
-     * @param slotFactory todo: doc
+     * @param slotFactory a factory method reference to construct {@link AccessorySlot}s
      * @param consumer a callback to perform an operation for each generated {@link AccessorySlot}, supplying it
      * @return a list of {@link AccessorySlot}s to add with the accessory extension to the menu
      * @apiNote Called by {@link #onConstruct(AbstractContainerMenu, Player)} and will usually not need to be invoked manually
@@ -62,7 +62,7 @@ public final class AccessoryMenus {
             AccessoryMenuExtension extension = AccessoryExtensions.getActiveMenuFactory().construct(menu, owner);
 
             extension.addSlots((index, x, y) -> {
-                AccessorySlot slot = slotFactory.construct(owner, index, x, y);
+                AccessorySlot slot = slotFactory.construct(index, x, y);
 
                 slots.add(slot);
 
@@ -78,7 +78,7 @@ public final class AccessoryMenus {
             }
         } else {
             for (int i = 0; i < requiredCount; i++) {
-                AccessorySlot slot = slotFactory.construct(owner, i, 0, 0);
+                AccessorySlot slot = slotFactory.construct(i, 0, 0);
 
                 slots.add(slot);
 
@@ -205,7 +205,7 @@ public final class AccessoryMenus {
                 if (!stack0.isEmpty()) {
                     ItemStack stack1 = stack.copy();
 
-                    AccessoryDataEntry.doUnequip(player, stack1, EquipContext.SLOT);
+                    AccessoryDataEntry.doUnequip(player, stack1, AccessoryContext.SLOT);
 
                     if (ItemStack.isSameItemSameComponents(stack1, stack0)) {
                         int j = stack0.getCount() + stack.getCount();
@@ -313,7 +313,7 @@ public final class AccessoryMenus {
                         ItemStack stack1 = tryMoveItemStackTo(player, menu, stack, 9, 45, false);
 
                         if (!stack1.isEmpty()) {
-                            AccessoryDataEntry.doUnequip(player, stack1, EquipContext.SLOT);
+                            AccessoryDataEntry.doUnequip(player, stack1, AccessoryContext.SLOT);
                             slot.setChanged();
                         }
                     } else {

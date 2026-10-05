@@ -35,11 +35,11 @@ public final class ItemsCommand implements ICommandNode {
     public ItemsCommand(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
         builder
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                .executes(ItemsCommand::print)
+                .executes(ItemsCommand::items)
                 .then(Commands.argument(ARGUMENT_TARGET, EntityArgument.entity())
-                        .executes(ItemsCommand::printWithEntity)
+                        .executes(ItemsCommand::itemsWithTarget)
                         .then(Commands.argument(ARGUMENT_INCLUDE_AIR, BoolArgumentType.bool())
-                                .executes(ItemsCommand::printWithEntityIncludeAir)));
+                                .executes(ItemsCommand::itemsWithEntityIncludeAir)));
     }
 
     private static int doPrint(CommandContext<CommandSourceStack> context, Entity entity, boolean includeAir) throws CommandSyntaxException {
@@ -70,17 +70,17 @@ public final class ItemsCommand implements ICommandNode {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int print(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int items(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return doPrint(context, context.getSource().getEntity(), false);
     }
 
-    private static int printWithEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int itemsWithTarget(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
 
         return doPrint(context, target, false);
     }
 
-    private static int printWithEntityIncludeAir(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int itemsWithEntityIncludeAir(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
         boolean includeAir = BoolArgumentType.getBool(context, ARGUMENT_INCLUDE_AIR);
 
