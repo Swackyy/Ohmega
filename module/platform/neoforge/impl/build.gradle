@@ -3,14 +3,16 @@ plugins {
     id "net.neoforged.moddev"
 }
 
+Project apiProject = apiProject()
+
 neoForge {
     version = loaderNeoV
+    validateAccessTransformers = true
 
     accessTransformers {
-        file "src/main/resources/META-INF/accesstransformer.cfg"
+        from apiProject.file("src/main/resources/META-INF/accesstransformer.cfg")
     }
 
-    validateAccessTransformers = true
 
     mods {
         "${modId}" {
@@ -18,7 +20,7 @@ neoForge {
 
             sourceSet commonImplProject.apiProject().sourceSets.main
             sourceSet commonImplProject.sourceSets.main
-            sourceSet apiProject().sourceSets.main
+            sourceSet apiProject.sourceSets.main
             sourceSet sourceSets.main
         }
     }

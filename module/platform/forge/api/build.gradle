@@ -4,7 +4,7 @@ plugins {
 }
 
 minecraft {
-    accessTransformer = true
+    useDefaultAccessTransformer()
 }
 
 repositories {
