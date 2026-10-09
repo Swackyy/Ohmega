@@ -18,7 +18,7 @@ public final class Ohmega {
     public Ohmega(IEventBus bus, Dist distro, ModContainer container) {
         OhmegaCommon.bootstrap();
 
-        container.registerConfig(ModConfig.Type.SERVER, OhmegaConfigImpl.Server.getSpec());
+        container.registerConfig(ModConfig.Type.SYNCED, OhmegaConfigImpl.Server.getSpec());
 
         OhmegaItems.register(bus);
         OhmegaMenusImpl.register(bus);

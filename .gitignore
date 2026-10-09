@@ -10,11 +10,12 @@ build
 run
 
 # misc
-loader/common/src/generated/
+/loader/common/src/generated/
 test
 remappedSrc
 runs
 *.bat
+/module/
 
 # oh no you don't
 secrets.properties
