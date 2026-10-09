@@ -108,6 +108,23 @@ public final class AccessoryData {
         this(true, entries);
     }
 
+    // todo: doc
+    @Override
+    public String toString() {
+        int size = size();
+        StringBuilder builder = new StringBuilder().append("AccessoryData").append('{');
+
+        for (int i = 0; i < size; i++) {
+            if (i != 0) {
+                builder.append(", ");
+            }
+
+            builder.append(entries.get(i));
+        }
+
+        return builder.append('}').toString();
+    }
+
     /**
      * Get the amount of items supported by this storage instance
      * @return the number of {@link AccessoryDataEntry} held

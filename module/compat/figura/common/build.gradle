@@ -1,0 +1,31 @@
+plugins {
+    id "ohmega-compat"
+}
+
+repositories {
+    // Figura Official
+    /*maven {
+        name = "Figura"
+        url = "https://maven.figuramc.org"
+    }*/
+
+    // NoFigura Fork
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+    }
+
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+}
+
+dependencies {
+    // Figura Official
+    //compileOnly "org.figuramc:figura-common-mojmap:${compatFiguraV}+${mcV}"
+
+    // NoFigura Fork
+    compileOnly "maven.modrinth:nofigura:${compatFiguraV}"
+    compileOnly "com.github.FiguraMC.luaj:luaj-core:${compatFiguraLuajV}-figura"
+}

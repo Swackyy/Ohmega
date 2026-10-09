@@ -47,16 +47,22 @@ if (loaderEnabledNeo) {
     include "module:platform:neoforge:impl"
 }
 
-if (compatEnabledJei.toBoolean()) {
+// change when Figura officially ports
+if (compatEnabledFigura.toBoolean() && loaderEnabledFabric) {
+    include "module:compat:figura:common"
+    include "module:compat:figura:fabric"
+}
+
+if (compatEnabledJei.toBoolean() && (loaderEnabledFabric || loaderEnabledNeo)) {
     include "module:compat:util:exclusion-zone"
     include "module:compat:jei"
 }
 
-if (compatEnabledPolymer.toBoolean()) {
+if (compatEnabledPolymer.toBoolean() && loaderEnabledFabric) {
     include "module:compat:polymer"
 }
 
-if (compatEnabledRei.toBoolean()) {
+if (compatEnabledRei.toBoolean() && (loaderEnabledFabric || loaderEnabledNeo)) {
     include "module:compat:util:exclusion-zone"
     include "module:compat:rei:common"
 
@@ -69,7 +75,7 @@ if (compatEnabledRei.toBoolean()) {
     }
 }
 
-if (compatEnabledRrv.toBoolean()) {
+if (compatEnabledRrv.toBoolean() && (loaderEnabledFabric || loaderEnabledNeo)) {
     include "module:compat:util:exclusion-zone"
     include "module:compat:rrv:common"
 

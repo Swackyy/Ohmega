@@ -4,7 +4,6 @@ import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.datagen.server.AccessoryTypeProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.Identifier;
 
 public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
     public OhmegaAccessoryTypeProvider(PackOutput output) {
@@ -33,6 +32,7 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
                 .defaultSlots(1)
                 .emptySlotPath("accessory_slot_special")
                 .slotPriority(3000)
+                .hoverTextColour(0xbbffbb)
                 .typePriority(1000));
     }
 }

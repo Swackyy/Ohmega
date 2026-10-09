@@ -1,5 +1,4 @@
 plugins {
-    id "java-library"
     id "ohmega-compat"
 }
 
@@ -17,8 +16,6 @@ repositories {
 
 dependencies {
     compatModuleDependency it, "rrv:rrv-common"
-    compileOnly "net.neoforged:neoforge:${loaderNeoV}"
-    compileOnly "net.neoforged:bus:8.0.5"
     compileOnlyApi "cc.cassian.rrv:reliable-recipe-viewer-neoforge:${compatRrvV}+${mcV}"
 }
 

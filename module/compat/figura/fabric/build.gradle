@@ -1,0 +1,38 @@
+plugins {
+    id "ohmega-compat"
+}
+
+repositories {
+    // Figura Official
+    /*maven {
+        name = "Figura"
+        url = "https://maven.figuramc.org"
+    }*/
+
+    // NoFigura Fork
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+    }
+
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+}
+
+Project fabricApiProject = platformApiProject("fabric")
+
+evaluationDependsOn fabricApiProject.path
+
+dependencies {
+    apiModuleDependency it, fabricApiProject
+    compatModuleDependency it, "figura:figura-common"
+    implementation "net.fabricmc.fabric-api:fabric-api:${loaderFabricApiV}+${mcV}"
+    // Figura Official
+    //compileOnlyApi "org.figuramc:figura-common-mojmap:${compatFiguraV}+${mcV}"
+
+    // NoFigura Fork
+    compileOnlyApi "maven.modrinth:nofigura:${compatFiguraV}"
+    compileOnlyApi "com.github.FiguraMC.luaj:luaj-core:${compatFiguraLuajV}-figura"
+}

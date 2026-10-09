@@ -93,7 +93,7 @@ void apiModuleDependency(DependencyHandler handler, Project apiProject) {
 }
 
 Project commonImplProject() {
-    return rootProject.project("module:platform:common:common")
+    return platformImplProject("common")
 }
 
 void compatModuleDependency(DependencyHandler handler, String name) {
@@ -134,8 +134,16 @@ void moduleDependency(DependencyHandler handler, Project dependency) {
     includeProjectOutput handler, dependency.path
 }
 
+Project platformProject(String name) {
+    return rootProject.project("module:platform:${name}")
+}
+
+Project platformApiProject(String name) {
+    return platformProject("${name}:${name}-api")
+}
+
 Project platformImplProject(String name) {
-    return rootProject.project("module:platform:${name}:${name}")
+    return platformProject("${name}:${name}")
 }
 
 ext.accessWidenerFile = this.&accessWidenerFile
@@ -146,4 +154,5 @@ ext.compatProject = this.&compatProject
 ext.metaFileName = this.&metaFileName
 ext.mixinConfigName = this.&mixinConfigName
 ext.moduleDependency = this.&moduleDependency
+ext.platformApiProject = this.&platformApiProject
 ext.platformImplProject = this.&platformImplProject

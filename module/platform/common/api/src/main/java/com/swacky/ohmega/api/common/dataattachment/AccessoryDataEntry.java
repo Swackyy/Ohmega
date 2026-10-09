@@ -86,6 +86,12 @@ public final class AccessoryDataEntry {
         this(type, context, ItemStack.EMPTY, false);
     }
 
+    // todo: doc
+    @Override
+    public String toString() {
+        return "AccessoryDataEntry{type=" + type + ", stack=" + stack + '}';
+    }
+
     /**
      * Retrieve the {@link AccessoryType} of this entry, corresponding to the accessory slot type
      * @return this entry's {@link AccessoryType}

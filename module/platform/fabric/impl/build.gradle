@@ -55,6 +55,11 @@ repositories {
     }
 
     maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+    }
+
+    maven {
         name = "Nucleoid"
         url = "https://maven.nucleoid.xyz"
     }
@@ -73,6 +78,18 @@ dependencies {
 
     if (loaderFabricModMenuEnabled.toBoolean()) {
         runtimeOnly "com.terraformersmc:modmenu:${loaderFabricModMenuV}"
+    }
+
+    if (compatEnabledFigura.toBoolean()) {
+        compatModuleDependency it, "figura:figura-fabric"
+
+        if (runtimeEnabledFigura.toBoolean()) {
+            // Figura Official
+            //runtimeOnly "org.figuramc:figura-common-mojmap:${compatFiguraV}+${mcV}"
+
+            // NoFigura Fork
+            runtimeOnly "maven.modrinth:nofigura:${compatFiguraV}"
+        }
     }
 
     if (compatEnabledJei.toBoolean()) {

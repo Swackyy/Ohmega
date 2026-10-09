@@ -25,11 +25,20 @@
     "fabric-datagen": [
       "com.swacky.ohmega.datagen.OhmegaDataGenerationMain"
     ],
-    "jei_mod_plugin": [
-      "com.swacky.ohmega.compat.jei.common.OhmegaJeiMain"
+    "ohmega-client-unsafe": [
+      "com.swacky.ohmega.compat.figura.client.OhmegaFiguraClientMain"
     ],
     "ohmega-common-unsafe": [
       "com.swacky.ohmega.compat.polymer.OhmegaPolymerMain"
+    ],
+    "figura_api": [
+      "com.swacky.ohmega.compat.figura.client.api.OhmegaFiguraClientAPIMain"
+    ],
+    "figura_event": [
+      "com.swacky.ohmega.compat.figura.client.event.OhmegaFiguraClientEventsMain"
+    ],
+    "jei_mod_plugin": [
+      "com.swacky.ohmega.compat.jei.common.OhmegaJeiMain"
     ],
     "rei_client": [
       "com.swacky.ohmega.compat.rei.client.OhmegaReiClientMain"
