@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(FabricClientEntrypoint.class)
 abstract class FabricClientEntrypointMixin {
     @ModifyVariable(
-            method = "lambda$onInitializeClient$3",
+            method = "onInitializeClient -> *(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/Screen;II)V",
             at = @At(
                     value = "LOAD",
                     ordinal = 0),

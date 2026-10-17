@@ -32,7 +32,6 @@ public final class OhmegaAccessoryTypeProvider extends AccessoryTypeProvider {
                 .defaultSlots(1)
                 .emptySlotPath("accessory_slot_special")
                 .slotPriority(3000)
-                .hoverTextColour(0xbbffbb)
                 .typePriority(1000));
     }
 }

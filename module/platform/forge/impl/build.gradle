@@ -58,7 +58,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "MixinConfigs": [ nativeMixinConfigName, nativeApiMixinConfigName, commonMixinConfigName ]
+                "MixinConfigs": "${nativeMixinConfigName}, ${nativeApiMixinConfigName}, ${commonMixinConfigName}"
         ])
     }
 }
