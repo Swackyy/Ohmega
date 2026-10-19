@@ -36,3 +36,10 @@ dependencies {
     compileOnlyApi "maven.modrinth:nofigura:${compatFiguraV}"
     compileOnlyApi "com.github.FiguraMC.luaj:luaj-core:${compatFiguraLuajV}-figura"
 }
+
+/*
+Project fabricImplProject = platformImplProject("fabric")
+
+evaluationDependsOn fabricImplProject.path
+fabricImplProject.extraMixinConfigs += mixinConfigName project
+*/

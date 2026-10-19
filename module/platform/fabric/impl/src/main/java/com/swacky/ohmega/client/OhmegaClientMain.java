@@ -33,7 +33,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
-@SuppressWarnings("unused")
 public final class OhmegaClientMain implements ClientModInitializer {
     @Override
     public void onInitializeClient() {

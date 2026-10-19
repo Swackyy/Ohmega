@@ -454,7 +454,6 @@ public final class AccessoryType {
          * @param location texture location relative to {@link #LOCATION_PREFIX}
          * @return the current builder instance
          */
-        @SuppressWarnings("unused")
         public @NonNull Builder emptySlotPath(@NonNull Identifier location) {
             this.emptySlotPath = location.toString();
 

@@ -39,7 +39,6 @@ import net.neoforged.fml.config.ModConfig;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
 public final class OhmegaMain implements ModInitializer {
     @Override
     public void onInitialize() {

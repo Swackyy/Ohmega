@@ -34,7 +34,6 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
     protected final @NonNull Player player;
     protected final @NonNull AccessoryData handler;
-    private final @NonNull AccessoryType type;
     private final int originalX;
     private final int originalY;
 
@@ -43,7 +42,6 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
         this.player = player;
         this.handler = OhmegaDataAttachments.getData(player);
-        this.type = handler.getEntry(index).getType();
         this.originalX = x;
         this.originalY = y;
     }
@@ -138,7 +136,7 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
     @Override
     public Identifier getNoItemIcon() {
-        return type.getEmptySlotLocation();
+        return getType().getEmptySlotLocation();
     }
 
     @Override
@@ -217,7 +215,7 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
     }
 
     public final @NonNull AccessoryType getType() {
-        return type;
+        return handler.getEntry(getContainerSlot()).getType();
     }
 
     public final void applyOffset(int xo, int yo) {

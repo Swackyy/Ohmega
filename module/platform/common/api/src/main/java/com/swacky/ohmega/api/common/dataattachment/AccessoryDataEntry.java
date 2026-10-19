@@ -38,7 +38,7 @@ import java.util.function.Function;
  */
 public final class AccessoryDataEntry {
     public static final @NonNull Codec<AccessoryDataEntry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            AccessoryType.CODEC.fieldOf("type").forGetter(AccessoryDataEntry::getType),
+            AccessoryType.CODEC.fieldOf("type").forGetter(inst -> inst.type),
             AccessoryContext.CODEC.fieldOf("context").orElse(AccessoryContext.UNKNOWN).forGetter(AccessoryDataEntry::getContext),
             ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(AccessoryDataEntry::getStack),
             Codec.BOOL.fieldOf("hidden").forGetter(AccessoryDataEntry::isHidden)
@@ -47,7 +47,7 @@ public final class AccessoryDataEntry {
     public static final @NonNull Codec<ArrayList<AccessoryDataEntry>> ARRAY_LIST_CODEC = CODEC.listOf().xmap(ArrayList::new, Function.identity());
 
     public static final @NonNull StreamCodec<RegistryFriendlyByteBuf, AccessoryDataEntry> STREAM_CODEC = StreamCodec.composite(
-            AccessoryType.STREAM_CODEC, AccessoryDataEntry::getType,
+            AccessoryType.STREAM_CODEC, inst -> inst.type,
             AccessoryContext.STREAM_CODEC, AccessoryDataEntry::getContext,
             ItemStack.OPTIONAL_STREAM_CODEC, AccessoryDataEntry::getStack,
             ByteBufCodecs.BOOL, AccessoryDataEntry::isHidden,
@@ -97,6 +97,10 @@ public final class AccessoryDataEntry {
      * @return this entry's {@link AccessoryType}
      */
     public @NonNull AccessoryType getType() {
+        if (OhmegaServerConfig.getData().disableAccessoryTypes().get()) {
+            return AccessoryType.GENERIC.get();
+        }
+
         return type;
     }
 
@@ -139,7 +143,7 @@ public final class AccessoryDataEntry {
      * @return {@code true} if valid, {@code false} if invalid
      */
     public boolean isItemValid(@NonNull LivingEntity entity, @NonNull ItemStack stack, @NonNull AccessoryContext context) {
-        return isItemValid(entity, stack, type, context);
+        return isItemValid(entity, stack, getType(), context);
     }
 
     /**
@@ -259,7 +263,7 @@ public final class AccessoryDataEntry {
 
         if (accessory != null) {
             stack.set(OhmegaDataComponents.getSlotIndex(), index);
-            AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), true);
+            AccessoryData.changeModifiers(entity, getType().getAttributeModifiers().getPassive(), true);
             AccessoryData.changeModifiers(entity, stack.get(DataComponents.ATTRIBUTE_MODIFIERS), true);
             accessory.onEquip(entity, stack, context);
 
@@ -301,7 +305,7 @@ public final class AccessoryDataEntry {
             doUnequip(entity, context);
 
             if (stack.isEmpty()) {
-                AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
+                AccessoryData.changeModifiers(entity, getType().getAttributeModifiers().getPassive(), false);
             }
 
             this.stack = stack;
@@ -375,7 +379,7 @@ public final class AccessoryDataEntry {
 
         if (!ItemStack.isSameItemSameComponents(this.stack, stack)) {
             doUnequip(entity, stack, context);
-            AccessoryData.changeModifiers(entity, type.getAttributeModifiers().getPassive(), false);
+            AccessoryData.changeModifiers(entity, getType().getAttributeModifiers().getPassive(), false);
         }
 
         return stack;

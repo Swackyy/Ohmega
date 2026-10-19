@@ -31,7 +31,6 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
     private int lastColumnSlots = 0;
     private boolean flipEntity = false;
 
-    @SuppressWarnings("unused")
     public DefaultScreenExtension(AbstractContainerScreen<?> screen, AccessoryMenuExtension menuExtension) {
         super(screen, menuExtension);
     }

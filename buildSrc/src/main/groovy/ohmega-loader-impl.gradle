@@ -21,6 +21,9 @@ dependencies {
     }
 }
 
+// This is a really bad way of doing this,
+// using it 'twice' creates a circular dependency with gradle (not sure why twice but we ball)
+// todo: Use a builtin gradle tool for this
 ext.extraMixinConfigs = []
 
 gradle.projectsEvaluated {
