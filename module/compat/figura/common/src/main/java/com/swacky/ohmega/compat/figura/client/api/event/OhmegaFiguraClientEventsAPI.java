@@ -5,21 +5,32 @@ import com.swacky.ohmega.api.common.Ohmega;
 import org.figuramc.figura.lua.LuaWhitelist;
 import org.figuramc.figura.lua.api.event.LuaEvent;
 import org.figuramc.figura.lua.docs.LuaFieldDoc;
+import org.figuramc.figura.lua.docs.LuaTypeDoc;
 import org.luaj.vm2.Varargs;
 
 import java.util.Collection;
 import java.util.List;
 
+@LuaWhitelist
+@LuaTypeDoc(
+        name = "OhmegaEventsAPI",
+        value = "ohmega.events")
 public final class OhmegaFiguraClientEventsAPI {
     @LuaWhitelist
-    @LuaFieldDoc("events.accessory_layer_render")
+    @LuaFieldDoc("events.ohmega.accessory_layer_render")
     public static final LuaEvent ACCESSORY_LAYER_RENDER_EVENT = new LuaEvent();
     @LuaWhitelist
-    @LuaFieldDoc("events.accessory_render.post")
+    @LuaFieldDoc("events.ohmega.accessory_render_post")
     public static final LuaEvent ACCESSORY_RENDER_POST_EVENT = new LuaEvent();
     @LuaWhitelist
-    @LuaFieldDoc("events.accessory_render.pre")
+    @LuaFieldDoc("events.ohmega.accessory_render_pre")
     public static final LuaEvent ACCESSORY_RENDER_PRE_EVENT = new LuaEvent();
+
+    public static void clear() {
+        ACCESSORY_LAYER_RENDER_EVENT.clear();
+        ACCESSORY_RENDER_POST_EVENT.clear();
+        ACCESSORY_RENDER_PRE_EVENT.clear();
+    }
 
     public static String getID() {
         return Ohmega.MODID;
@@ -31,6 +42,7 @@ public final class OhmegaFiguraClientEventsAPI {
                 Pair.of("ACCESSORY_RENDER_POST", ACCESSORY_RENDER_POST_EVENT),
                 Pair.of("ACCESSORY_RENDER_PRE", ACCESSORY_RENDER_PRE_EVENT));
     }
+
 
     public static boolean isCancelled(Varargs args) {
         if (args != null) {

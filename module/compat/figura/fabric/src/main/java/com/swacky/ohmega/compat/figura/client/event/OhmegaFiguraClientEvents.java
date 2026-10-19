@@ -13,6 +13,9 @@ import org.figuramc.figura.lua.api.world.ItemStackAPI;
 public final class OhmegaFiguraClientEvents {
     private static boolean bootstrapped = false;
 
+    private static final Avatar.Instructions ACCESSORY_LAYER_INST = new Avatar.Instructions(Integer.MAX_VALUE);
+    private static final Avatar.Instructions ACCESSORY_RENDER_INST = new Avatar.Instructions(Integer.MAX_VALUE);
+
     public static void bootstrap() {
         if (!bootstrapped) {
             bootstrapped = true;
@@ -29,9 +32,10 @@ public final class OhmegaFiguraClientEvents {
         Avatar avatar = AvatarManager.getAvatar(state);
 
         if (avatar != null) {
+            ACCESSORY_LAYER_INST.reset(Integer.MAX_VALUE);
             return OhmegaFiguraClientEventsAPI.isCancelled(avatar.run(
                     OhmegaFiguraClientEventsAPI.ACCESSORY_LAYER_RENDER_EVENT,
-                    new Avatar.Instructions(Integer.MAX_VALUE)));
+                    ACCESSORY_LAYER_INST));
         }
 
         return false;
@@ -41,9 +45,9 @@ public final class OhmegaFiguraClientEvents {
         Avatar avatar = AvatarManager.getAvatar(context.state);
 
         if (avatar != null) {
-           avatar.run(
+            avatar.run(
                    OhmegaFiguraClientEventsAPI.ACCESSORY_RENDER_POST_EVENT,
-                   new Avatar.Instructions(Integer.MAX_VALUE),
+                   ACCESSORY_RENDER_INST.post(),
                    ItemStackAPI.verify(context.stack));
         }
     }
@@ -53,8 +57,8 @@ public final class OhmegaFiguraClientEvents {
 
         if (avatar != null) {
             return OhmegaFiguraClientEventsAPI.isCancelled(avatar.run(
-                    OhmegaFiguraClientEventsAPI.ACCESSORY_LAYER_RENDER_EVENT,
-                    new Avatar.Instructions(Integer.MAX_VALUE),
+                    OhmegaFiguraClientEventsAPI.ACCESSORY_RENDER_PRE_EVENT,
+                    ACCESSORY_RENDER_INST,
                     ItemStackAPI.verify(context.stack)));
         }
 

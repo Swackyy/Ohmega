@@ -3,12 +3,12 @@ package com.swacky.ohmega.compat.figura.client.event;
 import com.mojang.datafixers.util.Pair;
 import com.swacky.ohmega.compat.figura.client.api.event.OhmegaFiguraClientEventsAPI;
 import org.figuramc.figura.entries.FiguraEvent;
-import org.figuramc.figura.entries.annotations.FiguraEventPlugin;
+import org.figuramc.figura.lua.LuaWhitelist;
 import org.figuramc.figura.lua.api.event.LuaEvent;
 
 import java.util.Collection;
 
-@FiguraEventPlugin
+@LuaWhitelist
 public class OhmegaFiguraClientEventsMain implements FiguraEvent {
     @Override
     public String getID() {
@@ -17,6 +17,7 @@ public class OhmegaFiguraClientEventsMain implements FiguraEvent {
 
     @Override
     public Collection<Pair<String, LuaEvent>> getEvents() {
+        OhmegaFiguraClientEventsAPI.clear();
         return OhmegaFiguraClientEventsAPI.getEvents();
     }
 }

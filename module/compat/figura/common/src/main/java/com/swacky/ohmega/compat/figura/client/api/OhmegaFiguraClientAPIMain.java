@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.compat.figura.client.api.accessorytype.FiguraAccessoryType;
 import com.swacky.ohmega.compat.figura.client.api.dataattachment.FiguraAccessoryData;
 import com.swacky.ohmega.compat.figura.client.api.dataattachment.FiguraAccessoryDataEntry;
+import com.swacky.ohmega.compat.figura.client.api.event.OhmegaFiguraClientEventsAPI;
 import org.figuramc.figura.avatar.Avatar;
 import org.figuramc.figura.entries.FiguraAPI;
 import org.figuramc.figura.entries.annotations.FiguraAPIPlugin;
@@ -25,6 +26,11 @@ import java.util.List;
         value = Ohmega.MODID)
 public class OhmegaFiguraClientAPIMain implements FiguraAPI {
     @Override
+    public String toString() {
+        return "OhmegaAPI";
+    }
+
+    @Override
     public FiguraAPI build(Avatar avatar) {
         return this;
     }
@@ -40,6 +46,7 @@ public class OhmegaFiguraClientAPIMain implements FiguraAPI {
                 OhmegaFiguraClientAPIMain.class,
                 FiguraAccessoryType.class,
                 FiguraAccessoryData.class,
+                OhmegaFiguraClientEventsAPI.class,
                 FiguraAccessoryDataEntry.class);
     }
 
@@ -49,12 +56,8 @@ public class OhmegaFiguraClientAPIMain implements FiguraAPI {
                 OhmegaFiguraClientAPIMain.class,
                 FiguraAccessoryType.class,
                 FiguraAccessoryData.class,
+                OhmegaFiguraClientEventsAPI.class,
                 FiguraAccessoryDataEntry.class);
-    }
-
-    @Override
-    public String toString() {
-        return "Ohmega";
     }
 
     @LuaWhitelist
