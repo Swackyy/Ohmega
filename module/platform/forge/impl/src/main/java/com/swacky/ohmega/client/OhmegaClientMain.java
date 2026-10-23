@@ -1,10 +1,13 @@
 package com.swacky.ohmega.client;
 
 import com.swacky.ohmega.api.client.model.ModelLayerRegistry;
+import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.util.LogicalSide;
 import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.screen.ConfigurationScreen;
 import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -21,5 +24,8 @@ public final class OhmegaClientMain {
 
         // Rendering
         ModelLayerRegistry.register(HaloModel.LOCATION, HaloModel::createDefinition);
+
+        // Custom entrypoint invocation
+        Ohmega.invokeEntrypointsService(entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint, ModList::isLoaded));
     }
 }

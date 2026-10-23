@@ -30,10 +30,13 @@ public interface AccessoryUseEvent {
     /**
      * @return a boolean pair of which elements correspond with:
      * <ul>
-     *     <li>first: {@code true} for cancelling the event, {@code false} to let it continue</li>
      *     <li>
-     *         second: {@code true} to synchronise this with the server and other clients, {@code false} otherwise.
-     *         This will be {@code true} if <strong>any</strong> listener decides to synchronise, not just the last one to be processed
+     *         first: {@code true} for cancelling the event, {@code false} to let it continue
+     *     </li>
+     *     <li>
+     *         second: If cancelled, {@code true} to synchronise this with the server and other clients, {@code false} otherwise.
+     *         This will be {@code true} if <strong>any</strong> listener decides to synchronise, not just the last one to be processed.
+     *         Note that this only has an effect when used on the logical server
      *     </li>
      * </ul>
      */

@@ -1,6 +1,7 @@
 package com.swacky.ohmega.common;
 
 import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.util.LogicalSide;
 import com.swacky.ohmega.client.OhmegaClientMain;
 import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import com.swacky.ohmega.common.init.OhmegaArgumentTypes;
@@ -9,13 +10,18 @@ import com.swacky.ohmega.common.init.OhmegaDataComponentsImpl;
 import com.swacky.ohmega.common.init.OhmegaItemsImpl;
 import com.swacky.ohmega.network.OhmegaNetworkingImpl;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
+import java.util.function.Function;
+
 @Mod(Ohmega.MODID)
 public final class OhmegaMain {
+    private static final Function<String, Boolean> MOD_LOADED = ModList::isLoaded;
+
     public OhmegaMain(FMLJavaModLoadingContext context) {
         // Bootstrap
         OhmegaBootstrap.bootstrap();
@@ -31,6 +37,10 @@ public final class OhmegaMain {
         OhmegaCriteriaTriggersImpl.register(group);
         OhmegaDataComponentsImpl.register(group);
         OhmegaItemsImpl.register(group);
+
+        // Custom entrypoint invocation
+        Ohmega.invokeEntrypointsService(entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, MOD_LOADED));
+        Ohmega.invokeEntrypointsService(entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint, MOD_LOADED));
 
         // Client entry
         if (FMLEnvironment.dist.isClient()) {

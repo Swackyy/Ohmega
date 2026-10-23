@@ -2,6 +2,7 @@ package com.swacky.ohmega.compat.figura.client.api.dataattachment;
 
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.compat.figura.client.api.accessorytype.FiguraAccessoryType;
+import com.swacky.ohmega.compat.figura.client.api.item.AccessoryContextAPI;
 import org.figuramc.figura.lua.LuaWhitelist;
 import org.figuramc.figura.lua.api.world.ItemStackAPI;
 import org.figuramc.figura.lua.docs.LuaMethodDoc;
@@ -29,9 +30,11 @@ public class FiguraAccessoryDataEntry {
         return new FiguraAccessoryType(entry.getType());
     }
 
-    /*public AccessoryContext getContext() {
-        return entry.getContext();
-    }*/
+    @LuaWhitelist
+    @LuaMethodDoc("get_context")
+    public AccessoryContextAPI getContext() {
+        return new AccessoryContextAPI(entry.getContext());
+    }
 
     @LuaWhitelist
     @LuaMethodDoc("get_stack")

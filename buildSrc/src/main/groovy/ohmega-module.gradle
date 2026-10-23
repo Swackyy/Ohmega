@@ -124,7 +124,6 @@ String mixinConfigName(Project project) {
 void moduleDependency(DependencyHandler handler, Project dependency) {
     String fixedGroup = group
 
-    // Export
     handler.compileOnly (dependency) {
         capabilities {
             requireCapability "${fixedGroup}:${modId}-${dependency.name}"

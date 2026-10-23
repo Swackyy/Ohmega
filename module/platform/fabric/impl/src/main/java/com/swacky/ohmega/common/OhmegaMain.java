@@ -35,11 +35,15 @@ import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.server.packs.PackType;
 import net.neoforged.fml.config.ModConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.function.Consumer;
 
 public final class OhmegaMain implements ModInitializer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public void onInitialize() {
         // Bootstrap
@@ -85,29 +89,29 @@ public final class OhmegaMain implements ModInitializer {
 
         loader.invokeEntrypoints("ohmega-common", IOhmegaEntrypoint.class, entrypoint ->
                 Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, loader::isModLoaded));
-        invokeEntrypointsUnsafe("ohmega-common-unsafe", IOhmegaEntrypoint.class, entrypoint ->
-                Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, loader::isModLoaded));
+        invokeEntrypointsUnsafe("ohmega-common-unsafe", entrypoint ->
+                Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, loader::isModLoaded), LOGGER);
 
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
             loader.invokeEntrypoints("ohmega-server", IOhmegaEntrypoint.class, entrypoint ->
                     Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint, loader::isModLoaded));
-            invokeEntrypointsUnsafe("ohmega-server-unsafe", IOhmegaEntrypoint.class, entrypoint ->
-                    Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint, loader::isModLoaded));
+            invokeEntrypointsUnsafe("ohmega-server-unsafe", entrypoint ->
+                    Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint, loader::isModLoaded), LOGGER);
         }
     }
 
-    public static <T> void invokeEntrypointsUnsafe(String key, Class<T> type, Consumer<T> invoker) {
+    public static void invokeEntrypointsUnsafe(String key, Consumer<IOhmegaEntrypoint> invoker, Logger logger) {
         RuntimeException exception = null;
-        Collection<EntrypointContainer<T>> entrypoints = FabricLoaderImpl.INSTANCE.getEntrypointContainers(key, type);
+        Collection<EntrypointContainer<IOhmegaEntrypoint>> entrypoints = FabricLoaderImpl.INSTANCE.getEntrypointContainers(key, IOhmegaEntrypoint.class);
 
         Log.debug(LogCategory.ENTRYPOINT, "Iterating over entrypoint '%s'", key);
 
-        for (EntrypointContainer<T> container : entrypoints) {
+        for (EntrypointContainer<IOhmegaEntrypoint> container : entrypoints) {
             try {
                 invoker.accept(container.getEntrypoint());
             } catch (EntrypointException _) {
                 // no op
-                // todo: probably log this
+                logger.warn("Unsafe entrypoint with key {} threw a (silenced) exception", key);
             } catch (Throwable t) {
                 exception = ExceptionUtil.gatherExceptions(t,
                         exception,

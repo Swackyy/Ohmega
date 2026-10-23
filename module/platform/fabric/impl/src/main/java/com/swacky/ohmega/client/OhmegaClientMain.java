@@ -32,8 +32,12 @@ import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class OhmegaClientMain implements ClientModInitializer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public void onInitializeClient() {
         // Bootstrap
@@ -90,7 +94,7 @@ public final class OhmegaClientMain implements ClientModInitializer {
 
         loader.invokeEntrypoints("ohmega-client", IOhmegaEntrypoint.class, entrypoint ->
                 Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint, loader::isModLoaded));
-        OhmegaMain.invokeEntrypointsUnsafe("ohmega-client-unsafe", IOhmegaEntrypoint.class, entrypoint ->
-                Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint, loader::isModLoaded));
+        OhmegaMain.invokeEntrypointsUnsafe("ohmega-client-unsafe", entrypoint ->
+                Ohmega.invokeEntrypoint(LogicalSide.CLIENT, entrypoint, loader::isModLoaded), LOGGER);
     }
 }

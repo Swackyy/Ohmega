@@ -10,6 +10,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -91,8 +92,10 @@ public final class Ohmega {
             } catch (Exception e) {
                 throw new RuntimeException("Entrypoint '" + name + "' could not be invoked", e);
             }
-        } else {
-            throw new IllegalStateException("Entrypoint '" + name + "' could not be invoked, logical side metadata specification (" + metadataSide + ") differs from annotation (" + annotationSide + ')');
         }
+    }
+
+    public static void invokeEntrypointsService(Consumer<IOhmegaEntrypoint> invoker) {
+        ServiceLoader.load(IOhmegaEntrypoint.class).forEach(invoker);
     }
 }
