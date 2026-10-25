@@ -99,9 +99,7 @@ And join the discord here: ${discordUrl}"""
 
 jar {
     from configurations.commonResources
-    exclude "**/${metaFileName(commonImplProject())}.accesswidener"
     exclude "**/${metaFileName(commonImplProject().apiProject())}.accesswidener"
-    exclude "**/${metaFileName(apiProject())}.accesswidener"
     setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
@@ -111,8 +109,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named("sourcesJar", Jar) {
-    from commonImplProject().sourceSets.main.allSource
-    exclude "**/common_aw.accesswidener"
+    from(
+            commonImplProject().sourceSets.main.allSource,
+            commonImplProject().apiProject().sourceSets.main.allSource,
+            apiProject().sourceSets.main.allSource)
     setDuplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
