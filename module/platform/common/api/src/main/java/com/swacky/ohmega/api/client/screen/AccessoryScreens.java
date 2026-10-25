@@ -2,8 +2,8 @@ package com.swacky.ohmega.api.client.screen;
 
 import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
 import com.swacky.ohmega.api.client.event.ClientCallbacks;
+import com.swacky.ohmega.api.client.event.OhmegaClientHooks;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
-import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.menu.AccessoryMenuExtension;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
 import com.swacky.ohmega.api.common.menu.AccessorySlot;
@@ -130,7 +130,7 @@ public final class AccessoryScreens {
 
         AccessoryScreenExtension.WidgetAdder adder = new AccessoryScreenExtension.WidgetAdder(consumer, overlayWidgets);
 
-        if (!OhmegaHooks.extensionInitPre(extension, adder)) {
+        if (!OhmegaClientHooks.extensionInitPre(extension, adder)) {
             extension.initExtension(adder);
 
             for (AbstractWidget widget : overlayWidgets) {
@@ -138,7 +138,7 @@ public final class AccessoryScreens {
                 screen.narratables.add(widget);
             }
 
-            OhmegaHooks.extensionInitPost(extension, adder);
+            OhmegaClientHooks.extensionInitPost(extension, adder);
         }
     }
 

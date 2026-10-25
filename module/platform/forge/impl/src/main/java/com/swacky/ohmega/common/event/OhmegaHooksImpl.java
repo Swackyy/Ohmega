@@ -1,12 +1,5 @@
 package com.swacky.ohmega.common.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionExtractEvent;
-import com.swacky.ohmega.api.client.event.AccessoryExtensionInitEvent;
-import com.swacky.ohmega.api.client.event.AccessoryLayerRenderEvent;
-import com.swacky.ohmega.api.client.event.AccessoryRenderEvent;
-import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.event.AccessoryAllowWalkOnPowderSnowEvent;
@@ -34,8 +27,6 @@ import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -113,16 +104,6 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     }
 
     @Override
-    public void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
-        AccessoryExtensionInitEvent.Post.BUS.post(new AccessoryExtensionInitEvent.Post(extension, adder));
-    }
-
-    @Override
-    public boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
-        return AccessoryExtensionInitEvent.Pre.BUS.post(new AccessoryExtensionInitEvent.Pre(extension, adder));
-    }
-
-    @Override
     public boolean isPiglinSafe(ItemStack stack, boolean original) {
         return AccessoryIsPiglinSafeEvent.BUS.fire(new AccessoryIsPiglinSafeEvent(stack, original)).returnValue;
     }
@@ -163,31 +144,6 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
 
         RegisterAccessoryTypesEvent.BUS.post(new RegisterAccessoryTypesEvent(map));
         return map;
-    }
-
-    @Override
-    public void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        AccessoryExtensionExtractEvent.Post.BUS.post(new AccessoryExtensionExtractEvent.Post(gui, extension));
-    }
-
-    @Override
-    public boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        return AccessoryExtensionExtractEvent.Pre.BUS.post(new AccessoryExtensionExtractEvent.Pre(gui, extension));
-    }
-
-    @Override
-    public boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack) {
-        return AccessoryLayerRenderEvent.BUS.post(new AccessoryLayerRenderEvent(state, stack));
-    }
-
-    @Override
-    public void renderAccessoryPost(AccessoryRenderContext<?, ?> context) {
-        AccessoryRenderEvent.Post.BUS.post(new AccessoryRenderEvent.Post(context));
-    }
-
-    @Override
-    public boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
-        return AccessoryRenderEvent.Pre.BUS.post(new AccessoryRenderEvent.Pre(context));
     }
 
     @Override

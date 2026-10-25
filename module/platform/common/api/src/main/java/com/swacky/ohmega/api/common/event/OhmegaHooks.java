@@ -1,8 +1,5 @@
 package com.swacky.ohmega.api.common.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.swacky.ohmega.api.client.renderer.AccessoryRenderContext;
-import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
@@ -11,8 +8,6 @@ import com.swacky.ohmega.api.common.item.SoundData;
 import com.swacky.ohmega.api.util.LoaderService;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -76,14 +71,6 @@ public final class OhmegaHooks {
         return IMPL.equipSound(stack, original);
     }
 
-    public static void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
-        IMPL.extensionInitPost(extension, adder);
-    }
-
-    public static boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
-        return IMPL.extensionInitPre(extension, adder);
-    }
-
     public static boolean isPiglinSafe(ItemStack stack, boolean original) {
         return IMPL.isPiglinSafe(stack, original);
     }
@@ -110,26 +97,6 @@ public final class OhmegaHooks {
 
     public static Map<Identifier, AccessoryType> registerAccessoryTypes() {
         return IMPL.registerAccessoryTypes();
-    }
-
-    public static void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        IMPL.extractAccessoryExtensionPost(gui, extension);
-    }
-
-    public static boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension) {
-        return IMPL.extractAccessoryExtensionPre(gui, extension);
-    }
-
-    public static boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack) {
-        return IMPL.renderAccessoryLayer(state, stack);
-    }
-
-    public static void renderAccessoryPost(AccessoryRenderContext<?, ?> context) {
-        IMPL.renderAccessoryPost(context);
-    }
-
-    public static boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
-        return IMPL.renderAccessoryPre(context);
     }
 
     public static boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original) {
@@ -166,10 +133,6 @@ public final class OhmegaHooks {
 
         SoundData equipSound(ItemStack stack, SoundData original);
 
-        void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder);
-
-        boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder);
-
         boolean isPiglinSafe(ItemStack stack, boolean original);
 
         BooleanBooleanPair keybindUse(Player player, ItemStack stack);
@@ -183,16 +146,6 @@ public final class OhmegaHooks {
         boolean preferVanillaUse(ItemStack stack, boolean original);
 
         Map<Identifier, AccessoryType> registerAccessoryTypes();
-
-        void extractAccessoryExtensionPost(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
-
-        boolean extractAccessoryExtensionPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
-
-        boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack);
-
-        void renderAccessoryPost(AccessoryRenderContext<?, ?> context);
-
-        boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context);
 
         boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original);
 

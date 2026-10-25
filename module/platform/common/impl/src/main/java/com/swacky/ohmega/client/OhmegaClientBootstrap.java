@@ -3,6 +3,7 @@ package com.swacky.ohmega.client;
 import com.swacky.ohmega.api.client.OhmegaClient;
 import com.swacky.ohmega.api.client.command.OhmegaClientCommandNodes;
 import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.event.OhmegaClientHooks;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
@@ -29,6 +30,7 @@ public final class OhmegaClientBootstrap {
             AccessoryRenderStateData.bootstrap();
             OhmegaBinds.bootstrap();
             OhmegaClientConfig.bootstrap();
+            OhmegaClientHooks.bootstrap();
 
             // Lock service loading
             OhmegaClient.lock();

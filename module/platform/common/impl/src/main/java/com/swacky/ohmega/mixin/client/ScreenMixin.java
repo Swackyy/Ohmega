@@ -1,11 +1,11 @@
 package com.swacky.ohmega.mixin.client;
 
+import com.swacky.ohmega.api.client.event.OhmegaClientHooks;
 import com.swacky.ohmega.api.client.screen.AccessoryScreenExtension;
 import com.swacky.ohmega.api.client.screen.AccessoryScreens;
 import com.swacky.ohmega.api.client.screen.IAccessoryScreen;
 import com.swacky.ohmega.api.client.screen.IEmbeddingScreen;
 import com.swacky.ohmega.api.client.screen.LazyPosition;
-import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
@@ -44,9 +44,9 @@ abstract class ScreenMixin extends AbstractContainerEventHandler implements Rend
                         position.x().get() + containerScreen.leftPos,
                         position.y().get() + containerScreen.topPos);
 
-                if (!OhmegaHooks.extractAccessoryExtensionPre(gui, extension)) {
+                if (!OhmegaClientHooks.extensionExtractPre(gui, extension)) {
                     extension.extractExtension(gui);
-                    OhmegaHooks.extractAccessoryExtensionPost(gui, extension);
+                    OhmegaClientHooks.extensionExtractPost(gui, extension);
                 }
 
                 pose.popMatrix();

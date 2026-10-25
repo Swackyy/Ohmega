@@ -2,6 +2,7 @@ package com.swacky.ohmega.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
+import com.swacky.ohmega.api.client.event.OhmegaClientHooks;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.client.renderer.HumanoidRenderContext;
@@ -11,7 +12,6 @@ import com.swacky.ohmega.api.client.renderer.LivingRenderContext;
 import com.swacky.ohmega.api.client.renderer.SubmitNodeCollectorWrapper;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
-import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
@@ -43,7 +43,7 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
         if (OhmegaClientConfig.getData().renderAccessories().get()) {
             AccessoryRenderStateData data = AccessoryRenderStateData.getData(state);
 
-            if (data != null && !OhmegaHooks.renderAccessoryLayer(state, poseStack)) {
+            if (data != null && !OhmegaClientHooks.renderAccessoryLayer(state, poseStack)) {
                 SubmitNodeCollectorWrapper wrapper = new SubmitNodeCollectorWrapper(collector);
                 ArrayList<AccessoryDataEntry> entries = data.entries();
                 boolean flag = OhmegaServerConfig.isLoaded() && OhmegaServerConfig.getData().allowHideAccessories().get();
@@ -67,9 +67,9 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
                                         Minecraft.getInstance().getModelManager(),
                                         packedLight);
 
-                                if (!OhmegaHooks.renderAccessoryPre(context)) {
+                                if (!OhmegaClientHooks.renderAccessoryPre(context)) {
                                     factory.construct(providerContext).submit(context);
-                                    OhmegaHooks.renderAccessoryPost(context);
+                                    OhmegaClientHooks.renderAccessoryPost(context);
                                     continue;
                                 }
                             }
@@ -87,9 +87,9 @@ public final class AccessoryRenderLayer<T extends LivingEntityRenderState, U ext
                                     Minecraft.getInstance().getModelManager(),
                                     packedLight);
 
-                            if (!OhmegaHooks.renderAccessoryPre(context)) {
+                            if (!OhmegaClientHooks.renderAccessoryPre(context)) {
                                 factory.construct(providerContext).submit(context);
-                                OhmegaHooks.renderAccessoryPost(context);
+                                OhmegaClientHooks.renderAccessoryPost(context);
                             }
                         }
                     }

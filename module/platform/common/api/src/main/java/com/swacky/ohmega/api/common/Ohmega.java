@@ -39,9 +39,9 @@ public final class Ohmega {
         locked = true;
 
         if (nonLinearServicesCount == 0) {
-            LOGGER.info("Loaded {} common services", servicesCount);
+            LOGGER.info("Loaded {} services", servicesCount);
         } else {
-            LOGGER.info("Loaded {} common services ({} non-linear)", servicesCount, nonLinearServicesCount);
+            LOGGER.info("Loaded {} services ({} non-linear)", servicesCount, nonLinearServicesCount);
         }
     }
 

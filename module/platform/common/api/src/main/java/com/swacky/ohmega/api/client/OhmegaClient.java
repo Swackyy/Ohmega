@@ -33,9 +33,9 @@ public final class OhmegaClient {
         locked = true;
 
         if (nonLinearServicesCount == 0) {
-            LOGGER.info("Loaded {} services", servicesCount);
+            LOGGER.info("Loaded {} client services", servicesCount);
         } else {
-            LOGGER.info("Loaded {} services ({} non-linear)", servicesCount, nonLinearServicesCount);
+            LOGGER.info("Loaded {} client services ({} non-linear)", servicesCount, nonLinearServicesCount);
         }
     }
 

@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class OhmegaRei {
-    @SuppressWarnings("ProtectedMemberInFinalClass")
-    protected static void registerExclusionZones(ExclusionZones zones) {
+    public static void registerExclusionZones(ExclusionZones zones) {
         zones.register(AbstractContainerScreen.class, screen -> {
             List<Rect2i> rects = ExclusionZoneProvider.getExclusionZones(screen);
             ArrayList<Rectangle> ret = new ArrayList<>(rects.size());
