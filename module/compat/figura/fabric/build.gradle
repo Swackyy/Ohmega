@@ -33,7 +33,7 @@ dependencies {
     //compileOnlyApi "org.figuramc:figura-common-mojmap:${compatFiguraV}+${mcV}"
 
     // NoFigura Fork
-    compileOnlyApi "maven.modrinth:nofigura:${compatFiguraV}"
+    compileOnlyApi "dev.stranik:nofigura-fabric:${compatFiguraV}-${mcV}"
     compileOnlyApi "com.github.FiguraMC.luaj:luaj-core:${compatFiguraLuajV}-figura"
 }
 

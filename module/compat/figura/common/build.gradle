@@ -26,6 +26,6 @@ dependencies {
     //compileOnly "org.figuramc:figura-common-mojmap:${compatFiguraV}+${mcV}"
 
     // NoFigura Fork
-    compileOnly "maven.modrinth:nofigura:${compatFiguraV}"
+    compileOnly "dev.stranik:nofigura-fabric:${compatFiguraV}-${mcV}"
     compileOnly "com.github.FiguraMC.luaj:luaj-core:${compatFiguraLuajV}-figura"
 }
