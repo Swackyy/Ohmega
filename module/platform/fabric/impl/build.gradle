@@ -125,6 +125,14 @@ dependencies {
             runtimeOnly "cc.cassian.rrv:reliable-recipe-viewer-fabric:${compatRrvV}+${mcV}"
         }
     }
+
+    if (compatEnabledTrinkets.toBoolean()) {
+        compatModuleDependency it, "trinkets"
+
+        if (runtimeEnabledTrinkets.toBoolean()) {
+            runtimeOnly "eu.pb4:trinkets:${compatTrinketsV}+${mcV}"
+        }
+    }
 }
 
 fabricApi {

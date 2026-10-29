@@ -7,6 +7,7 @@ import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.AccessoryContext;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -132,10 +133,26 @@ public final class AccessoryMenus {
      */
     public static void rebuildSlots(@NonNull AbstractContainerMenu menu, @NonNull Player owner) {
         IAccessoryMenu accessoryMenu = assertImplementation(menu);
-        List<AccessorySlot> slots = accessoryMenu.getSlots();
+        List<AccessorySlot> accessorySlots = accessoryMenu.getSlots();
 
-        if (slots != null) {
-            menu.slots.removeAll(slots);
+        if (accessorySlots != null) {
+            NonNullList<Slot> menuSlots = menu.slots;
+
+            menuSlots.removeAll(accessorySlots);
+
+            if (!accessorySlots.isEmpty()) {
+                int size = menuSlots.size();
+
+                for (int i = accessorySlots.getLast().index + 1; i < size; i++) {
+                    Slot slot = menuSlots.get(i);
+
+                    if (slot instanceof IAccessorySlotProvider) {
+                        break;
+                    }
+
+                    slot.index = i;
+                }
+            }
         }
 
         AccessoryMenuExtension extension = accessoryMenu.getAccessoryExtension();
@@ -153,20 +170,20 @@ public final class AccessoryMenus {
      */
     public static void tryRebuildSlots(@NonNull LivingEntity entity) {
         if (entity instanceof Player player) {
-            AbstractContainerMenu menu = player.inventoryMenu;
+            AbstractContainerMenu currentMenu = player.containerMenu;
 
-            if (menu instanceof IAccessoryMenu) {
-                rebuildSlots(menu, player);
-            }
-
-            menu = player.containerMenu;
-
-            if (menu instanceof IAccessoryMenu accessoryMenu) {
-                rebuildSlots(menu, player);
+            if (currentMenu instanceof IAccessoryMenu accessoryMenu) {
+                rebuildSlots(currentMenu, player);
 
                 if (player.level().isClientSide()) {
                     AccessoryScreens.onRebuildSlots(accessoryMenu);
                 }
+            }
+
+            AbstractContainerMenu inventoryMenu = player.inventoryMenu;
+
+            if (currentMenu != inventoryMenu && inventoryMenu instanceof IAccessoryMenu) {
+                rebuildSlots(inventoryMenu, player);
             }
         }
     }

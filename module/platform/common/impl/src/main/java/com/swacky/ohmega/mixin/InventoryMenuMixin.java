@@ -39,14 +39,14 @@ abstract class InventoryMenuMixin extends AbstractCraftingMenu implements IMixin
         ohmega$extension = extension;
     }
 
-    // Uses a custom order to ensure this mixin is applied in the same order on client and server
+    // Uses a custom order to ensure better compatibility
     @Inject(
             method = "<init>",
             at = @At(
                     value = "RETURN"),
-            order = -7777)
+            order = 7777)
     private void init(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
-        AccessoryMenus.attachExtension(this, owner, AccessoryMenus.assertImplementation(this));
+        AccessoryMenus.attachExtension(this, owner, this);
     }
 
     // todo: this bad

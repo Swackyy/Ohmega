@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -37,7 +38,8 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
 
     @Override
     public void initExtension(WidgetAdder adder) {
-        int size = OhmegaDataAttachments.getData(getMenuExtension().getOwner()).size();
+        Player owner = getMenuExtension().getOwner();
+        int size = OhmegaDataAttachments.getData(owner).size();
 
         if (size > 0) {
             OhmegaClientConfig.Data data = OhmegaClientConfig.getData();
@@ -67,7 +69,7 @@ public final class DefaultScreenExtension extends AccessoryScreenExtension imple
                             getScreen(),
                             1 + 18 * (i + 1),
                             2 + j * 18,
-                            getMenuExtension().getOwner(),
+                            owner,
                             index++));
 
                     if (++addedCurrentColumn >= mostSlotsPerColumn || index >= slotsAvailable) {

@@ -8,11 +8,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
-public record SyncDataPacket(int entityId, AccessoryData data) implements CustomPacketPayload {
+public record SyncDataPacket(int entityId, AccessoryData data, int startIndex) implements CustomPacketPayload {
     public static final Type<@NonNull SyncDataPacket> TYPE = new Type<>(Ohmega.id("sync_data"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncDataPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, SyncDataPacket::entityId,
             AccessoryData.STREAM_CODEC, SyncDataPacket::data,
+            ByteBufCodecs.VAR_INT, SyncDataPacket::startIndex,
             SyncDataPacket::new);
 
     @Override

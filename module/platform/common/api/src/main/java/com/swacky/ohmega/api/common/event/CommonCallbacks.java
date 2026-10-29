@@ -12,6 +12,8 @@ import com.swacky.ohmega.api.common.item.Accessories;
 import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
+import com.swacky.ohmega.api.common.menu.AccessorySlot;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
 import net.minecraft.commands.CommandBuildContext;
@@ -25,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.Collection;
+import java.util.List;
 
 public final class CommonCallbacks {
     public static double getVisibilityPercentModifier(LivingEntity entity, Entity targetingEntity) {
@@ -78,11 +81,22 @@ public final class CommonCallbacks {
     }
 
     public static void onLivingTrack(ServerPlayer tracker, LivingEntity tracked) {
-        OhmegaNetworking.sendS2C(tracker, new SyncDataPacket(tracked.getId(), OhmegaDataAttachments.getData(tracked)));
+        OhmegaNetworking.sendS2C(tracker, new SyncDataPacket(tracked.getId(), OhmegaDataAttachments.getData(tracked), -1));
     }
 
     public static void onPlayerChangeDimension(ServerPlayer player) {
-        OhmegaNetworking.sendS2C(player, new SyncDataPacket(player.getId(), OhmegaDataAttachments.getData(player)));
+        if (player.inventoryMenu instanceof IAccessoryMenu accessoryMenu) {
+            List<AccessorySlot> slots = accessoryMenu.getSlots();
+            int startIndex;
+
+            if (slots != null && !slots.isEmpty()) {
+                startIndex = slots.getFirst().index;
+            } else {
+                startIndex = 0;
+            }
+
+            OhmegaNetworking.sendS2C(player, new SyncDataPacket(player.getId(), OhmegaDataAttachments.getData(player), startIndex));
+        }
     }
 
     public static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {

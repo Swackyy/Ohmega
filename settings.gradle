@@ -88,6 +88,10 @@ if (compatEnabledRrv.toBoolean() && (loaderEnabledFabric || loaderEnabledNeo)) {
     }
 }
 
+if (compatEnabledTrinkets.toBoolean() && (loaderEnabledFabric || loaderEnabledNeo)) {
+    include "module:compat:trinkets"
+}
+
 gradle.settingsEvaluated {
     rootProject.children.forEach { child ->
         eval(child)

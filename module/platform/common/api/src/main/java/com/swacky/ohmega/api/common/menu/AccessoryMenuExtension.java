@@ -16,7 +16,7 @@ import java.util.List;
  * This does not override any vanilla behaviour such as inventory slots, it is purely an extension
  * <p>
  * Ohmega uses this to provide the default accessory extension implementation packaged with the mod
- * @apiNote This <strong>is</strong> a client class, and so you shouldn't assume behaviour will be replaced on the logical server.
+ * @apiNote This is effectively a client class, and so you shouldn't assume behaviour will be replicated on the logical server.
  * The only reason this is in the {@code common} package is because Ohmega defines one singular server implementation for internal use
  */
 public abstract class AccessoryMenuExtension {

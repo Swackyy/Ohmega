@@ -14,6 +14,8 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.IAccessory;
 import com.swacky.ohmega.api.common.menu.AccessoryMenus;
+import com.swacky.ohmega.api.common.menu.AccessorySlot;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
 import com.swacky.ohmega.api.network.S2C.SyncSlotsPacket;
@@ -34,7 +36,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jspecify.annotations.NonNull;
@@ -326,12 +327,19 @@ public final class AccessoryData {
                     defaultSlots(entity, AccessoryContext.ATTACH);
                 }
             }
+        }
 
-            if (entity instanceof ServerPlayer player) {
-                SyncDataPacket packet = new SyncDataPacket(player.getId(), this);
+        if (entity instanceof ServerPlayer player && player.inventoryMenu instanceof IAccessoryMenu accessoryMenu) {
+            List<AccessorySlot> slots = accessoryMenu.getSlots();
+            int startIndex;
 
-                OhmegaNetworking.sendS2C(player, packet);
+            if (slots != null && !slots.isEmpty()) {
+                startIndex = slots.getFirst().index;
+            } else {
+                startIndex = 0;
             }
+
+            OhmegaNetworking.sendS2C(player, new SyncDataPacket(player.getId(), this, startIndex));
         }
 
         OhmegaHooks.attachData(this, entity);
@@ -386,7 +394,7 @@ public final class AccessoryData {
         }
 
         if (indexes != null) {
-            trySendPacketToAll(level, new SyncStacksPacket(entity.getId(), indexes.toIntArray(), stacks, true));
+            sendPacketToAll(level, new SyncStacksPacket(entity.getId(), indexes.toIntArray(), stacks, true));
         }
 
         tickIndex++;
@@ -632,15 +640,13 @@ public final class AccessoryData {
     }
 
     /**
-     * Attempts to send the given packet to all players on a {@link Level}, only succeeds if it is a {@link ServerLevel}
-     * @param level possibly {@code null} level to retrieve {@link Player} receivers from
+     * Sends the given packet to all players on a {@link ServerLevel}
+     * @param level level to retrieve {@link Player} receivers from
      * @param packet the packet to send to each receiver
      */
-    private void trySendPacketToAll(@Nullable Level level, @NonNull CustomPacketPayload packet) {
-        if (level instanceof ServerLevel serverLevel) {
-            for (ServerPlayer player : serverLevel.players()) {
-                OhmegaNetworking.sendS2C(player, packet);
-            }
+    private void sendPacketToAll(@NonNull ServerLevel level, @NonNull CustomPacketPayload packet) {
+        for (ServerPlayer player : level.players()) {
+            OhmegaNetworking.sendS2C(player, packet);
         }
     }
 
@@ -720,7 +726,11 @@ public final class AccessoryData {
         }
 
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), packet);
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, packet);
+        }
+
         return count;
     }
 
@@ -755,12 +765,15 @@ public final class AccessoryData {
         }
 
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.DEFAULT,
-                entity.getId(),
-                ArrayUtils.EMPTY_INT_ARRAY,
-                Optional.empty(),
-                context));
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.DEFAULT,
+                    entity.getId(),
+                    ArrayUtils.EMPTY_INT_ARRAY,
+                    Optional.empty(),
+                    context));
+        }
     }
 
     /**
@@ -794,12 +807,15 @@ public final class AccessoryData {
         }
 
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.INHERIT,
-                entity.getId(),
-                new int[]{other.getId(), min, max},
-                Optional.empty(),
-                context));
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.INHERIT,
+                    entity.getId(),
+                    new int[]{other.getId(), min, max},
+                    Optional.empty(),
+                    context));
+        }
     }
 
     /**
@@ -829,12 +845,15 @@ public final class AccessoryData {
         }
 
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.INSERT,
-                entity.getId(),
-                new int[]{index, amount},
-                Optional.of(type),
-                context));
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.INSERT,
+                    entity.getId(),
+                    new int[]{index, amount},
+                    Optional.of(type),
+                    context));
+        }
     }
 
     /**
@@ -877,12 +896,16 @@ public final class AccessoryData {
 
         resetSlotDataComponents();
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.REMOVE,
-                entity.getId(),
-                list.toIntArray(),
-                Optional.empty(),
-                context));
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.REMOVE,
+                    entity.getId(),
+                    list.toIntArray(),
+                    Optional.empty(),
+                    context));
+        }
+
         return count;
     }
 
@@ -906,12 +929,15 @@ public final class AccessoryData {
 
         resetSlotDataComponents();
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.REMOVE,
-                entity.getId(),
-                indexes,
-                Optional.empty(),
-                context));
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.REMOVE,
+                    entity.getId(),
+                    indexes,
+                    Optional.empty(),
+                    context));
+        }
     }
 
     /**
@@ -930,12 +956,15 @@ public final class AccessoryData {
         }
 
         onMutateSlots(entity);
-        trySendPacketToAll(entity.level(), new SyncSlotsPacket(
-                SyncSlotsPacket.Action.SET,
-                entity.getId(),
-                new int[]{index, max},
-                Optional.of(type),
-                context));
+
+        if (entity.level() instanceof ServerLevel level) {
+            sendPacketToAll(level, new SyncSlotsPacket(
+                    SyncSlotsPacket.Action.SET,
+                    entity.getId(),
+                    new int[]{index, max},
+                    Optional.of(type),
+                    context));
+        }
     }
 
     /**
