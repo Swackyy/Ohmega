@@ -18,8 +18,8 @@ loom {
 
 dependencies {
     minecraft(libs.platform.fabric.minecraft)
-    compileOnlyApi(libs.platform.fabric)
+    compileOnly(libs.platform.fabric)
     // Uses 'implementation' so ClassTweaker still applies
-    compileOnlyApi(libs.platform.fabric.dependency.fabricApi)
+    implementation(libs.platform.fabric.dependency.fabricApi)
     compileOnly(libs.platform.fabric.dependency.forgeConfigApiPort)
 }

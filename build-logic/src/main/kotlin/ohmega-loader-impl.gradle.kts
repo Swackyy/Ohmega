@@ -36,8 +36,6 @@ dependencies {
 tasks.processResources {
     var extraMixinConfigsProcessed = ""
 
-    println("kuerguer: $extraMixinConfigs")
-
     if (extraMixinConfigs.isNotEmpty()) {
         for (config: String in extraMixinConfigs) {
             if (project.name == "fabric") {

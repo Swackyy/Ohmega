@@ -71,8 +71,8 @@ repositories {
 
 dependencies {
     minecraft(libs.platform.fabric.minecraft)
-    runtimeOnly(libs.platform.fabric)
-    runtimeOnly(libs.platform.fabric.dependency.fabricApi)
+    implementation(libs.platform.fabric)
+    implementation(libs.platform.fabric.dependency.fabricApi)
     implementation(libs.platform.fabric.dependency.forgeConfigApiPort)
 
     if (platformFabricUtilityModMenuEnabledRuntime.toBoolean()) {
