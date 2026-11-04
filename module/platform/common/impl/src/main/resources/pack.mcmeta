@@ -1,14 +1,14 @@
 {
   "pack": {
     "description": {
-      "translate": "dataPack.${modId}.description"
+      "translate": "dataPack.ohmega.description"
     },
-    "pack_format": ${packFormatMaxV},
-    "min_format": ${packFormatMinV},
-    "max_format": ${packFormatMaxV},
+    "pack_format": ${minecraftPackFormatVersionRangeMax},
+    "min_format": ${minecraftPackFormatVersionRangeMin},
+    "max_format": ${minecraftPackFormatVersionRangeMax},
     "supported_formats": {
-      "min_inclusive": ${packFormatMinV},
-      "max_inclusive": ${packFormatMaxV}
+      "min_inclusive": ${minecraftPackFormatVersionRangeMin},
+      "max_inclusive": ${minecraftPackFormatVersionRangeMax}
     }
   }
 }

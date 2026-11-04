@@ -1,29 +1,29 @@
 modLoader="javafml"
-loaderVersion="${loaderForgeV}"
-issueTrackerURL="${gitUrl}/issues"
-license="${license}"
+loaderVersion="${platformForgeVersion}"
+issueTrackerURL="${modUrlGithub}/issues"
+license="${modLicense}"
 
 
 [[mods]]
-modId="${modId}"
-version="${modV}"
+modId="ohmega"
+version="${modVersion}"
 displayName="${modName}"
-displayURL="${gitUrl}"
+displayURL="${modUrlGithub}"
 logoFile="${modId}.png"
 authors="${modAuthors}"
-description='''${modDesc}'''
+description='''${modDescription}'''
 
 
-[[dependencies.${modId}]]
+[[dependencies.ohmega]]
 modId="forge"
 mandatory=true
-versionRange="${loaderForgeVRange}"
+versionRange="${platformForgeVersionRange}"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.${modId}]]
+[[dependencies.ohmega]]
 modId="minecraft"
 mandatory=true
-versionRange="[${mcVRangeMin},${mcVRangeMax}]"
+versionRange="[${minecraftVersionRangeMin},${minecraftVersionRangeMax}]"
 ordering="NONE"
 side="BOTH"

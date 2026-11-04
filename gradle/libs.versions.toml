@@ -1,0 +1,97 @@
+[libraries]
+# Platform
+## Common
+### Compat
+platform-common-compat-rei                    = { group = "me.shedaniel", name = "RoughlyEnoughItems-api", version.ref = "compat-rei" }
+platform-common-compat-trinkets               = { group = "eu.pb4", name = "trinkets", version.ref = "compat-trinkets" }
+
+## Fabric
+platform-fabric                               = { group = "net.fabricmc", name = "fabric-loader", version.ref = "platform-fabric" }
+platform-fabric-dependency-fabricApi          = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "platform-fabric-dependency-fabricApi" }
+platform-fabric-dependency-forgeConfigApiPort = { group = "fuzs.forgeconfigapiport", name = "forgeconfigapiport-fabric", version.ref = "platform-fabric-dependency-forgeConfigApiPort" }
+platform-fabric-minecraft                     = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
+platform-fabric-utility-modMenu               = { group = "com.terraformersmc", name = "modmenu", version.ref = "platform-fabric-utility-modMenu" }
+
+## Forge
+platform-forge-eventbusValidator              = { group = "net.minecraftforge", name = "eventbus-validator", version.ref = "platform-forge-eventbusValidator" }
+
+### Compat
+platform-fabric-compat-figura                 = { group = "dev.stranik", name = "nofigura-fabric", version.ref = "compat-figura" }
+platform-fabric-compat-figura-luaj            = { group = "com.github.FiguraMC.luaj", name = "luaj-core", version.ref = "compat-figura-luaj" }
+platform-fabric-compat-polymer                = { group = "eu.pb4", name = "polymer-bundled", version.ref = "compat-polymer" }
+platform-fabric-compat-polymer-core           = { group = "eu.pb4", name = "polymer-core", version.ref = "compat-polymer" }
+platform-fabric-compat-polymer-resourcePack   = { group = "eu.pb4", name = "polymer-resource-pack", version.ref = "compat-polymer" }
+platform-fabric-compat-polymer-sgui           = { group = "eu.pb4", name = "sgui", version.ref = "compat-polymer-sgui" }
+platform-fabric-compat-rei                    = { group = "me.shedaniel", name = "RoughlyEnoughItems-fabric", version.ref = "compat-rei" }
+platform-fabric-compat-rrv                    = { group = "cc.cassian.rrv", name = "reliable-recipe-viewer-fabric", version.ref = "compat-rrv" }
+
+## Neoforge
+### Compat
+platform-neoforge-compat-rei                  = { group = "me.shedaniel", name = "RoughlyEnoughItems-api-neoforge", version.ref = "compat-rei" }
+platform-neoforge-compat-rrv                  = { group = "cc.cassian.rrv", name = "reliable-recipe-viewer-neoforge", version.ref = "compat-rrv" }
+
+
+[plugins]
+common-utility-modPublish    = { id = "me.modmuss50.mod-publish-plugin", version.ref = "plugin-common-utility-modPublish" }
+platform-common-spongeGradle = { id = "org.spongepowered.gradle.vanilla", version.ref = "plugin-platform-common-spongeGradle" }
+platform-fabric-loom         = { id = "net.fabricmc.fabric-loom", version.ref = "plugin-platform-fabric-loom" }
+platform-forge-fg            = { id = "net.minecraftforge.gradle", version.ref = "plugin-platform-forge-fg" }
+platform-neoforge-mdg        = { id = "net.neoforged.moddev", version.ref = "plugin-platform-neoforge-mdg" }
+
+# --- Only the entries in this table below should need to be changed (usually) ---
+[versions]
+# Common
+common-utility-spark = "1.10.187"
+
+
+# Compat
+compat-figura       = "0.1.6.10-26.2"
+compat-figura-luaj  = "3.0.8-figura"
+compat-jei          = "30.42.0.237"
+compat-polymer      = "0.17.5+26.2"
+compat-polymer-sgui = "2.1.0+26.2"
+compat-rei          = "26.2.820"
+compat-rrv          = "8.11.3+26.2"
+compat-trinkets     = "4.1.1+26.2"
+
+
+# Configuration
+configuration-java = "25"
+
+
+# Platform
+## Fabric
+platform-fabric-dependency-fabricApi                = "0.161.0+26.2"
+platform-fabric-dependency-forgeConfigApiPort       = "26.2.1"
+platform-fabric-dependency-forgeConfigApiPort-range = ">=26.2"
+platform-fabric-utility-modMenu                     = "20.0.3"
+platform-fabric                                     = "0.20.1"
+platform-fabric-range                               = ">=0.20"
+
+## Forge
+platform-forge                                      = "65.1.5"
+platform-forge-eventbusValidator                    = "7.0.5"
+platform-forge-range                                = "[65,)"
+
+## NeoForge
+platform-neoforge                                   = "26.2.0.93"
+platform-neoforge-range                             = "[26.2.0.0-beta,)"
+
+
+# Minecraft
+minecraft                      = "26.2"
+minecraft-range-min            = "26.2"
+minecraft-packFormat-range-max = "107"
+minecraft-packFormat-range-min = "1"
+
+
+# Mod
+mod = "1.6.0-beta.20"
+
+
+# Plugin
+plugin-common-utility-modPublish  = "2.2.1"
+plugin-platform-common-spongeGradle = "0.3.2"
+plugin-platform-fabric-loom         = "1.19-SNAPSHOT"
+plugin-platform-forge-fg            = "7.0.40"
+plugin-platform-neoforge-mdg        = "2.0.148"

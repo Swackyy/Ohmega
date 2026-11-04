@@ -1,17 +1,17 @@
 modLoader="javafml"
-loaderVersion="${loaderNeoV}"
-issueTrackerURL="${gitUrl}/issues"
-license="${license}"
+loaderVersion="${platformNeoforgeVersion}"
+issueTrackerURL="${modUrlGithub}/issues"
+license="${modLicense}"
 
 
 [[mods]]
-modId="${modId}"
-version="${modV}"
+modId="ohmega"
+version="${modVersion}"
 displayName="${modName}"
-displayURL="${gitUrl}"
+displayURL="${modUrlGithub}"
 iconFile="${modId}.png"
 authors="${modAuthors}"
-description='''${modDesc}'''
+description='''${modDescription}'''
 
 
 [[mixins]]
@@ -22,16 +22,16 @@ config="${modId}_common.mixins.json"
 
 ${extraMixinConfigs}
 
-[[dependencies.${modId}]]
+[[dependencies.ohmega]]
 modId="neoforge"
 type="required"
-versionRange="${loaderNeoVRange}"
+versionRange="${platformNeoforgeVersionRange}"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.${modId}]]
+[[dependencies.ohmega]]
 modId="minecraft"
 type="required"
-versionRange="[${mcVRangeMin},${mcVRangeMax}]"
+versionRange="[${minecraftVersionRangeMin},${minecraftVersionRangeMax}]"
 ordering="NONE"
 side="BOTH"

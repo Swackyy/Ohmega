@@ -1,7 +1,0 @@
-plugins {
-    id "ohmega-platform"
-}
-
-dependencies {
-    apiModuleDependency it, commonImplProject().apiProject()
-}

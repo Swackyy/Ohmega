@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "id": "ohmega",
-  "version": "${modV}",
+  "version": "${modVersion}",
   "name": "${modName}",
-  "description": "${modDesc}",
+  "description": "${modDescription}",
   "authors": [
     "${modAuthors}"
   ],
   "contact": {
-    "homepage": "${gitUrl}",
-    "sources": "${gitUrl}",
-    "issues": "${gitUrl}/issues"
+    "homepage": "${modUrlGithub}",
+    "sources": "${modUrlGithub}",
+    "issues": "${modUrlGithub}/issues"
   },
-  "license": "${license}",
+  "license": "${modLicense}",
   "icon": "ohmega.png",
   "environment": "*",
   "entrypoints": {
@@ -54,20 +54,20 @@
   ],
   "accessWidener": "ohmega_fabric-api.accesswidener",
   "depends": {
-    "fabricloader": "${loaderFabricVRange}",
-    "minecraft": "~${mcVRangeMin}",
-    "java": ">=${javaV}",
+    "fabricloader": "${platformFabricVersionRange}",
+    "minecraft": "~${minecraftVersionRangeMin}",
+    "java": ">=${configurationJavaVersion}",
     "fabric-api": "*",
-    "forgeconfigapiport": "${loaderFabricForgeConfigApiPortVRange}"
+    "forgeconfigapiport": "${platformFabricDependencyForgeConfigApiPortVersionRange}"
   },
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.crowdin": "${crowdinUrl}",
-        "modmenu.curseforge": "${curseUrl}",
-        "modmenu.discord": "${discordUrl}",
-        "modmenu.modrinth": "${modrinthUrl}",
-        "modmenu.wiki": "${gitUrl}/wiki"
+        "modmenu.crowdin": "${modUrlCrowdin}",
+        "modmenu.curseforge": "${modUrlCurseforge}",
+        "modmenu.discord": "${modUrlDiscord}",
+        "modmenu.modrinth": "${modUrlModrinth}",
+        "modmenu.wiki": "${modUrlWiki}"
       },
       "badges": [
         "library"
