@@ -13,36 +13,36 @@ import java.io.File
 import kotlin.apply
 
 // Non-libs properties
-val Project.commonUtilitySparkEnabledRuntime: String get() = getProperty("common.utility.spark.enabled.runtime")
-val Project.compatFiguraEnabled: String get() = getProperty("compat.figura.enabled")
-val Project.compatFiguraEnabledRuntime: String get() = getProperty("compat.figura.enabled.runtime")
-val Project.compatJeiEnabled: String get() = getProperty("compat.jei.enabled")
-val Project.compatJeiEnabledRuntime: String get() = getProperty("compat.jei.enabled.runtime")
-val Project.compatPolymerEnabled: String get() = getProperty("compat.polymer.enabled")
-val Project.compatPolymerEnabledRuntime: String get() = getProperty("compat.polymer.enabled.runtime")
-val Project.compatReiEnabled: String get() = getProperty("compat.rei.enabled")
-val Project.compatReiEnabledRuntime: String get() = getProperty("compat.rei.enabled.runtime")
-val Project.compatRrvEnabled: String get() = getProperty("compat.rrv.enabled")
-val Project.compatRrvEnabledRuntime: String get() = getProperty("compat.rrv.enabled.runtime")
-val Project.compatTrinketsEnabled: String get() = getProperty("compat.trinkets.enabled")
-val Project.compatTrinketsEnabledRuntime: String get() = getProperty("compat.trinkets.enabled.runtime")
-val Project.modAuthors: String get() = getProperty("mod.authors")
-val Project.modChanges: String get() = getProperty("mod.changes")
-val Project.modDescriptionSectionCrowdin: String get() = getProperty("mod.description.section.crowdin")
-val Project.modDescriptionSectionDiscord: String get() = getProperty("mod.description.section.discord")
-val Project.modDescriptionSectionSource: String get() = getProperty("mod.description.section.source")
-val Project.modDescriptionSectionWiki: String get() = getProperty("mod.description.section.wiki")
-val Project.modDescriptionSummary: String get() = getProperty("mod.description.summary")
-val Project.modId: String get() = getProperty("mod.id")
-val Project.modLicense: String get() = getProperty("mod.license")
-val Project.modName: String get() = getProperty("mod.name")
-val Project.modUrlCrowdin: String get() = getProperty("mod.url.crowdin")
-val Project.modUrlCurseforge: String get() = getProperty("mod.url.curseforge")
-val Project.modUrlDiscord: String get() = getProperty("mod.url.discord")
-val Project.modUrlGithub: String get() = getProperty("mod.url.github")
-val Project.modUrlModrinth: String get() = getProperty("mod.url.modrinth")
-val Project.modUrlWiki: String get() = getProperty("mod.url.wiki")
-val Project.platformFabricUtilityModMenuEnabledRuntime: String get() = getProperty("platform.fabric.utility.modMenu.enabled.runtime")
+val Project.commonUtilitySparkEnabledRuntime: String get() = providers.gradleProperty("common.utility.spark.enabled.runtime").get()
+val Project.compatFiguraEnabled: String get() = providers.gradleProperty("compat.figura.enabled").get()
+val Project.compatFiguraEnabledRuntime: String get() = providers.gradleProperty("compat.figura.enabled.runtime").get()
+val Project.compatJeiEnabled: String get() = providers.gradleProperty("compat.jei.enabled").get()
+val Project.compatJeiEnabledRuntime: String get() = providers.gradleProperty("compat.jei.enabled.runtime").get()
+val Project.compatPolymerEnabled: String get() = providers.gradleProperty("compat.polymer.enabled").get()
+val Project.compatPolymerEnabledRuntime: String get() = providers.gradleProperty("compat.polymer.enabled.runtime").get()
+val Project.compatReiEnabled: String get() = providers.gradleProperty("compat.rei.enabled").get()
+val Project.compatReiEnabledRuntime: String get() = providers.gradleProperty("compat.rei.enabled.runtime").get()
+val Project.compatRrvEnabled: String get() = providers.gradleProperty("compat.rrv.enabled").get()
+val Project.compatRrvEnabledRuntime: String get() = providers.gradleProperty("compat.rrv.enabled.runtime").get()
+val Project.compatTrinketsEnabled: String get() = providers.gradleProperty("compat.trinkets.enabled").get()
+val Project.compatTrinketsEnabledRuntime: String get() = providers.gradleProperty("compat.trinkets.enabled.runtime").get()
+val Project.modAuthors: String get() = providers.gradleProperty("mod.authors").get()
+val Project.modChanges: String get() = providers.gradleProperty("mod.changes").get()
+val Project.modDescriptionSectionCrowdin: String get() = providers.gradleProperty("mod.description.section.crowdin").get()
+val Project.modDescriptionSectionDiscord: String get() = providers.gradleProperty("mod.description.section.discord").get()
+val Project.modDescriptionSectionSource: String get() = providers.gradleProperty("mod.description.section.source").get()
+val Project.modDescriptionSectionWiki: String get() = providers.gradleProperty("mod.description.section.wiki").get()
+val Project.modDescriptionSummary: String get() = providers.gradleProperty("mod.description.summary").get()
+val Project.modId: String get() = providers.gradleProperty("mod.id").get()
+val Project.modLicense: String get() = providers.gradleProperty("mod.license").get()
+val Project.modName: String get() = providers.gradleProperty("mod.name").get()
+val Project.modUrlCrowdin: String get() = providers.gradleProperty("mod.url.crowdin").get()
+val Project.modUrlCurseforge: String get() = providers.gradleProperty("mod.url.curseforge").get()
+val Project.modUrlDiscord: String get() = providers.gradleProperty("mod.url.discord").get()
+val Project.modUrlGithub: String get() = providers.gradleProperty("mod.url.github").get()
+val Project.modUrlModrinth: String get() = providers.gradleProperty("mod.url.modrinth").get()
+val Project.modUrlWiki: String get() = providers.gradleProperty("mod.url.wiki").get()
+val Project.platformFabricUtilityModMenuEnabledRuntime: String get() = providers.gradleProperty("platform.fabric.utility.modMenu.enabled.runtime").get()
 
 fun Project.apiModuleDependency(handler: DependencyHandler, dependencyProject: Project) {
     val dependencyPath: String = dependencyProject.path
@@ -135,16 +135,6 @@ fun Project.apiProject(): Project {
     }
 
     throw IllegalStateException("Project has no parent")
-}
-
-private fun Project.getProperty(name: String): String {
-    val property = findProperty(name)
-
-    if (property != null) {
-        return property.toString()
-    }
-
-    throw IllegalStateException("Queried gradle.properties property is not defined")
 }
 
 fun Project.addExtraMixinConfig(targetProject: Project, configName: String) {

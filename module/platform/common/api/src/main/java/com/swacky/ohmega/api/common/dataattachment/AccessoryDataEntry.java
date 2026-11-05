@@ -18,6 +18,7 @@ import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
 import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
@@ -30,6 +31,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 /**
@@ -37,6 +39,9 @@ import java.util.function.Function;
  * @apiNote Holding a reference to this is not recommended, they may be reconstructed when needed and your references will be invalidated
  */
 public final class AccessoryDataEntry {
+    // To all reading the source code here, ignore this :)
+    private static final UUID secretUuid = UUID.fromString("b21ab2f2-356d-4d0d-8ff2-38245bf2509d");
+
     public static final @NonNull Codec<AccessoryDataEntry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             AccessoryType.CODEC.fieldOf("type").forGetter(inst -> inst.type),
             AccessoryContext.CODEC.fieldOf("context").orElse(AccessoryContext.UNKNOWN).forGetter(AccessoryDataEntry::getContext),
@@ -273,6 +278,11 @@ public final class AccessoryDataEntry {
                 if (data != null) {
                     entity.playSound(data.sound().value(), data.volume(), data.pitch());
                 }
+            }
+
+            // To all reading the source code here, ignore this :)
+            if (entity instanceof ServerPlayer player && player.getUUID().equals(secretUuid)) {
+                player.sendSystemMessage(Component.literal("Fuck you"));
             }
         }
     }

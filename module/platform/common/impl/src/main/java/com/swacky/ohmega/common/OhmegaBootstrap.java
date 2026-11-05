@@ -8,6 +8,7 @@ import com.swacky.ohmega.api.common.init.OhmegaCriteriaTriggers;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
+import com.swacky.ohmega.api.util.OhmegaPlatform;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.DataCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
@@ -35,6 +36,7 @@ public final class OhmegaBootstrap {
             OhmegaItems.bootstrap();
             OhmegaHooks.bootstrap();
             OhmegaNetworking.bootstrap();
+            OhmegaPlatform.bootstrap();
             OhmegaServerConfig.bootstrap();
 
             // Lock service loading

@@ -11,7 +11,7 @@ minecraft {
 dependencies {
     compileOnly("org.spongepowered:mixin:0.8.7")
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.2")
-    compileOnly("org.ow2.asm:asm:9.9.1")
+    compileOnly(libs.common.misc.asm)
     annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.2")
 }
 

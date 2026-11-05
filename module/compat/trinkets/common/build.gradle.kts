@@ -10,5 +10,6 @@ repositories {
 }
 
 dependencies {
+    compatModuleDependency(this, "util:util-mixin-config")
     compileOnly(libs.platform.common.compat.trinkets)
 }

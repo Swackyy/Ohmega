@@ -80,10 +80,9 @@ dependencies {
         if (compatReiEnabledRuntime.toBoolean()) {
             runtimeOnly(libs.platform.neoforge.compat.rei)
 
-            // todo: check to see if this is needed at all
-            /*constraints {
+            constraints {
                 runtimeOnly("dev.architectury:architectury-neoforge:21.0.7")
-            }*/
+            }
         }
     }
 

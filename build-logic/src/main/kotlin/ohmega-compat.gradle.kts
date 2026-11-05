@@ -28,8 +28,11 @@ repositories {
 
 dependencies {
     apiModuleDependency(this, commonImplProject.apiProject())
+    // Due to focusing on project maintainability and Forge's stubbornness to use Fabric's Mixin fork, the original Mixin needs to be used here.
+    // Slightly annoying for writing 'IMixinConfigPlugin's but it is what it is
     compileOnly("org.spongepowered:mixin:0.8.7")
     compileOnly("io.github.llamalad7:mixinextras-common:0.5.2")
-    compileOnly("org.ow2.asm:asm:9.9.1")
+    compileOnly(libs.common.misc.asm)
+    compileOnly(libs.common.misc.asm.tree)
     annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.2")
 }

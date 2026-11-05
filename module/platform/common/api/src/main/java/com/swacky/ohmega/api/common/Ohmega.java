@@ -11,7 +11,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Contains some common code used throughout the mod that isn't enough to deserve a single dedicated class, so it instead got lumped in here
@@ -72,14 +71,14 @@ public final class Ohmega {
         }
     }
 
-    public static void invokeEntrypoint(@Nullable LogicalSide metadataSide, @NonNull IOhmegaEntrypoint entrypoint, @NonNull Function<String, Boolean> modLoaded) {
+    public static void invokeEntrypoint(@Nullable LogicalSide metadataSide, @NonNull IOhmegaEntrypoint entrypoint) {
         Class<? extends IOhmegaEntrypoint> clazz = entrypoint.getClass();
         OhmegaEntrypoint annotation;
 
         if (clazz.isAnnotationPresent(OhmegaEntrypoint.class)) {
             annotation = clazz.getAnnotation(OhmegaEntrypoint.class);
         } else {
-            entrypoint.invoke(modLoaded);
+            entrypoint.invoke();
             return;
         }
 
@@ -88,7 +87,7 @@ public final class Ohmega {
 
         if (annotationSide == metadataSide) {
             try {
-                entrypoint.invoke(modLoaded);
+                entrypoint.invoke();
             } catch (Exception e) {
                 throw new RuntimeException("Entrypoint '" + name + "' could not be invoked", e);
             }

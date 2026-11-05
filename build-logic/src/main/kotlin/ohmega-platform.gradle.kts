@@ -9,7 +9,7 @@ plugins {
 }
 
 base {
-    archivesName.set("${libs.versions.mod.get()}-${project.name}")
+    archivesName.set("${modId}-${project.name}")
 }
 
 tasks.withType<GenerateModuleMetadata>().configureEach {

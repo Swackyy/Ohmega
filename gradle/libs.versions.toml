@@ -1,4 +1,8 @@
 [libraries]
+# Common
+common-misc-asm      = { group = "org.ow2.asm", name = "asm", version.ref = "common-misc-asm" }
+common-misc-asm-tree = { group = "org.ow2.asm", name = "asm-tree", version.ref = "common-misc-asm" }
+
 # Platform
 ## Common
 ### Compat
@@ -41,13 +45,14 @@ platform-neoforge-mdg        = { id = "net.neoforged.moddev", version.ref = "plu
 # --- Only the entries in this table below should need to be changed (usually) ---
 [versions]
 # Common
+common-misc-asm      = "9.9.1"
 common-utility-spark = "1.10.187"
 
 
 # Compat
 compat-figura       = "0.1.6.10-26.2"
 compat-figura-luaj  = "3.0.8-figura"
-compat-jei          = "30.42.0.237"
+compat-jei          = "30.14.0.89"
 compat-polymer      = "0.17.5+26.2"
 compat-polymer-sgui = "2.1.0+26.2"
 compat-rei          = "26.2.820"

@@ -87,16 +87,12 @@ public final class OhmegaMain implements ModInitializer {
         // Custom entrypoint invocation
         FabricLoader loader = FabricLoader.getInstance();
 
-        loader.invokeEntrypoints("ohmega-common", IOhmegaEntrypoint.class, entrypoint ->
-                Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, loader::isModLoaded));
-        invokeEntrypointsUnsafe("ohmega-common-unsafe", entrypoint ->
-                Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, loader::isModLoaded), LOGGER);
+        loader.invokeEntrypoints("ohmega-common", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint));
+        invokeEntrypointsUnsafe("ohmega-common-unsafe", entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint), LOGGER);
 
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
-            loader.invokeEntrypoints("ohmega-server", IOhmegaEntrypoint.class, entrypoint ->
-                    Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint, loader::isModLoaded));
-            invokeEntrypointsUnsafe("ohmega-server-unsafe", entrypoint ->
-                    Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint, loader::isModLoaded), LOGGER);
+            loader.invokeEntrypoints("ohmega-server", IOhmegaEntrypoint.class, entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint));
+            invokeEntrypointsUnsafe("ohmega-server-unsafe", entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.SERVER, entrypoint), LOGGER);
         }
     }
 
@@ -111,7 +107,7 @@ public final class OhmegaMain implements ModInitializer {
                 invoker.accept(container.getEntrypoint());
             } catch (EntrypointException _) {
                 // no op
-                logger.warn("Unsafe entrypoint with key {} threw a (silenced) exception", key);
+                logger.warn("Unsafe entrypoint with key {} threw a (silenced) exception, this should never be an issue", key);
             } catch (Throwable t) {
                 exception = ExceptionUtil.gatherExceptions(t,
                         exception,

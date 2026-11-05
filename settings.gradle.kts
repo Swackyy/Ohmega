@@ -81,6 +81,7 @@ if (getProperty("compat.rei.enabled").toBoolean() && (platformEnabledFabric || p
 
 if (getProperty("compat.rrv.enabled").toBoolean() && (platformEnabledFabric || platformEnabledNeoforge)) {
     include("module:compat:util:exclusion-zone")
+    include("module:compat:util:mixin-config")
     include("module:compat:rrv:common")
 
     if (platformEnabledFabric) {
@@ -93,6 +94,7 @@ if (getProperty("compat.rrv.enabled").toBoolean() && (platformEnabledFabric || p
 }
 
 if (getProperty("compat.trinkets.enabled").toBoolean() && (platformEnabledFabric || platformEnabledNeoforge)) {
+    include("module:compat:util:mixin-config")
     include("module:compat:trinkets:common")
 
     if (platformEnabledFabric) {

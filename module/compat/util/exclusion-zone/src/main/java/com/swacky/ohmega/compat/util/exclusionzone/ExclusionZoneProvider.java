@@ -20,7 +20,7 @@ public final class ExclusionZoneProvider {
         if (screen instanceof IAccessoryScreen accessoryScreen) {
             AccessoryScreenExtension extension = accessoryScreen.getAccessoryExtension();
 
-            if (extension != null && extension.isVisible()) {
+            if (extension != null && accessoryScreen.isAccessoryExtensionVisible()) {
                 List<Rect2i> rects = null;
 
                 if (screen.showsActiveEffects()) {
