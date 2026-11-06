@@ -52,17 +52,8 @@ public final class AccessoryScreens {
         if (slots != null) {
             LazyPosition position = accessoryScreen.getAccessoryExtensionPosition();
 
-            for (AccessorySlot accessorySlot : slots) {
-                // todo: yes
-                if (false) {
-                    Slot slot = accessoryMenu.getAccessoryExtension().getMenu().slots.get(accessorySlot.index);
-
-                    slot.x = accessorySlot.originalX + position.x().get();
-                    slot.y = accessorySlot.originalY + position.y().get();
-                } else {
-                    accessorySlot.x = accessorySlot.originalX + position.x().get();
-                    accessorySlot.y = accessorySlot.originalY + position.y().get();
-                }
+            for (AccessorySlot slot : slots) {
+                slot.applyOffset(position.x().get(), position.y().get());
             }
         }
     }

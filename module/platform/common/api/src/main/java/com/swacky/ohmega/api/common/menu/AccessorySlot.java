@@ -17,7 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.Optional;
 
 /**
@@ -34,8 +36,9 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
     protected final @NonNull Player player;
     protected final @NonNull AccessoryData handler;
-    public final int originalX;
-    public final int originalY;
+    private final int originalX;
+    private final int originalY;
+    private @Nullable WeakReference<@NonNull Slot> slotWrapperReference = null;
 
     public AccessorySlot(@NonNull Player player, int index, int x, int y) {
         super(EMPTY_CONTAINER, index, x, y);
@@ -216,6 +219,24 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
     public final @NonNull AccessoryType getType() {
         return handler.getEntry(getContainerSlot()).getType();
+    }
+
+    public final void applyOffset(int xo, int yo) {
+        if (slotWrapperReference != null) {
+            Slot wrapperReference = slotWrapperReference.get();
+
+            if (wrapperReference != null) {
+                wrapperReference.x = originalX + xo;
+                wrapperReference.y = originalY + yo;
+            }
+        }
+
+        x = originalX + xo;
+        y = originalY + yo;
+    }
+
+    public final void setWrapperReference(@NonNull Slot slot) {
+        slotWrapperReference = new WeakReference<>(slot);
     }
 
     public interface Factory {

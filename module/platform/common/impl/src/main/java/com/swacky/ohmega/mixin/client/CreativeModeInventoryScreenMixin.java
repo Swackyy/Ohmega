@@ -158,12 +158,15 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
             List<AccessorySlot> slots = accessoryMenu.getSlots();
 
             if (slots != null) {
-                slot = slots.get(slot.getContainerSlot());
+                AccessorySlot accessorySlot = slots.get(slot.getContainerSlot());
+                slot = accessorySlot;
                 slot.index = index;
                 x = slot.x;
                 y = slot.y;
+                AccessorySlotWrapperWrapper wrapper = new AccessorySlotWrapperWrapper(handle.call(slot, index, x, y));
 
-                return new AccessorySlotWrapperWrapper(handle.call(slot, index, x, y));
+                accessorySlot.setWrapperReference(wrapper);
+                return wrapper;
             }
         }
 
