@@ -5,6 +5,7 @@ import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import com.swacky.ohmega.api.util.LoaderService;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
@@ -103,6 +104,14 @@ public final class OhmegaHooks {
         return IMPL.shouldDropOnDeath(stack, entity, original);
     }
 
+    public static void toggleExtensionEventPost(@NonNull IAccessoryMenu accessoryMenu, boolean value) {
+        IMPL.toggleExtensionEventPost(accessoryMenu, value);
+    }
+
+    public static boolean toggleExtensionEventPre(@NonNull IAccessoryMenu accessoryMenu, boolean value) {
+        return IMPL.toggleExtensionEventPre(accessoryMenu, value);
+    }
+
     public static boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context) {
         return IMPL.unequip(entity, stack, context);
     }
@@ -148,6 +157,10 @@ public final class OhmegaHooks {
         Map<Identifier, AccessoryType> registerAccessoryTypes();
 
         boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original);
+
+        void toggleExtensionEventPost(@NonNull IAccessoryMenu accessoryMenu, boolean value);
+
+        boolean toggleExtensionEventPre(@NonNull IAccessoryMenu accessoryMenu, boolean value);
 
         boolean unequip(LivingEntity entity, ItemStack stack, AccessoryContext context);
     }

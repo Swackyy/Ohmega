@@ -20,12 +20,14 @@ import com.swacky.ohmega.api.common.event.AccessoryPreferInventoryTickEvent;
 import com.swacky.ohmega.api.common.event.AccessoryPreferVanillaUseEvent;
 import com.swacky.ohmega.api.common.event.AccessoryShouldDropOnDeathEvent;
 import com.swacky.ohmega.api.common.event.AccessoryTickEvent;
+import com.swacky.ohmega.api.common.event.AccessoryToggleExtensionEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUnequipEvent;
 import com.swacky.ohmega.api.common.event.AccessoryUseEvent;
 import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import com.swacky.ohmega.api.common.event.RegisterAccessoryTypesEvent;
 import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.item.SoundData;
+import com.swacky.ohmega.api.common.menu.IAccessoryMenu;
 import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import it.unimi.dsi.fastutil.booleans.BooleanObjectPair;
 import net.minecraft.resources.Identifier;
@@ -145,6 +147,16 @@ public final class OhmegaHooksImpl implements OhmegaHooks.Service {
     @Override
     public boolean shouldDropOnDeath(@NonNull ItemStack stack, @NonNull LivingEntity entity, boolean original) {
         return AccessoryShouldDropOnDeathEvent.EVENT.invoker().process(stack, entity, original);
+    }
+
+    @Override
+    public void toggleExtensionEventPost(@NonNull IAccessoryMenu accessoryMenu, boolean value) {
+        AccessoryToggleExtensionEvent.Post.EVENT.invoker().process(accessoryMenu, value);
+    }
+
+    @Override
+    public boolean toggleExtensionEventPre(@NonNull IAccessoryMenu accessoryMenu, boolean value) {
+        return AccessoryToggleExtensionEvent.Pre.EVENT.invoker().process(accessoryMenu, value);
     }
 
     @Override

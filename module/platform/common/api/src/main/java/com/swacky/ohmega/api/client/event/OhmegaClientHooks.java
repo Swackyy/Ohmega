@@ -46,14 +46,14 @@ public class OhmegaClientHooks {
 
         boolean extensionExtractPre(@NonNull GuiGraphicsExtractor gui, @NonNull AccessoryScreenExtension extension);
 
-        void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder);
+        void extensionInitPost(@NonNull AccessoryScreenExtension extension, AccessoryScreenExtension.@NonNull WidgetAdder adder);
 
-        boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder);
+        boolean extensionInitPre(@NonNull AccessoryScreenExtension extension, AccessoryScreenExtension.@NonNull WidgetAdder adder);
 
-        boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack);
+        boolean renderAccessoryLayer(@NonNull LivingEntityRenderState state, PoseStack stack);
 
-        void renderAccessoryPost(AccessoryRenderContext<?, ?> context);
+        void renderAccessoryPost(@NonNull AccessoryRenderContext<?, ?> context);
 
-        boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context);
+        boolean renderAccessoryPre(@NonNull AccessoryRenderContext<?, ?> context);
     }
 }

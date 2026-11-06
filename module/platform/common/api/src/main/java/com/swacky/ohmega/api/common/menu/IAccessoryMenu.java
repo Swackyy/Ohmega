@@ -1,5 +1,6 @@
 package com.swacky.ohmega.api.common.menu;
 
+import com.swacky.ohmega.api.common.event.OhmegaHooks;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -72,10 +73,14 @@ public interface IAccessoryMenu {
      * @param value {@code true} to make the extension visible, {@code false} to hide it
      */
     default void setAccessoryExtensionVisible(boolean value) {
-        AccessoryMenuExtension extension = getAccessoryExtension();
+        if (!OhmegaHooks.toggleExtensionEventPre(this, value)) {
+            AccessoryMenuExtension extension = getAccessoryExtension();
 
-        if (extension != null) {
-            extension.setVisible(value);
+            if (extension != null) {
+                extension.setVisible(value);
+            }
+
+            OhmegaHooks.toggleExtensionEventPost(this, value);
         }
     }
 }

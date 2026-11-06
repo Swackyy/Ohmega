@@ -25,27 +25,27 @@ public class OhmegaClientHooksImpl implements OhmegaClientHooks.Service {
     }
 
     @Override
-    public void extensionInitPost(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+    public void extensionInitPost(@NonNull AccessoryScreenExtension extension, AccessoryScreenExtension.@NonNull WidgetAdder adder) {
         AccessoryExtensionInitEvent.Post.EVENT.invoker().process(extension, adder);
     }
 
     @Override
-    public boolean extensionInitPre(AccessoryScreenExtension extension, AccessoryScreenExtension.WidgetAdder adder) {
+    public boolean extensionInitPre(@NonNull AccessoryScreenExtension extension, AccessoryScreenExtension.@NonNull WidgetAdder adder) {
         return AccessoryExtensionInitEvent.Pre.EVENT.invoker().process(extension, adder);
     }
 
     @Override
-    public boolean renderAccessoryLayer(LivingEntityRenderState state, PoseStack stack) {
+    public boolean renderAccessoryLayer(@NonNull LivingEntityRenderState state, PoseStack stack) {
         return AccessoryLayerRenderEvent.EVENT.invoker().process(state, stack);
     }
 
     @Override
-    public void renderAccessoryPost(AccessoryRenderContext<?, ?> context) {
+    public void renderAccessoryPost(@NonNull AccessoryRenderContext<?, ?> context) {
         AccessoryRenderEvent.Post.EVENT.invoker().process(context);
     }
 
     @Override
-    public boolean renderAccessoryPre(AccessoryRenderContext<?, ?> context) {
+    public boolean renderAccessoryPre(@NonNull AccessoryRenderContext<?, ?> context) {
         return AccessoryRenderEvent.Pre.EVENT.invoker().process(context);
     }
 }
