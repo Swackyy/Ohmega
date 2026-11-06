@@ -34,8 +34,8 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
 
     protected final @NonNull Player player;
     protected final @NonNull AccessoryData handler;
-    private final int originalX;
-    private final int originalY;
+    public final int originalX;
+    public final int originalY;
 
     public AccessorySlot(@NonNull Player player, int index, int x, int y) {
         super(EMPTY_CONTAINER, index, x, y);
@@ -210,17 +210,12 @@ public class AccessorySlot extends Slot implements IAccessorySlotProvider {
     }
 
     @Override
-    public @NonNull AccessorySlot getAccessorySlot() {
+    public @NonNull AccessorySlot get() {
         return this;
     }
 
     public final @NonNull AccessoryType getType() {
         return handler.getEntry(getContainerSlot()).getType();
-    }
-
-    public final void applyOffset(int xo, int yo) {
-        this.x = originalX + xo;
-        this.y = originalY + yo;
     }
 
     public interface Factory {

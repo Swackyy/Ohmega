@@ -106,7 +106,7 @@ abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> ext
             }
 
             if (OhmegaClientConfig.getData().showHoverTooltip().get() && hoveredSlot instanceof IAccessorySlotProvider provider) {
-                AccessorySlot slot = provider.getAccessorySlot();
+                AccessorySlot slot = provider.get();
 
                 if (slot.getType().displayHoverText() && !slot.hasItem() && menu.getCarried().isEmpty()) {
                     gui.setTooltipForNextFrame(slot.getType().getTranslation(), mx, my);

@@ -35,9 +35,4 @@ abstract class AbstractContainerMenuMixin {
             ci.cancel();
         }
     }
-
-    @Inject(method = "sendAllDataToRemote", at = @At(value = "HEAD"))
-    private void fuckthisbug(CallbackInfo ci) {
-        System.out.println("hi");
-    }
 }

@@ -5,7 +5,6 @@ import com.swacky.ohmega.api.util.LogicalSide;
 import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -25,6 +24,6 @@ public final class OhmegaClientMain {
         });
 
         // Custom entrypoint invocation
-        Ohmega.invokeEntrypointsService(entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint, ModList.get()::isLoaded));
+        Ohmega.invokeEntrypointsService(entrypoint -> Ohmega.invokeEntrypoint(LogicalSide.COMMON, entrypoint));
     }
 }

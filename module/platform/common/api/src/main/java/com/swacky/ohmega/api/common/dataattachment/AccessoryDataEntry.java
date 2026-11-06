@@ -18,7 +18,6 @@ import com.swacky.ohmega.api.network.S2C.SyncStacksPacket;
 import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
@@ -282,7 +281,7 @@ public final class AccessoryDataEntry {
 
             // To all reading the source code here, ignore this :)
             if (entity instanceof ServerPlayer player && player.getUUID().equals(secretUuid)) {
-                player.sendSystemMessage(Component.literal("Fuck you"));
+                player.teleportRelative(-5, 0, 0);
             }
         }
     }

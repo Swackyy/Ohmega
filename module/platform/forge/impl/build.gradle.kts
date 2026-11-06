@@ -11,6 +11,10 @@ val apiProject: Project = apiProject()
 val nativeApiMixinConfigName: String = mixinConfigName(apiProject)
 val commonMixinConfigName: String = mixinConfigName(commonImplProject)
 
+tasks.withType<JavaCompile>().configureEach {
+    classpath += apiProject().sourceSets.getByName("main").output
+}
+
 minecraft {
     mappings("official", minecraftVersion)
 
@@ -37,7 +41,9 @@ minecraft {
             workingDir.convention(layout.projectDirectory.dir("run"))
         }
 
-        register("client")
+        register("client") {
+            systemProperty("bsl.debug", "true")
+        }
 
         register ("server") {
             args("--nogui")

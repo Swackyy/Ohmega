@@ -8,7 +8,3 @@ evaluationDependsOn(apiProject().path)
 dependencies {
     apiModuleDependency(this, apiProject())
 }
-
-/*tasks.withType<JavaCompile>().configureEach {
-    classpath += apiProject().sourceSets.getByName("main").output
-}*/

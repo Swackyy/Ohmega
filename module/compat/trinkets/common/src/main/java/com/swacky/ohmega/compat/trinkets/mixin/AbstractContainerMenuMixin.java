@@ -30,15 +30,15 @@ abstract class AbstractContainerMenuMixin {
 
     @Shadow
     @Final
-    public NonNullList<ItemStack> lastSlots;
+    private NonNullList<ItemStack> lastSlots;
 
     @Shadow
     @Final
-    public NonNullList<RemoteSlot> remoteSlots;
+    private NonNullList<RemoteSlot> remoteSlots;
 
     @Shadow
     @Nullable
-    public ContainerSynchronizer synchronizer;
+    private ContainerSynchronizer synchronizer;
 
     @Inject(
             method = "addSlot",

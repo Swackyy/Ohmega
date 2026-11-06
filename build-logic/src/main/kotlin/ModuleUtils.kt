@@ -50,7 +50,8 @@ fun Project.apiModuleDependency(handler: DependencyHandler, dependencyProject: P
     // Possibly unneeded
     val fixedGroup: String = group.toString()
 
-    handler.add ("api", dependency) {
+    // Do not change the configuration here, a runtime classpath adding one breaks Forge
+    handler.add ("compileOnlyApi", dependency) {
         capabilities {
             requireCapability("$fixedGroup:${modId}-${dependencyProject.name}")
         }
@@ -79,7 +80,8 @@ fun Project.compatModuleDependency(handler: DependencyHandler, name: String) {
     // Possibly unneeded
     val fixedGroup: String = group.toString()
 
-    handler.add ("implementation", dependency) {
+    // Do not change the configuration here, a runtime classpath adding one breaks Forge
+    handler.add ("compileOnly", dependency) {
         capabilities {
             requireCapability("$fixedGroup:$modId-${dependencyProject.name}")
         }
@@ -106,7 +108,8 @@ fun Project.moduleDependency(handler: DependencyHandler, dependencyProject: Proj
     // Possibly unneeded
     val fixedGroup: String = group.toString()
 
-    handler.add ("implementation", dependency) {
+    // Do not change the configuration here, a runtime classpath adding one breaks Forge
+    handler.add ("compileOnly", dependency) {
         capabilities {
             requireCapability("$fixedGroup:$modId-${dependencyProject.name}")
         }

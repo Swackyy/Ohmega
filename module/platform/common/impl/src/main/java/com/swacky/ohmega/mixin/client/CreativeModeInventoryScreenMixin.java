@@ -176,7 +176,7 @@ abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<
         }
 
         @Override
-        public @NonNull AccessorySlot getAccessorySlot() {
+        public @NonNull AccessorySlot get() {
             return (AccessorySlot) target;
         }
     }
