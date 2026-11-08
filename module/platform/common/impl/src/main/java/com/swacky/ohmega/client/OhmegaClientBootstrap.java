@@ -8,11 +8,14 @@ import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderStateData;
 import com.swacky.ohmega.api.client.ui.AccessoryExtensions;
 import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.client.command.node.DebugCommandClient;
 import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.HelpCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
+import com.swacky.ohmega.client.command.node.ItemCommandClient;
 import com.swacky.ohmega.client.menu.DefaultMenuExtension;
 import com.swacky.ohmega.client.screen.DefaultScreenExtension;
+import com.swacky.ohmega.common.command.node.ItemCommandBase;
 import net.minecraft.resources.Identifier;
 
 public final class OhmegaClientBootstrap {
@@ -39,9 +42,11 @@ public final class OhmegaClientBootstrap {
             AccessoryExtensions.registerExtension(DEFAULT_EXTENSION_ID, DefaultMenuExtension::new, DefaultScreenExtension::new);
 
             // Register command nodes
+            OhmegaClientCommandNodes.register(DebugCommandClient.ELEMENT_ROOT, DebugCommandClient::new);
             OhmegaClientCommandNodes.register(ExtensionsCommand.ELEMENT_ROOT, ExtensionsCommand::new);
             OhmegaClientCommandNodes.register(HelpCommand.ELEMENT_ROOT, HelpCommand::new);
             OhmegaClientCommandNodes.register(InfoCommand.ELEMENT_ROOT, InfoCommand::new);
+            OhmegaClientCommandNodes.register(ItemCommandBase.ELEMENT_ROOT, ItemCommandClient::new);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + OhmegaClientBootstrap.class + " multiple times");
         }

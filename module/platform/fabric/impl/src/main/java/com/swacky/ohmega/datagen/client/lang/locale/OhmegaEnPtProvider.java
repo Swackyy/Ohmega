@@ -16,8 +16,9 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
-import com.swacky.ohmega.common.command.node.DataCommand;
+import com.swacky.ohmega.common.command.node.DebugCommandBase;
 import com.swacky.ohmega.common.command.node.ItemCommand;
+import com.swacky.ohmega.common.command.node.ItemCommandBase;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
@@ -73,9 +74,9 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching treasures were found in lubber %s's doubloon chest");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Took %s treasure(s) from %s lubbers' doubloon chests");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Took %s treasure(s) from lubber %s's doubloon chest");
-        // Data
-        builder.add(DataCommand.ROOT_FEEDBACK, "Lubber %s has th' followin' doubloon scroll: %s");
-        builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Lubber %s has th' followin' doubloon scroll entry in index %s: %s");
+        // Debug
+        builder.add(DebugCommandBase.DATA_FEEDBACK, "Lubber %s has th' followin' doubloon scroll: %s");
+        builder.add(DebugCommandBase.DATA_FEEDBACK_INDEX, "Lubber %s has th' followin' doubloon scroll entry in index %s: %s");
         // Extensions
         builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmega knows these %s doubloon quart'r(s): %s");
         // Info
@@ -88,7 +89,7 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Lubber %s has %s in index %s o' their doubloon chest");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s o' %s lubbers' doubloon chests t' %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s o' lubber %s's doubloon chest t' %s %s");
-        builder.add(ItemCommand.TYPE_FEEDBACK, "Treasure '%s' has default doubloon type '%s'");
+        builder.add(ItemCommandBase.TYPE_FEEDBACK, "Treasure '%s' has effectiv' doubloon type '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Lubber %s has th' following treasures in their doubloon chest: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Lubber %s has no treasures in their doubloon chest");

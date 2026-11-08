@@ -41,7 +41,8 @@ public final class ClearCommand implements ICommandNode {
     private static final DynamicCommandExceptionType EXCEPTION_SINGLE = new DynamicCommandExceptionType(name -> Component.translatable(ROOT_EXCEPTION_SINGLE, name));
 
     public ClearCommand(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
-        builder.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+        builder
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .executes(ClearCommand::clear)
                 .then(Commands.argument(ARGUMENT_TARGETS, EntityArgument.entities())
                         .executes(ClearCommand::clearWithTargets)

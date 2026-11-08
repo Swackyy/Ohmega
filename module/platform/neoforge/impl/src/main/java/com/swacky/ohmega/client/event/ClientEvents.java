@@ -18,7 +18,6 @@ import com.swacky.ohmega.common.init.OhmegaItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -157,25 +156,21 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterClientCommandsEvent event) {
-        ClientCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext(), context -> {
-            CommandSourceStack source = context.getSource();
+        ClientCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext(), source -> new ICommonCommandSource() {
+            @Override
+            public @Nullable Player getPlayer() {
+                return Minecraft.getInstance().player;
+            }
 
-            return new ICommonCommandSource() {
-                @Override
-                public @Nullable Player getPlayer() {
-                    return Minecraft.getInstance().player;
-                }
+            @Override
+            public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
+                source.sendSuccess(messageSupplier, false);
+            }
 
-                @Override
-                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
-                    source.sendSuccess(messageSupplier, false);
-                }
-
-                @Override
-                public void sendFailure(Component message) {
-                    source.sendFailure(message);
-                }
-            };
+            @Override
+            public void sendFailure(@NonNull Component message) {
+                source.sendFailure(message);
+            }
         });
     }
 

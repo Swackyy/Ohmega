@@ -121,25 +121,21 @@ public final class CommonEvents {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         CommandBuildContext buildContext = event.getBuildContext();
 
-        CommonCallbacks.onRegisterCommonCommands(dispatcher, buildContext, context -> {
-            CommandSourceStack source = context.getSource();
+        CommonCallbacks.onRegisterCommonCommands(dispatcher, buildContext, source -> new ICommonCommandSource() {
+            @Override
+            public @Nullable Player getPlayer() {
+                return source.getPlayer();
+            }
 
-            return new ICommonCommandSource() {
-                @Override
-                public @Nullable Player getPlayer() {
-                    return source.getPlayer();
-                }
+            @Override
+            public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
+                source.sendSuccess(messageSupplier, false);
+            }
 
-                @Override
-                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
-                    source.sendSuccess(messageSupplier, false);
-                }
-
-                @Override
-                public void sendFailure(Component message) {
-                    source.sendFailure(message);
-                }
-            };
+            @Override
+            public void sendFailure(@NonNull Component message) {
+                source.sendFailure(message);
+            }
         });
         CommonCallbacks.onRegisterServerCommands(dispatcher, buildContext);
     }

@@ -15,8 +15,9 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
-import com.swacky.ohmega.common.command.node.DataCommand;
+import com.swacky.ohmega.common.command.node.DebugCommandBase;
 import com.swacky.ohmega.common.command.node.ItemCommand;
+import com.swacky.ohmega.common.command.node.ItemCommandBase;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
@@ -64,9 +65,9 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No matching items were found in entity %s's accessory inventory");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Removed %s item(s) from %s entities' accessory inventories");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Removed %s item(s) from entity %s's accessory inventory");
-        // Data
-        builder.add(DataCommand.ROOT_FEEDBACK, "Entity %s has the following attached accessory data: %s");
-        builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Entity %s has the following attached accessory data in index %s: %s");
+        // Debug
+        builder.add(DebugCommandBase.DATA_FEEDBACK, "Entity %s has the following attached accessory data: %s");
+        builder.add(DebugCommandBase.DATA_FEEDBACK_INDEX, "Entity %s has the following attached accessory data in index %s: %s");
         // Extensions
         builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmega recognises the following %s accessory extension(s): %s");
         // Info
@@ -79,7 +80,7 @@ public final class OhmegaEnUsProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Entity %s has %s in index %s of their accessory inventory");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Set stack in index %s of %s entities' accessory inventories to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Set stack in index %s of entity %s's accessory inventory to %s %s");
-        builder.add(ItemCommand.TYPE_FEEDBACK, "Item '%s' has default accessory type '%s'");
+        builder.add(ItemCommandBase.TYPE_FEEDBACK, "Item '%s' has effective accessory type '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Entity %s has the following items in their accessory inventory: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Entity %s has no items in their accessory inventory");

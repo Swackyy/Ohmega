@@ -16,8 +16,9 @@ import com.swacky.ohmega.client.command.node.ExtensionsCommand;
 import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
-import com.swacky.ohmega.common.command.node.DataCommand;
+import com.swacky.ohmega.common.command.node.DebugCommandBase;
 import com.swacky.ohmega.common.command.node.ItemCommand;
+import com.swacky.ohmega.common.command.node.ItemCommandBase;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
@@ -73,9 +74,9 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "No findz dat in cat %s'z kit-cat inventori");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "SWIPD %s fing(z) fwom %s catz' kit-cat inventoriz");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "SWIPD %s fing(z) from cat %s'z kit-cat inventori");
-        // Data
-        builder.add(DataCommand.ROOT_FEEDBACK, "Cat %s haz diz kit-cat data: %s");
-        builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Cat %s haz diz kit-cat data in place %s: %s");
+        // Debug
+        builder.add(DebugCommandBase.DATA_FEEDBACK, "Cat %s haz diz kit-cat data: %s");
+        builder.add(DebugCommandBase.DATA_FEEDBACK_INDEX, "Cat %s haz diz kit-cat data in place %s: %s");
         // Extensions
         builder.add(ExtensionsCommand.ROOT_FEEDBACK, "Ohmegawd knowz deez %s kit-cat box(z): %s");
         // Info
@@ -88,7 +89,7 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Cat %s haz %s in place %s ov der kit-cat inventori");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Maded item in place %s ov %s catz' kit-cat inventoriz to %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Maded stack in place %s ov cat %s'z kit-cat inventori to %s %s");
-        builder.add(ItemCommand.TYPE_FEEDBACK, "Fing '%s' haz defolt kit-cat flavr '%s'");
+        builder.add(ItemCommandBase.TYPE_FEEDBACK, "Fing '%s' haz efektiv kit-cat flavr '%s'");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "Cat %s haz teh following fingz in der kit-cat inventori: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "Cat %s haz no fingz in der kit-cat inventori");

@@ -111,25 +111,21 @@ public final class ClientEvents {
     }
 
     private static void onRegisterCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext buildContext) {
-        ClientCallbacks.onRegisterCommands(dispatcher, buildContext, context -> {
-            FabricClientCommandSource source = context.getSource();
+        ClientCallbacks.onRegisterCommands(dispatcher, buildContext, source -> new ICommonCommandSource() {
+            @Override
+            public @NonNull Player getPlayer() {
+                return source.getPlayer();
+            }
 
-            return new ICommonCommandSource() {
-                @Override
-                public @NonNull Player getPlayer() {
-                    return source.getPlayer();
-                }
+            @Override
+            public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier, boolean broadcast) {
+                source.sendFeedback(messageSupplier.get());
+            }
 
-                @Override
-                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
-                    source.sendFeedback(messageSupplier.get());
-                }
-
-                @Override
-                public void sendFailure(Component message) {
-                    source.sendError(message);
-                }
-            };
+            @Override
+            public void sendFailure(@NonNull Component message) {
+                source.sendError(message);
+            }
         });
     }
 }

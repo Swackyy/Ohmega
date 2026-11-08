@@ -5,10 +5,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.SharedSuggestionProvider;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * A helper class for <strong>common</strong> commands specifically, removing bulky generic specification on function calls and wrapping executors cleanly
@@ -30,8 +28,8 @@ public final class CommandHelper<T extends SharedSuggestionProvider> {
      * @param executor function reference to wrap
      * @return wrapped {@link Command} instance
      */
-    public Command<T> executor(BiFunction<CommandContext<?>, ICommonCommandSource, Integer> executor) {
-        return context -> executor.apply(context, sourceFactory.construct(context));
+    public Command<T> executor(ExecutorWithContext executor) {
+        return context -> executor.execute(context, sourceFactory.construct(context.getSource()));
     }
 
     /**
@@ -39,8 +37,8 @@ public final class CommandHelper<T extends SharedSuggestionProvider> {
      * @param executor function reference to wrap
      * @return wrapped {@link Command} instance
      */
-    public Command<T> executor(Function<ICommonCommandSource, Integer> executor) {
-        return context -> executor.apply(sourceFactory.construct(context));
+    public Command<T> executor(ExecutorNoContext executor) {
+        return context -> executor.execute(sourceFactory.construct(context.getSource()));
     }
 
     /**
@@ -61,5 +59,13 @@ public final class CommandHelper<T extends SharedSuggestionProvider> {
      */
     public <U> RequiredArgumentBuilder<T, U> argument(String name, ArgumentType<U> type) {
         return RequiredArgumentBuilder.argument(name, type);
+    }
+
+    public interface ExecutorWithContext {
+        int execute(CommandContext<?> context, ICommonCommandSource source) throws CommandSyntaxException;
+    }
+
+    public interface ExecutorNoContext {
+        int execute(ICommonCommandSource source) throws CommandSyntaxException;
     }
 }

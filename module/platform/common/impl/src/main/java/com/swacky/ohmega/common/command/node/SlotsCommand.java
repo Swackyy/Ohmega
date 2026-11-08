@@ -11,8 +11,8 @@ import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypePredicateArgument;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -27,6 +27,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -306,7 +307,7 @@ public final class SlotsCommand implements ICommandNode {
         return doDefault(context, targets);
     }
 
-    private static int doGet(CommandContext<CommandSourceStack> context, Entity entity, int index) throws CommandSyntaxException {
+    private static int doGet(CommandContext<CommandSourceStack> context, Entity entity, int index, boolean broadcast) throws CommandSyntaxException {
         LivingEntity target = CommandUtils.convertLiving(entity);
         AccessoryData data = OhmegaDataAttachments.getData(target);
         int size = data.size();
@@ -324,14 +325,14 @@ public final class SlotsCommand implements ICommandNode {
                     name,
                     size,
                     Component.literal("[").append(ComponentUtils.formatList(components, Component.literal(", "))).append("]")
-            ), true);
+            ), broadcast);
         } else {
             if (index < size) {
                 source.sendSuccess(() -> Component.translatable(GET_FEEDBACK,
                         index,
                         name,
                         Component.literal(data.getEntry(index).getType().toString()).withStyle(ChatFormatting.GREEN)
-                ), true);
+                ), broadcast);
             } else {
                 source.sendFailure(Component.translatable(ROOT_EXCEPTION_BOUNDS_SLOTS, ARGUMENT_INDEX, index, name));
             }
@@ -344,7 +345,7 @@ public final class SlotsCommand implements ICommandNode {
         Entity target = context.getSource().getEntity();
 
         if (target != null) {
-            return doGet(context, target, -1);
+            return doGet(context, target, -1, false);
         }
 
         throw EntityArgument.NO_ENTITIES_FOUND.create();
@@ -353,14 +354,14 @@ public final class SlotsCommand implements ICommandNode {
     private static int getWithTarget(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
 
-        return doGet(context, target, -1);
+        return doGet(context, target, -1, !Objects.equals(context.getSource().getEntity(), target));
     }
 
     private static int getWithTargetIndex(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
         int index = IntegerArgumentType.getInteger(context, ARGUMENT_INDEX);
 
-        return doGet(context, target, index);
+        return doGet(context, target, index, !Objects.equals(context.getSource().getEntity(), target));
     }
 
     private static int doInherit(CommandContext<CommandSourceStack> context, Entity other, Collection<? extends Entity> entities, int min, int max) throws CommandSyntaxException {
@@ -667,7 +668,7 @@ public final class SlotsCommand implements ICommandNode {
         return doSet(context, targets, index, type, max);
     }
 
-    private static int doTracking(CommandContext<CommandSourceStack> context, Entity entity) throws CommandSyntaxException {
+    private static int doTracking(CommandContext<CommandSourceStack> context, Entity entity, boolean broadcast) throws CommandSyntaxException {
         LivingEntity target = CommandUtils.convertLiving(entity);
         AccessoryData data = OhmegaDataAttachments.getData(target);
         CommandSourceStack source = context.getSource();
@@ -676,11 +677,11 @@ public final class SlotsCommand implements ICommandNode {
         if (data.isTrackingDefault()) {
             source.sendSuccess(() -> Component.translatable(TRACKING_FEEDBACK_DEFAULT,
                     name
-            ), true);
+            ), broadcast);
         } else {
             source.sendSuccess(() -> Component.translatable(TRACKING_FEEDBACK_NONE,
                     name
-            ), true);
+            ), broadcast);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -690,7 +691,7 @@ public final class SlotsCommand implements ICommandNode {
         Entity target = context.getSource().getEntity();
 
         if (target != null) {
-            return doTracking(context, target);
+            return doTracking(context, target, false);
         }
 
         throw EntityArgument.NO_ENTITIES_FOUND.create();
@@ -699,7 +700,7 @@ public final class SlotsCommand implements ICommandNode {
     private static int trackingWithTarget(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
 
-        return doTracking(context, target);
+        return doTracking(context, target, !Objects.equals(context.getSource().getEntity(), target));
     }
 
     private static int doUntrack(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) {

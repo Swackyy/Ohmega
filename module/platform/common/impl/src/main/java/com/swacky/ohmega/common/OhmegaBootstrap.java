@@ -10,8 +10,10 @@ import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.util.OhmegaPlatform;
 import com.swacky.ohmega.common.command.node.ClearCommand;
-import com.swacky.ohmega.common.command.node.DataCommand;
+import com.swacky.ohmega.common.command.node.DebugCommand;
+import com.swacky.ohmega.common.command.node.DebugCommandBase;
 import com.swacky.ohmega.common.command.node.ItemCommand;
+import com.swacky.ohmega.common.command.node.ItemCommandBase;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
@@ -47,8 +49,8 @@ public final class OhmegaBootstrap {
             OhmegaCommandNodes.registerCommon(TypesCommand.ELEMENT_ROOT, TypesCommand::new);
             // Server
             OhmegaCommandNodes.registerServer(ClearCommand.ELEMENT_ROOT, ClearCommand::new);
-            OhmegaCommandNodes.registerServer(DataCommand.ELEMENT_ROOT, DataCommand::new);
-            OhmegaCommandNodes.registerServer(ItemCommand.ELEMENT_ROOT, ItemCommand::new);
+            OhmegaCommandNodes.registerServer(DebugCommandBase.ELEMENT_ROOT, DebugCommand::new);
+            OhmegaCommandNodes.registerServer(ItemCommandBase.ELEMENT_ROOT, ItemCommand::new);
             OhmegaCommandNodes.registerServer(ItemsCommand.ELEMENT_ROOT, ItemsCommand::new);
             OhmegaCommandNodes.registerServer(SlotsCommand.ELEMENT_ROOT, SlotsCommand::new);
         } else {

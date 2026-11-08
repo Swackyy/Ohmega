@@ -17,6 +17,7 @@ import com.swacky.ohmega.client.command.node.InfoCommand;
 import com.swacky.ohmega.client.screen.widget.CrowdinButton;
 import com.swacky.ohmega.common.command.node.ClearCommand;
 import com.swacky.ohmega.common.command.node.ItemCommand;
+import com.swacky.ohmega.common.command.node.ItemCommandBase;
 import com.swacky.ohmega.common.command.node.ItemsCommand;
 import com.swacky.ohmega.common.command.node.SlotsCommand;
 import com.swacky.ohmega.common.command.node.TypesCommand;
@@ -72,7 +73,7 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         builder.add(ClearCommand.ROOT_EXCEPTION_SINGLE, "В інвентарі аксесуарів %s не знайдено відповідних предметів");
         builder.add(ClearCommand.ROOT_FEEDBACK_MULTIPLE, "Вилучено %s предметів з інвентарю аксесуарів %s сутностей");
         builder.add(ClearCommand.ROOT_FEEDBACK_SINGLE, "Вилучено %s предметів з інвентарю аксесуарів %s");
-        // Data
+        // Debug
         //builder.add(DataCommand.ROOT_FEEDBACK, "Entity %s has the following attached accessory data: %s");
         //builder.add(DataCommand.ROOT_FEEDBACK_INDEX, "Entity %s has the following attached accessory data in index %s: %s");
         // Extensions
@@ -87,7 +88,7 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
         builder.add(ItemCommand.GET_FEEDBACK, "Сутність %s має %s в індексі %s свого інвентарю аксесуарів");
         builder.add(ItemCommand.SET_FEEDBACK_MULTIPLE, "Установлено стіс в індексі %s інвентарю аксесуарів %s сутностей на %s %s");
         builder.add(ItemCommand.SET_FEEDBACK_SINGLE, "Установлено стіс в індексі %s інвентарю %s на %s %s");
-        builder.add(ItemCommand.TYPE_FEEDBACK, "Предмет «%s» має усталений тип аксесуара «%s»");
+        builder.add(ItemCommandBase.TYPE_FEEDBACK, "Предмет «%s» має усталений тип аксесуара «%s»");
         // Items
         builder.add(ItemsCommand.ROOT_FEEDBACK, "%s має такі предмети у своєму інвентарі аксесуарів: %s");
         builder.add(ItemsCommand.ROOT_FEEDBACK_EMPTY, "%s не має предметів у своєму інвентарі аксесуарів");

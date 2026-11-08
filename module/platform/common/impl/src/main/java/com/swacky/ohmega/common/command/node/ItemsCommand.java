@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class ItemsCommand implements ICommandNode {
     public static final String ELEMENT_ROOT = "items";
@@ -42,7 +43,7 @@ public final class ItemsCommand implements ICommandNode {
                                 .executes(ItemsCommand::itemsWithEntityIncludeAir)));
     }
 
-    private static int doPrint(CommandContext<CommandSourceStack> context, Entity entity, boolean includeAir) throws CommandSyntaxException {
+    private static int doItems(CommandContext<CommandSourceStack> context, Entity entity, boolean includeAir, boolean broadcast) throws CommandSyntaxException {
         LivingEntity target = CommandUtils.convertLiving(entity);
         AccessoryData data = OhmegaDataAttachments.getData(target);
         List<Component> components = new ArrayList<>(data.size());
@@ -59,31 +60,31 @@ public final class ItemsCommand implements ICommandNode {
         if (components.isEmpty()) {
             source.sendSuccess(() -> Component.translatable(ROOT_FEEDBACK_EMPTY,
                     target.getDisplayName()
-            ), true);
+            ), broadcast);
             return Command.SINGLE_SUCCESS;
         }
 
         source.sendSuccess(() -> Component.translatable(ROOT_FEEDBACK,
                 target.getDisplayName(),
                 ComponentUtils.formatList(components, Component.literal(", "))
-        ), true);
+        ), broadcast);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int items(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        return doPrint(context, context.getSource().getEntity(), false);
+        return doItems(context, context.getSource().getEntity(), false, false);
     }
 
     private static int itemsWithTarget(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
 
-        return doPrint(context, target, false);
+        return doItems(context, target, false, !Objects.equals(context.getSource().getEntity(), target));
     }
 
     private static int itemsWithEntityIncludeAir(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
         boolean includeAir = BoolArgumentType.getBool(context, ARGUMENT_INCLUDE_AIR);
 
-        return doPrint(context, target, includeAir);
+        return doItems(context, target, includeAir, !Objects.equals(context.getSource().getEntity(), target));
     }
 }

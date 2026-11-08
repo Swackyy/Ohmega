@@ -1,3 +1,4 @@
+
 package com.swacky.ohmega.common.command.node;
 
 import com.mojang.brigadier.Command;
@@ -7,12 +8,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.swacky.ohmega.api.common.command.CommandUtils;
-import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
-import com.swacky.ohmega.api.common.item.Accessories;
-import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
-import net.minecraft.ChatFormatting;
+import com.swacky.ohmega.api.common.item.AccessoryContext;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -28,25 +26,19 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-public final class ItemCommand implements ICommandNode {
-    public static final String ELEMENT_ROOT = "item";
-    public static final String ELEMENT_GET = "get";
-    public static final String ELEMENT_SET = "set";
-    public static final String ELEMENT_TYPE = "type";
-
-    public static final String ARGUMENT_TARGET = "target";
-    public static final String ARGUMENT_INDEX = "index";
-    public static final String ARGUMENT_TARGETS = "targets";
-    public static final String ARGUMENT_ITEM = "item";
-    public static final String ARGUMENT_COUNT = "count";
+public final class ItemCommand extends ItemCommandBase {
+    private static final String ARGUMENT_TARGET = "target";
+    private static final String ARGUMENT_INDEX = "index";
+    private static final String ARGUMENT_TARGETS = "targets";
+    private static final String ARGUMENT_COUNT = "count";
 
     public static final String ARGUMENT_INDEX_EXCEPTION = CommandUtils.command(ARGUMENT_INDEX).exception();
 
     public static final String GET_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
     public static final String SET_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
     public static final String SET_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
-    public static final String TYPE_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_TYPE).feedback();
 
     @SuppressWarnings("unchecked")
     private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(object -> {
@@ -60,12 +52,13 @@ public final class ItemCommand implements ICommandNode {
 
     public ItemCommand(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
         builder
-                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal(ELEMENT_GET)
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.argument(ARGUMENT_TARGET, EntityArgument.entity())
                                 .then(Commands.argument(ARGUMENT_INDEX, IntegerArgumentType.integer(0))
-                                        .executes(ItemCommand::get))))
+                                        .executes(ItemCommand::doGet))))
                 .then(Commands.literal(ELEMENT_SET)
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.argument(ARGUMENT_TARGETS, EntityArgument.entities())
                                 .then(Commands.argument(ARGUMENT_INDEX, IntegerArgumentType.integer(0))
                                         .then(Commands.argument(ARGUMENT_ITEM, ItemArgument.item(context))
@@ -77,7 +70,7 @@ public final class ItemCommand implements ICommandNode {
                                 .executes(ItemCommand::type)));
     }
 
-    private static int get(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int doGet(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, ARGUMENT_TARGET);
         int index = IntegerArgumentType.getInteger(context, ARGUMENT_INDEX);
 
@@ -90,11 +83,13 @@ public final class ItemCommand implements ICommandNode {
             throw INDEX_EXCEPTION.create(Pair.of(index, data.size()));
         }
 
-        context.getSource().sendSuccess(() -> Component.translatable(GET_FEEDBACK,
+        CommandSourceStack source = context.getSource();
+
+        source.sendSuccess(() -> Component.translatable(GET_FEEDBACK,
                 target.getDisplayName(),
                 stack.toString(),
                 index
-        ), true);
+        ), !Objects.equals(source.getEntity(), target));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -152,12 +147,6 @@ public final class ItemCommand implements ICommandNode {
     }
 
     private static int type(CommandContext<CommandSourceStack> context) {
-        Item item = ItemArgument.getItem(context, ARGUMENT_ITEM).item().value();
-
-        context.getSource().sendSuccess(() -> Component.translatable(TYPE_FEEDBACK,
-                Component.literal(item.toString()).withStyle(ChatFormatting.GREEN),
-                Component.literal(Accessories.getType(null, item).toString()).withStyle(ChatFormatting.GREEN)
-        ), true);
-        return Command.SINGLE_SUCCESS;
+        return type(context, context.getSource()::sendSuccess);
     }
 }
