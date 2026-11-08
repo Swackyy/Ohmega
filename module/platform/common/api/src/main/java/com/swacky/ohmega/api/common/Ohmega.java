@@ -19,7 +19,8 @@ import java.util.function.Consumer;
 public final class Ohmega {
     public static final String MODID = "ohmega";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final String MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE = "This method was called without a defined functional method body. Implement it in your mixin class";
+    public static final String MIXIN_UNIMPLEMENTED_EXCEPTION_MESSAGE = "This duck method was called without a defined functional method body." +
+            "It should be implemented by the injecting Mixin";
 
     private static boolean bootstrapped = false;
     private static int nonLinearServicesCount = 0;

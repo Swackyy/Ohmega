@@ -90,7 +90,6 @@ public final class AccessoryDataEntry {
         this(type, context, ItemStack.EMPTY, false);
     }
 
-    // todo: doc
     @Override
     public String toString() {
         return "AccessoryDataEntry{type=" + type + ", stack=" + stack + '}';

@@ -2,19 +2,21 @@ package com.swacky.ohmega.api.common.command.node;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.OhmegaCommandNodes;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 import org.jspecify.annotations.NonNull;
 
 // there is literally 0 reason to construct any object here
 /**
  * Represents an extra node to add to the {@code /ohmega} command.
- * Use {@link OhmegaCommandNodes#register(String, Factory)} to register your command nodes
+ * Use {@link OhmegaCommandNodes#registerServer(String, ServerFactory)} to register your command nodes
  */
 public interface ICommandNode {
     /**
-     * Get the map of raw help elements to their argument types. Do not return strings from {@link CommandHelper.Builder#feedback()},
+     * Get the map of raw help elements to their argument types. Do not return strings from {@link CommandUtils.Builder#feedback()},
      * these are automatically wrapped. Instead, return a list of element strings like "get" or "set" mapped to arguments.
      * @return a map of raw elements to add to the built-in {@code /ohmegac help} command
      * @apiNote The boolean part of the argument value marks {@code true} for mandatory and {@code false} for optional
@@ -26,7 +28,12 @@ public interface ICommandNode {
     }
     */
 
-    interface Factory {
+    interface CommonFactory {
+        <T extends SharedSuggestionProvider> @NonNull ICommandNode construct(
+                @NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<T> builder, @NonNull CommandHelper<T> helper);
+    }
+
+    interface ServerFactory {
         @NonNull ICommandNode construct(@NonNull CommandBuildContext context, @NonNull LiteralArgumentBuilder<CommandSourceStack> builder);
     }
 }

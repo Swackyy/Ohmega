@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin;
 
-import com.swacky.ohmega.mixinduck.DisplayInfoExtension;
+import com.swacky.ohmega.common.advancement.duck.DisplayInfoExtension;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.DisplayInfo;

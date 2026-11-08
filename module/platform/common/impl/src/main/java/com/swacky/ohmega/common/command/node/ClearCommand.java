@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.item.AccessoryContext;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
@@ -31,11 +31,11 @@ public final class ClearCommand implements ICommandNode {
     private static final String ARGUMENT_FILTER = "filter";
     private static final String ARGUMENT_MAX = "max";
 
-    public static final String ROOT_EXCEPTION_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).exception("multiple");
-    public static final String ROOT_EXCEPTION_SINGLE = CommandHelper.command(ELEMENT_ROOT).exception("single");
+    public static final String ROOT_EXCEPTION_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).exception("multiple");
+    public static final String ROOT_EXCEPTION_SINGLE = CommandUtils.command(ELEMENT_ROOT).exception("single");
 
-    public static final String ROOT_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).feedback("multiple");
-    public static final String ROOT_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).feedback("single");
+    public static final String ROOT_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).feedback("multiple");
+    public static final String ROOT_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).feedback("single");
 
     private static final DynamicCommandExceptionType EXCEPTION_MULTIPLE = new DynamicCommandExceptionType((count) -> Component.translatable(ROOT_EXCEPTION_MULTIPLE, count));
     private static final DynamicCommandExceptionType EXCEPTION_SINGLE = new DynamicCommandExceptionType(name -> Component.translatable(ROOT_EXCEPTION_SINGLE, name));
@@ -52,7 +52,7 @@ public final class ClearCommand implements ICommandNode {
     }
 
     private static int doClear(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, Predicate<ItemStack> filter, int max) throws CommandSyntaxException {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
         int[] count = {0};
 
         for (LivingEntity target : targets) {

@@ -109,7 +109,6 @@ public final class AccessoryData {
         this(true, entries);
     }
 
-    // todo: doc
     @Override
     public String toString() {
         int size = size();

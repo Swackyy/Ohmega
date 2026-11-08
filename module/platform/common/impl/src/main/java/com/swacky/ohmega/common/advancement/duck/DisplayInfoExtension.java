@@ -1,4 +1,4 @@
-package com.swacky.ohmega.mixinduck;
+package com.swacky.ohmega.common.advancement.duck;
 
 import com.swacky.ohmega.api.common.Ohmega;
 import net.minecraft.resources.Identifier;

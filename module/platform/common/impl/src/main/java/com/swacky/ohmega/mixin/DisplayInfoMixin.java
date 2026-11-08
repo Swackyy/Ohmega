@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.mixinduck.DisplayInfoExtension;
+import com.swacky.ohmega.common.advancement.duck.DisplayInfoExtension;
 import it.unimi.dsi.fastutil.objects.ObjectIntImmutablePair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.DisplayInfo;

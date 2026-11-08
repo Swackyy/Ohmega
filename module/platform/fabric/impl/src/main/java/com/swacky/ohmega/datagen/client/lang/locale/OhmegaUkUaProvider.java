@@ -8,7 +8,7 @@ import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -61,8 +61,8 @@ public final class OhmegaUkUaProvider extends OhmegaLangProvider {
 
         // Commands
         // Misc
-        builder.add(CommandHelper.CONTEXT_HOVER, "(наведення)");
-        builder.add(CommandHelper.EXCEPTION_ARGUMENT_LIVING, "Для цього аргументу можна вказати лише живі сутності, однак наданий селектор уключає неживих сутностей");
+        builder.add(CommandUtils.CONTEXT_HOVER, "(наведення)");
+        builder.add(CommandUtils.EXCEPTION_ARGUMENT_LIVING, "Для цього аргументу можна вказати лише живі сутності, однак наданий селектор уключає неживих сутностей");
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Невідомий тип аксесуара: «%s»");
         builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Тип аксесуара «%s» позначено як невизначений, і цей аргумент приймає лише визначені типи");

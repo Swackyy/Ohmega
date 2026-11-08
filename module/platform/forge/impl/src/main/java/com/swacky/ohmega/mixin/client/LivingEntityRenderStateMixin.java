@@ -1,6 +1,6 @@
 package com.swacky.ohmega.mixin.client;
 
-import com.swacky.ohmega.mixinduck.client.LivingEntityRenderStateExtension;
+import com.swacky.ohmega.client.renderer.duck.LivingEntityRenderStateExtension;
 import com.swacky.ohmega.client.renderer.RenderStateDataKey;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;

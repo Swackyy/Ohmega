@@ -1,4 +1,4 @@
-package com.swacky.ohmega.mixinduck.client;
+package com.swacky.ohmega.client.renderer.duck;
 
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.client.renderer.RenderStateDataKey;

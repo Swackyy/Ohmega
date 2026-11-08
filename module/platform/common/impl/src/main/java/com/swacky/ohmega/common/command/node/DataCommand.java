@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
@@ -26,8 +26,8 @@ public final class DataCommand implements ICommandNode {
     private static final String ARGUMENT_TARGET = "target";
     private static final String ARGUMENT_INDEX = "index";
 
-    public static final String ROOT_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).feedback();
-    public static final String ROOT_FEEDBACK_INDEX = CommandHelper.command(ELEMENT_ROOT).feedback("index");
+    public static final String ROOT_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).feedback();
+    public static final String ROOT_FEEDBACK_INDEX = CommandUtils.command(ELEMENT_ROOT).feedback("index");
 
     public DataCommand(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
         builder
@@ -40,7 +40,7 @@ public final class DataCommand implements ICommandNode {
     }
 
     private static int doData(CommandContext<CommandSourceStack> context, Entity entity) throws CommandSyntaxException {
-        LivingEntity target = CommandHelper.convertLiving(entity);
+        LivingEntity target = CommandUtils.convertLiving(entity);
 
         AccessoryData.CODEC.encodeStart(NbtOps.INSTANCE, OhmegaDataAttachments.getData(target)).resultOrPartial().ifPresent(tag ->
                 context.getSource().sendSuccess(() -> Component.translatable(ROOT_FEEDBACK,
@@ -61,7 +61,7 @@ public final class DataCommand implements ICommandNode {
     }
 
     private static int dataWithEntityIndex(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        LivingEntity target = CommandHelper.convertLiving(EntityArgument.getEntity(context, ARGUMENT_TARGET));
+        LivingEntity target = CommandUtils.convertLiving(EntityArgument.getEntity(context, ARGUMENT_TARGET));
         int index = IntegerArgumentType.getInteger(context, ARGUMENT_INDEX);
 
         AccessoryDataEntry.CODEC.encodeStart(NbtOps.INSTANCE, OhmegaDataAttachments.getData(target).getEntry(index)).resultOrPartial().ifPresent(tag ->

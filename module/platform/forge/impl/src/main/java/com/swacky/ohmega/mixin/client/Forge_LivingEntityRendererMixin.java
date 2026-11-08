@@ -2,7 +2,7 @@ package com.swacky.ohmega.mixin.client;
 
 import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
-import com.swacky.ohmega.mixinduck.client.LivingEntityRenderStateExtension;
+import com.swacky.ohmega.client.renderer.duck.LivingEntityRenderStateExtension;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

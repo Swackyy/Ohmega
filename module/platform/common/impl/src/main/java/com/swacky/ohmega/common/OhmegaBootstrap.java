@@ -43,12 +43,14 @@ public final class OhmegaBootstrap {
             Ohmega.lock();
 
             // Register command nodes
-            OhmegaCommandNodes.register(ClearCommand.ELEMENT_ROOT, ClearCommand::new);
-            OhmegaCommandNodes.register(DataCommand.ELEMENT_ROOT, DataCommand::new);
-            OhmegaCommandNodes.register(ItemCommand.ELEMENT_ROOT, ItemCommand::new);
-            OhmegaCommandNodes.register(ItemsCommand.ELEMENT_ROOT, ItemsCommand::new);
-            OhmegaCommandNodes.register(SlotsCommand.ELEMENT_ROOT, SlotsCommand::new);
-            OhmegaCommandNodes.register(TypesCommand.ELEMENT_ROOT, TypesCommand::new);
+            // Common
+            OhmegaCommandNodes.registerCommon(TypesCommand.ELEMENT_ROOT, TypesCommand::new);
+            // Server
+            OhmegaCommandNodes.registerServer(ClearCommand.ELEMENT_ROOT, ClearCommand::new);
+            OhmegaCommandNodes.registerServer(DataCommand.ELEMENT_ROOT, DataCommand::new);
+            OhmegaCommandNodes.registerServer(ItemCommand.ELEMENT_ROOT, ItemCommand::new);
+            OhmegaCommandNodes.registerServer(ItemsCommand.ELEMENT_ROOT, ItemsCommand::new);
+            OhmegaCommandNodes.registerServer(SlotsCommand.ELEMENT_ROOT, SlotsCommand::new);
         } else {
             throw new IllegalStateException("Attempted to bootstrap " + OhmegaBootstrap.class + " multiple times");
         }

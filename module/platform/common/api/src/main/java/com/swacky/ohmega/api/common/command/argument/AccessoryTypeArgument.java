@@ -11,8 +11,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
-import com.swacky.ohmega.api.common.command.CommandHelper;
-import net.minecraft.commands.CommandSourceStack;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -34,8 +33,8 @@ public final class AccessoryTypeArgument implements ArgumentType<AccessoryType> 
             AccessoryType.UTILITY_ID.toString(),
             AccessoryType.SPECIAL_ID.toString());
 
-    public static final @NonNull String EXCEPTION_UNKNOWN_TYPE_KEY = CommandHelper.exception("unknown_accessory_type");
-    public static final @NonNull String EXCEPTION_UNSPECIFIABLE_TYPE_KEY = CommandHelper.exception("unspecifiable_accessory_type");
+    public static final @NonNull String EXCEPTION_UNKNOWN_TYPE_KEY = CommandUtils.exception("unknown_accessory_type");
+    public static final @NonNull String EXCEPTION_UNSPECIFIABLE_TYPE_KEY = CommandUtils.exception("unspecifiable_accessory_type");
 
     /**
      * General use type not found exception.
@@ -82,7 +81,7 @@ public final class AccessoryTypeArgument implements ArgumentType<AccessoryType> 
      * @param name key for the type in the command
      * @return the type present in the command, {@link NonNull} as it will simply throw if an instance with the given {@code name} is not found
      */
-    public static @NonNull AccessoryType getType(@NonNull CommandContext<CommandSourceStack> context, @NonNull String name) {
+    public static @NonNull AccessoryType getType(@NonNull CommandContext<?> context, @NonNull String name) {
         return context.getArgument(name, AccessoryType.class);
     }
 

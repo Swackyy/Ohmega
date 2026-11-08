@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypePredicateArgument;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
@@ -53,34 +53,34 @@ public final class SlotsCommand implements ICommandNode {
     private static final String ARGUMENT_MIN = "min";
     private static final String ARGUMENT_MAX = "max";
 
-    public static final String ADD_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_ADD).feedback("multiple");
-    public static final String ADD_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_ADD).feedback("single");
-    public static final String CLEAR_EXCEPTION_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).exception("multiple");
-    public static final String CLEAR_EXCEPTION_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).exception("single");
-    public static final String CLEAR_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).feedback("multiple");
-    public static final String CLEAR_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).feedback("single");
-    public static final String DEFAULT_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_DEFAULT).feedback("multiple");
-    public static final String DEFAULT_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_DEFAULT).feedback("single");
-    public static final String GET_FEEDBACK_RANGED = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback("ranged");
-    public static final String GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
-    public static final String INHERIT_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("multiple");
-    public static final String INHERIT_FEEDBACK_RANGED_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("ranged_multiple");
-    public static final String INHERIT_FEEDBACK_RANGED_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("ranged_single");
-    public static final String INHERIT_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("single");
-    public static final String INSERT_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_INSERT).feedback("multiple");
-    public static final String INSERT_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_INSERT).feedback("single");
-    public static final String REMOVE_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_REMOVE).feedback("multiple");
-    public static final String REMOVE_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_REMOVE).feedback("single");
-    public static final String ROOT_EXCEPTION_BOUNDS_ARGUMENT = CommandHelper.command(ELEMENT_ROOT).exception("bounds_argument");
-    public static final String ROOT_EXCEPTION_BOUNDS_SLOTS = CommandHelper.command(ELEMENT_ROOT).exception("bounds_slots");
-    public static final String SET_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
-    public static final String SET_FEEDBACK_RANGED_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("ranged_multiple");
-    public static final String SET_FEEDBACK_RANGED_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("ranged_single");
-    public static final String SET_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
-    public static final String TRACKING_FEEDBACK_DEFAULT = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TRACKING).feedback("default");
-    public static final String TRACKING_FEEDBACK_NONE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TRACKING).feedback("none");
-    public static final String UNTRACK_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_UNTRACK).feedback("multiple");
-    public static final String UNTRACK_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_UNTRACK).feedback("single");
+    public static final String ADD_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_ADD).feedback("multiple");
+    public static final String ADD_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_ADD).feedback("single");
+    public static final String CLEAR_EXCEPTION_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).exception("multiple");
+    public static final String CLEAR_EXCEPTION_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).exception("single");
+    public static final String CLEAR_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).feedback("multiple");
+    public static final String CLEAR_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_CLEAR).feedback("single");
+    public static final String DEFAULT_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_DEFAULT).feedback("multiple");
+    public static final String DEFAULT_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_DEFAULT).feedback("single");
+    public static final String GET_FEEDBACK_RANGED = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback("ranged");
+    public static final String GET_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
+    public static final String INHERIT_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("multiple");
+    public static final String INHERIT_FEEDBACK_RANGED_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("ranged_multiple");
+    public static final String INHERIT_FEEDBACK_RANGED_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("ranged_single");
+    public static final String INHERIT_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_INHERIT).feedback("single");
+    public static final String INSERT_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_INSERT).feedback("multiple");
+    public static final String INSERT_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_INSERT).feedback("single");
+    public static final String REMOVE_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_REMOVE).feedback("multiple");
+    public static final String REMOVE_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_REMOVE).feedback("single");
+    public static final String ROOT_EXCEPTION_BOUNDS_ARGUMENT = CommandUtils.command(ELEMENT_ROOT).exception("bounds_argument");
+    public static final String ROOT_EXCEPTION_BOUNDS_SLOTS = CommandUtils.command(ELEMENT_ROOT).exception("bounds_slots");
+    public static final String SET_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
+    public static final String SET_FEEDBACK_RANGED_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("ranged_multiple");
+    public static final String SET_FEEDBACK_RANGED_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("ranged_single");
+    public static final String SET_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
+    public static final String TRACKING_FEEDBACK_DEFAULT = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_TRACKING).feedback("default");
+    public static final String TRACKING_FEEDBACK_NONE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_TRACKING).feedback("none");
+    public static final String UNTRACK_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_UNTRACK).feedback("multiple");
+    public static final String UNTRACK_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_UNTRACK).feedback("single");
 
     public SlotsCommand(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
         builder
@@ -151,7 +151,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doAdd(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, AccessoryType type, int amount) {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
 
         for (LivingEntity target : targets) {
             OhmegaDataAttachments.getData(target).addSlots(target, type, amount, AccessoryContext.COMMAND);
@@ -192,7 +192,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doClear(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, Predicate<AccessoryType> filter, int max) {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
         int[] count = {0};
 
         for (LivingEntity target : targets) {
@@ -268,7 +268,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doDefault(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
 
         for (LivingEntity target : targets) {
             OhmegaDataAttachments.getData(target).defaultSlots(target, AccessoryContext.COMMAND);
@@ -307,7 +307,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doGet(CommandContext<CommandSourceStack> context, Entity entity, int index) throws CommandSyntaxException {
-        LivingEntity target = CommandHelper.convertLiving(entity);
+        LivingEntity target = CommandUtils.convertLiving(entity);
         AccessoryData data = OhmegaDataAttachments.getData(target);
         int size = data.size();
         CommandSourceStack source = context.getSource();
@@ -367,8 +367,8 @@ public final class SlotsCommand implements ICommandNode {
         CommandSourceStack source = context.getSource();
 
         if (min <= max || max < 0) {
-            List<LivingEntity> targets = CommandHelper.convertLiving(entities);
-            LivingEntity otherTarget = CommandHelper.convertLiving(other);
+            List<LivingEntity> targets = CommandUtils.convertLiving(entities);
+            LivingEntity otherTarget = CommandUtils.convertLiving(other);
             int size = targets.size();
 
             if (size == 1) {
@@ -460,7 +460,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doInsert(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, AccessoryType type, int amount) {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
 
         int size = targets.size();
         CommandSourceStack source = context.getSource();
@@ -519,7 +519,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doRemove(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, int amount, Predicate<AccessoryType> filter) {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
 
         int size = targets.size();
         CommandSourceStack source = context.getSource();
@@ -587,7 +587,7 @@ public final class SlotsCommand implements ICommandNode {
         CommandSourceStack source = context.getSource();
 
         if (index <= max) {
-            List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+            List<LivingEntity> targets = CommandUtils.convertLiving(entities);
             int size = targets.size();
 
             if (size == 1) {
@@ -668,7 +668,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doTracking(CommandContext<CommandSourceStack> context, Entity entity) throws CommandSyntaxException {
-        LivingEntity target = CommandHelper.convertLiving(entity);
+        LivingEntity target = CommandUtils.convertLiving(entity);
         AccessoryData data = OhmegaDataAttachments.getData(target);
         CommandSourceStack source = context.getSource();
         Component name = target.getName();
@@ -703,7 +703,7 @@ public final class SlotsCommand implements ICommandNode {
     }
 
     private static int doUntrack(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities) {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
 
         for (LivingEntity target : targets) {
             OhmegaDataAttachments.getData(target).untrackDefault(target);

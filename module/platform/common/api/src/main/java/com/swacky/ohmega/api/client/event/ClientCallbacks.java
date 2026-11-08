@@ -1,7 +1,6 @@
 package com.swacky.ohmega.api.client.event;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.command.OhmegaClientRootCommand;
 import com.swacky.ohmega.api.client.config.ButtonStyle;
 import com.swacky.ohmega.api.client.config.OhmegaClientConfig;
@@ -19,6 +18,7 @@ import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryType;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.command.ICommonCommandSource;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
@@ -241,7 +241,8 @@ public final class ClientCallbacks {
                     consumer.accept(new ToggleExtensionButton(containerScreen, extension, style));
                 }
 
-                if (screen instanceof IEntityRenderingScreen entityRenderingScreen && extension instanceof IEntityRenderingExtension entityRenderingExtension) {
+                if (screen instanceof IEntityRenderingScreen entityRenderingScreen &&
+                        extension instanceof IEntityRenderingExtension entityRenderingExtension) {
                     consumer.accept(new FlipEntityButton(containerScreen, entityRenderingScreen.getFlipEntityButtonPosition(), entityRenderingExtension));
                 }
 
@@ -250,7 +251,8 @@ public final class ClientCallbacks {
         }
     }
 
-    public static <T extends SharedSuggestionProvider> void onRegisterCommands(CommandDispatcher<T> dispatcher, CommandBuildContext context, IClientCommandSource.Factory<T> sourceFactory) {
+    public static <T extends SharedSuggestionProvider> void onRegisterCommands(
+            CommandDispatcher<T> dispatcher, CommandBuildContext context, ICommonCommandSource.Factory<T> sourceFactory) {
         OhmegaClientRootCommand.register(dispatcher, context, sourceFactory);
     }
 

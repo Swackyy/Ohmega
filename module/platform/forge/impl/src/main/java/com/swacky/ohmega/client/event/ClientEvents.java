@@ -1,18 +1,17 @@
 package com.swacky.ohmega.client.event;
 
 import com.swacky.ohmega.api.client.OhmegaClient;
-import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.command.ICommonCommandSource;
 import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
 import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import com.swacky.ohmega.common.init.OhmegaItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
@@ -21,6 +20,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
@@ -37,8 +37,10 @@ import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
@@ -138,20 +140,20 @@ public final class ClientEvents {
         ClientCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext(), context -> {
             CommandSourceStack source = context.getSource();
 
-            return new IClientCommandSource() {
+            return new ICommonCommandSource() {
                 @Override
-                public void sendSuccess(@NonNull Component message) {
-                    source.sendSuccess(() -> message, false);
-                }
-
-                @Override
-                public void sendError(@NonNull Component message) {
-                    source.sendFailure(message);
-                }
-
-                @Override
-                public @NonNull LocalPlayer getPlayer() {
+                public @Nullable Player getPlayer() {
                     return Minecraft.getInstance().player;
+                }
+
+                @Override
+                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
+                    source.sendSuccess(messageSupplier, false);
+                }
+
+                @Override
+                public void sendFailure(Component message) {
+                    source.sendFailure(message);
                 }
             };
         });

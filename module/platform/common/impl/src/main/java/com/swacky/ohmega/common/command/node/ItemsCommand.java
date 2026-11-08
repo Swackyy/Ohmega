@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryDataEntry;
@@ -29,8 +29,8 @@ public final class ItemsCommand implements ICommandNode {
     private static final String ARGUMENT_TARGET = "target";
     private static final String ARGUMENT_INCLUDE_AIR = "includeAir";
 
-    public static final String ROOT_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).feedback();
-    public static final String ROOT_FEEDBACK_EMPTY = CommandHelper.command(ELEMENT_ROOT).feedback("empty");
+    public static final String ROOT_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).feedback();
+    public static final String ROOT_FEEDBACK_EMPTY = CommandUtils.command(ELEMENT_ROOT).feedback("empty");
 
     public ItemsCommand(CommandBuildContext context, LiteralArgumentBuilder<CommandSourceStack> builder) {
         builder
@@ -43,7 +43,7 @@ public final class ItemsCommand implements ICommandNode {
     }
 
     private static int doPrint(CommandContext<CommandSourceStack> context, Entity entity, boolean includeAir) throws CommandSyntaxException {
-        LivingEntity target = CommandHelper.convertLiving(entity);
+        LivingEntity target = CommandUtils.convertLiving(entity);
         AccessoryData data = OhmegaDataAttachments.getData(target);
         List<Component> components = new ArrayList<>(data.size());
         CommandSourceStack source = context.getSource();

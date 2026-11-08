@@ -6,7 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.node.ICommandNode;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -41,12 +41,12 @@ public final class ItemCommand implements ICommandNode {
     public static final String ARGUMENT_ITEM = "item";
     public static final String ARGUMENT_COUNT = "count";
 
-    public static final String ARGUMENT_INDEX_EXCEPTION = CommandHelper.command(ARGUMENT_INDEX).exception();
+    public static final String ARGUMENT_INDEX_EXCEPTION = CommandUtils.command(ARGUMENT_INDEX).exception();
 
-    public static final String GET_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
-    public static final String SET_FEEDBACK_MULTIPLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
-    public static final String SET_FEEDBACK_SINGLE = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
-    public static final String TYPE_FEEDBACK = CommandHelper.command(ELEMENT_ROOT).add(ELEMENT_TYPE).feedback();
+    public static final String GET_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_GET).feedback();
+    public static final String SET_FEEDBACK_MULTIPLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("multiple");
+    public static final String SET_FEEDBACK_SINGLE = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_SET).feedback("single");
+    public static final String TYPE_FEEDBACK = CommandUtils.command(ELEMENT_ROOT).add(ELEMENT_TYPE).feedback();
 
     @SuppressWarnings("unchecked")
     private static final DynamicCommandExceptionType INDEX_EXCEPTION = new DynamicCommandExceptionType(object -> {
@@ -82,7 +82,7 @@ public final class ItemCommand implements ICommandNode {
         int index = IntegerArgumentType.getInteger(context, ARGUMENT_INDEX);
 
         ItemStack stack;
-        AccessoryData data = OhmegaDataAttachments.getData(CommandHelper.convertLiving(target));
+        AccessoryData data = OhmegaDataAttachments.getData(CommandUtils.convertLiving(target));
 
         if (index >= 0 && index < data.size()) {
             stack = data.getEntry(index).getStack();
@@ -99,7 +99,7 @@ public final class ItemCommand implements ICommandNode {
     }
 
     private static int doSet(CommandContext<CommandSourceStack> context, Collection<? extends Entity> entities, int index, Holder<Item> item, int count) throws CommandSyntaxException {
-        List<LivingEntity> targets = CommandHelper.convertLiving(entities);
+        List<LivingEntity> targets = CommandUtils.convertLiving(entities);
 
         for (LivingEntity target : targets) {
             AccessoryData data = OhmegaDataAttachments.getData(target);

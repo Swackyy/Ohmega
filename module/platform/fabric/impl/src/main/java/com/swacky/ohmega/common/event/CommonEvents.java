@@ -2,6 +2,7 @@ package com.swacky.ohmega.common.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.common.Ohmega;
+import com.swacky.ohmega.api.common.command.ICommonCommandSource;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
 import com.swacky.ohmega.api.common.event.CommonCallbacks;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
@@ -25,6 +26,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +40,10 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.config.ModConfig;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public final class CommonEvents {
     private static boolean bootstrapped = false;
@@ -111,8 +117,29 @@ public final class CommonEvents {
         CommonCallbacks.onPlayerChangeDimension(player);
     }
 
-    private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {
-        CommonCallbacks.onRegisterCommands(dispatcher, context);
+    private static void onRegisterCommands(
+            CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext, Commands.CommandSelection selection) {
+        CommonCallbacks.onRegisterCommonCommands(dispatcher, buildContext, context -> {
+            CommandSourceStack source = context.getSource();
+
+            return new ICommonCommandSource() {
+                @Override
+                public @Nullable Player getPlayer() {
+                    return source.getPlayer();
+                }
+
+                @Override
+                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
+                    source.sendSuccess(messageSupplier, false);
+                }
+
+                @Override
+                public void sendFailure(Component message) {
+                    source.sendFailure(message);
+                }
+            };
+        });
+        CommonCallbacks.onRegisterServerCommands(dispatcher, buildContext);
     }
 
     private static void onServerStarting(MinecraftServer server) {

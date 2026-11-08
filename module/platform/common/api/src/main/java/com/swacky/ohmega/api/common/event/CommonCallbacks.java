@@ -3,6 +3,7 @@ package com.swacky.ohmega.api.common.event;
 import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
 import com.swacky.ohmega.api.common.command.OhmegaRootCommand;
+import com.swacky.ohmega.api.common.command.ICommonCommandSource;
 import com.swacky.ohmega.api.common.config.KeepAccessoriesBehaviour;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.common.dataattachment.AccessoryData;
@@ -18,6 +19,7 @@ import com.swacky.ohmega.api.network.OhmegaNetworking;
 import com.swacky.ohmega.api.network.S2C.SyncDataPacket;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -99,8 +101,13 @@ public final class CommonCallbacks {
         }
     }
 
-    public static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
-        OhmegaRootCommand.register(dispatcher, context);
+    public static <T extends SharedSuggestionProvider> void onRegisterCommonCommands(
+            CommandDispatcher<T> dispatcher, CommandBuildContext context, ICommonCommandSource.Factory<T> sourceFactory) {
+        OhmegaRootCommand.registerCommon(dispatcher, context, sourceFactory);
+    }
+
+    public static void onRegisterServerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
+        OhmegaRootCommand.registerServer(dispatcher, context);
     }
 
     public static void onServerConfigLoad() {

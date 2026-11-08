@@ -2,22 +2,21 @@ package com.swacky.ohmega.client.event;
 
 import com.google.common.reflect.TypeToken;
 import com.swacky.ohmega.api.client.OhmegaClient;
-import com.swacky.ohmega.api.client.command.IClientCommandSource;
 import com.swacky.ohmega.api.client.event.ClientCallbacks;
 import com.swacky.ohmega.api.client.init.OhmegaBinds;
 import com.swacky.ohmega.api.client.renderer.AccessoryRenderers;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.command.ICommonCommandSource;
 import com.swacky.ohmega.api.common.init.OhmegaDataComponents;
 import com.swacky.ohmega.client.config.OhmegaClientConfigImpl;
 import com.swacky.ohmega.client.model.HaloModel;
 import com.swacky.ohmega.client.renderer.AccessoryRenderStateDataImpl;
 import com.swacky.ohmega.client.renderer.HaloRenderer;
-import com.swacky.ohmega.common.init.OhmegaItems;
 import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
+import com.swacky.ohmega.common.init.OhmegaItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentType;
@@ -27,6 +26,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -46,6 +46,9 @@ import net.neoforged.neoforge.event.AddAttributeTooltipsEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = Ohmega.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
@@ -157,24 +160,20 @@ public final class ClientEvents {
         ClientCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext(), context -> {
             CommandSourceStack source = context.getSource();
 
-            return new IClientCommandSource() {
+            return new ICommonCommandSource() {
                 @Override
-                public void sendSuccess(@NonNull Component message) {
-                    source.sendSuccess(() -> message, false);
+                public @Nullable Player getPlayer() {
+                    return Minecraft.getInstance().player;
                 }
 
                 @Override
-                public void sendError(@NonNull Component message) {
+                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
+                    source.sendSuccess(messageSupplier, false);
+                }
+
+                @Override
+                public void sendFailure(Component message) {
                     source.sendFailure(message);
-                }
-
-                @Override
-                public @NonNull LocalPlayer getPlayer() {
-                    if (Minecraft.getInstance().player != null) {
-                        return Minecraft.getInstance().player;
-                    }
-
-                    throw new NullPointerException("Minecraft#player should not be null when invoking a client command");
                 }
             };
         });

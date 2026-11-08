@@ -8,7 +8,7 @@ import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -62,8 +62,8 @@ public final class OhmegaLolUsProvider extends OhmegaLangProvider {
 
         // Commands
         // Misc
-        builder.add(CommandHelper.CONTEXT_HOVER, "(meow)");
-        builder.add(CommandHelper.EXCEPTION_ARGUMENT_LIVING, "Cat iz ded cat doezn't wan ded cat");
+        builder.add(CommandUtils.CONTEXT_HOVER, "(meow)");
+        builder.add(CommandUtils.EXCEPTION_ARGUMENT_LIVING, "Cat iz ded cat doezn't wan ded cat");
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Cat doezn't know diz kit-cat flavr: '%s'");
         builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Kit-cat flavr '%s' izn't speakablez, diz only want speakablez flavrz");

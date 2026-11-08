@@ -1,7 +1,9 @@
 package com.swacky.ohmega.common.event;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.swacky.ohmega.api.common.Ohmega;
 import com.swacky.ohmega.api.common.accessorytype.AccessoryTypeManager;
+import com.swacky.ohmega.api.common.command.ICommonCommandSource;
 import com.swacky.ohmega.api.common.event.CommonCallbacks;
 import com.swacky.ohmega.api.common.init.OhmegaDataAttachments;
 import com.swacky.ohmega.api.common.item.Accessories;
@@ -9,6 +11,9 @@ import com.swacky.ohmega.api.common.item.Accessory;
 import com.swacky.ohmega.common.config.OhmegaServerConfigImpl;
 import com.swacky.ohmega.common.dataattachment.AccessoryDataProvider;
 import com.swacky.ohmega.common.init.OhmegaItems;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,6 +34,10 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = Ohmega.MODID)
 public final class CommonEvents {
@@ -100,7 +109,30 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
-        CommonCallbacks.onRegisterCommands(event.getDispatcher(), event.getBuildContext());
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        CommandBuildContext buildContext = event.getBuildContext();
+
+        CommonCallbacks.onRegisterCommonCommands(dispatcher, buildContext, context -> {
+            CommandSourceStack source = context.getSource();
+
+            return new ICommonCommandSource() {
+                @Override
+                public @Nullable Player getPlayer() {
+                    return source.getPlayer();
+                }
+
+                @Override
+                public void sendSuccess(@NonNull Supplier<@NonNull Component> messageSupplier) {
+                    source.sendSuccess(messageSupplier, false);
+                }
+
+                @Override
+                public void sendFailure(Component message) {
+                    source.sendFailure(message);
+                }
+            };
+        });
+        CommonCallbacks.onRegisterServerCommands(dispatcher, buildContext);
     }
 
     @SubscribeEvent

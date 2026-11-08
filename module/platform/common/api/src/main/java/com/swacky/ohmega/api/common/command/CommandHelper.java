@@ -1,162 +1,65 @@
 package com.swacky.ohmega.api.common.command;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.swacky.ohmega.api.common.Ohmega;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import org.jspecify.annotations.NonNull;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.commands.SharedSuggestionProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
- * A helper class for commands, may be useful to others
+ * A helper class for <strong>common</strong> commands specifically, removing bulky generic specification on function calls and wrapping executors cleanly
+ * @param <T> specified internally, type will depend on mod-loader
  */
-public final class CommandHelper {
-    public static final @NonNull String CONTEXT_HOVER = context("hover");
-    public static final @NonNull String EXCEPTION_ARGUMENT_LIVING = exceptionArgument("living");
-
-    public static final @NonNull SimpleCommandExceptionType EXCEPTION_NO_LIVING = new SimpleCommandExceptionType(
-            Component.translatable(EXCEPTION_ARGUMENT_LIVING));
+public final class CommandHelper<T extends SharedSuggestionProvider> {
+    private final ICommonCommandSource.Factory<T> sourceFactory;
 
     /**
-     * Converts a {@link Entity} to a {@link LivingEntity} if possible, and throws an exception otherwise
-     * @param target conversion target
-     * @return the {@code target} cast to a {@link LivingEntity} if possible
-     * @throws CommandSyntaxException an {@link #EXCEPTION_NO_LIVING} will be thrown if the provided {@code target} is not a {@link LivingEntity}
+     * Creates a helper instance, called internally
+     * @param sourceFactory a factory method to converting loader and logical side specific command sources to a unified {@link ICommonCommandSource}
      */
-    public static @NonNull LivingEntity convertLiving(@NonNull Entity target) throws CommandSyntaxException {
-        if (target instanceof LivingEntity entity) {
-            return entity;
-        }
-
-        throw EXCEPTION_NO_LIVING.create();
+    public CommandHelper(ICommonCommandSource.Factory<T> sourceFactory) {
+        this.sourceFactory = sourceFactory;
     }
 
     /**
-     * Converts a list of entities to living entities if possible.
-     * Does not throw, and instead will just not add invalid entries to the returned list
-     * @param targets conversion targets
-     * @return a list of all valid {@link Entity} targets cast to their {@link LivingEntity} versions
+     * Wraps a command invoker accepting a {@link CommandContext}{@code <?>} and an {@link ICommonCommandSource} to a {@link Command}
+     * @param executor function reference to wrap
+     * @return wrapped {@link Command} instance
      */
-    public static @NonNull List<LivingEntity> convertLiving(@NonNull Collection<? extends Entity> targets) {
-        List<LivingEntity> list = new ArrayList<>(targets.size());
-
-        for (Entity target : targets) {
-            if (target instanceof LivingEntity entity) {
-                list.add(entity);
-            }
-        }
-
-        return list;
+    public Command<T> executor(BiFunction<CommandContext<?>, ICommonCommandSource, Integer> executor) {
+        return context -> executor.apply(context, sourceFactory.construct(context));
     }
 
     /**
-     * Internally constructs a new {@link Builder}
-     * @return the newly constructed builder
+     * Wraps a command invoker accepting an {@link ICommonCommandSource} to a {@link Command}
+     * @param executor function reference to wrap
+     * @return wrapped {@link Command} instance
      */
-    private static @NonNull Builder builder() {
-        return new Builder()
-                .add("command")
-                .add(Ohmega.MODID);
+    public Command<T> executor(Function<ICommonCommandSource, Integer> executor) {
+        return context -> executor.apply(sourceFactory.construct(context));
     }
 
     /**
-     * Creates a translation key for a general top-level contextual hint with the provided string specifier as the key suffix
-     * @param suffix a final suffix to end the key with
-     * @return the full string key for the context translation
+     * Creates a {@link LiteralArgumentBuilder} with the specified {@link T} generic type
+     * @param literal string literal for the argument to be referenced by
+     * @return generic-specified {@link LiteralArgumentBuilder}
      */
-    public static @NonNull String context(@NonNull String suffix) {
-        return builder().add("context").add(suffix).toString();
+    public LiteralArgumentBuilder<T> literal(String literal) {
+        return LiteralArgumentBuilder.literal(literal);
     }
 
     /**
-     * Creates a translation key for a general top-level exception with the provided string specifier as the key suffix
-     * @param suffix a final suffix to end the key with
-     * @return the full string key for the exception translation
+     * Creates a {@link RequiredArgumentBuilder} with the specified {@link T} generic type
+     * @param name reference key for the argument
+     * @param type argument type
+     * @return generic-specified {@link RequiredArgumentBuilder}
+     * @param <U> argument type, automatically inferred via the {@code type} param
      */
-    public static @NonNull String exception(@NonNull String suffix) {
-        return builder().add("exception").add(suffix).toString();
-    }
-
-    /**
-     * Performs the same thing as {@link #exception(String)} but is for command arguments specifically
-     * @param suffix a final suffix to end the key with
-     * @return the full string key for the exception translation
-     */
-    public static @NonNull String exceptionArgument(@NonNull String suffix) {
-        return exception("argument." + suffix);
-    }
-
-    /**
-     * Creates a new builder for a command, given the command's string identifier
-     * @param command a unique key for this command
-     * @return a translation key builder for this command
-     */
-    public static @NonNull Builder command(@NonNull String command) {
-        return builder().add(command);
-    }
-
-    /**
-     * Easily usable translation key builder for commands
-     */
-    public static final class Builder {
-        private final @NonNull List<String> components = new ArrayList<>();
-
-        /**
-         * Adds some general string to the output
-         * @param component string to add
-         * @return this builder instance
-         */
-        public @NonNull Builder add(@NonNull String component) {
-            components.add(component);
-            return this;
-        }
-
-        /**
-         * Finishes the builder with a feedback key given a suffix
-         * @param suffix a final suffix to end the key with
-         * @return the final translation key for this feedback message
-         */
-        public @NonNull String feedback(@NonNull String suffix) {
-            return add("feedback").add(suffix).toString();
-        }
-
-        /**
-         * Finishes the builder with a feedback key
-         * @return the final translation key for this feedback message
-         */
-        public @NonNull String feedback() {
-            return add("feedback").toString();
-        }
-
-        /**
-         * Finishes the builder with an exception key given a suffix
-         * @param suffix a final suffix to end the key with
-         * @return the final translation key for this exception message
-         */
-        public @NonNull String exception(@NonNull String suffix) {
-            return add("exception").add(suffix).toString();
-        }
-
-        /**
-         * Finishes the builder with an exception key
-         * @return the final translation key for this exception message
-         */
-        public @NonNull String exception() {
-            return add("exception").toString();
-        }
-
-        /**
-         * Converts the builder to a string by joining all translation key components with {@code .} characters
-         * @return the translation key represented by this builder
-         */
-        @Override
-        public @NonNull String toString() {
-            return String.join(".", components);
-        }
+    public <U> RequiredArgumentBuilder<T, U> argument(String name, ArgumentType<U> type) {
+        return RequiredArgumentBuilder.argument(name, type);
     }
 }

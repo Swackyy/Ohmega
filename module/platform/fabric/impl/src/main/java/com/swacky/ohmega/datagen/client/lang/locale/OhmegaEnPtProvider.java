@@ -8,7 +8,7 @@ import com.swacky.ohmega.api.client.screen.widget.FlipEntityButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleExtensionButton;
 import com.swacky.ohmega.api.client.screen.widget.ToggleVisibilityButton;
 import com.swacky.ohmega.api.common.Ohmega;
-import com.swacky.ohmega.api.common.command.CommandHelper;
+import com.swacky.ohmega.api.common.command.CommandUtils;
 import com.swacky.ohmega.api.common.command.argument.AccessoryTypeArgument;
 import com.swacky.ohmega.api.common.config.OhmegaServerConfig;
 import com.swacky.ohmega.api.datagen.client.OhmegaLangHelper;
@@ -62,8 +62,8 @@ public final class OhmegaEnPtProvider extends OhmegaLangProvider {
 
         // Commands
         // Misc
-        builder.add(CommandHelper.CONTEXT_HOVER, "(look)");
-        builder.add(CommandHelper.EXCEPTION_ARGUMENT_LIVING, "Only a livin' lubber may be giv'n fer this thing, but th' giv'n selector gives a non-livin' lubber");
+        builder.add(CommandUtils.CONTEXT_HOVER, "(look)");
+        builder.add(CommandUtils.EXCEPTION_ARGUMENT_LIVING, "Only a livin' lubber may be giv'n fer this thing, but th' giv'n selector gives a non-livin' lubber");
         // Exceptions
         builder.add(AccessoryTypeArgument.EXCEPTION_UNKNOWN_TYPE_KEY, "Unknown doubloon type: '%s'");
         builder.add(AccessoryTypeArgument.EXCEPTION_UNSPECIFIABLE_TYPE_KEY, "Doubloon type '%s' be marked as non-specifiable, and this thing only accepts specifiable types");
