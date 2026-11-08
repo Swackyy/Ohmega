@@ -12,7 +12,8 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
- * Class for registering {@code /ohmega} command nodes
+ * Class for registering {@code /ohmega} command nodes, available on both client and server
+ * @apiNote Custom commands should most likely only be used if you are creating an addon for the mod itself, or if you are me :p
  */
 public final class OhmegaCommandNodes {
     private static final @NonNull Map<@Nullable String, ICommandNode.@NonNull Factory> NODES = new IdentityHashMap<>();
